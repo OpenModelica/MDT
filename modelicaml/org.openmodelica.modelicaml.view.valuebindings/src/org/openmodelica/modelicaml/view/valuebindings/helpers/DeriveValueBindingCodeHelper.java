@@ -34,7 +34,6 @@
  */
 package org.openmodelica.modelicaml.view.valuebindings.helpers;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,7 +44,6 @@ import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -60,7 +58,7 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
-import org.openmodelica.modelicaml.common.valuebindings.helpers.ValueBindingsDataCollector;
+import org.openmodelica.modelicaml.common.valuebindings.helpers.BindingsDataCollector;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.SelectValueMediatorDialog;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.SelectValueProviderDialog;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
@@ -83,7 +81,7 @@ public class DeriveValueBindingCodeHelper {
 
 	private HashSet<Element> mediatorsContainingClientOperationScript = new HashSet<Element>();
 
-	private ValueBindingsDataCollector dataCollection;
+	private BindingsDataCollector dataCollection;
 
 	private String code = null; // derived code
 	private String logString = ""; // logs all important information during the code derivation
@@ -96,7 +94,8 @@ public class DeriveValueBindingCodeHelper {
 			ClassInstantiation classInstantiation, 
 			TreeParent instantiationTreeRoot, 
 			HashSet<Element> preCollectedMediators, 
-			boolean showProgressMonitor){
+			boolean recollectMediatorsIfEmpty
+			){
 		
 		if (instantiationTreeRoot instanceof TreeParent) {
 			
@@ -104,41 +103,18 @@ public class DeriveValueBindingCodeHelper {
 				valueBindingsPackage = (Package) instantiationTreeRoot.getSelectedClass().getModel();
 			}
 			
-			if (showProgressMonitor) {
-				try {
-					dataCollection = new ValueBindingsDataCollector();
-					
-					/*
-					 * Use mediators that were already collected. If no mediators are provided -> find some in the specified bindings package
-					 * If mediators are provided then the collectAll() method will use them and skip an additional search
-					 */
-					if (preCollectedMediators != null && preCollectedMediators.size() > 0) {
-						dataCollection.setAllMediators(preCollectedMediators);
-					}
-					
-					dataCollection.collectAll((Element) valueBindingsPackage, classInstantiation, instantiationTreeRoot);
-					
-					new ProgressMonitorDialog(getShell()).run(true, true, dataCollection);
-					
-		        } catch (InvocationTargetException e) {
-		        	MessageDialog.openError(getShell(), "Error", e.getMessage());
-		        } catch (InterruptedException e) {
-		        	MessageDialog.openInformation(getShell(), "Cancelled", e.getMessage());
-		        }
+			dataCollection = new BindingsDataCollector(recollectMediatorsIfEmpty);
+			
+			/*
+			 * Use mediators that were already collected. If no mediators are provided -> find some in the specified bindings package
+			 * If mediators are provided then the collectAll() method will use them and skip an additional search
+			 */
+			if (preCollectedMediators != null && preCollectedMediators.size() > 0) {
+				dataCollection.setAllMediators(preCollectedMediators);
 			}
-			else {
-				dataCollection = new ValueBindingsDataCollector();
-				
-				/*
-				 * Use mediators that were already collected. If no mediators are provided -> find some in the specified bindings package
-				 * If mediators are provided then the collectAll() method will use them and skip an additional search
-				 */
-				if (preCollectedMediators != null && preCollectedMediators.size() > 0) {
-					dataCollection.setAllMediators(preCollectedMediators);
-				}
-				
-				dataCollection.collectAll((Element) valueBindingsPackage, classInstantiation, instantiationTreeRoot);
-			}
+			
+			dataCollection.collectAll((Element) valueBindingsPackage, classInstantiation, instantiationTreeRoot);
+			
 		}
 		else {
 			String message = "NOT VALID: No Value Bindings data could be collected from '" + instantiationTreeRoot + "'.";
@@ -990,11 +966,11 @@ public class DeriveValueBindingCodeHelper {
 	
 	// ******************************************************************** GETTER / SETTER
 
-	public ValueBindingsDataCollector getDataCollection() {
+	public BindingsDataCollector getDataCollection() {
 		return dataCollection;
 	}
 	
-	public void setDataCollection(ValueBindingsDataCollector dataCollection) {
+	public void setDataCollection(BindingsDataCollector dataCollection) {
 		this.dataCollection = dataCollection;
 	}
 	

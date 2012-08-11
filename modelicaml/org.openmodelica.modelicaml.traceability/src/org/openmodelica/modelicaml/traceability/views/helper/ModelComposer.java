@@ -16,7 +16,6 @@ import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.helper.datacollection.VerificationScenariosCollector;
-import org.openmodelica.modelicaml.helper.generators.NOT_USED_Utls;
 import org.openmodelica.modelicaml.helper.generators.CreatorValueBinding;
 
 public class ModelComposer {
@@ -81,11 +80,12 @@ public class ModelComposer {
 			VerificationScenariosCollector collector){
 		
 		this.systemModel = sourceModel;
+		this.valueBindingsPackage = valueBindingsPackage;
+		this.collector = collector;
+		
 		if (this.systemModel instanceof Class) {
 			findAdditionModels((Class) this.systemModel);
 		}
-		
-		this.valueBindingsPackage = valueBindingsPackage;
 		
 		// use the pre-instantiated models in order to avoid instantiating models multiple times
 		if (preparedModelsToInstantiations != null) {
@@ -104,7 +104,6 @@ public class ModelComposer {
 		this.initialSetOfModels.addAll(this.modelsToBeInstantiated); 
 		this.initialSetOfModels.add(systemModel);
 		
-		this.collector = collector;
 		
 //		this.ec = new VerificationDataCollector(umlRoolModel);
 		
@@ -144,9 +143,9 @@ public class ModelComposer {
 					newChild = getModelToItsInstantiation().get(model).getTreeRoot();
 				}
 				else {
-					ClassInstantiation ci_model = new ClassInstantiation((Class) model, true, false);
+					ClassInstantiation ci_model = new ClassInstantiation((Class) model, true, false, collector.getAllMediators(), false);
 					ci_model.createTree();
-					ci_model.collectValueClientsAndProvidersFromUmlModel();
+					ci_model.collectBindingsDataFromUmlModel();
 					newChild = ci_model.getTreeRoot();
 					
 					// add to model -> its instantiation map
@@ -334,9 +333,9 @@ public class ModelComposer {
 				sourceElementInstantiated = getModelToItsInstantiation().get(sourceElement).getTreeRoot();
 			}
 			else {
-				ClassInstantiation ci_model = new ClassInstantiation((Class) sourceElement, true, false);
+				ClassInstantiation ci_model = new ClassInstantiation((Class) sourceElement, true, false, collector.getAllMediators(), false);
 				ci_model.createTree();
-				ci_model.collectValueClientsAndProvidersFromUmlModel();
+				ci_model.collectBindingsDataFromUmlModel();
 				
 				sourceElementInstantiated = ci_model.getTreeRoot();
 				

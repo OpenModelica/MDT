@@ -483,7 +483,8 @@ public class InstantiateRequirementsDialog extends Dialog {
 //				System.err.println("numberOfExisingInstantiations: " + numberOfExisingInstantiations);
 
 				// avoid collecting of mediators again -> collect them in advance and pass them  
-				final int numberOfRequiredInstantiations = ri.getMaxNumberOfProviders(this.containingClass, reqClass, collector.getAllMediators());
+				//NOTE: we have collected all mediators and pass them. There is no need to try to recollect them if the list is empty.
+				final int numberOfRequiredInstantiations = ri.getMaxNumberOfProviders(this.containingClass, reqClass, collector.getAllMediators(), false);
 //				System.err.println("numberOfRequiredInstantiations: " + numberOfRequiredInstantiations);
 				
 				int recommendedNumberOfInstantiations = 0;

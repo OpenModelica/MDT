@@ -26,13 +26,6 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 
 public class VerificationServices {
 	
-	/*
-	 * TODO: This is a a workaround. It is used to avoid new searches of mediators 
-	 * when generating combinations or models.   
-	 */
-	public static boolean modelContainsMediators = true;
-	
-	
 	private static Date date = null;
 	 
 	
@@ -432,10 +425,10 @@ public class VerificationServices {
 		if (element instanceof Class) {
 			
 			// instantiate
-			ClassInstantiation ci = new ClassInstantiation((Class) element, true, false);
+			ClassInstantiation ci = new ClassInstantiation((Class) element, true, false, null, true);
 			ci.setUmlModel(element.getModel());
 			ci.createTree();
-			ci.collectValueClientsAndProvidersFromUmlModel();
+			ci.collectBindingsDataFromUmlModel();
 
 			if (ci.getTreeRoot().hasChildren()) {
 				TreeObject[] children = ci.getTreeRoot().getChildren();
@@ -462,10 +455,10 @@ public class VerificationServices {
 		if (element instanceof Class) {
 
 			// instantiate
-			ClassInstantiation ci = new ClassInstantiation((Class) element, true, false);
+			ClassInstantiation ci = new ClassInstantiation((Class) element, true, false, null, true);
 			ci.setUmlModel(element.getModel());
 			ci.createTree();
-			ci.collectValueClientsAndProvidersFromUmlModel();
+			ci.collectBindingsDataFromUmlModel();
 			
 			if (ci.getTreeRoot().hasChildren()) {
 				TreeObject[] children = ci.getTreeRoot().getChildren();

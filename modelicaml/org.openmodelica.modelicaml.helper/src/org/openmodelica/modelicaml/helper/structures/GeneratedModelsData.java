@@ -142,7 +142,7 @@ public class GeneratedModelsData {
 
 		for (Element genModel : this.generatedModels) {
 			// get model instantiation
-			ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(genModel, getPreparedInstantiations(), getAllFoundMediators());
+			ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(genModel, getPreparedInstantiations(), getAllFoundMediators(), false);
 			
 			// pass pre-collected mediators in order to avoid another search
 			ci.setAllMediators(getAllFoundMediators());

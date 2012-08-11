@@ -170,7 +170,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	
 	// Actions
 	/** The show path action. */
-	private Action showPathAction;
+//	private Action showPathAction;
 	
 	/** The action show all. */
 	private Action actionShowAll;
@@ -263,6 +263,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	
 	public final static int DEFAULT_EXPAND_LEVEL = 2;
 
+	private ClassInstantiation ast;
 	
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -1282,7 +1283,14 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					}
 					
 					String fullModificationString = item.getDotPathWithoutFirstLevelComponent() + " = " + modificationString;
-					modificationStringDialog = new DialogComponentModification(shell, "Edit Component Modification", item.getDotPath(), fullModificationString, item, null, root);
+					modificationStringDialog = new DialogComponentModification(shell, 
+							"Edit Component Modification", 
+							item.getDotPath(), 
+							fullModificationString, 
+							item, 
+							root, 
+							getAst().getAllMediators(), 
+							false);
 					
 					modificationStringDialog.open();
 					
@@ -2345,10 +2353,10 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		
 		if (selectedClass != null && !(selectedClass instanceof Behavior) && isValid(selectedClass)) {
 			
-			ClassInstantiation ast = new ClassInstantiation(selectedClass, actionShowStateMachines.isChecked(), actionShowPredefinedTypesProperties.isChecked());
-
+			ast = new ClassInstantiation(selectedClass, actionShowStateMachines.isChecked(), actionShowPredefinedTypesProperties.isChecked(), null, true);
 			ast.createTree();
-			ast.collectValueClientsAndProvidersFromUmlModel();
+			ast.collectBindingsDataFromUmlModel();
+
 			invisibleRoot = ast.getInvisibleRoot();
 			root = ast.getTreeRoot();
 			
@@ -2445,5 +2453,14 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	@Override
 	public String getContributorId() {
 		return getSite().getId();
+	}
+	
+	
+	public ClassInstantiation getAst() {
+		return ast;
+	}
+
+	public void setAst(ClassInstantiation ast) {
+		this.ast = ast;
 	}
 }

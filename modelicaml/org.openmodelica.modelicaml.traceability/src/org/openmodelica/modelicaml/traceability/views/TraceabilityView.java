@@ -470,9 +470,10 @@ public class TraceabilityView extends ViewPart {
 							// prepare instantiation so that it can be reused for other iterations
 							HashMap<Element, ClassInstantiation> preparedModelInstantiations = new HashMap<Element, ClassInstantiation>();
 							// prepare the system model
-							preparedModelInstantiations.put(treeBuilder.getSelectedElement(), ModelicaMLServices.getModelInstantiation(treeBuilder.getSelectedElement(), preparedModelInstantiations, treeBuilder.getVsc().getAllMediators()));
-							preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(treeBuilder.getVsc().getAllRequirements(), preparedModelInstantiations, treeBuilder.getVsc().getAllMediators()));
-							preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(treeBuilder.getVsc().getAllScenarios(), preparedModelInstantiations, treeBuilder.getVsc().getAllMediators()));
+							// NOTE: there is no need for re-collecting mediators because we pass them
+							preparedModelInstantiations.put(treeBuilder.getSelectedElement(), ModelicaMLServices.getModelInstantiation(treeBuilder.getSelectedElement(), preparedModelInstantiations, treeBuilder.getVsc().getAllMediators(), false));
+							preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(treeBuilder.getVsc().getAllRequirements(), preparedModelInstantiations, treeBuilder.getVsc().getAllMediators(), false));
+							preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(treeBuilder.getVsc().getAllScenarios(), preparedModelInstantiations, treeBuilder.getVsc().getAllMediators(), false));
 							
 							final VerModelForRequirementsWithoutScenarioCreator mc = new VerModelForRequirementsWithoutScenarioCreator(
 									treeBuilder.getSelectedElement(), 

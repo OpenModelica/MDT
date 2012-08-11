@@ -370,7 +370,7 @@ public class XMLReportGenerator {
 					XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(model))+"\" "+
 					XMLTagName_qualifiedName+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(model))+"\">";
 
-		ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(model, preparedModelInstantiations, gmd.getAllFoundMediators());
+		ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(model, preparedModelInstantiations, gmd.getAllFoundMediators(), false);
 		
 		string += getSystemModelItems(ci);
 		

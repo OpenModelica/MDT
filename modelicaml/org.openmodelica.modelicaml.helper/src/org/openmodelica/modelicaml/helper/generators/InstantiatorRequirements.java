@@ -54,15 +54,20 @@ import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.StringUtls;
-import org.openmodelica.modelicaml.common.valuebindings.helpers.ValueBindingsDataCollector;
+import org.openmodelica.modelicaml.common.valuebindings.helpers.BindingsDataCollector;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeHelper;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeUtls;
 
 public class InstantiatorRequirements {
 	
 	final static String reqPropertyPrefix = Constants.reqirementPropertyNamePrefix;
+
 	
-	public void instantiateRequirements(Class containingClass, HashSet<Class> reqClasses, HashMap<Class, Integer> selectedNumberOfInstantiations, HashSet<Element> preCollectedMediators){
+	public void instantiateRequirements(Class containingClass, 
+			HashSet<Class> reqClasses, 
+			HashMap<Class, Integer> selectedNumberOfInstantiations, 
+			HashSet<Element> preCollectedMediators,
+			boolean recollectMediatorsIfEmpty){
 	
 		EList<Property> instantiatedRequirements = new BasicEList<Property>();
 		
@@ -70,18 +75,15 @@ public class InstantiatorRequirements {
 			Integer numberOfInstantiations = 0; 
 			if (selectedNumberOfInstantiations != null) {
 				Integer n = selectedNumberOfInstantiations.get(reqClass);
-//				System.err.println(reqClass.getName() + " number of instantiations: " + n);
 				if (n != null) {
 					numberOfInstantiations = n;
 				}
 				else {
-//					numberOfInstantiations = getFinalNumberOfRequiredInstantiations(containingClass, reqClass);
 					// if it is not clear then always instantiated only one.
 					numberOfInstantiations = 1; 
 				}
 			}
 			else {
-//				numberOfInstantiations = getFinalNumberOfRequiredInstantiations(containingClass, reqClass);
 				// if it is not clear then always instantiated only one.
 				numberOfInstantiations = 1;
 			}
@@ -96,16 +98,19 @@ public class InstantiatorRequirements {
 			}
 		}
 
-		bindReqInputProperties(instantiatedRequirements, containingClass, preCollectedMediators);
+		bindReqInputProperties(instantiatedRequirements, containingClass, preCollectedMediators, recollectMediatorsIfEmpty);
 	}
 	
-	public void bindReqInputProperties(EList<Property> instantiatedRequirementList, Class containingClass, HashSet<Element> preCollectedMediators) {
+	public void bindReqInputProperties(EList<Property> instantiatedRequirementList, 
+			Class containingClass, 
+			HashSet<Element> preCollectedMediators, 
+			boolean recollectMediatorsIfEmpty) {
 		
 		// class instantiation after the requirements were added
-		ClassInstantiation ast = new ClassInstantiation(containingClass, true, false);
-		ast.setAllMediators(preCollectedMediators);
+		ClassInstantiation ast = new ClassInstantiation(containingClass, true, false, preCollectedMediators, recollectMediatorsIfEmpty);
+//		ast.setAllMediators(preCollectedMediators);
 		ast.createTree();
-		ast.collectValueClientsAndProvidersFromUmlModel();
+		ast.collectBindingsDataFromUmlModel();
 		TreeParent treeRoot = ast.getTreeRoot();
 		
 		// find the instantiation class tree items based on the created UML properties
@@ -117,6 +122,7 @@ public class InstantiatorRequirements {
 		
 		// update bindings
 		CreatorValueBinding vc = new CreatorValueBinding();
+		vc.setAllMediators(ast.getAllMediators());
 
 		for (TreeObject treeObject : instantiationClassTreeItems) {
 			if (treeObject instanceof TreeParent) {
@@ -164,7 +170,6 @@ public class InstantiatorRequirements {
 	public Property instantiateRequirement(Class containingClass, Class reqClass){
 		EList<Property> pList = containingClass.getAllAttributes();
 		int numberOfReqInstancesWithSameType = 0;
-//		String prefix = reqPropertyPrefix;
 		for (Property property : pList) {
 			String pName = StringUtls.replaceSpecChar(property.getName());
 			if (pName.substring(0, pName.length() - 2).startsWith(reqPropertyPrefix + getRequirementId(reqClass) + StringUtls.replaceSpecChar(reqClass.getName()).toLowerCase()) ) {
@@ -175,7 +180,8 @@ public class InstantiatorRequirements {
 		String postfixString = "_" + postfix.toString();
 		
 		// create Property
-		Property p = containingClass.createOwnedAttribute(reqPropertyPrefix + getRequirementId(reqClass) + StringUtls.replaceSpecChar(reqClass.getName()).toLowerCase() + postfixString, reqClass);
+		Property p = containingClass.createOwnedAttribute(reqPropertyPrefix + getRequirementId(reqClass) 
+				+ StringUtls.replaceSpecChar(reqClass.getName()).toLowerCase() + postfixString, reqClass);
 		// apply stereotype
 		Stereotype s = p.getApplicableStereotype(Constants.stereotypeQName_RequirementInstance);
 		if (s != null) {
@@ -183,7 +189,8 @@ public class InstantiatorRequirements {
 			return p; 
 		}
 		else {
-			MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error:", "Cannot apply ModelicaML stereotype to " + p.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
+			MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
+					"Error:", "Cannot apply ModelicaML stereotype to " + p.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
 		}
 		return null;
 	}
@@ -201,18 +208,6 @@ public class InstantiatorRequirements {
 		
 		return id;
 	}
-	
-	
-//	public int getFinalNumberOfRequiredInstantiations(Class containingClass, Class reqClass){
-//		int numberOfExistingInstantations = getNumberOfExisitngClassInstances(containingClass, reqClass);
-//		int numberOfRequiredInstantations = getMaxNumberOfProviders(containingClass, reqClass);
-//		int finalNumber = numberOfRequiredInstantations - numberOfExistingInstantations; 
-//		if (finalNumber > 0 ) {
-//			return finalNumber;
-//		}
-//		return 0;
-//	}
-	
 	
 	
 	public int getNumberOfExisitngClassInstances(Class containingClass, Class reqClass){
@@ -237,19 +232,24 @@ public class InstantiatorRequirements {
      * @param req the req
      * @return the number of required instantiations
      */
-	public int getMaxNumberOfProviders(Class containingClass, Class reqClass, HashSet<Element> preCollectedMediators){
-    	EList<Property> inputsList = getRequirementInputPropertiesList(reqClass);
+	public int getMaxNumberOfProviders(Class containingClass, 
+			Class reqClass, 
+			HashSet<Element> preCollectedMediators,
+			boolean recollectMediatorsIfEmpty
+			){
+    	
+		EList<Property> inputsList = getRequirementInputPropertiesList(reqClass);
     	
     	// default number if required instantiations
     	int numberOrRequiredInstantiations = 1;  
 
-		ClassInstantiation ast = new ClassInstantiation(containingClass, true, false);
+		ClassInstantiation ast = new ClassInstantiation(containingClass, true, false, preCollectedMediators, recollectMediatorsIfEmpty);
 		ast.setAllMediators(preCollectedMediators);
 		ast.createTree();
-		ast.collectValueClientsAndProvidersFromUmlModel();
+		ast.collectBindingsDataFromUmlModel();
 		TreeParent astRoot = ast.getTreeRoot();
 		
-		ValueBindingsDataCollector dc = new ValueBindingsDataCollector();
+		BindingsDataCollector dc = new BindingsDataCollector(recollectMediatorsIfEmpty);
 		dc.collectElementsFromInstantiationTree(ast);
 		
 		Set<Element> umlElementsInTreeInstantiation = dc.getUmlElementsInInstantiationTree();
@@ -315,10 +315,6 @@ public class InstantiatorRequirements {
     			System.err.println("Cannot access the instantiator tree root");
     		}
 		}
-    	
-//    	System.err.println("containingClass: " + containingClass.getName());
-//    	System.err.println("reqClass: " + reqClass.getName());
-//    	System.err.println("numberOrRequiredInstantiations: " + numberOrRequiredInstantiations);
     	
     	return numberOrRequiredInstantiations;
     }

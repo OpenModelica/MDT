@@ -90,12 +90,19 @@ public class Simulator {
 	private void simulateModels(IProgressMonitor monitor){
 		
 		clearLists();
+		setLog("");
 
 		// create compiler communication
 		OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
 		
 		//clear compiler
-		omcc.clear();
+		String reply = omcc.clear();
+		
+		/*
+		 * TODO: sometimes, when it happens that the OMC CORBA connection takes longer to initiate, 
+		 * OMC returns strange responses ... 
+		 */
+
 		
 		simulationResultsFolderPath =  omcc.getTempDirectoryPath();
 		// correct the path
@@ -108,18 +115,22 @@ public class Simulator {
 
 		// if selected, load the standard library in advance
 		if (loadMSL) {
-			String reply = omcc.loadModel(Constants.actionLanguageName);
+			monitor.subTask("Loading Modelica Standard Library ...");
+			
+			reply = omcc.loadModel(Constants.actionLanguageName);
 			String message = "Loading MSL: " + " \n reply: " + reply;
 			System.err.println(message);
 			addToLog(message);
 		}
 		
 		// load code into compiler
+		monitor.subTask("Loading Code ...");
+
 		List<String> filesToLoad = new ArrayList<String>();
 		filesToLoad.addAll(ModelicaMLServices.getFilesToLoad(projectPath + "/" + Constants.folderName_code_sync));
 		filesToLoad.addAll(ModelicaMLServices.getFilesToLoad(projectPath + "/" + Constants.folderName_code_gen));
 		for (String string : filesToLoad) {
-			String reply = omcc.loadFile(string);
+			reply = omcc.loadFile(string);
 			String message = "Loading models: " + filesToLoad.toString() + " \n reply: " + reply;
 			
 			System.err.println(message);
@@ -127,11 +138,14 @@ public class Simulator {
 		}
 		
 		
+		monitor.beginTask("Deleting old files", gmd.getGeneratedModels().size());
+		int counter = 1;
 		/*
 		 *  First delete old files in order to avoid that in case the simulation was 
 		 *  aborted old result files are used for post-processing
 		 */
 		for (Element genModel : ModelicaMLServices.getSortedByName(gmd.getGeneratedModels())) {
+			
 			// determine the qualified name of the model
 			String modelQName = getModelQName((NamedElement)genModel);
 			String filePath = simulationResultsFolderPath + "/" + ModelicaMLServices.getSimulationResultsFileName((NamedElement) genModel);
@@ -152,8 +166,15 @@ public class Simulator {
 			List<String> filesToBeDeleted = new ArrayList<String>();
 			filesToBeDeleted.add(filePath);
 			ModelicaMLServices.deleteFiles(filesToBeDeleted, monitor, "Deleting old file: ");
+			
+			monitor.worked(counter);
+			// increase the progress counter
+			counter ++;
 		}
 		
+		
+		monitor.beginTask("Simulating models ...", gmd.getGeneratedModels().size());
+		counter = 1;
 		
 		// simulate each model
 		for (Element genModel : ModelicaMLServices.getSortedByName(gmd.getGeneratedModels())) {
@@ -168,25 +189,8 @@ public class Simulator {
 			String filePath = simulationResultsFolderPath + "/" + ModelicaMLServices.getSimulationResultsFileName((NamedElement) genModel);
 			String message = "";
 			
-//			/*
-//			 * First delete old files from the tmp directory.
-//			 * This is necessary in case the same models should be simulated and the new simulation fails.
-//			 * Old files needs to be deleted so that the simulation results will not get confused with older simulations.
-//			 */
-//			message = "Deleting old files for '" + modelQName + "'";
-//			monitor.beginTask(message, 100);
-//			addToLog(message);
-//			
-//			/*
-//			 * Delete the old file for the case when this model could not be simulated
-//			 * but an old file still exists.
-//			 */
-//			List<String> filesToBeDeleted = new ArrayList<String>();
-//			filesToBeDeleted.add(filePath);
-//			ModelicaMLServices.deleteFiles(filesToBeDeleted, monitor, "Deleting old file: ");
-			
 			// simulate
-			message = "Simulating '" + modelQName + "'";
+			message = "Simulating " + counter + " of " + gmd.getGeneratedModels().size() + " '" + modelQName + "'";
 			monitor.subTask(message);
 			addToLog(message);
 			
@@ -214,6 +218,10 @@ public class Simulator {
 				
 				addToLog("'"+modelQName+"' was NOT simulated.\n\n");
 			}	
+			
+			monitor.worked(counter);
+			// increase progress counter
+			counter ++;
 		}
 	}
 	
@@ -262,7 +270,7 @@ public class Simulator {
 			if (isRecordOnlyRequirementStatusAndClients()) {
 				
 				HashSet<TreeObject> clientAndRequirementItems = new HashSet<TreeObject>(); 
-				ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(model, gmd.getPreparedInstantiations(),gmd.getAllFoundMediators());
+				ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(model, gmd.getPreparedInstantiations(), gmd.getAllFoundMediators(), false);
 				
 				/*
 				 * In case the simulation action was started not immediately after the models generation
@@ -281,7 +289,7 @@ public class Simulator {
 					// pass the pre-collected mediators in order to avoid another search 
 					ci.setAllMediators(gmd.getAllFoundMediators());
 					// collect binding data in order to determine clients, providers, operations, etc.
-					ci.collectValueClientsAndProvidersFromUmlModel();
+					ci.collectBindingsDataFromUmlModel();
 				}
 				
 				for (TreeObject treeObject : ci.getAllTreeObjects()) {

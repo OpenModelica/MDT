@@ -142,13 +142,7 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 			try {
 				
 				// generate code
-				/*
-				 * TODO: set name space for code generation in order to only generate code for the new models
-				 */
 				cgAction.execute(null);
-				/*
-				 * TODO: reset name space for later code generation
-				 */
 				
 				// when finished start the simulation job
 				cgAction.getJob().addJobChangeListener(new JobChangeAdapter() {

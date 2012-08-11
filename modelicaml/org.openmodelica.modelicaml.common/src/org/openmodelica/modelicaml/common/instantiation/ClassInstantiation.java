@@ -61,11 +61,7 @@ import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.services.UmlServices;
-import org.openmodelica.modelicaml.common.valuebindings.helpers.ValueBindingsDataCollector;
-//import org.eclipse.papyrus.resource.NotFoundException;
-//import org.eclipse.papyrus.resource.uml.UmlModel;
-//import org.eclipse.papyrus.resource.uml.UmlUtils;
-
+import org.openmodelica.modelicaml.common.valuebindings.helpers.BindingsDataCollector;
 
 public class ClassInstantiation {
 
@@ -79,7 +75,6 @@ public class ClassInstantiation {
 	private HashMap<Element,HashSet<TreeObject>> elementToInstantiationTreeObjects = new HashMap<Element,HashSet<TreeObject>>();
 	
 	// all mediators that were pre-collected
-//	private HashSet<Element> allMediators = new HashSet<Element>();
 	private HashSet<Element> allMediators;
 	
 	/** The action show state machines. */
@@ -88,7 +83,6 @@ public class ClassInstantiation {
 	/** The action show state machines. */
 	private boolean buildPredefinedTypesProperties;
 
-	
 	public HashMap<String,Type> redeclaredComponentTypes = new HashMap<String,Type>();
 	public HashMap<String,String> firstLevelComponentsModifications = new HashMap<String,String>();
 	public HashMap<String,NamedElement> modificationSource = new HashMap<String,NamedElement>();
@@ -101,17 +95,39 @@ public class ClassInstantiation {
 	private Element umlModel= null;
 	
 	//  value bindings data collection
-	private ValueBindingsDataCollector valueBindingsDataCollector; 
+	private BindingsDataCollector valueBindingsDataCollector; 
+
+	private boolean recollectMediatorsIfEmpty = false;
+
 
 	
+	public ClassInstantiation(Class selectedClass, 
+			boolean includeStateMachines, 
+			boolean buildPredefinedTypesProperties, 
+			HashSet<Element> preCollectedMediators, 
+			boolean reCollectMediatorsIfEmpty
+			){
+		
+		this.selectedClass = selectedClass;
+		
+		this.setAllMediators(preCollectedMediators);
+		this.setRecollectMediatorsIfEmpty(reCollectMediatorsIfEmpty);
+		
+		this.setIncludeStateMachines(includeStateMachines);
+		this.setBuildPredefinedTypesProperties(buildPredefinedTypesProperties);
+	}
 	
-	
+
 	/*
 	 * This constructor is used for instantiations that 
 	 * get added sub graphs and will not create their own graph
 	 */
-	public ClassInstantiation(Class selectedClass){
+	public ClassInstantiation(Class selectedClass, HashSet<Element> preCollectedMediators, boolean reCollectMediatorsIfEmpty){
 		this.selectedClass = selectedClass;
+		
+		this.setAllMediators(preCollectedMediators);
+		this.setRecollectMediatorsIfEmpty(reCollectMediatorsIfEmpty);
+
 		this.setIncludeStateMachines(includeStateMachines);
 		this.setBuildPredefinedTypesProperties(buildPredefinedTypesProperties);
 		
@@ -120,18 +136,10 @@ public class ClassInstantiation {
 		String name = "Instantiated '" + selectedClass.getName() +"' ";
 		treeRoot = new TreeParent(name, null, null, "", false, true, new HashSet<String>(), selectedClass, includeStateMachines);
 		invisibleRoot.addChild(treeRoot);
-//		allElements.add(selectedClass);
 		allTreeObjects.add(treeRoot);
 		addToElementToInstantiationTreeObjectMap(selectedClass, treeRoot);
 	}
-	
-	
-	
-	public ClassInstantiation(Class selectedClass, boolean includeStateMachines, boolean buildPredefinedTypesProperties){
-		this.selectedClass = selectedClass;
-		this.setIncludeStateMachines(includeStateMachines);
-		this.setBuildPredefinedTypesProperties(buildPredefinedTypesProperties);
-	}
+
 	
 	
 	public void createTree(){
@@ -141,7 +149,6 @@ public class ClassInstantiation {
 			String name = "Instantiated '" + selectedClass.getName() +"' ";
 			treeRoot = new TreeParent(name, null, null, "", false, true, new HashSet<String>(), selectedClass, includeStateMachines);
 			invisibleRoot.addChild(treeRoot);
-//			allElements.add(selectedClass);
 			allTreeObjects.add(treeRoot);
 			addToElementToInstantiationTreeObjectMap(selectedClass, treeRoot);
 			
@@ -258,7 +265,6 @@ public class ClassInstantiation {
 				
 				TreeParent child = new TreeParent(property.getName(), property, firstLevelComponent, newDotPath, true, false, modifications, selectedClass, includeStateMachines);
 				parent.addChild(child);
-//				allElements.add(property);
 				allTreeObjects.add(child);
 				addToElementToInstantiationTreeObjectMap(property, child);
 				
@@ -292,7 +298,6 @@ public class ClassInstantiation {
 				HashSet<String> modifications = null;
 				TreeParent newParent = new TreeParent(property.getName(), property, firstLevelComponent, newDotPath, false, false, modifications, selectedClass, includeStateMachines);
 				parent.addChild(newParent);
-//				allElements.add(property);
 				allTreeObjects.add(newParent);
 				addToElementToInstantiationTreeObjectMap(property, newParent);
 				
@@ -523,7 +528,6 @@ public class ClassInstantiation {
 						HashSet<String> modifications = null;
 						TreeParent child = new TreeParent(p.getName(), p, firstLevelComponent, newDotPath, true, false, modifications, selectedClass, false);
 						parent.addChild(child);
-//						allElements.add(p);
 						allTreeObjects.add(child);
 						addToElementToInstantiationTreeObjectMap(p, child);
 						
@@ -823,7 +827,7 @@ public class ClassInstantiation {
 	}
 
 	
-	public void collectValueClientsAndProvidersFromUmlModel(){
+	public void collectBindingsDataFromUmlModel(){
 		
 		UmlModel papyrusModel = null;
 		Element valueMediatorsPackage = null;
@@ -837,7 +841,7 @@ public class ClassInstantiation {
 				try {
 					valueMediatorsPackage = (Element) papyrusModel.lookupRoot();
 				} catch (NotFoundException e) {
-//					e.printStackTrace();
+					e.printStackTrace();
 //					System.err.println("Collecting Value Binding Elements: Could not access the Papyrus model.");
 				}
 			}
@@ -847,7 +851,7 @@ public class ClassInstantiation {
 		}
 
 		if (valueMediatorsPackage != null ) {
-			valueBindingsDataCollector = new ValueBindingsDataCollector();
+			valueBindingsDataCollector = new BindingsDataCollector(isRecollectMediatorsIfEmpty());
 			
 			// pass all pre-collected mediators in order to avoid another search
 			valueBindingsDataCollector.setAllMediators(getAllMediators());
@@ -939,13 +943,22 @@ public class ClassInstantiation {
 		}
 	}
 	
-	public ValueBindingsDataCollector getValueBindingsDataCollector() {
+	public BindingsDataCollector getValueBindingsDataCollector() {
 		return valueBindingsDataCollector;
 	}
 
 
 	public void setValueBindingsDataCollector(
-			ValueBindingsDataCollector valueBindingsDataCollector) {
+			BindingsDataCollector valueBindingsDataCollector) {
 		this.valueBindingsDataCollector = valueBindingsDataCollector;
+	}
+	
+	
+	public boolean isRecollectMediatorsIfEmpty() {
+		return recollectMediatorsIfEmpty;
+	}
+
+	public void setRecollectMediatorsIfEmpty(boolean recollectMediatorsIfEmpty) {
+		this.recollectMediatorsIfEmpty = recollectMediatorsIfEmpty;
 	}
 }

@@ -166,9 +166,10 @@ public class SimulationOMCAction extends AbstractHandler {
 			 * NOTE: this is expensive if the class is large. 
 			 * TODO: think about how to avoid the instantiation ...
 			 */
-			ClassInstantiation ci = new ClassInstantiation((Class) umlElement, true, false);
+			ClassInstantiation ci = new ClassInstantiation((Class) umlElement, true, false, null, false);
 			ci.createTree();
-			ci.collectValueClientsAndProvidersFromUmlModel();
+			// NOTE: there is no need for bindings data collection because we are only interested to see if MSL is used.
+//			ci.collectBindingsDataFromUmlModel();
 			
 			TreeParent treeRoot = ci.getTreeRoot();
 			HashSet<Element> allTypes = TreeUtls.getAllTreeItemsClasses(treeRoot);

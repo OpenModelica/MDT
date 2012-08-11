@@ -34,26 +34,22 @@
  */
 package org.openmodelica.modelicaml.common.valuebindings.helpers;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.helpers.VerificationServices;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.ElementsCollector;
 
-public class ValueBindingsDataCollector implements IRunnableWithProgress {
+public class BindingsDataCollector {
 
 	// all mediators found
 	private HashSet<Element> allMediators;
@@ -81,20 +77,18 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 
 	private String log = "";
 	private boolean wasCancelled = false;
+
+	private boolean recollectMediatorsIfEmpty = false;
 	
-	// The total sleep time
-	private static final int TOTAL_TIME = 100;
-	// The increment sleep time
-	private static final int INCREMENT = 10;
-	// process time´is unknown
-	private boolean indeterminate = true; 
-	
+	public BindingsDataCollector(boolean recollectMediatorsIfEmpty){
+		this.setRecollectMediatorsIfEmpty(recollectMediatorsIfEmpty);
+	}
 	
 	public void collectAll(Element valueBindingsPackage, 
 			ClassInstantiation classInstantiation, 
 			TreeParent instantiationTreeRoot){
 		
-		// collect uml elements that exist in the instantiation tree
+		// collect UML elements that exist in the instantiation tree
 		if (instantiationTreeRoot instanceof TreeParent && valueBindingsPackage instanceof NamedElement) {
 			
 			if (instantiationTreeRoot.getSelectedClass() != null) {
@@ -120,40 +114,16 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 			}
 
 			// collect mediators and references to clients, other mediators and providers
-			addToLog("Collecting data from the UML Model '" + ((NamedElement)valueBindingsPackage).getQualifiedName() + "'... \n");
+			addToLog("Collecting data from the package '" + ((NamedElement)valueBindingsPackage).getQualifiedName() + "'... \n");
 			collectMeditorsDataFromUmlModel(valueBindingsPackage, umlElementsInInstantiationTree);
 			
 			// remove all mediators that have not clients in the instantiation tree.
 			removeMediatorsWithNoClientsInInstantiationTree();
 		}
 		else {
-			addToLog("ERROR: Was not able to collect data ...");
+			addToLog("ERROR: Was not able to collect bindings data ...");
 		}
 	}
-	
-//	public void collectAll(Element valueBindingsPackage, TreeObject instantiationTreeRoot){
-//		// collect uml elements that exist in the instantiation tree
-//		if (instantiationTreeRoot instanceof TreeParent && valueBindingsPackage instanceof NamedElement) {
-//			if (instantiationTreeRoot.getSelectedClass() != null) {
-//				addToLog("Collecting data from the instantiated class '" + instantiationTreeRoot.getSelectedClass().getQualifiedName() + "' ... \n");	
-//			}
-//			else {
-//				addToLog("Collecting data from the instantiated class '" + instantiationTreeRoot.getName() + "' ... \n");	
-//			}
-//			
-//			collectElementsFromInstantiationTree(instantiationTreeRoot);
-//
-//			// collect mediators and references to clients, other mediators and providers
-//			addToLog("Collecting data from the UML Model '" + ((NamedElement)valueBindingsPackage).getQualifiedName() + "'... \n");
-//			collectMeditorsDataFromUmlModel(valueBindingsPackage, umlElementsInInstantiationTree);
-//			
-//			// remove all mediators that have not clients in the instantiation tree.
-//			removeMediatorsWithNoClientsInInstantiationTree();
-//		}
-//		else {
-//			addToLog("ERROR: Was not able to collect data ...");
-//		}
-//	}
 	
 	public void removeMediatorsWithNoClientsInInstantiationTree(){
 		HashSet<Element> usedMediatorsCopy = new HashSet<Element>();
@@ -224,13 +194,7 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 		if (umlRootElement instanceof NamedElement) {
 			
 			// collect mediators if they were not collected yet
-//			if (allMediators == null) {
-			
-			/*
-			 * TODO: this is a workaround in order to avoid new searches of mediators if the model does not contain any. 
-			 * It is set and reset by each invocation of a generator.
-			 */
-			if (allMediators == null && VerificationServices.modelContainsMediators) {
+			if (allMediators == null && isRecollectMediatorsIfEmpty()) {
 
 				ElementsCollector ec = new ElementsCollector();
 				ec.setStereotypeQName(Constants.stereotypeQName_ValueMediator);
@@ -242,6 +206,7 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 			if (allMediators ==  null) {
 				return;
 			}
+			
 			for ( Element object : allMediators ) {
 				if (object instanceof NamedElement 
 						&& ((NamedElement)object).getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
@@ -367,24 +332,6 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 			map.put(key, newList);
 		}
 	}
-	
-	
-	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-	    monitor.beginTask("Bindings data collecting is running." , indeterminate ? IProgressMonitor.UNKNOWN : TOTAL_TIME);
-	    for (int total = 0; total < TOTAL_TIME && !monitor.isCanceled(); total += INCREMENT) {
-	      Thread.sleep(INCREMENT);
-	      monitor.worked(INCREMENT);
-	      if (total == TOTAL_TIME / 8) monitor.subTask("Searching for Mediators ...");
-	      if (total == TOTAL_TIME / 4) monitor.subTask("Analyzing the instantiation tree ...");
-	      if (total == TOTAL_TIME / 2) monitor.subTask("Sorting data ...");
-	    }
-	    monitor.done();
-	    if (monitor.isCanceled()){
-	    	setWasCancelled(true);
-	    	throw new InterruptedException("The Value Bindings data collection operation was cancelled.");
-	    }   
-	  }
-	
 	
 	private void addToElementToInstantiationTreeObjectMap(Element key, TreeObject item){
 		HashSet<TreeObject> set = elementToInstantiationTreeObjects.get(key);
@@ -515,6 +462,14 @@ public class ValueBindingsDataCollector implements IRunnableWithProgress {
 
 	public void setProviderOperations(HashMap<Element,HashSet<String>> providerOperations) {
 		this.providerOperations = providerOperations;
+	}
+
+	public boolean isRecollectMediatorsIfEmpty() {
+		return recollectMediatorsIfEmpty;
+	}
+
+	public void setRecollectMediatorsIfEmpty(boolean recollectMediatorsIfEmpty) {
+		this.recollectMediatorsIfEmpty = recollectMediatorsIfEmpty;
 	}
 	
 }

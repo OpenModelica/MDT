@@ -27,7 +27,6 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.helpers.VerificationServices;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
@@ -133,6 +132,9 @@ public class GeneratorVeMScenariosBased {
 	// indicates if this generator is used for discovery of relations or verification models generation
 	private int mode;
 
+	private boolean createModels = true;
+	private boolean showCombinationsBeforeCreatingModels = true;
+	
 	private ProgressMonitorDialog progressDialog;
 	private IProgressMonitor progressMonitor;
 	
@@ -168,6 +170,8 @@ public class GeneratorVeMScenariosBased {
 		this.includeRequirementsWithNegativeRelations = includeRequirementsWithNegativeRelations;
 		this.includeRequirementsWitnUnknownRelations = includeRequirementsWitnUnknownRelations;
 		this.minimizeNumberOfRequirementInstantiations = minimizeNumberOfRequirementInstantiations;
+		
+		
 		
 		/*
 		 * Pre-collect requirements, scenarios and mediators in order 
@@ -264,9 +268,10 @@ public class GeneratorVeMScenariosBased {
 					MessageDialog.openInformation(ModelicaMLServices.getShell(), "Generator Interruption", "The generation of models was interrupted.");
 				}
 
-				
-				// generate simulation models for the selected system model 
-				generateSimulationModels(systemModel);
+				if (isCreateModels()) {
+					// generate simulation models for the selected system model 
+					generateSimulationModels(systemModel);
+				}
 			}
 		}
 	}
@@ -276,16 +281,6 @@ public class GeneratorVeMScenariosBased {
 
 	private void createCombinationsForSimulationModels(Element systemeModel){
 		
-		/*
-		 * TODO: This is a workaround. Here we signal that there are no mediators in this model
-		 * and there is no need to search for them again and again. This must be reset after each generation of combinations or models. 
-		 */
-		if (getVerificationScenariosCollector().getAllMediators() == null || getVerificationScenariosCollector().getAllMediators().size() == 0) {
-			VerificationServices.modelContainsMediators = false;
-		}
-		
-		
-		
 		progressMonitor.beginTask("Creating combinations of system model, scenarios and requirements ...", verificationScenariosCollector.getAllScenarios().size());
 		
 		if (systemeModel instanceof Class) {
@@ -293,9 +288,9 @@ public class GeneratorVeMScenariosBased {
 			Class systemModel = (Class) systemeModel;
 			progressMonitor.subTask("Instantiating: " + ModelicaMLServices.getName(systemModel));
 			// prepare instantiation so that it can be reused for other iterations
-			preparedModelInstantiations.put(systemModel, ModelicaMLServices.getModelInstantiation(systemModel, preparedModelInstantiations, getVerificationScenariosCollector().getAllMediators()));
+			preparedModelInstantiations.put(systemModel, ModelicaMLServices.getModelInstantiation(systemModel, preparedModelInstantiations, getVerificationScenariosCollector().getAllMediators(), false));
 			
-			int counter = 0;
+			int counter = 1;
 			
 			/*
 			 * Sort scenarios in order to make generation be deterministic (at least in terms of scenario names and associated combinations of requirements)
@@ -312,7 +307,12 @@ public class GeneratorVeMScenariosBased {
 					Class scenarioToBeUsed = (Class) scenario;
 					progressMonitor.subTask("Instantiating: " + ModelicaMLServices.getName(scenarioToBeUsed));
 					// prepare instantiation so that it can be reused for other iterations
-					preparedModelInstantiations.put(scenarioToBeUsed, ModelicaMLServices.getModelInstantiation(scenarioToBeUsed, preparedModelInstantiations, getVerificationScenariosCollector().getAllMediators()));
+					preparedModelInstantiations.put(scenarioToBeUsed, 
+							ModelicaMLServices.getModelInstantiation(
+									scenarioToBeUsed, 
+									preparedModelInstantiations, 
+									getVerificationScenariosCollector().getAllMediators(),
+									false));
 
 					// get requirements according to the requirements selection options settings
 					HashSet<Element> reqWithPositiveRelations = getRequirements(scenarioToBeUsed, Constants.stereotypeQName_UseToVerify);
@@ -434,7 +434,11 @@ public class GeneratorVeMScenariosBased {
 					
 					progressMonitor.subTask("Instantiating requirements ...");
 					// prepare requirement instantiations to be reused for 
-					preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(requirementsToBeUsed, preparedModelInstantiations, getVerificationScenariosCollector().getAllMediators()));
+					preparedModelInstantiations.putAll(
+							ModelicaMLServices.getModelInstantiations(
+									requirementsToBeUsed, 
+									preparedModelInstantiations, 
+									getVerificationScenariosCollector().getAllMediators(), false));
 
 					// prepare all additional models instantiations
 					HashSet<Element> addidtionalModels = new HashSet<Element>();
@@ -442,7 +446,12 @@ public class GeneratorVeMScenariosBased {
 						addidtionalModels.addAll(verificationScenariosCollector.getModelToItsAdditionalModels().get(addModel));
 					}
 					progressMonitor.subTask("Instantiating additional models ...");
-					preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(addidtionalModels, preparedModelInstantiations, getVerificationScenariosCollector().getAllMediators()));
+					preparedModelInstantiations.putAll(
+							ModelicaMLServices.getModelInstantiations(
+									addidtionalModels, 
+									preparedModelInstantiations, 
+									getVerificationScenariosCollector().getAllMediators(),
+									false));
 
 					progressMonitor.subTask("Validating the combination of: " + ModelicaMLServices.getName(systemModel) + ", " + ModelicaMLServices.getName(scenarioToBeUsed)
 							+ ", requirements and all additional models ...");
@@ -500,10 +509,6 @@ public class GeneratorVeMScenariosBased {
 			String message = "NOT VALID: System model '" + systemeModel.toString() + "' is not a UML::Class.";
 			addToLog(message);
 		}
-		
-		
-		// TODO: Reset the indicator in order to enable new searches
-		VerificationServices.modelContainsMediators = true;
 	}
 	
 	
@@ -513,15 +518,6 @@ public class GeneratorVeMScenariosBased {
 
 	public void generateSimulationModels(final Element sourceModel){
 		
-		/*
-		 * TODO: This is a workaround. Here we signal that there are no mediators in this model
-		 * and there is no need to search for them again and again. This must be reset after each generation of combinations or models. 
-		 */
-		if (getVerificationScenariosCollector().getAllMediators() == null || getVerificationScenariosCollector().getAllMediators().size() == 0) {
-			VerificationServices.modelContainsMediators = false;
-		}
-		
-		
 		String errorTitle = "Verification Models Generation Helper";
 		String errorMessage = "No scenarios were found that can be used to stimulate the model " +
 				"'"+((NamedElement)sourceModel).getName()+"'.";
@@ -529,6 +525,17 @@ public class GeneratorVeMScenariosBased {
 		if (verificationScenariosCollector.getAllScenarios().size() > 0) {
 			if (testScenariosToBeInstantiated.size() > 0) {
 				
+				
+				/*
+				 * TODO: For AUTOMATIV SCENARIO-BASED VERIFICATION MODE the user 
+				 * can decide not to see the combination but run the models generation immediately based on 
+				 * generator suggestion. This may save time to wait until the combinations are created in 
+				 * order to be able to start the models generation. This will be interesting only for 
+				 * large models for which the generation of combinations may take long time.
+				 *  
+				 * There is already the attribute isShowCombinationsBeforeCreatingModels. Missing 
+				 * is the creation of schnariosWithRequirements map to pass to the models creator.
+				 */
 				
 				/* GUI to show the collected and discarded test scenarios and requirements.
 				 * It should enable a selection of test scenarios and requirements to be finally instantiated. 
@@ -555,30 +562,31 @@ public class GeneratorVeMScenariosBased {
 				
 				if (dialog.getReturnCode() == IDialogConstants.CANCEL_ID) { // Cancel return code
 					setTestSimulationModelGenerationCanceled(true); // indicate abort and stop here. 
+					return;
 				}
-				else {
-					
-					// generate models
-					progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
-					progressMonitor = progressDialog.getProgressMonitor();
-					try {
-						progressDialog.run(false, true, new IRunnableWithProgress() {
+				
+				
+				// generate models
+				progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
+				progressMonitor = progressDialog.getProgressMonitor();
+				try {
+					progressDialog.run(false, true, new IRunnableWithProgress() {
+						
+						@Override
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							
-							@Override
-							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-								
-								// Create simulation models
-								createSimulationModels(sourceModel, dialog.getSelectedScenariosWithRequirements());
-								
-								monitor.done();
-							}
-						});
-					} catch (InvocationTargetException e) {
-						MessageDialog.openError(ModelicaMLServices.getShell(), "Generator Invocation Error", "Could not invoce the generator. Please try it again.");
-					} catch (InterruptedException e) {
-						MessageDialog.openInformation(ModelicaMLServices.getShell(), "Generator Interruption", "The generation of models was interrupted.");
-					}
+							// Create simulation models
+							createSimulationModels(sourceModel, dialog.getSelectedScenariosWithRequirements());
+							
+							monitor.done();
+						}
+					});
+				} catch (InvocationTargetException e) {
+					MessageDialog.openError(ModelicaMLServices.getShell(), "Generator Invocation Error", "Could not invoce the generator. Please try it again.");
+				} catch (InterruptedException e) {
+					MessageDialog.openInformation(ModelicaMLServices.getShell(), "Generator Interruption", "The generation of models was interrupted.");
 				}
+				
 			}
 			else {
 				reportError(errorTitle, errorMessage);
@@ -587,9 +595,6 @@ public class GeneratorVeMScenariosBased {
 		else {
 			reportError(errorTitle, errorMessage);
 		}
-		
-		// TODO: Reset the indicator in order to enable new searches
-		VerificationServices.modelContainsMediators = true;
 	}
 	
 
@@ -630,7 +635,7 @@ public class GeneratorVeMScenariosBased {
 				List<Element> userSelectedTestScenariosSorted = ModelicaMLServices.getSortedByName(userSelectedTestScenarios);
 
 				// counter for monitor
-				int counter = 0;
+				int counter = 1;
 				
 				/*
 				 * iterate over scenarios and generate for each valid combination a model
@@ -775,7 +780,8 @@ public class GeneratorVeMScenariosBased {
 							if (requirement instanceof Classifier) {
 							
 								// get the number of required instantiations
-								int requiredNumberOfInstantions = ri.getMaxNumberOfProviders(simulationModel, (Class) requirement, verificationScenariosCollector.getAllMediators());
+								//NOTE: we have collected all mediators and pass them. There is no need to try to recollect them if the list is empty.
+								int requiredNumberOfInstantions = ri.getMaxNumberOfProviders(simulationModel, (Class) requirement, verificationScenariosCollector.getAllMediators(), false);
 								String requiredNumberOfInstantionsString = "";
 								
 								for (int i = 0; i < requiredNumberOfInstantions; i++) {
@@ -871,20 +877,30 @@ public class GeneratorVeMScenariosBased {
 								
 								String componentName = StringUtls.replaceSpecChar(ModelicaMLServices.getName(component));
 
-								ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(((Property)component).getType(), preparedModelInstantiationsCopy, getVerificationScenariosCollector().getAllMediators());
+								ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(
+										((Property)component).getType(), 
+										preparedModelInstantiationsCopy, 
+										getVerificationScenariosCollector().getAllMediators(),
+										false);
 								
 								/*
 								 * Special case for requirements which are instantiated multiple times in this VeM.
 								 * Create a new instantiation tree for this requirement component. 
 								 */
 								if ( requirementsInstatiatedMultipleTimes.contains(component)) {
-									ClassInstantiation requirementInstantiation = new ClassInstantiation((Class) ((Property)component).getType(), true, false);
+									ClassInstantiation requirementInstantiation = new ClassInstantiation(
+											(Class) ((Property)component).getType(), 
+											true, 
+											false, 
+											getVerificationScenariosCollector().getAllMediators(), 
+											false);
+									
 									requirementInstantiation.createTree();
 									
 									// pass pre-collected mediators in order to avoid additional search
 									requirementInstantiation.setAllMediators(getVerificationScenariosCollector().getAllMediators());
 									
-									requirementInstantiation.collectValueClientsAndProvidersFromUmlModel();
+									requirementInstantiation.collectBindingsDataFromUmlModel();
 									
 									ci = requirementInstantiation;
 								}
@@ -920,7 +936,7 @@ public class GeneratorVeMScenariosBased {
 									createdVeM.addChild(newComponentTree);
 									
 									// add the instantiated class to the prepared instantiation for reuse
-									ClassInstantiation veMCi = new ClassInstantiation(simulationModel);
+									ClassInstantiation veMCi = new ClassInstantiation(simulationModel, getVerificationScenariosCollector().getAllMediators(), false);
 
 									// DO NOT create tree, we will reused available instantiation trees! 
 									
@@ -937,7 +953,7 @@ public class GeneratorVeMScenariosBased {
 									// pass the pre-collected mediators in order to avoid another search 
 									veMCi.setAllMediators(getVerificationScenariosCollector().getAllMediators());
 									// collect binding data in order to determine clients, providers, operations, etc.
-									veMCi.collectValueClientsAndProvidersFromUmlModel();
+									veMCi.collectBindingsDataFromUmlModel();
 									
 									// add to map
 									preparedModelInstantiations.put(simulationModel, veMCi);
@@ -1280,6 +1296,31 @@ public class GeneratorVeMScenariosBased {
 
 	public void setMode(int mode) {
 		this.mode = mode;
+	}
+
+
+
+	public boolean isCreateModels() {
+		return createModels;
+	}
+
+
+
+	public void setCreateModels(boolean createModels) {
+		this.createModels = createModels;
+	}
+
+
+
+	public boolean isShowCombinationsBeforeCreatingModels() {
+		return showCombinationsBeforeCreatingModels;
+	}
+
+
+
+	public void setShowCombinationsBeforeCreatingModels(
+			boolean showCombinationsBeforeCreatingModels) {
+		this.showCombinationsBeforeCreatingModels = showCombinationsBeforeCreatingModels;
 	}
 	
 }

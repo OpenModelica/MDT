@@ -64,7 +64,7 @@ import org.eclipse.uml2.uml.TypedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
-import org.openmodelica.modelicaml.common.valuebindings.helpers.ValueBindingsDataCollector;
+import org.openmodelica.modelicaml.common.valuebindings.helpers.BindingsDataCollector;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeUtls;
 
 public class SelectValueMediatorDialog extends Dialog {
@@ -78,7 +78,7 @@ public class SelectValueMediatorDialog extends Dialog {
 	private String groupTitle;
 	private String messageText;
 	
-	private ValueBindingsDataCollector dataCollection;
+	private BindingsDataCollector dataCollection;
 	
 	private Element selectedElement = null;
 	
@@ -89,7 +89,7 @@ public class SelectValueMediatorDialog extends Dialog {
 			String groupTitle,
 			String messageText,
 			ArrayList<Element> elementsForSelection,
-			ValueBindingsDataCollector dataCollection
+			BindingsDataCollector dataCollection
 			) {
 	
 		super(parentShell);

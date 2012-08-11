@@ -141,7 +141,8 @@ public class VerModelForRequirementsWithoutScenarioCreator {
 			if (requirement instanceof Classifier) {
 			
 				// get the number of required instantiations
-				int requiredNumberOfInstantions = ri.getMaxNumberOfProviders(simulationModel, (Class) requirement, collector.getAllMediators());
+				// NOTE: we have collected mediators and there is no need to try to re collect them if the list is empty.
+				int requiredNumberOfInstantions = ri.getMaxNumberOfProviders(simulationModel, (Class) requirement, collector.getAllMediators(), false);
 				String requiredNumberOfInstantionsString = "";
 				
 				for (int i = 0; i < requiredNumberOfInstantions; i++) {
@@ -185,16 +186,17 @@ public class VerModelForRequirementsWithoutScenarioCreator {
 		 * Instantiate the created simulation model class
 		 * (it now contains all components)
 		 */
-		ClassInstantiation ci = new ClassInstantiation((Class) simulationModel, true, false);
+		// NOTE: we have not collected mediators yet. However, we do not need to recollect them because the Value Bindings Creator will do it.
+		ClassInstantiation ci = new ClassInstantiation((Class) simulationModel, true, false, null, false);
 		ci.createTree();
-		ci.collectValueClientsAndProvidersFromUmlModel();
+		ci.collectBindingsDataFromUmlModel();
 		
 		// update all bindings in the created simulation model class
 		CreatorValueBinding vbc = new CreatorValueBinding();
 		/* Note, the updateAllBindings() is called with the last argument simulateOnly = false  
 		 * so that modifications ARE created in components.
 		 */
-		vbc.updateAllBindings((Package)valueBindingsPackage, ci, ci.getTreeRoot(), ci.getTreeRoot(), false, true, false, false);
+		vbc.updateAllBindings((Package)valueBindingsPackage, ci, ci.getTreeRoot(), ci.getTreeRoot(), false, true, true, false);
 		
 		/*
 		 * Create test verdict code

@@ -173,11 +173,11 @@ public class VeMReqCombinationsCreator {
 				sourceElementInstantiated = getModelToItsInstantiation().get(sourceElement).getTreeRoot();
 			}
 			else {
-				ClassInstantiation ci_model = new ClassInstantiation((Class) sourceElement, true, false);
+				ClassInstantiation ci_model = new ClassInstantiation((Class) sourceElement, true, false, collector.getAllMediators(), false);
 				// pass mediators in order to avoid annother search
-				ci_model.setAllMediators(collector.getAllMediators());
+//				ci_model.setAllMediators(collector.getAllMediators());
 				ci_model.createTree();
-				ci_model.collectValueClientsAndProvidersFromUmlModel();
+				ci_model.collectBindingsDataFromUmlModel();
 				
 				sourceElementInstantiated = ci_model.getTreeRoot();
 				
@@ -263,10 +263,10 @@ public class VeMReqCombinationsCreator {
 					newChild = getModelToItsInstantiation().get(model).getTreeRoot();
 				}
 				else {
-					ClassInstantiation ci_model = new ClassInstantiation((Class) model, true, false);
-					ci_model.setAllMediators(collector.getAllMediators());
+					ClassInstantiation ci_model = new ClassInstantiation((Class) model, true, false, collector.getAllMediators(), false);
+//					ci_model.setAllMediators(collector.getAllMediators());
 					ci_model.createTree();
-					ci_model.collectValueClientsAndProvidersFromUmlModel();
+					ci_model.collectBindingsDataFromUmlModel();
 					newChild = ci_model.getTreeRoot();
 					
 					// add to model -> its instantiation map

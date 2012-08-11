@@ -64,13 +64,6 @@ import org.openmodelica.modelicaml.helper.dialogs.InstantiateRequirementsDialog;
 import org.openmodelica.modelicaml.helper.generators.CreatorVerificationVerdictElements;
 import org.openmodelica.modelicaml.helper.generators.InstantiatorRequirements;
 
-
-
-
-// TODO: Auto-generated Javadoc
-/**
- * The Class InstantiateRequirementsHandler.
- */
 public class InstantiateRequirementsHandler extends AbstractHandler {
 
 	/** The selected element. */
@@ -78,6 +71,8 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 	
 	// list of requirements that shall be displayed (e.g. used to filter requirements that are referenced by a test scenario)
 	private ArrayList<Class> preselectedList = null;
+
+	private VerificationScenariosCollector collector;
 	
 	public void collectLinkedItems(Class containingClass, Property selectedProperty) {
 		
@@ -89,8 +84,8 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 			if ( testCaseClass != null) {
 				HashSet<Class> itemsFound = new HashSet<Class>();
 				
-				VerificationScenariosCollector tsc = new VerificationScenariosCollector();
-				for (Element element : tsc.collectRequirementsForScenario(testCaseClass, Constants.stereotypeQName_UseToVerify)) {
+				collector = new VerificationScenariosCollector();
+				for (Element element : collector.collectRequirementsForScenario(testCaseClass, Constants.stereotypeQName_UseToVerify)) {
 					if (element instanceof Class) {
 						itemsFound.add((Class) element);
 					}
@@ -136,17 +131,6 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 				
 				// instantiate requirements
 				editingDomain.getCommandStack().execute(getCommand(editingDomain, selectedReq, selectedNumberOfInstantiations, (Class) selectedElement));
-				
-				// Requirements test oracle code 
-//				if (selectedReq.size() > 0) { // if new requirements were instantiated
-//					// ask for creating requirements evaluation elements and code 
-//					boolean go = MessageDialog.openQuestion(new Shell(), "Confirmation", 
-//							"Should the requirements evaluation elements and respective code be created or updated " +
-//							"in '" + ((Class)selectedElement).getName() + "'?");
-//					if (go) {
-//						editingDomain.getCommandStack().execute(getTestOracleElementCreationCommand(editingDomain, (Class) selectedElement));
-//					}
-//				}
 			}
 		}
 		return null;
@@ -169,30 +153,10 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 		Command command = new RecordingCommand(editingDomain) {
 			@Override
 			protected void doExecute() {
-//				EList<Property> pList = owningClass.getAllAttributes();
-//				int numberOfReqInstancesWithSameType = 0;
-//				String prefix = "req_";
-//				for (Property property : pList) {
-//					String pName = StringUtls.replaceSpecChar(property.getName());
-//					if (pName.substring(0, pName.length() - 2).startsWith(prefix + StringUtls.replaceSpecChar(reqClass.getName()).toLowerCase()) ) {
-//						numberOfReqInstancesWithSameType ++; 
-//					}
-//				}
-//				Integer postfix = numberOfReqInstancesWithSameType + 1;
-//				String postfixString = "_" + postfix.toString();
-//				
-//				// create Property
-//				Property p = ((Class)selectedElement).createOwnedAttribute(prefix + StringUtls.replaceSpecChar(reqClass.getName()).toLowerCase() + postfixString, reqClass);
-//				// apply stereotype
-//				Stereotype s = p.getApplicableStereotype("ModelicaML::ModelicaRequirementConstructs::RequirementInstance");
-//				if (s != null) {
-//					p.applyStereotype(s);
-//				}
-//				else {
-//					MessageDialog.openError(new Shell(), "Error:", "Cannot apply ModelicaML stereotype to " + p.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
-//				}
 				InstantiatorRequirements ri = new InstantiatorRequirements();
-				ri.instantiateRequirements(owningClass, selectedReq, selectedNumberOfInstantiations, null);
+				
+				// NOTE: we have collected mediators and there is no need to try to re collect them if the list is empty
+				ri.instantiateRequirements(owningClass, selectedReq, selectedNumberOfInstantiations, collector.getAllMediators(), false);
 			}
 		};
 		cc.append(command);
@@ -230,19 +194,8 @@ public class InstantiateRequirementsHandler extends AbstractHandler {
 	}
 
 
-//	@Override
-//	public boolean isHandled() {
-//		// TODO Auto-generated method stub
-//		return false;
-//	}
-
-	
-	/**
- * Gets the current selections.
- * 
- * @return the current selections
- */
-private List<Object> getCurrentSelections() {
+	@SuppressWarnings("unchecked")
+	private List<Object> getCurrentSelections() {
 		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
 		if(selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
@@ -251,14 +204,6 @@ private List<Object> getCurrentSelections() {
 		return null;
 	}
 	
-	
-	/**
-	 * Adapt selected element.
-	 * 
-	 * @param selection
-	 *            the selection
-	 * @return the e object
-	 */
 	protected EObject adaptSelectedElement( Object selection) {
 		EObject eObject = null;
 		if(selection != null) {

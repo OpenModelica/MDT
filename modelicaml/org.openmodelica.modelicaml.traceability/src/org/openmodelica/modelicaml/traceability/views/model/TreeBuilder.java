@@ -57,9 +57,6 @@ import org.eclipse.papyrus.infra.core.resource.NotFoundException;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
 import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
@@ -72,8 +69,7 @@ import org.openmodelica.modelicaml.helper.datacollection.VerificationScenariosCo
 import org.openmodelica.modelicaml.helper.structures.VeMScenarioReqCombinationsCreator;
 import org.openmodelica.modelicaml.traceability.views.helper.ModelComposer;
 
-public class TreeBuilder implements IRunnableWithProgress{
-
+public class TreeBuilder {
 	private List<TreeObject> treeItems = new ArrayList<TreeObject>(); // created tree clients
 
 	private Element rootPackage;
@@ -155,7 +151,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 	private String log = "";
 	
 	
-	public void initialize(NamedElement selectedElement){
+	public void initialize(final NamedElement selectedElement){
 		
 		this.selectedElement = selectedElement;
 
@@ -191,7 +187,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 				
 			} catch (NotFoundException e) {
 				e.printStackTrace();
-				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Packages Selection", "Cannot access the root model in Papyrus. Please open die model in editor and try it again.");
+				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
+						"Packages Selection", 
+						"Cannot access the root model in Papyrus. Please open die model in editor and try it again.");
 			}
 		}
 		
@@ -199,44 +197,56 @@ public class TreeBuilder implements IRunnableWithProgress{
 		
 		if (allPackagesAreSet) {
 			
-			Shell shell = getShell();
-			
+			ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
 			try {
-				// create combinations
-				new ProgressMonitorDialog(shell).run(true, true, this);
-				collectData();
-				
-				reqTreeRoot = new TreeParent(selectedElement.getName() + " - Requirement Clients Satisfaction");
-				reqTreeRoot.setUmlElement(selectedElement);
-				
-				// build tree for req. view
-				createRequirementsList(reqTreeRoot);
-				
-				scenTreeRoot = new TreeParent(selectedElement.getName()+ " - Possible Scenarios");
-				scenTreeRoot.setUmlElement(selectedElement);
-				
-				// build tree for scen. view
-				createScenariosList(scenTreeRoot);
-				
+				progressDialog.run(false, true, new IRunnableWithProgress() {
+					
+					@Override
+					public void run(IProgressMonitor monitor) throws InvocationTargetException,
+							InterruptedException {
+						
+						collectData(monitor);
+						
+						monitor.beginTask("Creating view ...", 3);
+						
+						reqTreeRoot = new TreeParent(selectedElement.getName() + " - Requirement Clients Satisfaction");
+						reqTreeRoot.setUmlElement(selectedElement);
+						monitor.worked(1);
+						
+						monitor.subTask("Creating requirements view ...");
+						// build tree for req. view
+						createRequirementsList(reqTreeRoot);
+						monitor.worked(2);
+						
+						scenTreeRoot = new TreeParent(selectedElement.getName()+ " - Possible Scenarios");
+						scenTreeRoot.setUmlElement(selectedElement);
+						
+						// build tree for scen. view
+						monitor.subTask("Creating scenarios view ...");
+						createScenariosList(scenTreeRoot);
+						monitor.worked(3);
+
+						monitor.done();
+
+					}
+				});
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
-				MessageDialog.openError(shell, "Traceability Data Collection Invocation Error.", "Traceability data collection could not be invoked.");
+				MessageDialog.openError(ModelicaMLServices.getShell(), "Invocation Error", "Could not invoce the generator to create combinations.");
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-				MessageDialog.openError(shell, "Traceability Data Collection Abort", "Traceability data collection was aborted.");
+				MessageDialog.openInformation(ModelicaMLServices.getShell(), "Interruption", "Create of combinations was interrupted.");
 			}
 		}
 	}
 
 	
-	private void collectData(){
+	private void collectData(IProgressMonitor monitor){
 		
 		// clear all lists from previous iterations
 		clearAll();
 		
-//		ElementsCollector ec = new ElementsCollector();
-//		ec.collectElementsFromModel(requirementsPackage, Constants.stereotypeQName_Requirement);
-//		requirementsAll.addAll(ec.getElements());
+		monitor.beginTask("Collecting data ...", 1);
 		
 		// find all test scenarios
 		vsc = new VerificationScenariosCollector();
@@ -246,16 +256,26 @@ public class TreeBuilder implements IRunnableWithProgress{
 			addToLog(message);
 		}
 		
+		monitor.worked(1);
+		
 		requirementsAll.addAll(vsc.getAllRequirements());
 
-		preparedModelInstantiations.put(selectedElement, ModelicaMLServices.getModelInstantiation(selectedElement, preparedModelInstantiations, getVsc().getAllMediators()));
+		// NOTE: there is no need to recollect mediators
+		preparedModelInstantiations.put(selectedElement, ModelicaMLServices.getModelInstantiation(selectedElement, preparedModelInstantiations, getVsc().getAllMediators(), false));
+
+		monitor.beginTask("Creating combinations...", vsc.getAllScenarios().size());
+		int counter = 1;
 		
-		for (Element scenario : vsc.getAllScenarios() ) {
+		for (Element scenario : ModelicaMLServices.getSortedByName(vsc.getAllScenarios()) ) {
 			
 			if (scenario instanceof Class) {
+
+				monitor.subTask("Creating combination " + counter + " of " + vsc.getAllScenarios().size());
+				monitor.worked(counter);
 				
 				Class scenarioToBeUsed = (Class) scenario;
-				preparedModelInstantiations.put(scenarioToBeUsed, ModelicaMLServices.getModelInstantiation(scenarioToBeUsed, preparedModelInstantiations, getVsc().getAllMediators()));
+				// NOTE: there is no need to recollect mediators
+				preparedModelInstantiations.put(scenarioToBeUsed, ModelicaMLServices.getModelInstantiation(scenarioToBeUsed, preparedModelInstantiations, getVsc().getAllMediators(), false));
 
 				// get requirements
 				HashSet<Element> reqList = vsc.getScenarioToReq().get(scenarioToBeUsed);
@@ -277,9 +297,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 					addToLog(message);
 				}
 				
-				
-				preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(requirementsToBeUsed, preparedModelInstantiations, getVsc().getAllMediators()));
-				preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(vsc.getAlwaysInclude(), preparedModelInstantiations, getVsc().getAllMediators()));
+				// NOTE: there is no need to recollect mediators
+				preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(requirementsToBeUsed, preparedModelInstantiations, getVsc().getAllMediators(), false));
+				preparedModelInstantiations.putAll(ModelicaMLServices.getModelInstantiations(vsc.getAlwaysInclude(), preparedModelInstantiations, getVsc().getAllMediators(), false));
 				
 				VeMScenarioReqCombinationsCreator tsmc = new VeMScenarioReqCombinationsCreator((Class) selectedElement, 
 						scenarioToBeUsed, 
@@ -315,12 +335,17 @@ public class TreeBuilder implements IRunnableWithProgress{
 
 				// add log messages
 				addToLog(tsmc.getLog().trim());
+				
+				// increase the counter for the progress monitor
+				counter++;
 			}
 			else {
 				String message = "NOT VALID: Scenario '" + ModelicaMLServices.getQualifiedName(selectedElement) + "' is not a UML::Class.";
 				addToLog(message);
 			}
 		}
+		
+		monitor.done();
 		
 	}
 	
@@ -596,26 +621,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 		this.log = this.log + msg + "\n";
 	}
 
-//	private void clearLog(){
-//		this.log = "";
-//	}
-	
-//	private HashSet<TreeObject> getAllItemsFromParent(TreeParent treeParent){
-//		
-//		HashSet<TreeObject> allTreeItems = new HashSet<TreeObject>();
-//		allTreeItems.add(treeParent);
-//		
-//		TreeObject[] children = treeParent.getChildren();
-//		for (int i = 0; i < children.length; i++) {
-//			allTreeItems.add(children[i]);
-//			if (children[i] instanceof TreeParent) {
-//				allTreeItems.addAll(getAllItemsFromParent((TreeParent)children[i]));
-//			}
-//		}
-//		
-//		return allTreeItems;
-//	}
-
 
 	public List<TreeObject> findTreeItems(Object[] viewerSelection){
 
@@ -732,21 +737,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 		return false;
 	}
 	
-	private Shell getShell(){
-		Shell shell = null;
-		IWorkbench wb = PlatformUI.getWorkbench();
-		if (wb != null) {
-			IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-			if (win != null) {
-				shell = win.getShell();
-			}
-		}
-		if (shell == null) {
-			shell = new Shell();
-		}
-		return shell;
-	}
-	
 	
 	protected EObject adaptSelectedElement( Object selection) {
 		EObject eObject = null;
@@ -846,40 +836,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 	
 	
 	
-	
-	
-	
-	// Progress monitor 
-	
-	// The total sleep time
-	private static final int TOTAL_TIME = 50;
-	// The increment sleep time
-	private static final int INCREMENT = 10;
-	// process time´is unknown
-	private boolean indeterminate = true; 
-	
-	private String progressMonitorTitle = "Collecting Tracebility Data";
-	private String monitorText1 = "Analyzing data ...";
-//	private String monitorText2 = "Quering OMC...";
-//	private String monitorText3 = "Preparing tree visualization ...";
-	
-	@Override
-	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		
-		monitor.beginTask(progressMonitorTitle + " is running." , indeterminate ? IProgressMonitor.UNKNOWN : TOTAL_TIME);
-	    for (int total = 0; total < TOTAL_TIME && !monitor.isCanceled(); total += INCREMENT) {
-	      Thread.sleep(INCREMENT);
-	      monitor.worked(INCREMENT);
-	      if (total == TOTAL_TIME / 2) monitor.subTask(monitorText1);
-	    }
-	    monitor.done();
-	    if (monitor.isCanceled()){
-	    	throw new InterruptedException(progressMonitorTitle + " was cancelled.");
-	    }   
-	}
-
-
-
 	public void setVsc(VerificationScenariosCollector vsc) {
 		this.vsc = vsc;
 	}

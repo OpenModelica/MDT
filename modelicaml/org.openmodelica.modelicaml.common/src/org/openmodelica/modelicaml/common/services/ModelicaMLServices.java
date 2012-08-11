@@ -17,14 +17,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -597,12 +593,18 @@ public class ModelicaMLServices {
 	 */
 	
 	
-	public static HashMap<Element,ClassInstantiation> getModelInstantiations(HashSet<Element> models, HashMap<Element,ClassInstantiation> preparedInstantiations, HashSet<Element> mediators){
+	public static HashMap<Element,ClassInstantiation> getModelInstantiations(
+			HashSet<Element> models, 
+			HashMap<Element,ClassInstantiation> preparedInstantiations, 
+			HashSet<Element> preCollectedMediators,
+			boolean reCollectMediatorsIfEmpty){
 		
 		HashMap<Element,ClassInstantiation> modelToInstantiations = new HashMap<Element, ClassInstantiation>();
 		
 		for (Element model : models) {
-			ClassInstantiation newInstantiation = getModelInstantiation(model, preparedInstantiations, mediators);
+			
+			ClassInstantiation newInstantiation = getModelInstantiation(model, preparedInstantiations, preCollectedMediators, reCollectMediatorsIfEmpty);
+			
 			if (newInstantiation != null) {
 				modelToInstantiations.put(model, newInstantiation);
 			}
@@ -611,8 +613,15 @@ public class ModelicaMLServices {
 		return modelToInstantiations;
 	}
 	
-	public static ClassInstantiation getModelInstantiation(Element model, HashMap<Element,ClassInstantiation> preparedInstantiations, HashSet<Element> mediators){
+	
+	public static ClassInstantiation getModelInstantiation(Element model, 
+			HashMap<Element,
+			ClassInstantiation> preparedInstantiations, 
+			HashSet<Element> preCollectedMediators, 
+			boolean reCollectMediatorsIfEmpty){
+		
 		ClassInstantiation newInstantiation = null;
+		
 		if (preparedInstantiations != null) {
 			newInstantiation = preparedInstantiations.get(model);
 		}
@@ -620,15 +629,11 @@ public class ModelicaMLServices {
 		// create only if it does not exists already
 		if ( newInstantiation == null) {
 			
-			ClassInstantiation ci_model = new ClassInstantiation((Class) model, true, false);
+			ClassInstantiation ci_model = new ClassInstantiation((Class) model, true, false, preCollectedMediators, reCollectMediatorsIfEmpty);
 			// instantiate -> create a tree
 			ci_model.createTree();
-			if (mediators != null && mediators.size() > 0) {
-				// set pre-collected mediators in order to avoid new search
-				ci_model.setAllMediators(mediators);
-			}
 			// collect bindings data that is specific to this tree
-			ci_model.collectValueClientsAndProvidersFromUmlModel();
+			ci_model.collectBindingsDataFromUmlModel();
 			
 			newInstantiation = ci_model;
 		}

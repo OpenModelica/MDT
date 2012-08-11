@@ -191,10 +191,10 @@ public class VeMScenarioReqCombinationsCreator {
 			}
 			else {
 				// TODO: check there if no issue if we do not create predefined type properties for each primitive variable
-				ClassInstantiation ci_model = new ClassInstantiation((Class) sourceElement, true, false);
-				ci_model.setAllMediators(collector.getAllMediators());
+				ClassInstantiation ci_model = new ClassInstantiation((Class) sourceElement, true, false, collector.getAllMediators(), false);
+//				ci_model.setAllMediators(collector.getAllMediators());
 				ci_model.createTree();
-				ci_model.collectValueClientsAndProvidersFromUmlModel();
+				ci_model.collectBindingsDataFromUmlModel();
 				sourceElementInstantiated = ci_model.getTreeRoot();
 				
 				// add to model -> its instantiation map
@@ -279,10 +279,10 @@ public class VeMScenarioReqCombinationsCreator {
 					newChild = getModelToItsInstantiation().get(model).getTreeRoot();
 				}
 				else {
-					ClassInstantiation ci_model = new ClassInstantiation((Class) model, true, false);
-					ci_model.setAllMediators(collector.getAllMediators());
+					ClassInstantiation ci_model = new ClassInstantiation((Class) model, true, false, collector.getAllMediators(), false);
+//					ci_model.setAllMediators(collector.getAllMediators());
 					ci_model.createTree();
-					ci_model.collectValueClientsAndProvidersFromUmlModel();
+					ci_model.collectBindingsDataFromUmlModel();
 					
 					newChild = ci_model.getTreeRoot();
 					

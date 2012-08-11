@@ -1102,7 +1102,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		data.setVeMElement(model);
 		item.setData(data);
 		
-		ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(model, gmd.getPreparedInstantiations(), gmd.getAllFoundMediators());
+		ClassInstantiation ci = ModelicaMLServices.getModelInstantiation(model, gmd.getPreparedInstantiations(), gmd.getAllFoundMediators(), false);
 		
 		getSystemModelItems(item, ci);
 		

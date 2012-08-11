@@ -253,7 +253,11 @@ public class ElementSelectionDialog extends Dialog {
 				setValue(SWT.OK);
 				
 				if (selectedElement instanceof NamedElement) {
+
+					// close the dialog
+					sShell.dispose();
 					
+					// create view
 					Object[] expandedElements = viewer.getExpandedElements();
 					TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
 
@@ -267,7 +271,6 @@ public class ElementSelectionDialog extends Dialog {
 
 					viewer.expandToLevel(2);
 					
-					sShell.dispose();
 				}
 			}
 		});

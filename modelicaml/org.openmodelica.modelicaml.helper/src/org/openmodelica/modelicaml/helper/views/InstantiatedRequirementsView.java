@@ -138,9 +138,10 @@ public class InstantiatedRequirementsView extends ViewPart implements ISelection
 				reqInstancesList.clear(); 
 				
 				// instantiate class 
-				ClassInstantiation ci = new ClassInstantiation(selectedClass, false, false);
+				// NOTE: here we are not interested in bindings data, but only in number of requirement instantiated in the selected class
+				ClassInstantiation ci = new ClassInstantiation(selectedClass, false, false, null, false);
 				ci.createTree();
-				ci.collectValueClientsAndProvidersFromUmlModel();
+				ci.collectBindingsDataFromUmlModel();
 				
 				TreeParent treeRoot = ci.getTreeRoot();
 				
@@ -165,29 +166,6 @@ public class InstantiatedRequirementsView extends ViewPart implements ISelection
 
 		clearItemsList();// clear the graphical view.
 
-//		Label lblSelectRequirementsTo = new Label(messageComposite, SWT.NONE);
-//		lblSelectRequirementsTo.setFont(SWTResourceManager.getFont("Arial", 10, SWT.NORMAL));
-//		lblSelectRequirementsTo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
-//		lblSelectRequirementsTo.setBounds(0, 0, 238, 18);
-//
-//		if (reqList != null && reqList.size() > 0) {
-//			// NEW Label for the owning class name
-//			lblSelectRequirementsTo.setText("The following requirements are instantiated in:");
-//			CLabel label_1 = new CLabel(messageComposite, SWT.NONE);
-//			label_1.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-//			label_1.setTopMargin(0);
-//			label_1.setBottomMargin(0);
-//			
-//			// Set the name of containing class 
-//			label_1.setText(selectedClass.getName());	
-//			label_1.setFont(SWTResourceManager.getFont("Arial", 10, SWT.BOLD));
-//			label_1.setBounds(244, 0, 450, 18);
-//		}
-//		else {
-//			lblSelectRequirementsTo.setText("No requirements are instantiated in " + selectedClass.getName() +  ".");
-//		}
-		
-		
 		for (String reqClassName : reqClassesNames) {
 				
 				Class req = (Class) reqClassNameToElement.get(reqClassName);

@@ -55,8 +55,8 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
+import org.openmodelica.modelicaml.common.valuebindings.helpers.BindingsDataCollector;
 import org.openmodelica.modelicaml.common.valuebindings.helpers.MediatorsCollector;
-import org.openmodelica.modelicaml.common.valuebindings.helpers.ValueBindingsDataCollector;
 
 
 public class TreeBuilder {
@@ -67,10 +67,6 @@ public class TreeBuilder {
 	// only the imported mediator containers
 	private HashSet<Element> importedMediatorContainers = new HashSet<Element>();
 	// only the imported mediators
-//	private HashSet<Element> importedMediators = new HashSet<Element>(); 
-	
-//	private EList<Property> valueClients = new BasicEList<Property>();
-//	private EList<Property> valueProviders = new BasicEList<Property>();
 
 	public HashMap<Element, HashSet<Element>> valueMediatorToValueClients = new HashMap<Element, HashSet<Element>>();
 	public HashMap<Element, HashSet<Element>> valueMediatorToValueProviders = new HashMap<Element, HashSet<Element>>();
@@ -97,7 +93,9 @@ public class TreeBuilder {
 //			rootModelNode.setUmlElement(instantiatedClassTreeItem.getSelectedClass());
 			treeRoot.addChild(rootModelNode);
 			
-			ValueBindingsDataCollector dc = new ValueBindingsDataCollector();
+			//NOTE: we have the mediators right here. There is no need to try to re-collect them if the list is empty.
+			BindingsDataCollector dc = new BindingsDataCollector(false);
+			dc.setAllMediators(valueMediators);
 			dc.collectAll(instantiatedClassTreeItem.getSelectedClass().getModel(), classInstantiation, instantiatedClassTreeItem);
 
 			// add mediators, clients and providers - Mediator Perspective 
@@ -118,7 +116,7 @@ public class TreeBuilder {
 	}
 
 	
-	public void addValueMediatorsUsedInInstantaitedClass(TreeParent instantiatedClassTreeItem, ValueBindingsDataCollector dc){
+	public void addValueMediatorsUsedInInstantaitedClass(TreeParent instantiatedClassTreeItem, BindingsDataCollector dc){
 		
 		valueMediatorToValueClients.clear();
 		valueMediatorToValueProviders.clear();
@@ -342,7 +340,7 @@ public class TreeBuilder {
 		}
 	}
 	
-	private void createClientPerspectiveNodes(TreeObject rootItem, ValueBindingsDataCollector dc, String titlePostFix){
+	private void createClientPerspectiveNodes(TreeObject rootItem, BindingsDataCollector dc, String titlePostFix){
 		if (rootItem instanceof TreeParent) {
 			// add clients
 			TreeParent valueClientsTitle = new TreeParent(Constants.valueClientsNodeName + titlePostFix); 
@@ -365,7 +363,7 @@ public class TreeBuilder {
 		}
 	}
 	
-	private void createProviderPerspectiveNodes(TreeObject rootItem, ValueBindingsDataCollector dc, String titlePostFix){
+	private void createProviderPerspectiveNodes(TreeObject rootItem, BindingsDataCollector dc, String titlePostFix){
 		if (rootItem instanceof TreeParent) {
 			// add providers
 			TreeParent valueProvidersTitle = new TreeParent(Constants.valueProvidersNodeName + titlePostFix);
@@ -437,7 +435,7 @@ public class TreeBuilder {
 	
 	// ###################### READ-ONLY nodes
 	
-	public void addReadOnlyNodes(TreeParent item, ValueBindingsDataCollector dc){
+	public void addReadOnlyNodes(TreeParent item, BindingsDataCollector dc){
 		
 		Element element = item.getUmlElement();
 		if (element != null) {

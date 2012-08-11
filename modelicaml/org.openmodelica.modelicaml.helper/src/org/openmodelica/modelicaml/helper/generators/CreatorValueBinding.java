@@ -105,7 +105,7 @@ public class CreatorValueBinding implements IRunnableWithProgress {
 			TreeParent treeRoot, 
 			boolean deleteOldBindings, 
 			boolean isAutomaticSelectionOfPreferredProvidersEnabled,
-			boolean showProgressMonitor,
+			boolean reCollectMediatorsIfEmpty,
 			boolean onlySimulate){
 
 		// clear all lists
@@ -114,7 +114,7 @@ public class CreatorValueBinding implements IRunnableWithProgress {
 		// Instantiate a new derive code helper
 		deriveCodeHelper = new DeriveValueBindingCodeHelper();
 		// initialize the helper in order to collect and sort the data from the model and the instantiated class.
-		deriveCodeHelper.initialize( valueBindingsPackage, classInstantiation, treeRoot, getAllMediators(), showProgressMonitor); 
+		deriveCodeHelper.initialize( valueBindingsPackage, classInstantiation, treeRoot, getAllMediators(), reCollectMediatorsIfEmpty); 
 		
 		// update bindings for all sub-components (recursively) of the selected tree item.
 		updateAllSubComponents(treeParent, 
