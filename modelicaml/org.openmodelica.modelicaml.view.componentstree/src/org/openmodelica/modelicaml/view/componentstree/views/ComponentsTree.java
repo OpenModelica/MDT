@@ -140,7 +140,7 @@ import com.google.common.collect.Lists;
 /**
  * The Class ComponentsTree.
  */
-public class ComponentsTree extends ViewPart implements IGotoMarker, ITabbedPropertySheetPageContributor  {
+public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPageContributor  {
 
 	/** The viewer. */
 	private TreeViewer viewer;
@@ -2475,30 +2475,7 @@ public class ComponentsTree extends ViewPart implements IGotoMarker, ITabbedProp
 		this.ast = ast;
 	}
 
-	@Override
-	public void gotoMarker(IMarker marker) {
-		String uriAttribute = marker.getAttribute(EValidator.URI_ATTRIBUTE, null);
-		if(uriAttribute != null) {
-			URI uri = URI.createURI(uriAttribute);
-			
-			// TODO: implement the goto operation
-			
-//			org.openmodelica.modelicaml.common.instantiation.TreeUtls.findTreeItems(dotPath, parent, list)
-//			EditorServices.locateInComponentsTreeView(Object object);
-//			
-//			
-//			IViewPart viewPart = getActiveView();
-//			if(viewPart instanceof ModelExplorerView) {
-//				ModelExplorerView modelExplorerView = (ModelExplorerView)viewPart;
-//				EditingDomain domain = modelExplorerView.getEditingDomain();
-//				EObject eObject = domain.getResourceSet().getEObject(uri, false);
-//				if(eObject != null) {
-//					CommonViewer treeViewer = ((ModelExplorerView)viewPart).getCommonViewer();
-//					// The common viewer is in fact a tree viewer
-//					// bug enhancement: use function in ModelExplorerView instead of findElementForEObject
-//					ModelExplorerView.reveal(Lists.newArrayList(eObject), treeViewer);
-//				}
-//			}
-		}
+	public void locate(String dotPath) {
+		EditorServices.locateInComponentsTreeView(dotPath);
 	}
 }

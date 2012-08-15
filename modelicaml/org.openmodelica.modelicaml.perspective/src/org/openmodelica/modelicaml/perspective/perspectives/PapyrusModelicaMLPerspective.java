@@ -57,7 +57,7 @@ public class PapyrusModelicaMLPerspective implements IPerspectiveFactory {
 	protected static final String ID_MODELEXPLORER = Constants.VIEW_MODELEXPLORER;
 	
 	/** The Constant ID_COMPONENT_TREE_VIEW. */
-	protected static final String ID_COMPONENT_TREE_VIEW = Constants.VIEW_COMPONENT_TREE_VIEW;
+	protected static final String ID_COMPONENT_TREE_VIEW = Constants.VIEW_COMPONENT_TREE;
 	
 	/** The Constant ID_VALIDATION_VIEW. */
 	protected static final String ID_VALIDATION_VIEW = Constants.VIEW_VALIDATION;

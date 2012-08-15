@@ -35,7 +35,6 @@
 package org.openmodelica.modelicaml.modelica.importer.model;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,7 +52,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.papyrus.infra.core.resource.NotFoundException;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
 import org.eclipse.uml2.uml.Class;
@@ -73,9 +71,9 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.modelica.importer.helper.ModelicaModelProxiesCollector;
 import org.openmodelica.modelicaml.modelica.importer.helper.StringHandler;
 
-public class TreeBuilder implements IRunnableWithProgress{
+public class TreeBuilder {
 
-	private EList<TreeObject> treeItems = new BasicEList<TreeObject>(); // created tree clients
+	private List<TreeObject> treeItems = new ArrayList<TreeObject>(); // created tree clients
 
 	// Model that is currently open in Papyrus
 	private UmlModel ModelicaMLModel = null;
@@ -99,6 +97,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 	// by default this is null until it is set by the setter
 	private Boolean loadMSL = null;
 	
+	private IProgressMonitor monitor;
+
 	class ModelicaComponentData {
 		private String typeQName;
 		private Element type;
@@ -123,11 +123,16 @@ public class TreeBuilder implements IRunnableWithProgress{
 	
 	public void buildTree(TreeParent treeRoot, ArrayList<String> excludeModels){
 
+		omcc.setMonitor(getMonitor());
+		
+		setMonitorTaskName("Cleaning up ...");
 		clearAll();
 		
+		setMonitorTaskName("Loading models");
 		loadModels();
 		
 		// look for model proxies in the current ModelicaML model.
+		setMonitorTaskName("Collecting proxies models");
 		collectModelicaModelProxies();
 
 		// models/libraries to be excluded
@@ -135,6 +140,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			modelsToBeExcluded.addAll(excludeModels);
 		}
 		
+		setMonitorTaskName("Creating class nodes in " + treeRoot.getName());
 		// create class nodes
 		createClassNodes(treeRoot, "", true);
 		
@@ -143,6 +149,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 		for (int i = 0; i < children.length; i++) {
 			TreeObject treeObject = children[i];
 			if (treeObject instanceof ClassItem && treeObject instanceof TreeParent) {
+
+				setMonitorTaskName("Creating components of class " + treeObject.getName());
+				
 				// create components and extends relation nodes
 				createClassElementNodes((TreeParent)treeObject, true);
 			}
@@ -238,6 +247,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 							// create tree item
 							ClassItem item = new ClassItem(className);
 							
+							setMonitorTaskName("Creating node for class " + className);
+							
 							treeParent.addChild(item);
 							treeItems.add(item);
 							
@@ -268,6 +279,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 	
 	public void updateClassNode(ClassItem item){
 		
+		setMonitorTaskName("Updating the information about class " + item.getQName());
+		
 		// set attributes
 		setClassProperties(item, item.getQName());
 		
@@ -283,6 +296,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 	
 	
 	public ArrayList<TreeObject> createClassElementNodes(TreeParent treeParent, boolean recursive){
+		
+		// pass the progress monitor
+		omcc.setMonitor(getMonitor());
 		
 		// forward the model to the utilities class.
 		Utilities.ModelicaMLModel = getModelicaMLModel();
@@ -306,6 +322,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 					for (String inheritedClassQName : inheritedClasses) {
 						
 //						System.err.println("Creating ExtendsRelationItem in " + classQName);
+						
+						setMonitorTaskName("Creating extends relations in " + inheritedClassQName);
 						
 						// create tree item
 						ExtendsRelationItem item = new ExtendsRelationItem(inheritedClassQName);
@@ -356,6 +374,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 						// create tree item
 						ComponentItem item = new ComponentItem (component.name);
 
+						setMonitorTaskName("Creating component " + component.name);
+						
 						treeParent.addChild(item);
 						treeItems.add(item);
 						
@@ -421,6 +441,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 
 		List<TreeObject> createdItems = new ArrayList<TreeObject>();
 		
+		setMonitorTaskName("Creating imports for the class" + classQName);
+
 		int n = omcc.getImportCount(classQName);
 		if (n > 0) {
 			for (int i = 0; i <= n; i++) {
@@ -483,6 +505,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			
 					String literalName = items.get(i);
 					ComponentItem literatItem = new ComponentItem(literalName);
+					setMonitorTaskName("Creating enumeration literal " + literalName);
 					
 					classItem.addChild(literatItem);
 					treeItems.add(literatItem);
@@ -573,6 +596,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 		
 		if (!classInfo.trim().equals("") && !classInfo.equals("Error") && !classInfo.trim().equals("false") ) {
 
+			setMonitorTaskName("Updating information about class " + classQName);
+			
 			// get class data
 			ArrayList<String> classData = StringHandler.unparseStrings(classInfo);
 
@@ -699,6 +724,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 		
 			ArrayList<String> items = StringHandler.unparseStrings(stringFromArray);
 			
+			setMonitorTaskName("Retrieving components data from class " + classItem.getName());
+			
 			if (items.size() > 10 ) {
 				
 				ModelicaComponentData data = new ModelicaComponentData();
@@ -773,6 +800,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 	private String getComponentDeclarationEquation(ComponentItem component, String classQName){
 		String declaration = null;
 		if (!classQName.equals("") && component != null) {
+			
+			setMonitorTaskName("Retrieving declaration equations for component " + component.getName());
+			
 			String declarationString = omcc.getComponentModifierValue(classQName, component.getName()).trim();
 			if (!declarationString.equals("Error") && !declarationString.equals("false") && !declarationString.equals("")) {
 				declaration = "= " + declarationString; 
@@ -798,6 +828,8 @@ public class TreeBuilder implements IRunnableWithProgress{
 		if (!classQName.equals("")) {
 			List<String> componentModifiers = getItems(omcc.getComponentModifierNames(classQName, component.getName()));
 			
+			setMonitorTaskName("Retrieving modifications for component " + component.getName());
+			
 			if (componentModifiers != null && componentModifiers.size() > 0) {
 				for (String modifier : componentModifiers) {
 					String modificationItem = modifier + omcc.getComponentModifierValue(classQName, component.getName() + "." + modifier);
@@ -808,12 +840,18 @@ public class TreeBuilder implements IRunnableWithProgress{
 		return modifications;
 	}
 	
+	
+	
 	private EList<String> getExtendsModifications(ExtendsRelationItem extendsRelationItem, String classQName){
+		
 		EList<String> modifications = new BasicEList<String>();
+		
 		if (!extendsRelationItem.getSourceQname().equals("") && !extendsRelationItem.getTargetQname().equals("")) {
 
 			List<String> componentModifiers = getItems(omcc.getExtendsModifierNames(extendsRelationItem.getSourceQname(), 
 					extendsRelationItem.getTargetQname()));
+			
+			setMonitorTaskName("Retrieving extends modifications for class " + classQName);
 			
 			if (componentModifiers != null && componentModifiers.size() > 0) {
 				for (String modifier : componentModifiers) {
@@ -829,6 +867,13 @@ public class TreeBuilder implements IRunnableWithProgress{
 		}
 		return modifications;
 	}
+	
+	
+	
+	
+	/*
+	 * Utls *********************************************************************************************************************************************
+	 */
 	
 	
 	private HashSet<TreeObject> getAllTreeItems(TreeParent treeParent){
@@ -880,7 +925,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 		}
 		if (string.trim().equals("Error")){
 			// TODO: collect errors
-			String errorString = omcc.getErrorString();	
+//			String errorString = omcc.getErrorString();	
 		}
 		
 		if (items.size() > 0 ) {
@@ -931,15 +976,46 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 	
 	
+	
+	private boolean codeSyncFolderExists(){
+		if (ModelicaMLModel != null && ModelicaMLModel.getResource() != null) {
+			String projectName = ModelicaMLModel.getResource().getURI().segment(1);
+			if (projectName != null) {
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				IWorkspaceRoot root = workspace.getRoot();
+				IProject iProject = root.getProject(projectName);
+				String projectAbsolutePath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
+				String codeIncAbsolutePath = projectAbsolutePath+"/"+Constants.folderName_code_sync + "/";
+
+				File codeSyncFolder = new File(codeIncAbsolutePath);
+				boolean exists = codeSyncFolder.exists();
+				
+				return exists;
+			}
+		}
+		return false;
+	}
+	
+	
+	
+	/*
+	 * Loading of models **********************************************************************************************************************************************
+	 */
 	public void loadModels(){
 //		UmlModel umlModel = UmlUtils.getUmlModel();
 		UmlModel umlModel = ModelicaMLModel;
+		
+		setMonitorTaskName("Clearing compiler ...");
 		
 		// clear the omc first
 		omcc.clear();
 
 		//TODO: ask user if Modelica, with specific version, should be loaded ...
 		if (isLoadMSL() && codeSyncFolderExists()) {
+			
+			// TODO: get the MSL verion and indicate it in the monitor
+			setMonitorTaskName("Loading Modelica Standard Library...");
+
 			// Load MSL
 			omcc.loadModel(getMSLModelName());
 		}
@@ -958,6 +1034,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 			for (String fileToLoad : filesToLoad) {
 				
 				String reply = "";
+				setMonitorTaskName("Loading file: " + fileToLoad);
 				reply = omcc.loadFile(fileToLoad);
 				
 //				if (reply.trim().equals("Error")) {
@@ -985,8 +1062,14 @@ public class TreeBuilder implements IRunnableWithProgress{
 		
 	}
 
+	/*
+	 * Proxies validation
+	 */
+	
 	public void validateProxies(IProject iProject){
 		if (isValidateProxies()) {
+			
+			setMonitorTaskName("Deleting proxies markers  in "+iProject.getName()+" ... ");
 			
 			// Delete all old markers
 			Utilities.deleteProxyValidationMarkers(iProject);
@@ -1010,6 +1093,9 @@ public class TreeBuilder implements IRunnableWithProgress{
 
 	private void validateProxies(HashSet<Element> proxies,  HashSet<String> modelicaModelQNames){
 			for (Element element : proxies) {
+				
+				setMonitorTaskName("Validating proxy "+ ModelicaMLServices.getQualifiedName(element));
+				
 				if (element instanceof NamedElement) {
 					Model topLevelModel = element.getModel();
 					// don't check installed library elements 
@@ -1061,9 +1147,13 @@ public class TreeBuilder implements IRunnableWithProgress{
 			
 		// delete all old markers
 		if (treeItem.getModelicaMLProxy() instanceof NamedElement) {
+			setMonitorTaskName("Deleting proxies marker for "+ModelicaMLServices.getQualifiedName(treeItem.getModelicaMLProxy())+" ... ");
+			
 			Utilities.deleteProxyValidationMarkers(iProject, ((NamedElement)treeItem.getModelicaMLProxy()).getQualifiedName());
 		}
-		// ´Collect proxies 
+		
+		// ´Collect proxies
+		setMonitorTaskName("Collecting proxies from "+ModelicaMLServices.getQualifiedName(treeItem.getModelicaMLProxy())+" ... ");
 		HashSet<Element> proxies = new HashSet<Element>();
 		Iterator<EObject> i = treeItem.getModelicaMLProxy().eAllContents();
 		while (i.hasNext()) {
@@ -1077,6 +1167,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 		
 		// Get Modelica model names
 		HashSet<String> modelicaModelQNames = new HashSet<String>();
+		setMonitorTaskName("Collecting modelica models from " + treeItem.getQName() + " ... ");
 		for (TreeObject treeObject : getAllTreeItems(treeItem)) {
 			modelicaModelQNames.add(treeObject.getQName());
 		}
@@ -1086,6 +1177,11 @@ public class TreeBuilder implements IRunnableWithProgress{
 	}
 
 
+	
+	/*
+	 * Collecting proxies *************************************************************************************************************************************
+	 */
+	
 	public void collectModelicaModelProxies(){
 			
 			proxies.clear();
@@ -1096,7 +1192,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 			
 			if (umlModel != null && umlModel.getResource() != null) {
 				try {
-					
 					/*
 					 * ModelicaML root is the first Model in the list
 					 */
@@ -1110,9 +1205,13 @@ public class TreeBuilder implements IRunnableWithProgress{
 					 */
 					EList<EObject> rootModels = umlModel.getResource().getContents();
 					for (EObject rootModel : rootModels) {
+						
 						root = rootModel;
 						
 						if (root instanceof NamedElement) {
+
+							setMonitorTaskName("Collecting proxies from " + ModelicaMLServices.getQualifiedName((Element) root));
+
 							ModelicaModelProxiesCollector pc = new ModelicaModelProxiesCollector();
 							pc.setStereotypeQName(Constants.stereotypeQName_ModelicaModelProxy);
 //							pc.collectElementsFromModel(root, Constants.stereotypeQName_ModelicaModelProxy);
@@ -1198,6 +1297,11 @@ public class TreeBuilder implements IRunnableWithProgress{
 			}
 		}
 
+	
+	
+	
+	
+	// getter and setter ********************************************************************************************************************************
 
 	public void setModelicaMLModel(UmlModel modelicaMLModel) {
 		ModelicaMLModel = modelicaMLModel;
@@ -1230,7 +1334,7 @@ public class TreeBuilder implements IRunnableWithProgress{
 		return ModelicaMLRoot;
 	}
 
-	public EList<TreeObject> getTreeItems() {
+	public List<TreeObject> getTreeItems() {
 		return treeItems;
 	}
 	
@@ -1468,41 +1572,26 @@ public class TreeBuilder implements IRunnableWithProgress{
 
 	
 	
-	
-	
-	
-
-	// Progress monitor 
-	
-	// The total sleep time
-	private static final int TOTAL_TIME = 3000;
-	// The increment sleep time
-	private static final int INCREMENT = 10;
-	// process time´is unknown
-	private boolean indeterminate = true; 
-	
-	private String progressMonitorTitle = "Loading Modelica Models using OMC API";
-	private String monitorText1 = "Establishing connection to OMC...";
-	private String monitorText2 = "Quering OMC...";
-	private String monitorText3 = "Preparing tree visualization ...";
-	
-	@Override
-	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		
-		monitor.beginTask(progressMonitorTitle + " is running." , indeterminate ? IProgressMonitor.UNKNOWN : TOTAL_TIME);
-	    for (int total = 0; total < TOTAL_TIME && !monitor.isCanceled(); total += INCREMENT) {
-	      Thread.sleep(INCREMENT);
-	      monitor.worked(INCREMENT);
-	      if (total == TOTAL_TIME / 100) monitor.subTask(monitorText1);
-	      if (total == TOTAL_TIME / 4) monitor.subTask(monitorText2);
-	      if (total == TOTAL_TIME / 2) monitor.subTask(monitorText3);
-	    }
-	    monitor.done();
-	    if (monitor.isCanceled()){
-	    	throw new InterruptedException(progressMonitorTitle + " was cancelled.");
-	    }   
+	public IProgressMonitor getMonitor() {
+		return monitor;
 	}
 
+	public void setMonitor(IProgressMonitor monitor) {
+		this.monitor = monitor;
+	}
+	
+	private void setMonitorTaskName(String name){
+		if (this.monitor != null) {
+			monitor.setTaskName(name);
+		}
+	}
+	
+//	private void setMonitorSubTaskName(String name){
+//		if (this.monitor != null) {
+//			monitor.subTask(name);
+//		}
+//	}
+	
 
 	public void setFullImport(boolean fullImport) {
 		this.fullImport = fullImport;
@@ -1533,24 +1622,6 @@ public class TreeBuilder implements IRunnableWithProgress{
 	public void setLoadMSL(boolean loadMSL) {
 		this.loadMSL = loadMSL;
 	}
-	
-	private boolean codeSyncFolderExists(){
-		if (ModelicaMLModel != null && ModelicaMLModel.getResource() != null) {
-			String projectName = ModelicaMLModel.getResource().getURI().segment(1);
-			if (projectName != null) {
-				IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				IWorkspaceRoot root = workspace.getRoot();
-				IProject iProject = root.getProject(projectName);
-				String projectAbsolutePath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
-				String codeIncAbsolutePath = projectAbsolutePath+"/"+Constants.folderName_code_sync + "/";
 
-				File codeSyncFolder = new File(codeIncAbsolutePath);
-				boolean exists = codeSyncFolder.exists();
-				
-				return exists;
-			}
-		}
-		return false;
-	}
 }
 

@@ -2,10 +2,6 @@ package org.openmodelica.modelicaml.modelica.importer.model;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.uml2.uml.Element;
-import org.eclipse.uml2.uml.Class;
-import org.eclipse.uml2.uml.PrimitiveType;
-import org.eclipse.uml2.uml.Stereotype;
-import org.openmodelica.modelicaml.common.constants.Constants;
 
 public class TreeObject implements IAdaptable{
 	

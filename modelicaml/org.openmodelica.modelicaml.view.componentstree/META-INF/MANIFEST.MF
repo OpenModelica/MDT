@@ -33,4 +33,5 @@ Import-Package: org.eclipse.core.resources,
  org.eclipse.uml2.uml,
  org.eclipse.xtext.resource
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openmodelica.modelicaml.view.componentstree.display
+Export-Package: org.openmodelica.modelicaml.view.componentstree.display,
+ org.openmodelica.modelicaml.view.componentstree.views

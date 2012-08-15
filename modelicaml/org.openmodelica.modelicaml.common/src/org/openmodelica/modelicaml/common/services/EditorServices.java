@@ -103,12 +103,12 @@ public class EditorServices {
 	}
 	
 	
-	public static void locateInComponentsTreeView(Object object){
-		if (object instanceof String) {
+	public static void locateInComponentsTreeView(Object dotPath){
+		if (dotPath instanceof String) {
 			
 			List<Object> elements = new ArrayList<Object>();
 			// find treeObject with the dotPath
-			HashSet<Object> treeObjects =  TreeUtls.findTreeItems((String) object, TreeUtls.componentsTreeRoot, new HashSet<Object>());
+			HashSet<Object> treeObjects =  TreeUtls.findTreeItems((String) dotPath, TreeUtls.componentsTreeRoot, new HashSet<Object>());
 			elements.addAll(treeObjects);
 			
 			StructuredSelection selection = new StructuredSelection(elements);

@@ -209,6 +209,8 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 									modelsToBeExcluded.add("Modelica.UsersGuide");
 									modelsToBeExcluded.add("Modelica.Fluid");
 
+									treeBuilder.setMonitor(monitor);
+									
 									treeBuilder.buildTree(treeRoot, modelsToBeExcluded);
 									return Status.OK_STATUS;
 								}
@@ -372,7 +374,8 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 						editingDomain, 
 						umlModel, 
 						ModelicaMLRoot,
-						treeBuilder);
+						treeBuilder,
+						monitor);
 				
 				TreeObject[] modelicaRoots = treeRoot.getChildren();
 				for (int i = 0; i < modelicaRoots.length; i++) {

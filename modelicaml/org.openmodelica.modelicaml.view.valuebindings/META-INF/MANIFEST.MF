@@ -30,5 +30,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openmodelica.modelicaml.view.valuebindings.dialogs,
  org.openmodelica.modelicaml.view.valuebindings.helpers,
- org.openmodelica.modelicaml.view.valuebindings.model
+ org.openmodelica.modelicaml.view.valuebindings.model,
+ org.openmodelica.modelicaml.view.valuebindings.views
 

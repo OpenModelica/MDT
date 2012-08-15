@@ -114,12 +114,14 @@ public String getErrorMessageForSingleAssignementRuleInAlgorithmSections(Classif
 			// This creates one message per duplicate
 			result = "Single Assignment Rule Violation";
 			for (Object object : duplicates) {
-				msg = "NOT VALID(sar01): Variable " + "'" + object.toString()+ "' " +
-						"is set in multiple algorithm sections that are generated from ModelicaMLStateMachine, " +
-						"Algorithm(Code) or ConditionalAlgorithm(Diagram) elements. " +
-						"This violates the Modelica singe assigment rule. " +
-						"Note that redeclarations are not taken into account in this analysis.";
-				MoldelicaMLValidator.modelicaMLValidationAlert(classifier, "error", msg);
+				if (!object.toString().isEmpty()) {
+					msg = "NOT VALID(sar01): Variable " + "'" + object.toString()+ "' " +
+							"is set in multiple algorithm sections that are generated from ModelicaMLStateMachine, " +
+							"Algorithm(Code) or ConditionalAlgorithm(Diagram) elements. " +
+							"This violates the Modelica singe assigment rule. " +
+							"Note that redeclarations are not taken into account in this analysis.";
+					MoldelicaMLValidator.modelicaMLValidationAlert(classifier, "error", msg);
+				}
 			}
 		}
 		

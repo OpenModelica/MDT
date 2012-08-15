@@ -55,12 +55,12 @@ import org.eclipse.uml2.uml.Element;
  * Implementation of the Locate contextual action PopUp action is defined in
  * plug-in extensions PopUp action accept a single IUMLObjectEditPart.
  */
-public class LocateActionDelegate implements IEditorActionDelegate {
+public class OBSOLETE_LocateActionDelegate implements IEditorActionDelegate {
 
 	/**
 	 * Instantiates a new locate action delegate.
 	 */
-	public LocateActionDelegate() {
+	public OBSOLETE_LocateActionDelegate() {
 		super();
 		// TODO Auto-generated constructor stub
 	}

@@ -18,7 +18,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.papyrus.infra.ui.resources;bundle-version="0.9.0",
  org.openmodelica.modelicaml.modelexplorer;bundle-version="1.0.0",
  org.eclipse.ui.navigator;bundle-version="3.5.200",
- org.eclipse.papyrus.views.modelexplorer;bundle-version="0.9.0"
+ org.eclipse.papyrus.views.modelexplorer;bundle-version="0.9.0",
+ org.openmodelica.modelicaml.view.componentstree;bundle-version="1.1.12",
+ org.openmodelica.modelicaml.view.valuebindings;bundle-version="1.0.0",
+ org.openmodelica.modelicaml.modelica.importer;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openmodelica.modelicaml.validation,

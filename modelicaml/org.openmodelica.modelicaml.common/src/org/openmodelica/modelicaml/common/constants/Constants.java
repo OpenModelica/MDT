@@ -324,9 +324,10 @@ public class Constants {
 //	public final static String VIEW_PAPYRUS_MODELEXPLORER = "org.eclipse.papyrus.views.modelexplorer.modelexplorer";
 	public final static String VIEW_MODELEXPLORER = "org.openmodelica.modelicaml.modelexplorer";
 
-	public final static String VIEW_COMPONENT_TREE_VIEW = "org.openmodelica.modelicaml.view.componentstree";
+	public final static String VIEW_COMPONENT_TREE = "org.openmodelica.modelicaml.view.componentstree";
 	public final static String VIEW_VALUE_BINDINGS = "org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView";
 	public final static String VIEW_VALIDATION = "org.openmodelica.modelicaml.validation.view";
+	public final static String VIEW_MODELICA_CODE_SYNCHRONIZATION = "org.openmodelica.modelicaml.modelica.importer.views.ModelicaOMCCodeViewer";
 	
 	
 	/*

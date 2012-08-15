@@ -559,6 +559,12 @@ public class TreeUtls {
 		return list;
 	}
 	
+	
+	public static void locate(Element element, TreeParent treeRoot, TreeViewer viewer){
+		for (Object treeItem : findTreeItems(element, treeRoot, new HashSet<Object>())) {
+			selectInView(treeItem, treeRoot, viewer);
+		}
+	}
 
 	public static void selectInView(Object obj, TreeParent treeRoot, TreeViewer viewer){
 		if ( obj instanceof TreeObject ) {

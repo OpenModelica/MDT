@@ -3,9 +3,9 @@ package org.openmodelica.modelicaml.modelica.importer.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.omc.OMCProxy;
-import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.modelica.importer.Activator;
 import org.openmodelica.modelicaml.modelica.importer.helper.StringHandler;
@@ -15,12 +15,13 @@ public class OpenModelicaCompilerCommunication {
 
 	private OMCProxy omc;
 	private ArrayList<String> history;
+	private IProgressMonitor monitor;
 	
 	public OpenModelicaCompilerCommunication(){
-//		super();
+
 		this.omc = new OMCProxy();
 		
-		// set omc reference in order to enable the shut dowm of omc process when Eclipse is closed
+		// set omc reference in order to enable the shut down of omc process when Eclipse is closed
 		Activator.setOmcProxy(omc);
 		
 		history = new ArrayList<String>();
@@ -76,8 +77,11 @@ public class OpenModelicaCompilerCommunication {
 		// initial reply (negative)
 		String replyString = "Error: No reply from OMC ...";
 		
+		setMonitorSubTaskName(command);
+		
 		// TODO: observe the containsOMCErrorMessage. It should prevent executing commands with error string as parameters
 		if (command != null && command.length() > 0 && !ModelicaMLServices.containsOMCErrorMessage(command)) {
+			
 			history.add(command);
 			
 			try {
@@ -660,6 +664,26 @@ public class OpenModelicaCompilerCommunication {
 //
 //		return tempHistory;
 		return this.history;
+	}
+
+	public IProgressMonitor getMonitor() {
+		return monitor;
+	}
+
+	public void setMonitor(IProgressMonitor monitor) {
+		this.monitor = monitor;
+	}
+	
+	private void setMonitorTaskName(String name){
+		if (this.monitor != null) {
+			monitor.setTaskName(name);
+		}
+	}
+	
+	private void setMonitorSubTaskName(String name){
+		if (this.monitor != null) {
+			monitor.subTask(name);
+		}
 	}
 	
 }

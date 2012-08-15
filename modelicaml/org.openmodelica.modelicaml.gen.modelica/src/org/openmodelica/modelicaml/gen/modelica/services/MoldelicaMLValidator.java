@@ -43,11 +43,11 @@ import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
+import org.openmodelica.modelicaml.common.constants.Constants;
 
 import fr.obeo.acceleo.gen.AcceleoEcoreGenPlugin;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MoldelicaMLValidator.
  */
@@ -92,30 +92,7 @@ public class MoldelicaMLValidator {
 		}
 		modelicaMLValidationAlert(elt, criticality, msg);
 	}
-	
-	/**
-	 * Message dialog.
-	 * 
-	 * @param elt
-	 *            the elt
-	 * @param title
-	 *            the title
-	 * @param msg
-	 *            the msg
-	 */
-	public static void messageDialog(Element elt, String title, String msg){
-		
-//		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-//		if (window != null) {
-//			MessageDialog.openError(window.getShell(), title, msg); //$NON-NLS-1$
-//		} else {
-//			//AcceleoUIActivator.getDefault().getLog().log(e.getStatus());
-//		}
-		
-		//Shell shell = new Shell();
-		//AcceleoEcoreGenPlugin.getDefault().getBundle().
-		//MessageDialog.openInformation(null, title, msg);
-	}
+
 	
 	/**
 	 * Modelica ml validation alert.
@@ -138,7 +115,7 @@ public class MoldelicaMLValidator {
 			
 		try {
 		//	IMarker marker = r.createMarker(EValidator.MARKER);
-			IMarker marker = r.createMarker("org.openmodelica.modelicaml.modelicamlMarker.validation");
+			IMarker marker = r.createMarker(Constants.MARKERTYPE_VALIDATION_PROBLEM);
 			
 			marker.setAttribute(IMarker.MESSAGE, msg);
 			
@@ -184,7 +161,7 @@ public class MoldelicaMLValidator {
 			
 		try {
 		//	IMarker marker = r.createMarker(EValidator.MARKER);
-			IMarker marker = r.createMarker("org.openmodelica.modelicaml.modelicamlMarker.validation");
+			IMarker marker = r.createMarker(Constants.MARKERTYPE_VALIDATION_PROBLEM);
 			
 			marker.setAttribute(IMarker.MESSAGE, msg);
 			

@@ -1727,7 +1727,7 @@ public class CopyOfModelicaMLElementsCreator implements IRunnableWithProgress {
 		 */
 		
 		HashSet<String> modelicaModelQNames = new HashSet<String>();
-		EList<TreeObject> treeItems = treeBuilder.getTreeItems(); 
+		List<TreeObject> treeItems = treeBuilder.getTreeItems(); 
 		for (TreeObject treeObject : treeItems) {
 			modelicaModelQNames.add(treeObject.getQName());
 		}

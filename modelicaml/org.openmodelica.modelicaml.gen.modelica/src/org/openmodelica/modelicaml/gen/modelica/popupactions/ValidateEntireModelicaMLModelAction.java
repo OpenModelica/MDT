@@ -62,7 +62,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
-import org.eclipse.papyrus.infra.core.utils.EditorUtils;
+import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 
 import fr.obeo.acceleo.chain.File;
 import fr.obeo.acceleo.chain.impl.spec.CChain;
@@ -72,7 +73,6 @@ import fr.obeo.acceleo.chain.impl.spec.CModel;
 import fr.obeo.acceleo.gen.IGenFilter;
 import fr.obeo.acceleo.gen.template.eval.LaunchManager;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ValidateEntireModelicaMLModelAction.
  * 
@@ -91,7 +91,7 @@ public class ValidateEntireModelicaMLModelAction extends AbstractHandler {
 	private String modelFileURI = null;
 	
 	/** The model name. */
-	private String modelName = null;
+//	private String modelName = null;
 
 	// NullProgressMonitor monitor = null;
 
@@ -107,8 +107,7 @@ public class ValidateEntireModelicaMLModelAction extends AbstractHandler {
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		TransactionalEditingDomain editingDomain = EditorUtils
-				.getTransactionalEditingDomain();
+		TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 		editingDomain.getCommandStack().execute(getCommand(editingDomain));
 		return null;
 	}
@@ -128,21 +127,13 @@ public class ValidateEntireModelicaMLModelAction extends AbstractHandler {
 					IResource.DEPTH_INFINITE);
 
 			for (IMarker marker : markers) {
-				if (marker.getType().equals("org.openmodelica.modelicaml.modelicamlMarker.validation")) {
+				if (marker.getType().equals(Constants.MARKERTYPE_VALIDATION_PROBLEM)) {
 					marker.delete();
 				}
-//				Object qualifiedName = marker.getAttribute(IMarker.LOCATION);
-//				Object markerMessage = marker.getAttribute(IMarker.MESSAGE);
-//
-//				if (qualifiedName.equals( ((NamedElement)sourceElement).getQualifiedName())
-//						&& markerMessage.equals(message)) {
-//					marker.delete();
-//				}
 			}
 
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			
 		}
 	}
 	
@@ -154,12 +145,13 @@ public class ValidateEntireModelicaMLModelAction extends AbstractHandler {
 	 *            the editing domain
 	 * @return the command
 	 */
+	@SuppressWarnings("unchecked")
 	protected Command getCommand(TransactionalEditingDomain editingDomain) {
 
 		UmlModel umlModel = UmlUtils.getUmlModel();
 		modelFileURI = umlModel.getResourceURI().toPlatformString(true);
 		
-		modelName = umlModel.getResourceURI().lastSegment();
+//		modelName = umlModel.getResourceURI().lastSegment();
 		//project = umlModel.getResourceURI().path().replace(modelName, "").replace("/resource/", "");
 		project = umlModel.getResource().getURI().segment(1);
 		

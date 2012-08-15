@@ -47,20 +47,23 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.papyrus.infra.core.sasheditor.editor.IPage;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.MarkerSupportView;
+import org.eclipse.uml2.uml.Element;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.modelexplorer.ModelExplorerPage;
 import org.openmodelica.modelicaml.modelexplorer.ModelExplorerPageBookView;
 import org.openmodelica.modelicaml.modelexplorer.ModelExplorerView;
+import org.openmodelica.modelicaml.modelica.importer.views.ModelicaOMCCodeViewer;
+import org.openmodelica.modelicaml.view.componentstree.views.ComponentsTree;
+import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
+import org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView;
 
 
 // TODO: Auto-generated Javadoc
@@ -75,64 +78,6 @@ public class ModelicaMLValidationView extends MarkerSupportView {
     public ModelicaMLValidationView() {
         super("org.openmodelica.modelicaml.markerContentGenerator");
     }
-
-    
-//	public static void openMarkerInEditor(IMarker marker, IWorkbenchPage page) {
-//		// optimization: if the active editor has the same input as
-//		// the
-//		// selected marker then
-//		// RevealMarkerAction would have been run and we only need
-//		// to
-//		// activate the editor
-//		IEditorPart editor = page.getActiveEditor();
-//		if (editor != null) {
-//			IEditorInput input = editor.getEditorInput();
-//			IFile file = ResourceUtil.getFile(input);
-//			if (file != null) {
-//				if (marker.getResource().equals(file)
-//						&& OpenStrategy.activateOnOpen()) {
-//					page.activate(editor);
-//				}
-//			}
-//		}
-//
-//		if (marker != null && marker.getResource() instanceof IFile) {
-//			try {
-//				IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
-//			} catch (PartInitException e) {
-//
-//				// Check for a nested CoreException
-//				IStatus status = e.getStatus();
-//				if (status != null
-//						&& status.getException() instanceof CoreException) {
-//					status = ((CoreException) status.getException())
-//							.getStatus();
-//				}
-//
-//				if (status == null)
-//					StatusManager.getManager().handle(
-//							StatusUtil.newStatus(IStatus.ERROR, e.getMessage(),
-//									e), StatusManager.SHOW);
-//
-//				else
-//					StatusManager.getManager().handle(status,
-//							StatusManager.SHOW);
-//
-//			}
-//		}
-//		else if (marker != null ) {
-//			try {
-//				String markerType = marker.getType();
-//				if (markerType.equals(Constants.MARKERTYPE_MODELICA_MODELS_LOADING) || markerType.equals(Constants.MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES) ) {
-//					System.err.println("HOIER");
-//				}
-//			} catch (CoreException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//		}
-//	}
     
     @SuppressWarnings("restriction")
 	@Override
@@ -144,50 +89,15 @@ public class ModelicaMLValidationView extends MarkerSupportView {
     	Action locateAction = new Action("locateAction") {
     		@Override
     		public void run() {
-    			// TODO Auto-generated method stub
-//    			super.run();
-    			
-    			IMarker[] markers = getMarkersSelectedInView();
-				for (IMarker iMarker : markers) {
-					String uriAttribute = iMarker.getAttribute(EValidator.URI_ATTRIBUTE, null);
-					if(uriAttribute != null) {
-						URI uri = URI.createURI(uriAttribute);
-						
-						
-						IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
-						if(viewPart instanceof ModelExplorerPageBookView) {
-							org.eclipse.ui.part.IPage page =  ((ModelExplorerPageBookView)viewPart).getCurrentPage();
-							
-							if (page instanceof ModelExplorerPage) {
-								ModelExplorerView modelExplorerView = (ModelExplorerView) ( (ModelExplorerPage) ((ModelExplorerPageBookView)viewPart ).getCurrentPage() ).getViewer();
-								EditingDomain domain = modelExplorerView.getEditingDomain();
-								EObject eObject = domain.getResourceSet().getEObject(uri, false);
-								if(eObject != null) {
-									CommonViewer treeViewer = ((ModelExplorerView)modelExplorerView).getCommonViewer();
-									// The common viewer is in fact a tree viewer
-									// bug enhancement: use function in ModelExplorerView instead of findElementForEObject
-									List<Object> list = new ArrayList<Object>();
-									list.add(eObject);
-									ModelExplorerView.reveal(list, treeViewer);
-								}
-							}
-						}
-						
-						
-					}
-				}
+    			openMarkersInEditor();
 			}
 		}; 
 		
-		locateAction.setText("Locate selected markers in Model Explorer");
+		locateAction.setText("Open selected markers in views");
 		locateAction.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/editor/ModelExplorer.png")));
-		
 		getViewSite().getActionBars().getToolBarManager().add(new Separator());
-		
 		getViewSite().getActionBars().getToolBarManager().add(locateAction);
 
-		
-		
 		
 		Action deleteAllAction = new Action() {
     		@Override
@@ -206,42 +116,73 @@ public class ModelicaMLValidationView extends MarkerSupportView {
 		deleteAllAction.setText("Delete all selected markers");
 		deleteAllAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(org.eclipse.ui.internal.SharedImages.IMG_ELCL_REMOVEALL));
 		getViewSite().getActionBars().getToolBarManager().add(deleteAllAction);
-
-		
-		/*
-		 * TODO: does not work ... :(
-		 */
-//		parent.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseDoubleClick(MouseEvent e) {
-//				IMarker[] markers = getSelectedMarkers();
-//				for (IMarker iMarker : markers) {
-//					String uriAttribute = iMarker.getAttribute(EValidator.URI_ATTRIBUTE, null);
-//					if(uriAttribute != null) {
-//						URI uri = URI.createURI(uriAttribute);
-//						IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
-//						if(viewPart instanceof ModelExplorerView) {
-//							ModelExplorerView modelExplorerView = (ModelExplorerView)viewPart;
-//							EditingDomain domain = modelExplorerView.getEditingDomain();
-//							EObject eObject = domain.getResourceSet().getEObject(uri, false);
-//							if(eObject != null) {
-//								CommonViewer treeViewer = ((ModelExplorerView)viewPart).getCommonViewer();
-//								// The common viewer is in fact a tree viewer
-//								// bug enhancement: use function in ModelExplorerView instead of findElementForEObject
-//								List<Object> list = new ArrayList<Object>();
-//								list.add(eObject);
-//								ModelExplorerView.reveal(list, treeViewer);
-//							}
-//						}
-//					}
-//				}
-//			}
-//		});
-		
     }
    
     
-    public IMarker[] getMarkersSelectedInView(){
+    public void openMarkersInEditor(){
+    	
+    	IMarker[] markers = getMarkersSelectedInView();
+    	
+		for (IMarker iMarker : markers) {
+			String uriAttribute = iMarker.getAttribute(EValidator.URI_ATTRIBUTE, null);
+			if(uriAttribute != null) {
+				URI uri = URI.createURI(uriAttribute);
+				
+				IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
+				EObject eObject = null;
+				if(viewPart instanceof ModelExplorerPageBookView) {
+					org.eclipse.ui.part.IPage page =  ((ModelExplorerPageBookView)viewPart).getCurrentPage();
+					
+					if (page instanceof ModelExplorerPage) {
+						ModelExplorerView modelExplorerView = (ModelExplorerView) ( (ModelExplorerPage) ((ModelExplorerPageBookView)viewPart ).getCurrentPage() ).getViewer();
+						EditingDomain domain = modelExplorerView.getEditingDomain();
+						eObject = domain.getResourceSet().getEObject(uri, false);
+						if(eObject != null) {
+							CommonViewer treeViewer = ((ModelExplorerView)modelExplorerView).getCommonViewer();
+							// The common viewer is in fact a tree viewer bug enhancement: use function in ModelExplorerView instead of findElementForEObject
+							List<Object> list = new ArrayList<Object>();
+							list.add(eObject);
+							ModelExplorerView.reveal(list, treeViewer);
+						}
+					}
+				}
+				
+				// components view 
+				IViewPart viewPartComponentsTree = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_COMPONENT_TREE);
+				if(viewPartComponentsTree instanceof ComponentsTree) {
+					EditorServices.locateInComponentsTreeView(uriAttribute);
+				}
+
+				// bindings view 
+				IViewPart viewPartBindigns = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_VALUE_BINDINGS);
+				if(viewPartBindigns instanceof ValueBindingsView) {
+					if (eObject instanceof Element) {
+						TreeUtls.locate((Element)eObject, ((ValueBindingsView)viewPartBindigns).getTreeRoot(), ((ValueBindingsView)viewPartBindigns).getViewer());
+					}
+				}
+
+				// Modelica code view 
+				IViewPart viewPartModelicaCodeSynchonization = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELICA_CODE_SYNCHRONIZATION);
+				if(viewPartModelicaCodeSynchonization instanceof ModelicaOMCCodeViewer) {
+					((ModelicaOMCCodeViewer)viewPartModelicaCodeSynchonization).locate((Element) eObject);
+				}
+				
+			}
+
+			// Modelica code view 
+			String location = iMarker.getAttribute(IMarker.LOCATION, null);
+			if (!location.isEmpty() && location != null) {
+				IViewPart viewPartModelicaCodeSynchonization = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELICA_CODE_SYNCHRONIZATION);
+				if(viewPartModelicaCodeSynchonization instanceof ModelicaOMCCodeViewer) {
+					// for code importer use the marker attribute location
+					((ModelicaOMCCodeViewer)viewPartModelicaCodeSynchonization).locate(location);
+				}
+			}
+		}
+    }
+    
+    @SuppressWarnings("restriction")
+	public IMarker[] getMarkersSelectedInView(){
 		IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_VALIDATION);
 		if (viewPart instanceof MarkerSupportView) {
 			return ((MarkerSupportView)viewPart).getSelectedMarkers();
