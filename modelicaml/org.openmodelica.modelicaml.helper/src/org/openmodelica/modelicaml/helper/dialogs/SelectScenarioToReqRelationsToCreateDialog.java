@@ -51,7 +51,7 @@ import org.eclipse.uml2.uml.UMLPackage;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
-import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.helper.report.XMLReportGenerator;
@@ -324,7 +324,7 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		btnLocate.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
+				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
 
 				ModelExplorerPageBookView modelExplorerPageBookView = null;
 				if (view instanceof ModelExplorerPageBookView) {
@@ -359,7 +359,7 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 			}
 		});
 		btnLocate.setText("Locate");
-		btnLocate.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif"));
+		btnLocate.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/editor/ModelExplorer.png"));
 
 		
 		Button btnReadReport = new Button(container, SWT.NONE);
@@ -583,7 +583,7 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 	
 	
 	private void storeRelations(){
-		TransactionalEditingDomain  editingDomain = PapyrusServices.getPapyrusEditingDomain();
+		TransactionalEditingDomain  editingDomain = EditorServices.getPapyrusEditingDomain();
 		if (editingDomain != null) {
 			// execute 
 			editingDomain.getCommandStack().execute(getCommand(editingDomain));

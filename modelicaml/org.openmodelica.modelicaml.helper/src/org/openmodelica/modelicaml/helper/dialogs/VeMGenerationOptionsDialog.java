@@ -43,7 +43,7 @@ import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
-import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.helper.generators.GeneratorVeMRequirementsBased;
@@ -276,7 +276,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		lblSelectionHint.setBackground(SWTResourceManager.getColor(SWT.COLOR_INFO_BACKGROUND));
 		lblSelectionHint.setBounds(67, 10, 410, 41);
 		lblSelectionHint.setText(selectionHintMessage);
-		lblSelectionHint.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif"));
+		lblSelectionHint.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/editor/ModelExplorer.png"));
 		lblSelectionHint.setVisible(false);
 		
 		/*
@@ -619,7 +619,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 				
 //				ServicesRegistry  serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
 //				TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
-				TransactionalEditingDomain  editingDomain = PapyrusServices.getPapyrusEditingDomain();
+				TransactionalEditingDomain  editingDomain = EditorServices.getPapyrusEditingDomain();
 									
 				smg = new GeneratorVeMScenariosBased(
 						rootPackage,
@@ -886,7 +886,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 	private void setSelectionHintMode(boolean isError, String message){
 		if (!isError) { //normal
 			lblSelectionHint.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
-			lblSelectionHint.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif"));
+			lblSelectionHint.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/editor/ModelExplorer.png"));
 			lblSelectionHint.setText(message);
 		}
 		if (isError) { // error

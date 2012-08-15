@@ -168,7 +168,7 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 		lblSelectionHint.setBackground(SWTResourceManager.getColor(SWT.COLOR_INFO_BACKGROUND));
 		lblSelectionHint.setBounds(53, 22, 410, 41);
 		lblSelectionHint.setText(selectionHintMessage);
-		lblSelectionHint.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif"));
+		lblSelectionHint.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/editor/ModelExplorer.png"));
 		lblSelectionHint.setVisible(false);
 		
 		/*
@@ -614,7 +614,7 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 	private void setSelectionHintMode(boolean isError, String message){
 		if (!isError) { //normal
 			lblSelectionHint.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
-			lblSelectionHint.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif"));
+			lblSelectionHint.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/editor/ModelExplorer.png"));
 			lblSelectionHint.setText(message);
 		}
 		if (isError) { // error

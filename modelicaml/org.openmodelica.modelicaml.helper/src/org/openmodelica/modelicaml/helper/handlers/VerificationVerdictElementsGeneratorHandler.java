@@ -52,7 +52,7 @@ import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
-import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.helper.generators.CreatorVerificationVerdictElements;
 
 
@@ -75,7 +75,7 @@ public class VerificationVerdictElementsGeneratorHandler extends AbstractHandler
 						"\n     - a nested class '"+CreatorVerificationVerdictElements.resultsClassName+"' containing additional variables and behavior"+ 
 						"\n     - a component '"+CreatorVerificationVerdictElements.resultsPropertyName+"' of type '"+CreatorVerificationVerdictElements.resultsClassName+"'");
 			if (go) {
-				TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+				TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 				editingDomain.getCommandStack().execute(getTestOracleElementCreationCommand(editingDomain, (Class) selectedElement));
 			}
 		}

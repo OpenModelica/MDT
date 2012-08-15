@@ -122,7 +122,9 @@ public class VeMGenaratorPopupHandler extends AbstractHandler {
 		
 			} catch (NotFoundException e) {
 				e.printStackTrace();
-				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Packages Selection", "Cannot access the root model in Papyrus. Please try it again.");
+				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Packages Selection", "Cannot access the root model in editor. " +
+						"Please open the models in editor, " +
+						"click on a diagram and then try again to select the element in the Model Explorer.");
 			}
 	
 			boolean allPackagesAreSet = targetPackage != null && requirementsPackage != null && testScenariosPackage != null && valueMediatorsPackage != null;
@@ -135,7 +137,9 @@ public class VeMGenaratorPopupHandler extends AbstractHandler {
 			}
 			else {
 				MessageDialog.openError(getShell(), "Packages Selection for Models Generation",
-						"Cannot access the root model in Papyrus. Please try it again.");
+						"Please open the models in editor, " +
+						"click on a diagram and then try again to select the element in the Model Explorer.");
+
 			}
 		}
 		

@@ -55,7 +55,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Property;
-import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.helper.datacollection.VerificationScenariosCollector;
 import org.openmodelica.modelicaml.helper.dialogs.InstantiateVerificationScenarioDialog;
 import org.openmodelica.modelicaml.helper.generators.InstantiatorScenarios;
@@ -140,7 +140,7 @@ public class InstantiateTestScenarioHandler extends AbstractHandler {
 					
 					if (dialog.getReturnCode() == 0) { // if OK button was pressed
 						HashSet<Element> selectedTS = dialog.getTsToBeInstantiated();
-						TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+						TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 						
 						// instantiate test scenarios
 						editingDomain.getCommandStack().execute(getCommand(editingDomain, selectedTS, containingClass));

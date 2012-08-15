@@ -56,7 +56,7 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 
 
@@ -110,7 +110,7 @@ public class CreatorVerificationVerdictElements {
 					"\n     - a component '"+resultsPropertyName+"' of type '"+resultsClassName+"'");
 		if (go) {
 			//########## storing start
-			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+			TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 			CompoundCommand cc = new CompoundCommand("Create Verification Verdict Elements");
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
@@ -329,7 +329,7 @@ public class CreatorVerificationVerdictElements {
 			if (resultsProperty != null) {
 				if (delete) {
 					//########## storing start
-					TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+					TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 					CompoundCommand cc = new CompoundCommand("Create Requirements Verification Verdict Elements");
 					Command command = new RecordingCommand(editingDomain) {
 						@Override
