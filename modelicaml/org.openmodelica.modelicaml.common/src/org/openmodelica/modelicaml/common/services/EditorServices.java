@@ -83,7 +83,7 @@ public class EditorServices {
 				List<EObject> items = new ArrayList<EObject>();
 				items.add((EObject) object);
 				
-				ModelExplorerView.reveal(items, modelExplorerView);
+//				ModelExplorerView.reveal(items, modelExplorerView);
 
 				// set focus
 				modelExplorerView.getControl().setFocus();
@@ -94,7 +94,7 @@ public class EditorServices {
 				}
 				
 				// set new selection
-//				ModelExplorerView.reveal(items, modelExplorerView);
+				ModelExplorerView.reveal(items, modelExplorerView);
 			}
 			else {
 				MessageDialog.openError(ModelicaMLServices.getShell(), "Locate in Model Explorer Error", "Could not access the Model Explorer. Please click on a diagram in order to active the Model Explorer and try again.");

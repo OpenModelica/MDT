@@ -473,7 +473,8 @@ public class XMLReportGenerator {
 				
 				string += "<"+XMLTagName_systemModel+" "+
 								XMLTagName_uid +"=\""+getUid()+"\" "+			
-								XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(treeObject.getUmlElement()))+"\" " +
+//								XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(treeObject.getUmlElement()))+"\" " +
+								XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(VeM, treeObject))+"\" " +
 								XMLTagName_plotLink+"=\""+StringEscapeUtils.escapeXml(getPlotLink(VeM, treeObject))+"\" " +
 								XMLTagName_instanceName+"=\""+treeObject.getDotPath()+"\" "+
 								XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(type))+"\"  "+
@@ -505,7 +506,8 @@ public class XMLReportGenerator {
 
 				string += "<"+XMLTagName_scenario+" "+
 						XMLTagName_uid +"=\""+getUid()+"\" "+	
-						XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(scenario.getUmlElement()))+"\" " +
+//						XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(scenario.getUmlElement()))+"\" " +
+						XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(VeM, scenario))+"\" " +
 						XMLTagName_plotLink+"=\""+StringEscapeUtils.escapeXml(getPlotLink(VeM, scenario))+"\" " +
 						XMLTagName_instanceName+"=\""+scenario.getDotPath()+"\" "+
 						XMLTagName_name+"=\""+StringEscapeUtils.escapeXml(ModelicaMLServices.getName(type))+"\" "+
@@ -578,7 +580,8 @@ public class XMLReportGenerator {
 						XMLTagName_isViolated + "=\""+isViolated+"\" " +
 						XMLTagName_isEvaluated+"=\""+isEvaluated+"\" " +
 						XMLTagName_instanceName+"=\""+requirement.getDotPath()+"\" " +
-						XMLTagName_locateLink+"=\""+getLocateLink(requirement.getUmlElement())+"\" " +
+//						XMLTagName_locateLink+"=\""+getLocateLink(requirement.getUmlElement())+"\" " +
+						XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(VeM, requirement))+"\" " +
 						XMLTagName_plotLink+"=\""+getPlotRequirementStatusLink(VeM, requirement)+"\" " +
 						XMLTagName_name+"=\""+ModelicaMLServices.getName(type)+"\" " +
 						XMLTagName_qualifiedName + "=\""+ModelicaMLServices.getQualifiedName(type) +"\" " +
@@ -618,7 +621,8 @@ public class XMLReportGenerator {
 						XMLTagName_instanceName+"=\"" + client.getDotPath() + "\" " + 
 						XMLTagName_clientPath+"=\"" + client.getDotPathWithoutFirstLevelComponent() + "\" " + 
 						XMLTagName_isMandatory+"=\"" + isMandatory + "\" " +
-						XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(client.getUmlElement()))+"\" " +
+//						XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(client.getUmlElement()))+"\" " +
+						XMLTagName_locateLink+"=\""+StringEscapeUtils.escapeXml(getLocateLink(VeM, client))+"\" " +
 						XMLTagName_plotLink +"=\"" + StringEscapeUtils.escapeXml(getPlotLink(VeM, client)) + "\" " +
 								">";
 			String binding = client.getFinalModificationRightHand();
@@ -910,11 +914,11 @@ public class XMLReportGenerator {
 		return linkAdress;
 	}
 	
-//	private String getLocateLink(Element model, TreeObject treeObject){
-//		String linkAdress = "";
-//		linkAdress = "locate:" + ModelicaMLServices.getQualifiedName(model) + Constants.linkDelimiter + treeObject.getDotPath();
-//		return linkAdress;
-//	}
+	private String getLocateLink(Element model, TreeObject treeObject){
+		String linkAdress = "";
+		linkAdress = "locate:" + ModelicaMLServices.getQualifiedName(model) + Constants.linkDelimiter + treeObject.getDotPath();
+		return linkAdress;
+	}
 	
 	private String getPlotLink(Element model){
 		String linkAdress = "";
