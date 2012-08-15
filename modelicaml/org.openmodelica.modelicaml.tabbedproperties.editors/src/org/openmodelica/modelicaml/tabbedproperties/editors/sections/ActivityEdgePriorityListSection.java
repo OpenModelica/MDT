@@ -65,7 +65,7 @@ import org.eclipse.uml2.uml.ActivityNode;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
-import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 
 
 // TODO: Auto-generated Javadoc
@@ -242,7 +242,7 @@ public class ActivityEdgePriorityListSection extends AbstractPropertySection {
 						//################## Store
 						CompoundCommand cc = new CompoundCommand();
 						// Get Papyrus editing domain.
-						TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+						TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 						
 						// Record command
 						Command command = new RecordingCommand(editingDomain) {
@@ -278,7 +278,7 @@ public class ActivityEdgePriorityListSection extends AbstractPropertySection {
 						//################## Store
 						CompoundCommand cc = new CompoundCommand();
 						// Get Papyrus editing domain.
-						TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+						TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 						
 						// Record command
 						Command command = new RecordingCommand(editingDomain) {
@@ -413,7 +413,7 @@ public class ActivityEdgePriorityListSection extends AbstractPropertySection {
 			//################## Store
 			CompoundCommand cc = new CompoundCommand();
 			// Get Papyrus editing domain.
-			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+			TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 			
 			// Record command
 			Command command = new RecordingCommand(editingDomain) {
@@ -451,7 +451,7 @@ public class ActivityEdgePriorityListSection extends AbstractPropertySection {
 			//################## Store
 			CompoundCommand cc = new CompoundCommand();
 			// Get Papyrus editing domain.
-			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+			TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 			
 			// Record command
 			Command command = new RecordingCommand(editingDomain) {

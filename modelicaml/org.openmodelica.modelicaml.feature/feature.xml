@@ -203,13 +203,6 @@ See the full OSMC Public License conditions for more details.
          unpack="false"/>
 
    <plugin
-         id="org.openmodelica.modelicaml.model.explorer.customization"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.openmodelica.modelicaml.perspective"
          download-size="0"
          install-size="0"
@@ -357,6 +350,13 @@ See the full OSMC Public License conditions for more details.
 
    <plugin
          id="org.openmodelica.modelicaml.relations"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.modelexplorer"
          download-size="0"
          install-size="0"
          version="0.0.0"

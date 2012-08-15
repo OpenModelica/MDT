@@ -41,12 +41,16 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EValidator;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -86,6 +90,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
@@ -110,6 +115,7 @@ import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
@@ -129,10 +135,12 @@ import org.openmodelica.modelicaml.view.componentstree.display.TreeUtls;
 import org.openmodelica.modelicaml.view.componentstree.display.ViewLabelProvider;
 import org.openmodelica.modelicaml.view.componentstree.listeners.DragListener;
 import org.openmodelica.modelicaml.view.componentstree.validation.ComponentModificationValidator;
+
+import com.google.common.collect.Lists;
 /**
  * The Class ComponentsTree.
  */
-public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPageContributor  {
+public class ComponentsTree extends ViewPart implements IGotoMarker, ITabbedPropertySheetPageContributor  {
 
 	/** The viewer. */
 	private TreeViewer viewer;
@@ -794,7 +802,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					UIjob.schedule();
 				}
 				else {
-					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Component Validation", "Please select a class in Papyrus Model Explorer.");
+					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Component Validation", 
+							"Please select a class in Model Explorer.");
 				}
 			}
 		};
@@ -814,7 +823,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					}
 				}
 				else {
-					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Component Validation", "Please select a class in Papyrus Model Explorer.");
+					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Component Validation",
+							"Please select a class in Model Explorer.");
 				}
 			}
 		};
@@ -1172,7 +1182,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		
 		actionLocate = new Action(){
 			public void run() {
-				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
+				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
 
 				ModelExplorerPageBookView modelExplorerPageBookView = null;
 				if (view instanceof ModelExplorerPageBookView) {
@@ -1198,14 +1208,14 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			}
 		};	
 		actionLocate.setText("Locate component");
-		actionLocate.setToolTipText("Locate component in Papyrus Model Explorer");
-		actionLocate.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif")));
+		actionLocate.setToolTipText("Locate component in Model Explorer");
+		actionLocate.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/editor/ModelExplorer.png")));
 //		actionLocate.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 //		
 		actionLocateType = new Action(){
 			public void run() {
 				
-				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
+				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
 
 				ModelExplorerPageBookView modelExplorerPageBookView = null;
 				if (view instanceof ModelExplorerPageBookView) {
@@ -1247,8 +1257,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			}
 		};	
 		actionLocateType.setText("Locate the component type");
-		actionLocateType.setToolTipText("Locate in Papyrus Model Explorer");
-		actionLocateType.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif")));
+		actionLocateType.setToolTipText("Locate in Model Explorer");
+		actionLocateType.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/editor/ModelExplorer.png")));
 //		actionLocateType.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 		
 		
@@ -1725,7 +1735,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		
 		actionShowAboutInfo = new Action("actionShowAboutInfo") { //obviously a check box style
 			public void run() {
-				showMessage("Notes for 'Class Components Tree' view", "This view shows the components tree of the class that is selected in Papyrus model explorer.");
+				showMessage("Notes for 'Class Components Tree' view", 
+						"This view shows the components tree of the class that is selected in  Model Explorer.");
 //							"\n\nNote that arrays are not expanded.");
 			}
 		};
@@ -2180,7 +2191,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 					sourcepart != null 
 					&& sourcepart.getSite() != null
 					&& sourcepart.getSite().getId()!= null
-					&& sourcepart.getSite().getId().equals(Constants.VIEW_PAPYRUS_MODELEXPLORER)) {
+					&& sourcepart.getSite().getId().equals(Constants.VIEW_MODELEXPLORER)) {
 				
 				EObject selectedElement = null;
 	        	if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
@@ -2462,5 +2473,32 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 
 	public void setAst(ClassInstantiation ast) {
 		this.ast = ast;
+	}
+
+	@Override
+	public void gotoMarker(IMarker marker) {
+		String uriAttribute = marker.getAttribute(EValidator.URI_ATTRIBUTE, null);
+		if(uriAttribute != null) {
+			URI uri = URI.createURI(uriAttribute);
+			
+			// TODO: implement the goto operation
+			
+//			org.openmodelica.modelicaml.common.instantiation.TreeUtls.findTreeItems(dotPath, parent, list)
+//			EditorServices.locateInComponentsTreeView(Object object);
+//			
+//			
+//			IViewPart viewPart = getActiveView();
+//			if(viewPart instanceof ModelExplorerView) {
+//				ModelExplorerView modelExplorerView = (ModelExplorerView)viewPart;
+//				EditingDomain domain = modelExplorerView.getEditingDomain();
+//				EObject eObject = domain.getResourceSet().getEObject(uri, false);
+//				if(eObject != null) {
+//					CommonViewer treeViewer = ((ModelExplorerView)viewPart).getCommonViewer();
+//					// The common viewer is in fact a tree viewer
+//					// bug enhancement: use function in ModelExplorerView instead of findElementForEObject
+//					ModelExplorerView.reveal(Lists.newArrayList(eObject), treeViewer);
+//				}
+//			}
+		}
 	}
 }

@@ -34,13 +34,34 @@
  */
 package org.openmodelica.modelicaml.validation.views;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EValidator;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.papyrus.infra.core.sasheditor.editor.IPage;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.MarkerSupportView;
+import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.utls.ResourceManager;
+import org.openmodelica.modelicaml.modelexplorer.ModelExplorerPage;
+import org.openmodelica.modelicaml.modelexplorer.ModelExplorerPageBookView;
+import org.openmodelica.modelicaml.modelexplorer.ModelExplorerView;
+
 
 // TODO: Auto-generated Javadoc
 /**
@@ -53,9 +74,9 @@ public class ModelicaMLValidationView extends MarkerSupportView {
 	 */
     public ModelicaMLValidationView() {
         super("org.openmodelica.modelicaml.markerContentGenerator");
-           
     }
 
+    
 //	public static void openMarkerInEditor(IMarker marker, IWorkbenchPage page) {
 //		// optimization: if the active editor has the same input as
 //		// the
@@ -119,7 +140,56 @@ public class ModelicaMLValidationView extends MarkerSupportView {
     	// TODO Auto-generated method stub
     	super.createPartControl(parent);
     	
-    	Action deleteAllAction = new Action() {
+    	
+    	Action locateAction = new Action("locateAction") {
+    		@Override
+    		public void run() {
+    			// TODO Auto-generated method stub
+//    			super.run();
+    			
+    			IMarker[] markers = getMarkersSelectedInView();
+				for (IMarker iMarker : markers) {
+					String uriAttribute = iMarker.getAttribute(EValidator.URI_ATTRIBUTE, null);
+					if(uriAttribute != null) {
+						URI uri = URI.createURI(uriAttribute);
+						
+						
+						IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
+						if(viewPart instanceof ModelExplorerPageBookView) {
+							org.eclipse.ui.part.IPage page =  ((ModelExplorerPageBookView)viewPart).getCurrentPage();
+							
+							if (page instanceof ModelExplorerPage) {
+								ModelExplorerView modelExplorerView = (ModelExplorerView) ( (ModelExplorerPage) ((ModelExplorerPageBookView)viewPart ).getCurrentPage() ).getViewer();
+								EditingDomain domain = modelExplorerView.getEditingDomain();
+								EObject eObject = domain.getResourceSet().getEObject(uri, false);
+								if(eObject != null) {
+									CommonViewer treeViewer = ((ModelExplorerView)modelExplorerView).getCommonViewer();
+									// The common viewer is in fact a tree viewer
+									// bug enhancement: use function in ModelExplorerView instead of findElementForEObject
+									List<Object> list = new ArrayList<Object>();
+									list.add(eObject);
+									ModelExplorerView.reveal(list, treeViewer);
+								}
+							}
+						}
+						
+						
+					}
+				}
+			}
+		}; 
+		
+		locateAction.setText("Locate selected markers in Model Explorer");
+		locateAction.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/editor/ModelExplorer.png")));
+		
+		getViewSite().getActionBars().getToolBarManager().add(new Separator());
+		
+		getViewSite().getActionBars().getToolBarManager().add(locateAction);
+
+		
+		
+		
+		Action deleteAllAction = new Action() {
     		@Override
     		public void run() {
     			// TODO Auto-generated method stub
@@ -133,11 +203,51 @@ public class ModelicaMLValidationView extends MarkerSupportView {
     		}
 		}; 
 		
-		deleteAllAction.setText("Delete All");
+		deleteAllAction.setText("Delete all selected markers");
 		deleteAllAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(org.eclipse.ui.internal.SharedImages.IMG_ELCL_REMOVEALL));
 		getViewSite().getActionBars().getToolBarManager().add(deleteAllAction);
+
+		
+		/*
+		 * TODO: does not work ... :(
+		 */
+//		parent.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseDoubleClick(MouseEvent e) {
+//				IMarker[] markers = getSelectedMarkers();
+//				for (IMarker iMarker : markers) {
+//					String uriAttribute = iMarker.getAttribute(EValidator.URI_ATTRIBUTE, null);
+//					if(uriAttribute != null) {
+//						URI uri = URI.createURI(uriAttribute);
+//						IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
+//						if(viewPart instanceof ModelExplorerView) {
+//							ModelExplorerView modelExplorerView = (ModelExplorerView)viewPart;
+//							EditingDomain domain = modelExplorerView.getEditingDomain();
+//							EObject eObject = domain.getResourceSet().getEObject(uri, false);
+//							if(eObject != null) {
+//								CommonViewer treeViewer = ((ModelExplorerView)viewPart).getCommonViewer();
+//								// The common viewer is in fact a tree viewer
+//								// bug enhancement: use function in ModelExplorerView instead of findElementForEObject
+//								List<Object> list = new ArrayList<Object>();
+//								list.add(eObject);
+//								ModelExplorerView.reveal(list, treeViewer);
+//							}
+//						}
+//					}
+//				}
+//			}
+//		});
+		
     }
    
+    
+    public IMarker[] getMarkersSelectedInView(){
+		IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_VALIDATION);
+		if (viewPart instanceof MarkerSupportView) {
+			return ((MarkerSupportView)viewPart).getSelectedMarkers();
+		}
+    	return super.getSelectedMarkers();
+    }
    
     /**
 	 * Gets the value.

@@ -72,7 +72,7 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
-import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.simulation.omc.OBSOLETE_OMCCommandExecuter;
 import org.openmodelica.modelicaml.simulation.omc.OBSOLETE_OMCSimulationDataStorage;
@@ -136,7 +136,7 @@ public class OBSOLETE_CGAndSimulationOMCAction extends AbstractHandler {
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+		TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 		editingDomain.getCommandStack().execute(getCommand(editingDomain));
 		return null;
 	}

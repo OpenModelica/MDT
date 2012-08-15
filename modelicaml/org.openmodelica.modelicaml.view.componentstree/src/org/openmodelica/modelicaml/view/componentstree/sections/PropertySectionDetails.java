@@ -234,7 +234,7 @@ public class PropertySectionDetails extends AbstractPropertySection {
 	private void locate(Object object){
 		if (object instanceof EObject) {
 			
-			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
+			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
 
 			ModelExplorerPageBookView modelExplorerPageBookView = null;
 			if (view instanceof ModelExplorerPageBookView) {

@@ -34,7 +34,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
-import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.modelica.importer.dialogs.SynchronizeOptionsDialog;
 import org.openmodelica.modelicaml.modelica.importer.helper.ModelicaMLElementsCreator;
 import org.openmodelica.modelicaml.modelica.importer.model.ClassItem;
@@ -410,7 +410,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 			 * an element that will not be modified, e.g. the ModelicaML root. 
 			 */
 //			PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
-			PapyrusServices.locateInModelExplorer(treeBuilder.getModelicaMLRoot(), true);
+			EditorServices.locateInModelExplorer(treeBuilder.getModelicaMLRoot(), true);
 			
     	  // As a job
 			TreeObject[] children = treeRoot.getChildren();
@@ -489,7 +489,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
     					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
     						"ModelicaML Model Access Error", 
     						"Cannot acceess the ModelicaML model. " +
-    						"Please make sure that the ModelicaML model is open in Papyrus editor.");
+    						"Please make sure that the ModelicaML model is open in editor.");
     				}
 
     				return Status.OK_STATUS;
@@ -524,7 +524,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 		 * proxies that are displayed in Papyrus Properties View and are modified by 
 		 * the synchronization job at the same time. 
 		 */
-		if (!PapyrusServices.isVisiblePapyrusModelExplorerView()) {
+		if (!EditorServices.isVisiblePapyrusModelExplorerView()) {
 			return false;
 		}
 		

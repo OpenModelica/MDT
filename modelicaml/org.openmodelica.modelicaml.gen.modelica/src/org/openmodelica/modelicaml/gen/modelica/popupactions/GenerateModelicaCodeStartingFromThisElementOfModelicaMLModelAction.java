@@ -64,7 +64,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.State;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
-import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.gen.modelica.cg.helpers.CGConfigurationManager;
 
 import fr.obeo.acceleo.chain.File;
@@ -112,7 +112,7 @@ public class GenerateModelicaCodeStartingFromThisElementOfModelicaMLModelAction 
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+		TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 //		TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
 		editingDomain.getCommandStack().execute(getCommand(editingDomain));
 		return null;

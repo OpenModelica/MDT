@@ -635,7 +635,8 @@ public class TreeBuilder {
 	
 	private void openModelAccessError(){
 		String errorTitle = "Bindings View Reload Error";
-		String message = "Could not access the ModelicaML model in Papyrus. Please click on a Papyrus diagram and try again.";
+		String message = "Could not access the ModelicaML model in editor. " +
+				"Please make sure the the model is opened in edtor, click on a diagram and then reload again.";
 		MessageDialog.openError(ModelicaMLServices.getShell(), errorTitle, message);
 	}
 	

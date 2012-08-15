@@ -54,7 +54,7 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 public class PapyrusModelicaMLPerspective implements IPerspectiveFactory {
 
 	/** The Constant ID_MODELEXPLORER. */
-	protected static final String ID_MODELEXPLORER = Constants.VIEW_PAPYRUS_MODELEXPLORER;
+	protected static final String ID_MODELEXPLORER = Constants.VIEW_MODELEXPLORER;
 	
 	/** The Constant ID_COMPONENT_TREE_VIEW. */
 	protected static final String ID_COMPONENT_TREE_VIEW = Constants.VIEW_COMPONENT_TREE_VIEW;

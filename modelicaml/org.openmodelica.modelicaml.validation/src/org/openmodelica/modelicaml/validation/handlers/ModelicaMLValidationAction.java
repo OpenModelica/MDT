@@ -56,7 +56,8 @@ public class ModelicaMLValidationAction implements IHandler {
 				topLevelElement = umlModel.lookupRoot();
 			} catch (NotFoundException e) {
 //				e.printStackTrace();
-				MessageDialog.openError(new Shell(), "ModelicaML Validation Error", "Could not access the top-level element in Papyrus.");
+				MessageDialog.openError(new Shell(), "ModelicaML Validation Error", 
+						"Could not access the top-level element in editor.");
 			}
 
 		return topLevelElement;

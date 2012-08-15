@@ -68,7 +68,7 @@ import org.eclipse.uml2.uml.Transition;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.eclipse.uml2.uml.Vertex;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
-import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 //import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 //import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
@@ -277,7 +277,7 @@ public class TransitionPriorityListSection extends AbstractPropertySection {
 						//################## Store
 						CompoundCommand cc = new CompoundCommand();
 						// Get Papyrus editing domain.
-						TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+						TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 						
 						// Record command
 						Command command = new RecordingCommand(editingDomain) {
@@ -314,7 +314,7 @@ public class TransitionPriorityListSection extends AbstractPropertySection {
 						//################## Store
 						CompoundCommand cc = new CompoundCommand();
 						// Get Papyrus editing domain.
-						TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+						TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 						
 						// Record command
 						Command command = new RecordingCommand(editingDomain) {
@@ -456,7 +456,7 @@ public class TransitionPriorityListSection extends AbstractPropertySection {
 			//################## Store
 			CompoundCommand cc = new CompoundCommand();
 			// Get Papyrus editing domain.
-			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+			TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 			
 			// Record command
 			Command command = new RecordingCommand(editingDomain) {
@@ -493,7 +493,7 @@ public class TransitionPriorityListSection extends AbstractPropertySection {
 			//################## Store
 			CompoundCommand cc = new CompoundCommand();
 			// Get Papyrus editing domain.
-			TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+			TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 			
 			// Record command
 			Command command = new RecordingCommand(editingDomain) {

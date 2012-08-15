@@ -558,7 +558,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		actionLocateInPapyrusModelExplorer = new Action("actionLocateInPapyrusModelExplorer") {
 			public void run() {
 //				showMessage("The view will be reloaded");
-				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
+				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
 
 				ModelExplorerPageBookView modelExplorerPageBookView = null;
 				if (view instanceof ModelExplorerPageBookView) {
@@ -585,10 +585,10 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				}
 			}
 		};
-//		actionLocateInPapyrusModelExplorer.setText("Locate in Papyrus Model Explorer");
-		actionLocateInPapyrusModelExplorer.setText("Locate in Papyrus");
-		actionLocateInPapyrusModelExplorer.setToolTipText("Locate in Papyrus Model Explorer");
-		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif")));
+//		actionLocateInPapyrusModelExplorer.setText("Locate in  Model Explorer");
+		actionLocateInPapyrusModelExplorer.setText("Locate in Model Explorer");
+		actionLocateInPapyrusModelExplorer.setToolTipText("Locate in Model Explorer");
+		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/editor/ModelExplorer.png")));
 		
 		
 		actionReload = new Action("actionReload") {
@@ -1011,7 +1011,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 								
 								if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() != null) {
 									// get the value bindings view
-									IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_COMPONENT_VALUE_BINDINGS);
+									IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_VALUE_BINDINGS);
 									ValueBindingsView myView = null;
 									
 									if (view instanceof ValueBindingsView) {

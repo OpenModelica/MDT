@@ -66,7 +66,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
-import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.simulation.testexecution.actions.PlotResultsAction;
 
 public class DialogMessageWithHTMLBrowser extends Dialog {
@@ -117,14 +117,14 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 				if (elementQName != null) {
 					for (Element  element : findElement(elementQName)) {
 //						PapyrusServices.locateWithReselection(element);
-						PapyrusServices.locateInModelExplorer(element, true);
+						EditorServices.locateInModelExplorer(element, true);
 					}
 				}
 				
 				String componentDotPath = "";
 				if (splitted.length == 2) {
 					componentDotPath = splitted[1];
-					PapyrusServices.locateInComponentsTreeView(componentDotPath);
+					EditorServices.locateInComponentsTreeView(componentDotPath);
 				}
 
 			}

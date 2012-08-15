@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+
+<!--
    <extension
          point="org.eclipse.ui.menus">
-<!--
+
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.papyrus.modelexplorer.modelexplorer.popup">
@@ -38,9 +40,8 @@
             </visibleWhen>
          </command>
       </menuContribution>
--->
-      
    </extension>
+   -->
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -97,19 +98,6 @@
       </view>
    </extension>
    <extension
-         point="org.eclipse.ui.handlers">
-      <!--
-      <handler
-            class="org.openmodelica.modelicaml.validation.handlers.ModelicaMLValidationSubTreeAction"
-            commandId="org.openmodelica.modelicaml.validation.subtree">
-      </handler>
-      -->
-      <handler
-            class="org.openmodelica.modelicaml.validation.handlers.ModelicaMLValidationAction"
-            commandId="org.openmodelica.modelicaml.validation.entiremodel">
-      </handler>
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
       <!--
       <command
@@ -121,6 +109,19 @@
             id="org.openmodelica.modelicaml.validation.entiremodel"
             name="Validate ModelicaML Entire Model">
       </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <!--
+      <handler
+            class="org.openmodelica.modelicaml.validation.handlers.ModelicaMLValidationSubTreeAction"
+            commandId="org.openmodelica.modelicaml.validation.subtree">
+      </handler>
+      -->
+      <handler
+            class="org.openmodelica.modelicaml.validation.handlers.ModelicaMLValidationAction"
+            commandId="org.openmodelica.modelicaml.validation.entiremodel">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.emf.validation.constraintProviders">
@@ -135,8 +136,21 @@
       <constraintProvider
             cache="true">
          <package
+               namespaceUri="http://www.eclipse.org/uml2/2.0.0/UML">
+         </package>
+         <package
+               namespaceUri="http://www.eclipse.org/uml2/2.1.0/UML">
+         </package>
+         <package
                namespaceUri="http://www.eclipse.org/uml2/3.0.0/UML">
          </package>
+         <package
+               namespaceUri="http://www.eclipse.org/uml2/4.0.0/UML">
+         </package>
+         <!--<package
+               namespaceUri="http://www.eclipse.org/uml2/3.0.0/UML">
+         </package>
+         -->
          <constraints
                categories="org.openmodelica.modelicaml.validation.batch">
             <constraint

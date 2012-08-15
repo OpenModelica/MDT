@@ -82,7 +82,7 @@ import org.eclipse.uml2.uml.util.UMLUtil;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
-import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.eclipse.swt.layout.GridData;
 
@@ -520,7 +520,7 @@ public class NOT_USED_SelectValueClientOrProviderDialog extends Dialog {
 				if (s != null) {
 					
 					//########## storing start
-					TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+					TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 					CompoundCommand cc = new CompoundCommand();
 					Command command = new RecordingCommand(editingDomain) {
 						@Override
@@ -578,7 +578,7 @@ public class NOT_USED_SelectValueClientOrProviderDialog extends Dialog {
 				
 				if (list instanceof EList) {
 //					########## storing start
-					TransactionalEditingDomain editingDomain = PapyrusServices.getPapyrusEditingDomain();
+					TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 					CompoundCommand cc = new CompoundCommand("Add value mediator reference");
 					Command command = new RecordingCommand(editingDomain) {
 						@SuppressWarnings({ "unchecked", "rawtypes" })

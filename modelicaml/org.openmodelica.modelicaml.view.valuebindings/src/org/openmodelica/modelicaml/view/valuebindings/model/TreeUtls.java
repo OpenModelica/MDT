@@ -58,7 +58,7 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView;
 
 public class TreeUtls {
@@ -323,7 +323,7 @@ public class TreeUtls {
 	
 	
 	private static TransactionalEditingDomain getTransactionalEditingDomain(){
-		return PapyrusServices.getPapyrusEditingDomain();
+		return EditorServices.getPapyrusEditingDomain();
 	}
 	
 	

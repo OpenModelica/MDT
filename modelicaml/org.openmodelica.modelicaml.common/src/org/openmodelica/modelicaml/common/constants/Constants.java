@@ -321,11 +321,12 @@ public class Constants {
 	public final static Integer numberOfItemsInCreateNewElementsDiologs = 5;
 	public final static String MODELICAML_PROFILE_URI = "pathmap://PALETTE_PROFILE/ModelicaML.profile.uml"; //$NON-NLS-1$
 	
-	public final static String VIEW_PAPYRUS_MODELEXPLORER = "org.eclipse.papyrus.views.modelexplorer.modelexplorer";
+//	public final static String VIEW_PAPYRUS_MODELEXPLORER = "org.eclipse.papyrus.views.modelexplorer.modelexplorer";
+	public final static String VIEW_MODELEXPLORER = "org.openmodelica.modelicaml.modelexplorer";
 
 	public final static String VIEW_COMPONENT_TREE_VIEW = "org.openmodelica.modelicaml.view.componentstree";
-	public final static String VIEW_COMPONENT_VALUE_BINDINGS = "org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView";
-	public final static String VIEW_VALIDATION = "org.openmodelica.modelicaml.gen.modelica.validation";
+	public final static String VIEW_VALUE_BINDINGS = "org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView";
+	public final static String VIEW_VALIDATION = "org.openmodelica.modelicaml.validation.view";
 	
 	
 	/*

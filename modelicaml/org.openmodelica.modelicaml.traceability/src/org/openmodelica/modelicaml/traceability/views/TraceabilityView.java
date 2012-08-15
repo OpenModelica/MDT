@@ -60,7 +60,7 @@ import org.eclipse.uml2.uml.Package;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
-import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.helper.generators.GeneratorVeMScenariosBased;
@@ -460,7 +460,7 @@ public class TraceabilityView extends ViewPart {
 					
 					if (go && treeItem.getUmlElement() != null && treeBuilder.getSelectedElement() != null) {
 						
-						TransactionalEditingDomain  editingDomain = PapyrusServices.getPapyrusEditingDomain();
+						TransactionalEditingDomain  editingDomain = EditorServices.getPapyrusEditingDomain();
 						
 						if (editingDomain != null) {
 							List<Element> elementsToBeInstantiated = new ArrayList<Element>();
@@ -489,7 +489,7 @@ public class TraceabilityView extends ViewPart {
 								protected void doExecute() {
 									EObject createdModel = mc.createModel();
 //									PapyrusServices.locateWithReselection(createdModel);
-									PapyrusServices.locateInModelExplorer(createdModel, true);
+									EditorServices.locateInModelExplorer(createdModel, true);
 								}
 							};
 							cc.append(command);
@@ -677,7 +677,7 @@ public class TraceabilityView extends ViewPart {
 		
 		actionLocateInPapyrusModelExplorer = new Action("actionLocateInPapyrusModelExplorer") {
 			public void run() {
-				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
+				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
 
 				ModelExplorerPageBookView modelExplorerPageBookView = null;
 				if (view instanceof ModelExplorerPageBookView) {
@@ -706,7 +706,7 @@ public class TraceabilityView extends ViewPart {
 		};
 		actionLocateInPapyrusModelExplorer.setText("Locate in Model Explorer");
 		actionLocateInPapyrusModelExplorer.setToolTipText("Locate in Model Explorer");
-		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif")));
+		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/editor/ModelExplorer.png")));
 		
 		
 		doubleClickAction = new Action() {

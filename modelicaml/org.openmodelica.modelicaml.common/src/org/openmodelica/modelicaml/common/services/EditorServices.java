@@ -21,7 +21,7 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
 
 
-public class PapyrusServices {
+public class EditorServices {
 
 	public static TransactionalEditingDomain getPapyrusEditingDomain(){
 		ServicesRegistry serviceRegistry;
@@ -40,7 +40,7 @@ public class PapyrusServices {
 	
 	
 	public static CommonViewer getModelExplorerView(){
-		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
+		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
 
 		ModelExplorerPageBookView modelExplorerPageBookView = null;
 		if (view instanceof ModelExplorerPageBookView) {
@@ -53,7 +53,7 @@ public class PapyrusServices {
 	
 	
 	public static boolean isVisiblePapyrusModelExplorerView(){
-		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
+		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
 
 		ModelExplorerPageBookView modelExplorerPageBookView = null;
 		if (view instanceof ModelExplorerPageBookView) {
@@ -72,7 +72,7 @@ public class PapyrusServices {
 	public static void locateInModelExplorer(Object object, boolean reselectFirst){
 		if (object instanceof EObject) {
 			
-			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
+			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
 
 			ModelExplorerPageBookView modelExplorerPageBookView = null;
 			if (view instanceof ModelExplorerPageBookView) {
@@ -83,21 +83,21 @@ public class PapyrusServices {
 				List<EObject> items = new ArrayList<EObject>();
 				items.add((EObject) object);
 				
-//				ModelExplorerView.reveal(items, modelExplorerView);
+				ModelExplorerView.reveal(items, modelExplorerView);
 
 				// set focus
 				modelExplorerView.getControl().setFocus();
 				
 				if (reselectFirst) {
 					// reset the selection so that the components tree can instantiate the selected class again
-					ModelExplorerView.reveal(new ArrayList<EObject>(), modelExplorerView);
+					ModelExplorerView.selectReveal(new StructuredSelection(items), modelExplorerView);
 				}
 				
 				// set new selection
-				ModelExplorerView.reveal(items, modelExplorerView);
+//				ModelExplorerView.reveal(items, modelExplorerView);
 			}
 			else {
-				MessageDialog.openError(ModelicaMLServices.getShell(), "Locate in Papyrus Error", "Could not access the Model Explorer. Please click on a Papyrus diagram in order to active the Model Explorer and try again.");
+				MessageDialog.openError(ModelicaMLServices.getShell(), "Locate in Model Explorer Error", "Could not access the Model Explorer. Please click on a diagram in order to active the Model Explorer and try again.");
 			}
       	}
 	}

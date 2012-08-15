@@ -75,7 +75,7 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
-import org.openmodelica.modelicaml.common.services.PapyrusServices;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.modelica.importer.Activator;
 import org.openmodelica.modelicaml.modelica.importer.dialogs.SynchronizeOptionsDialog;
@@ -507,7 +507,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								 * an element that will not be modified, e.g. the ModelicaML root. 
 								 */
 //								PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
-								PapyrusServices.locateInModelExplorer(treeBuilder.getModelicaMLRoot(), true);
+								EditorServices.locateInModelExplorer(treeBuilder.getModelicaMLRoot(), true);
 
 								// run the synch action after loading
 	        					actionSynchronize.run();
@@ -540,11 +540,11 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		actionReload = new Action() {
 			public void run() {
 				
-				if (!PapyrusServices.isVisiblePapyrusModelExplorerView()) {
+				if (!EditorServices.isVisiblePapyrusModelExplorerView()) {
 					MessageDialog.openError(getSite().getShell(), "Modelica Model Proxies Synchronization Error", 
-							"When synchronizing proxies the Papyrus Model Explorer View must be visible " +
+							"When synchronizing proxies the Model Explorer View must be visible " +
 							"so that the viewer selection can be reset in order to avoid cuncurrent access to " +
-							"proxies that are displayed in Papyrus Properties View and are modified by " +
+							"proxies that are displayed in Properties View and are modified by " +
 							"the synchronization job at the same time." +
 							"\n\n Please make the Papyrus Model Explorer View visible and do not " +
 							"select existing Modelica model proxies while the synchronization is running.");
@@ -776,7 +776,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					MessageDialog.openError(getSite().getShell(), 
 						"ModelicaML Model Access Error", 
 						"Cannot acceess the ModelicaML model. " +
-						"Please make sure that the ModelicaML model is open in Papyrus editor.");
+						"Please make sure that the ModelicaML model is open in editor.");
 				}
 				
 				viewer.refresh();
@@ -1093,11 +1093,11 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 //				}
 				
 				
-				if (!PapyrusServices.isVisiblePapyrusModelExplorerView()) {
+				if (!EditorServices.isVisiblePapyrusModelExplorerView()) {
 					MessageDialog.openError(getSite().getShell(), "Modelica Model Proxies Synchronization Error", 
-							"When synchronizing proxies the Papyrus Model Explorer View must be visible " +
+							"When synchronizing proxies the Model Explorer View must be visible " +
 							"so that the viewer selection can be reset in order to avoid parallel access to " +
-							"proxies that are displayed in Papyrus Properties View and are modified by " +
+							"proxies that are displayed in Properties View and are modified by " +
 							"the synchronization job at the same time." +
 							
 							"\n\nPlease make the Papyrus Model Explorer View visible and do not " +
@@ -1113,7 +1113,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				 * an element that will not be modified, e.g. the ModelicaML root. 
 				 */
 //				PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
-				PapyrusServices.locateInModelExplorer(treeBuilder.getModelicaMLRoot(), true);
+				EditorServices.locateInModelExplorer(treeBuilder.getModelicaMLRoot(), true);
 				
 				// As a job
 				TreeObject[] children = treeRoot.getChildren();
@@ -1286,7 +1286,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		
 		actionLocateInPapyrusModelExplorer = new Action("actionLocateInPapyrusModelExplorer") {
 			public void run() {
-				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
+				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
 
 				ModelExplorerPageBookView modelExplorerPageBookView = null;
 				if (view instanceof ModelExplorerPageBookView) {
@@ -1313,9 +1313,9 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				}
 			}
 		};
-		actionLocateInPapyrusModelExplorer.setText("Locate in Papyrus");
-		actionLocateInPapyrusModelExplorer.setToolTipText("Locate in Papyrus Model Explorer");
-		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/papyrus/ModelExplorer.gif")));
+		actionLocateInPapyrusModelExplorer.setText("Locate in Model Explorer");
+		actionLocateInPapyrusModelExplorer.setToolTipText("Locate in Model Explorer");
+		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/editor/ModelExplorer.png")));
 		
 		
 		actionLinkWithEditor = new Action("actionLinkWithEditor", 2) { //obviously a check box style
@@ -1759,7 +1759,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		 * an element that will not be modified, e.g. the ModelicaML root. 
 		 */
 //		PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
-		PapyrusServices.locateInModelExplorer(treeBuilder.getModelicaMLRoot(), true);
+		EditorServices.locateInModelExplorer(treeBuilder.getModelicaMLRoot(), true);
 		
 		// start sync
 		if (umlModel != null) {

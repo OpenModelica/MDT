@@ -189,7 +189,7 @@ public class TreeBuilder {
 				e.printStackTrace();
 				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 						"Packages Selection", 
-						"Cannot access the root model in Papyrus. Please open die model in editor and try it again.");
+						"Cannot access the root model in editor. Please open die model in editor and try it again.");
 			}
 		}
 		
