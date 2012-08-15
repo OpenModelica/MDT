@@ -1,0 +1,1603 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+      <extension-point id="actionHandler" name="actionHandler" schema="schema/org.eclipse.papyrus.views.modelexplorer.actionHandler.exsd"/>
+<extension
+      point="org.eclipse.emf.facet.infra.query.registration">
+   <modelqueryset
+         file="resources/ModelicaML.querySet">
+   </modelqueryset>
+</extension>
+  <extension
+         point="org.eclipse.emf.facet.infra.browser.custom.core.registration">
+      <browserCustomization
+            file="resources/ModelicaMLCustomization.uiCustom"
+            loadByDefault="true">
+      </browserCustomization>
+   </extension>
+   <extension point="org.eclipse.ui.views">
+      <view category="org.openmodelica.modelicaml.category" class="org.openmodelica.modelicaml.modelexplorer.ModelExplorerPageBookView" icon="icons/ModelicaML_logo_16x16.png" id="org.openmodelica.modelicaml.modelexplorer" name="Model Explorer" restorable="true">
+      </view>
+   </extension>
+   <extension point="org.eclipse.ui.navigator.viewer">
+      <viewer popupMenuId="org.openmodelica.modelicaml.modelexplorer.popup" viewerId="org.openmodelica.modelicaml.modelexplorer">
+      </viewer>
+      <viewerContentBinding viewerId="org.openmodelica.modelicaml.modelexplorer">
+         <includes>
+            <contentExtension pattern="org.eclipse.papyrus.views.modelexplorer.*">
+            </contentExtension>
+         </includes>
+      </viewerContentBinding>
+      <!--We add a drag assistant in order support drag and drop between Model Explorer and Table Editor or other View/editors -->
+      <dragAssistant class="org.eclipse.papyrus.views.modelexplorer.dnd.EObjectDragAdapterAssistant" viewerId="org.openmodelica.modelicaml.modelexplorer">
+      </dragAssistant>
+   </extension>
+   <extension point="org.eclipse.ui.navigator.navigatorContent">
+      <navigatorContent activeByDefault="false" contentProvider="org.eclipse.papyrus.views.modelexplorer.MoDiscoContentProvider" id="org.openmodelica.modelicaml.modelexplorer.navigatorContent" labelProvider="org.eclipse.papyrus.views.modelexplorer.MoDiscoLabelProvider" name="Model Contents" priority="lowest">
+         <triggerPoints>
+            <or>
+               <instanceof value="org.eclipse.emf.ecore.EObject">
+               </instanceof>
+               <adapt type="org.eclipse.emf.ecore.EObject">
+               </adapt>
+               <instanceof value="java.lang.Object">
+               </instanceof>
+            </or>
+         </triggerPoints>
+         <possibleChildren>
+            <or>
+               <instanceof value="org.eclipse.gmf.runtime.notation.impl.DiagramImpl">
+               </instanceof>
+               <instanceof value="org.eclipse.emf.facet.infra.browser.uicore.internal.model.ModelElementItem"/>
+            </or>
+         </possibleChildren>
+         <actionProvider class="org.eclipse.papyrus.views.modelexplorer.actionprovider.GenericTransformActionProvider" id="org.eclipse.papyrus.views.modelexplorer.actionprovider.GenericTransformActionProvider">
+            <enablement>
+               <or>
+                  <adapt type="org.eclipse.emf.ecore.EObject">
+                  </adapt>
+               </or>
+            </enablement>
+         </actionProvider>
+          
+         <actionProvider class="org.eclipse.papyrus.views.modelexplorer.actionprovider.EditingDomainActionProvider" id="org.eclipse.papyrus.views.modelexplorer.actionprovider.EditingDomainActionProvider">
+                  <enablement>
+               <and>
+                  <not>
+                     <instanceof value="org.eclipse.gmf.runtime.notation.Diagram">
+                     </instanceof>
+                  </not>
+                  <adapt type="org.eclipse.emf.ecore.EObject">
+                  </adapt>
+               </and>
+            </enablement>
+         </actionProvider>
+         <dropAssistant class="org.eclipse.papyrus.views.modelexplorer.dnd.CommonDropAdapterAssistant" id="org.eclipse.papyrus.views.modelexplorer.dnd.CommonDropAdapterAssistant">
+            <possibleDropTargets>
+               <or>
+                  <instanceof value="org.eclipse.gmf.runtime.notation.impl.DiagramImpl">
+                  </instanceof>
+                  <adapt type="org.eclipse.emf.ecore.EObject">
+                  </adapt>
+               </or>
+            </possibleDropTargets>
+         </dropAssistant>
+    
+      </navigatorContent>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
+         <separator
+               name="org.openmodelica.modelicaml.profile.separator1"
+               visible="true">
+         </separator>
+         <menu
+               icon="resources/icons/icons16/new.gif"
+               id="org.openmodelica.modelicaml.popup.newelement"
+               label="New Element">
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreatePackageCommand"
+                  icon="resources/icons/papyrus/Package.gif"
+                  label="Package(s)"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateClassDiagram"
+                  icon="resources/icons/papyrus/Diagram_Class.gif"
+                  label="Class Diagram"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <separator
+                  name="org.openmodelica.modelicaml.profile.separator1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateModelicaRequirementCommand"
+                  icon="resources/icons/icons16/requirement.gif"
+                  label="Requirement(s)"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <instanceof
+                                 value="org.eclipse.uml2.uml.Package">
+                           </instanceof>
+                        </adapt>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateModelicaClassCommand"
+                  icon="resources/icons/icons16/model.gif"
+                  label="System Model(s)"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <instanceof
+                                 value="org.eclipse.uml2.uml.Package">
+                           </instanceof>
+                        </adapt>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateModelicaConnectorCommand"
+                  icon="resources/icons/icons16/connector.gif"
+                  label="Interface Defintion(s)"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <instanceof
+                                 value="org.eclipse.uml2.uml.Package">
+                           </instanceof>
+                        </adapt>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateModelicaCalculationModelCommand"
+                  icon="resources/icons/icons16/calculationModel.gif"
+                  label="Calculation Model(s)"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <instanceof
+                                 value="org.eclipse.uml2.uml.Package">
+                           </instanceof>
+                        </adapt>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateTestScenarioCommand"
+                  icon="resources/icons/icons16/calculationModel.gif"
+                  label="Verification Scenario(s)"
+                  style="push"
+                  tooltip="Verification Scenario(s)">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <instanceof
+                                 value="org.eclipse.uml2.uml.Package">
+                           </instanceof>
+                        </adapt>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateModelicaSimulationModelCommand"
+                  icon="resources/icons/icons16/model.gif"
+                  label="Simulation Model(s)"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <instanceof
+                                 value="org.eclipse.uml2.uml.Package">
+                           </instanceof>
+                        </adapt>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+            </command>
+            <separator
+                  name="org.openmodelica.modelicaml.profile.separator2"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateValueMediatorsContainerCommand"
+                  icon="resources/icons/icons16/valueMediatorsContainer.png"
+                  label="Value Mediator Container"
+                  style="push"
+                  tooltip="Value Mediator Container">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <instanceof
+                                 value="org.eclipse.uml2.uml.Package">
+                           </instanceof>
+                        </adapt>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateValueMediatorCommand"
+                  icon="resources/icons/icons16/valueMediator.png"
+                  label="Value Mediator"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <and>
+                              <test
+                                    args="ModelicaML::ValueBinding::ValueMediatorsContainer"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                           </and>
+                        </adapt>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+            </command>
+            <separator
+                  name="org.openmodelica.modelicaml.profile.separator3"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateModelicaRequirementInstanceCommand"
+                  icon="resources/icons/icons16/requirementInstance.png"
+                  label="Requirement Instance"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <test
+                                 args="ModelicaML::ModelicaSimulationConstructs::Simulation"
+                                 forcePluginActivation="true"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                        </adapt>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateModelicaFunctionArgumentCommand"
+                  icon="resources\icons\icons16\Parameter.gif"
+                  label="Function Argument"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateModelicaVariableCommand"
+                  icon="resources/icons/icons16/variable.png"
+                  label="Variables (Primitive)"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateModelicaEnumerationLiteralCommand"
+                  icon="resources/icons/icons16/EnumerationLiteral.gif"
+                  label="Enumeration Literal"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <separator
+                  name="org.openmodelica.modelicaml.profile.separator4"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateModelicaComponentCommand"
+                  icon="resources/icons/icons16/component.png"
+                  label="Component (Model Usage)"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <or>
+                              <test
+                                    args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                              <test
+                                    args="ModelicaML::ModelicaClassConstructs::Model"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                              <test
+                                    args="ModelicaML::ModelicaClassConstructs::Block"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                           </or>
+                        </adapt>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateModelicaPortCommand"
+                  icon="resources/icons/papyrus/Port.gif"
+                  label="Port (Interface Usage)"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateConnectionDiagram"
+                  icon="resources/icons/papyrus/Diagram_CompositeStructure.gif"
+                  label="Connection Diagram"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <separator
+                  name="org.openmodelica.modelicaml.profile.separator5"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateModelicaCalculatedPropertyCommand"
+                  icon="resources/icons/icons16/calculatedProperty.png"
+                  label="Calculated Property (Calculation Model Usage)"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <not>
+                              <test
+                                    args="ModelicaML::ValueBinding::ValueMediatorsContainer"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                           </not>
+                        </adapt>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+            </command>
+            <separator
+                  name="org.openmodelica.modelicaml.profile.separator6"
+                  visible="true">
+            </separator>
+            <menu
+                  label="Modelica Classes">
+               <command
+                     commandId="org.openmodelica.modelicaml.commands.CreateModelicaPackageCommand"
+                     icon="resources/icons/icons16/package.gif"
+                     label="Modelica Package"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="true">
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="org.openmodelica.modelicaml.commands.CreateModelicaOperatorCommand"
+                     icon="resources/icons/icons16/operator.gif"
+                     label="Operator"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="true">
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="org.openmodelica.modelicaml.commands.CreateModelicaModelCommand"
+                     icon="resources/icons/icons16/model.gif"
+                     label="Model"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="true">
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="org.openmodelica.modelicaml.commands.CreateModelicaBlockCommand"
+                     icon="resources/icons/icons16/block.gif"
+                     label="Block"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="true">
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="org.openmodelica.modelicaml.commands.CreateModelicaConnectorCommand"
+                     icon="resources/icons/icons16/connector.gif"
+                     label="Connector"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="true">
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="org.openmodelica.modelicaml.commands.CreateModelicaRecordCommand"
+                     icon="resources/icons/icons16/record.gif"
+                     label="Record"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="true">
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="org.openmodelica.modelicaml.commands.CreateModelicaFunctionCommand"
+                     icon="resources/icons/papyrus/FunctionBehavior.gif"
+                     label="Function"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="true">
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="org.openmodelica.modelicaml.commands.CreateModelicaTypeCommand"
+                     icon="resources/icons/icons16/type.gif"
+                     label="Type"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="true">
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="org.openmodelica.modelicaml.commands.CreateModelicaEnumerationCommand"
+                     icon="resources/icons/papyrus/Enumeration.gif"
+                     label="Enumeration"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="true">
+                  </visibleWhen>
+               </command>
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <instanceof
+                                 value="org.eclipse.uml2.uml.Package">
+                           </instanceof>
+                        </adapt>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+            </menu>
+            <separator
+                  name="org.openmodelica.modelicaml.profile.separator7"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateModelicaAlgorithmCommand"
+                  icon="resources/icons/papyrus/OpaqueBehavior.gif"
+                  label="Algorithm Section"
+                  style="push"
+                  tooltip="Algorithm Section">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <not>
+                              <test
+                                    args="ModelicaML::ValueBinding::ValueMediatorsContainer"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                           </not>
+                        </adapt>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateModelicaEquationsCodeCommand"
+                  icon="resources/icons/papyrus/OpaqueBehavior.gif"
+                  label="Equation Section"
+                  style="push"
+                  tooltip="Equation Section">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <not>
+                              <test
+                                    args="ModelicaML::ValueBinding::ValueMediatorsContainer"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                           </not>
+                        </adapt>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateStateMachineDiagram"
+                  icon="resources/icons/papyrus/Diagram_StateMachine.gif"
+                  label="State Machine"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <separator
+                  name="org.openmodelica.modelicaml.profile.separator8"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateModelicaAssertCommand"
+                  icon="resources/icons/papyrus/Constraint.gif"
+                  label="Assert"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <separator
+                  name="org.openmodelica.modelicaml.profile.separator9"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateModelicaAnnotationCommand"
+                  icon="resources/icons/papyrus/Comment.gif"
+                  label="Annotation"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <separator
+                  name="org.openmodelica.modelicaml.profile.separator10"
+                  visible="true">
+            </separator>
+            <menu
+                  label="Nested Classes">
+               <command
+                     commandId="org.openmodelica.modelicaml.commands.CreateModelicaRequirementCommand"
+                     icon="resources/icons/icons16/requirement.gif"
+                     label="Requirement(s)"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="true">
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="org.openmodelica.modelicaml.commands.CreateModelicaClassCommand"
+                     icon="resources/icons/icons16/model.gif"
+                     label="System Model(s)"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="true">
+                     <with
+                           variable="selection">
+                        <iterate
+                              ifEmpty="false"
+                              operator="or">
+                           <adapt
+                                 type="org.eclipse.emf.ecore.EObject">
+                              <or>
+                                 <test
+                                       args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                       forcePluginActivation="true"
+                                       property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                 </test>
+                                 <test
+                                       args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                       forcePluginActivation="true"
+                                       property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                 </test>
+                                 <test
+                                       args="ModelicaML::ModelicaClassConstructs::Model"
+                                       forcePluginActivation="true"
+                                       property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                 </test>
+                                 <test
+                                       args="ModelicaML::ModelicaClassConstructs::Block"
+                                       forcePluginActivation="true"
+                                       property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                 </test>
+                              </or>
+                           </adapt>
+                        </iterate>
+                        <count
+                              value="1">
+                        </count>
+                     </with>
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="org.openmodelica.modelicaml.commands.CreateModelicaConnectorCommand"
+                     icon="resources/icons/icons16/connector.gif"
+                     label="Interface Defintion(s)"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="true">
+                     <with
+                           variable="selection">
+                        <iterate
+                              ifEmpty="false"
+                              operator="or">
+                           <adapt
+                                 type="org.eclipse.emf.ecore.EObject">
+                              <or>
+                                 <test
+                                       args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                       forcePluginActivation="true"
+                                       property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                 </test>
+                                 <test
+                                       args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                       forcePluginActivation="true"
+                                       property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                 </test>
+                                 <test
+                                       args="ModelicaML::ModelicaClassConstructs::Model"
+                                       forcePluginActivation="true"
+                                       property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                 </test>
+                                 <test
+                                       args="ModelicaML::ModelicaClassConstructs::Block"
+                                       forcePluginActivation="true"
+                                       property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                 </test>
+                              </or>
+                           </adapt>
+                        </iterate>
+                        <count
+                              value="1">
+                        </count>
+                     </with>
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="org.openmodelica.modelicaml.commands.CreateModelicaCalculationModelCommand"
+                     icon="resources/icons/icons16/calculationModel.gif"
+                     label="Calculation Model(s)"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="true">
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="org.openmodelica.modelicaml.commands.CreateModelicaSimulationModelCommand"
+                     icon="resources/icons/icons16/model.gif"
+                     label="Simulation Model(s)"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="true">
+                     <with
+                           variable="selection">
+                        <iterate
+                              ifEmpty="false"
+                              operator="or">
+                           <adapt
+                                 type="org.eclipse.emf.ecore.EObject">
+                              <or>
+                                 <test
+                                       args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                       forcePluginActivation="true"
+                                       property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                 </test>
+                                 <test
+                                       args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                       forcePluginActivation="true"
+                                       property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                 </test>
+                                 <test
+                                       args="ModelicaML::ModelicaClassConstructs::Model"
+                                       forcePluginActivation="true"
+                                       property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                 </test>
+                                 <test
+                                       args="ModelicaML::ModelicaClassConstructs::Block"
+                                       forcePluginActivation="true"
+                                       property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                 </test>
+                              </or>
+                           </adapt>
+                        </iterate>
+                        <count
+                              value="1">
+                        </count>
+                     </with>
+                  </visibleWhen>
+               </command>
+               <menu
+                     label="Modelica Classes">
+                  <command
+                        commandId="org.openmodelica.modelicaml.commands.CreateModelicaPackageCommand"
+                        icon="resources/icons/icons16/package.gif"
+                        label="Modelica Package"
+                        style="push">
+                     <visibleWhen
+                           checkEnabled="true">
+                     </visibleWhen>
+                  </command>
+                  <command
+                        commandId="org.openmodelica.modelicaml.commands.CreateModelicaOperatorCommand"
+                        icon="resources/icons/icons16/operator.gif"
+                        label="Operator"
+                        style="push">
+                     <visibleWhen
+                           checkEnabled="true">
+                     </visibleWhen>
+                  </command>
+                  <command
+                        commandId="org.openmodelica.modelicaml.commands.CreateModelicaModelCommand"
+                        icon="resources/icons/icons16/model.gif"
+                        label="Model"
+                        style="push">
+                     <visibleWhen
+                           checkEnabled="true">
+                     </visibleWhen>
+                  </command>
+                  <command
+                        commandId="org.openmodelica.modelicaml.commands.CreateModelicaBlockCommand"
+                        icon="resources/icons/icons16/block.gif"
+                        label="Block"
+                        style="push">
+                     <visibleWhen
+                           checkEnabled="true">
+                     </visibleWhen>
+                  </command>
+                  <command
+                        commandId="org.openmodelica.modelicaml.commands.CreateModelicaConnectorCommand"
+                        icon="resources/icons/icons16/connector.gif"
+                        label="Connector"
+                        style="push">
+                     <visibleWhen
+                           checkEnabled="true">
+                     </visibleWhen>
+                  </command>
+                  <command
+                        commandId="org.openmodelica.modelicaml.commands.CreateModelicaRecordCommand"
+                        icon="resources/icons/icons16/record.gif"
+                        label="Record"
+                        style="push">
+                     <visibleWhen
+                           checkEnabled="true">
+                     </visibleWhen>
+                  </command>
+                  <command
+                        commandId="org.openmodelica.modelicaml.commands.CreateModelicaFunctionCommand"
+                        icon="resources/icons/papyrus/FunctionBehavior.gif"
+                        label="Function"
+                        style="push">
+                     <visibleWhen
+                           checkEnabled="true">
+                     </visibleWhen>
+                  </command>
+                  <command
+                        commandId="org.openmodelica.modelicaml.commands.CreateModelicaTypeCommand"
+                        icon="resources/icons/icons16/type.gif"
+                        label="Type"
+                        style="push">
+                     <visibleWhen
+                           checkEnabled="true">
+                     </visibleWhen>
+                  </command>
+                  <command
+                        commandId="org.openmodelica.modelicaml.commands.CreateModelicaEnumerationCommand"
+                        icon="resources/icons/papyrus/Enumeration.gif"
+                        label="Enumeration"
+                        style="push">
+                     <visibleWhen
+                           checkEnabled="true">
+                     </visibleWhen>
+                  </command>
+               </menu>
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <not>
+                              <test
+                                    args="ModelicaML::ModelicaClassConstructs::Function"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                           </not>
+                           <and>
+                              <or>
+                                 <instanceof
+                                       value="org.eclipse.uml2.uml.Class">
+                                 </instanceof>
+                              </or>
+                           </and>
+                           <not>
+                              <instanceof
+                                    value="org.eclipse.uml2.uml.Behavior">
+                              </instanceof>
+                           </not>
+                           <not>
+                              <instanceof
+                                    value="org.eclipse.uml2.uml.Package">
+                              </instanceof>
+                           </not>
+                           <not>
+                              <test
+                                    args="ModelicaML::ValueBinding::ValueMediatorsContainer"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                           </not>
+                        </adapt>
+                     </iterate>
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+            </menu>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="org.openmodelica.modelicaml.perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </menu>
+         <menu
+               icon="resources/icons/icons16/newDiagram.gif"
+               id="org.openmodelica.modelicaml.popup.newdiagram"
+               label="New Diagram">
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateClassDiagram"
+                  icon="resources/icons/papyrus/Diagram_Class.gif"
+                  label="Class Diagram"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateConnectionDiagram"
+                  icon="resources/icons/papyrus/Diagram_CompositeStructure.gif"
+                  label="Connection Diagram"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateStateMachineDiagram"
+                  icon="resources/icons/papyrus/Diagram_StateMachine.gif"
+                  label="State Machine Diagram"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="org.openmodelica.modelicaml.perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </menu>
+         <command
+               commandId="org.openmodelica.modelicaml.commands.deleteTopLevelModelPackage"
+               icon="resources/icons/icons16/delete.gif"
+               label="Delete Top-Level Model"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <adapt
+                           type="org.eclipse.emf.ecore.EObject">
+                        <instanceof
+                              value="org.eclipse.uml2.uml.Model">
+                        </instanceof>
+                     </adapt>
+                  </iterate>
+                  <count
+                        value="1">
+                  </count>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
+         <separator
+               name="org.openmodelica.modelicaml.profile.separator2"
+               visible="true">
+         </separator>
+         <menu
+               icon="resources/icons/icons16/invocation.gif"
+               id="org.openmodelica.modelicaml.popup.helpers"
+               label="Helper">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="org.openmodelica.modelicaml.perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+            <separator
+                  name="org.openmodelica.modelicaml.helper.separator1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.helper.commands.generatesimmodels"
+                  icon="resources/icons/icons16/new_testsuite.gif"
+                  label="Generate Design Verification Models"
+                  style="push"
+                  tooltip="Generate Design Verification Models">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
+            <separator
+                  name="org.openmodelica.modelicaml.helper.separator2"
+                  visible="true">
+            </separator>
+         </menu>
+      </menuContribution>
+   </extension>
+<extension
+      point="org.eclipse.ui.menus">
+   <menuContribution
+         locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
+      <menu
+            icon="icons/import_wiz_16x16-papyrusColor.gif"
+            id="org.eclipse.papyrus.uml.import.menu"
+            label="&amp;Import"
+            tooltip="Papyrus Import Menu">
+         
+         <!--
+         <command
+               commandId="org.eclipse.papyrus.import.registered.profile"
+               icon="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Profile.gif"
+               label="Import &amp;Registered Profile"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.papyrus.import.registered.package"
+               icon="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Package.gif"
+               label="Import Registered &amp;Package"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.papyrus.import.package.from.workspace"
+               icon="platform:/plugin/org.eclipse.uml2.uml.edit/icons/full/obj16/Package.gif"
+               label="Import Package From &amp;Workspace"
+               style="push">
+         </command>
+         -->
+      </menu>
+      <separator
+            name="org.openmodelica.modelicaml.modelexplorer.separator1"
+            visible="true">
+      </separator>
+   </menuContribution>
+</extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
+         <separator
+               name="org.openmodelica.modelicaml.profile.separator3"
+               visible="true">
+         </separator>
+         <menu
+               icon="resources/icons/icons16/generate_code.gif"
+               label="Validation and Code Generation">
+            <command
+                  commandId="org.eclipse.papyrus.modelexplorer.ValidateDelMarkersFromSubtreeCommand"
+                  icon="resources/icons/icons16/errorwarning_tab.gif"
+                  id="org.eclipse.papyrus.modelexplorer.DelMarkersFromSubtree"
+                  label="Remove markers"
+                  tooltip="Remove markers from sub-tree">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <count
+                           value="1">
+                     </count>
+                     <iterate>
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                        </adapt>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.gen.modelica.commands.GenerateModelicaCodeFromThisElement"
+                  icon="resources/icons/icons16/generate_code.gif"
+                  label="Generate Modelica code (from sub-tree)"
+                  style="push"
+                  tooltip="Generate Modelica code (from sub-tree)">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <count
+                           value="1">
+                     </count>
+                     <iterate>
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <or>
+                              <instanceof
+                                    value="org.eclipse.uml2.uml.Package">
+                              </instanceof>
+                              <instanceof
+                                    value="org.eclipse.uml2.uml.Class">
+                              </instanceof>
+                           </or>
+                        </adapt>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="org.openmodelica.modelicaml.perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
+         <separator
+               name="org.openmodelica.modelicaml.profile.separator4"
+               visible="true">
+         </separator>
+         <menu
+               icon="resources/icons/timeline_marker.png"
+               id="org.openmodelica.modelicaml.popup.simulation"
+               label="Simulation">
+            <command
+                  commandId="org.openmodelica.modelicaml.simulation.commands.CGAndSimulateThisClassWithOMC"
+                  icon="resources/icons/timeline_marker.png"
+                  label="Simulate with OMC"
+                  style="push"
+                  tooltip="Open in OMC Simulation Center">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <count
+                           value="1">
+                     </count>
+                     <iterate>
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <or>
+                              <instanceof
+                                    value="org.eclipse.uml2.uml.Package">
+                              </instanceof>
+                              <instanceof
+                                    value="org.eclipse.uml2.uml.Class">
+                              </instanceof>
+                           </or>
+                        </adapt>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="org.openmodelica.modelicaml.perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </menu>
+         <separator
+               name="org.openmodelica.modelicaml.modelexplorer.separator2"
+               visible="true">
+         </separator>
+      </menuContribution>
+   </extension>
+    <!--  
+    <extension
+         point="org.eclipse.papyrus.views.modelexplorer.actionHandler">
+
+      <customAction
+            actionHandler="org.eclipse.papyrus.views.modelexplorer.factory.DefaultEMFActionsFactory"
+            actionId="org.eclipse.papyrus.views.modelexplorer.factory.defaultEMFActions"
+            afterAction="org.eclipse.papyrus.views.modelexplorer.factory.renameAction"
+            needSeparator="true">
+      </customAction>
+   </extension>
+-->
+<extension point="org.eclipse.ui.menus">
+
+	<!-- ModelExplorer toolbar -->
+	<menuContribution allPopups="false" locationURI="toolbar:org.openmodelica.modelicaml.modelexplorer">
+
+		<!-- Load modisco browser customization command -->		
+		<command commandId="org.eclipse.papyrus.views.modelexplorer.LoadBrowserCustomization" icon="icons/etool16/uiCustom.gif" label="Load browser customization" style="push">
+		</command>
+
+		<!-- Search element command -->	
+		<command commandId="org.eclipse.papyrus.views.modelexplorer.searchelement" icon="icons/etool16/search.gif" label="Search element" style="push">
+		</command>
+		
+		<!-- Sort elements command -->	
+		<command commandId="org.eclipse.papyrus.views.modelexplorer.sortelement" icon="icons/etool16/sort.gif" label="sort" style="toggle">
+		</command>
+	</menuContribution>
+ <menuContribution allPopups="false" locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
+    <separator name="popup:org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup.separator0" visible="true">
+    </separator>
+    <command commandId="org.eclipse.ui.edit.rename" icon="icons/etool16/rename.gif" id="org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup.rename" label="&amp;Rename" style="push" tooltip="Rename the element">
+       <visibleWhen checkEnabled="true">
+       </visibleWhen>
+    </command>
+    <separator name="popup:org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup.separator1" visible="true">
+    </separator>
+    <command commandId="org.eclipse.ui.edit.undo" id="org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup.undo" label="&amp;Undo" style="push">
+    </command>
+    <command commandId="org.eclipse.ui.edit.redo" id="org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup.redo" label="&amp;Redo" style="push">
+    </command>
+    <separator name="popup:org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup.separator2" visible="true">
+    </separator>
+    <command commandId="org.eclipse.papyrus.views.modelexplorer.popup.open.command" icon="icons/etool16/forward.gif" id="org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup.open" label="&amp;Open" style="push" tooltip="Open">
+       <visibleWhen checkEnabled="true">
+       </visibleWhen>
+    </command>
+    <command commandId="org.eclipse.papyrus.views.modelexplorer.popup.open.new.command" icon="icons/etool16/arrow_double.gif" id="org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup.open.new" label="Open In &amp;New Table" style="push" tooltip="Open in new tab">
+       <visibleWhen checkEnabled="true">
+       </visibleWhen>
+    </command>
+    <command commandId="org.eclipse.papyrus.views.modelexplorer.popup.close.command" icon="icons/etool16/close.png" id="org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup.close" label="&amp;Close" style="push" tooltip="Close">
+       <visibleWhen checkEnabled="true">
+       </visibleWhen>
+    </command>
+    <command commandId="org.eclipse.papyrus.views.modelexplorer.close.all.command" icon="icons/etool16/closeAll.png" id="org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup.close.all" label="Close &amp;All" style="push" tooltip="Close All">
+       <visibleWhen checkEnabled="true">
+       </visibleWhen>
+    </command>
+    <command commandId="org.eclipse.papyrus.views.modelexplorer.duplicate.command" icon="icons/etool16/duplicate.png" id="org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup.duplicate" label="&amp;Duplicate" style="push" tooltip="Duplicate the element">
+       <visibleWhen checkEnabled="true">
+       </visibleWhen>
+    </command>
+    <separator name="popup:org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup.separator3" visible="true">
+    </separator>
+    <command commandId="org.eclipse.ui.edit.cut" id="org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup.cut" label="Cu&amp;t" style="push">
+       <visibleWhen checkEnabled="false">
+          <with variable="selection">
+                <!-- We add this test in order to refresh the Cut action in the menu edit -->
+             <test forcePluginActivation="true" property="org.eclipse.papyrus.views.modelexplorer.tester.isEObject" value="true">
+             </test>
+          </with>
+       </visibleWhen>
+    </command>
+    <command commandId="org.eclipse.ui.edit.copy" id="org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup.copy" label="&amp;Copy" style="push">
+       <visibleWhen checkEnabled="false">
+          <with variable="selection">
+                <!-- We add this test in order to refresh the Copy action in the menu edit -->
+             <test forcePluginActivation="true" property="org.eclipse.papyrus.views.modelexplorer.tester.isEObject" value="true">
+             </test>
+          </with>
+       </visibleWhen>
+    </command>
+    <command commandId="org.eclipse.ui.edit.paste" id="org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup.paste" label="&amp;Paste" style="push">
+       <visibleWhen checkEnabled="false">
+          <with variable="selection">
+                <!-- We add this test in order to refresh the Paste action in the menu edit -->
+             <test forcePluginActivation="true" property="org.eclipse.papyrus.views.modelexplorer.tester.isEObject" value="true">
+             </test>
+          </with>
+       </visibleWhen>
+    </command>
+    <separator
+          name="popup:org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup.separator3"
+          visible="true">
+    </separator>
+    <command commandId="org.eclipse.ui.edit.delete" disabledIcon="IMG_TOOL_DELETE_DISABLED" icon="IMG_TOOL_DELETE" label="Delete" style="push" tooltip="Delete">
+       <visibleWhen checkEnabled="true">
+          <and>
+             <with variable="selection">
+                <iterate>
+                   <adapt type="org.eclipse.emf.ecore.EObject">
+                   </adapt>
+                </iterate>
+             </with>
+          </and>
+       </visibleWhen>
+    </command>
+ </menuContribution>
+	<!-- ModelExplorer Contextual menu -->       
+       
+</extension>
+
+<!-- Command declarations (for model explorer toolbar and contextual menu -->
+<extension point="org.eclipse.ui.commands">
+
+	<!-- Command declaration : Load modisco browser customization command -->			
+	<command categoryId="org.eclipse.papyrus.editor.category" defaultHandler="org.openmodelica.modelicaml.modelexplorer.handler.LoadBrowserCustomization" description="Load a customization for the papyrus browser" id="org.eclipse.papyrus.views.modelexplorer.LoadBrowserCustomization" name="loadBrowserCustomization">
+	</command>
+	
+	<!-- Command declaration : Search element command -->			
+	<command categoryId="org.eclipse.papyrus.editor.category" defaultHandler="org.eclipse.papyrus.views.modelexplorer.handler.SearchElementHandler" description="Search an element in the model explorer" id="org.eclipse.papyrus.views.modelexplorer.searchelement" name="searchelement">
+	</command>
+	
+	<!-- Command declaration : Sort elements command -->			
+	<command categoryId="org.eclipse.papyrus.editor.category" defaultHandler="org.eclipse.papyrus.views.modelexplorer.handler.SortElementHandler" description="Sort elements" id="org.eclipse.papyrus.views.modelexplorer.sortelement" name="SortElement">
+	</command>
+       
+	<!-- Command declaration : Delete element command -->
+	<command categoryId="org.eclipse.papyrus.editor.category" defaultHandler="org.eclipse.papyrus.views.modelexplorer.handler.DeleteCommandHandler" description="Delete" id="org.eclipse.papyrus.uml.service.creation.DeleteCommand" name="Delete">
+	</command>       
+</extension>
+    
+    
+   <extension point="org.eclipse.core.runtime.preferences">
+		<?gmfgen generated="false"?>
+		<initializer class="org.eclipse.papyrus.views.modelexplorer.preferences.NavigatorPreferenceInitializer"/>
+   </extension>
+
+<!-- This declaration is added in order command (DeleteCommandHandler) status to be
+     verified (isVisible and isEnabled) before any attempt to execute the command, 
+     and to mask the command in case it is not supported or executable.
+  -->
+<extension point="org.eclipse.ui.startup">
+	<startup class="org.eclipse.papyrus.views.modelexplorer.Activator"/>
+</extension>
+<extension point="org.eclipse.ui.navigator.linkHelper">
+   <linkHelper class="org.eclipse.papyrus.views.modelexplorer.LinkHelper" id="org.eclipse.papyrus.views.modelexplorer.linkHelper">
+       <selectionEnablement>
+         <instanceof value="java.lang.Object">
+         </instanceof>
+      </selectionEnablement>
+      <editorInputEnablement>
+         <instanceof value="org.eclipse.ui.part.IFileEditorInput">
+         </instanceof>
+      </editorInputEnablement>
+   </linkHelper>
+</extension>
+
+<!-- This service listen the selection, ensures that the modelExplorer is active, and update the  
+	 deleteInModelExplorer variable according to the selection.
+  -->
+<!--
+<extension point="org.eclipse.ui.services">
+	<sourceProvider provider="org.eclipse.papyrus.views.modelexplorer.provider.ActionStateSourceProvider">
+		<variable name="deleteInModelExplorer" priorityLevel="workbench"/>
+	</sourceProvider>
+</extension>
+  -->
+<!-- This handler is activated when deleteInModelExplorer variable is valid.
+  -->
+ <!--
+<extension point="org.eclipse.ui.handlers">
+	<handler class="org.eclipse.papyrus.views.modelexplorer.handler.DeleteCommandHandler" commandId="org.eclipse.ui.edit.delete">
+		<activeWhen>
+		<with variable="deleteInModelExplorer">
+			<equals value="enabled"/>
+		</with>
+		</activeWhen>
+	</handler>
+</extension>
+-->
+<extension point="org.eclipse.ui.commands">
+   <command categoryId="org.eclipse.papyrus.editor.category" description="The command to open in a tab" id="org.eclipse.papyrus.views.modelexplorer.popup.open.command" name="Open Command">
+   </command>
+   <command categoryId="org.eclipse.papyrus.editor.category" description="The command to open in a new tab" id="org.eclipse.papyrus.views.modelexplorer.popup.open.new.command" name="Open In New Tab Command">
+   </command>
+   <command categoryId="org.eclipse.papyrus.editor.category" description="The command to close" id="org.eclipse.papyrus.views.modelexplorer.popup.close.command" name="Close Command">
+   </command>
+   <command categoryId="org.eclipse.papyrus.editor.category" description="The command to close all " id="org.eclipse.papyrus.views.modelexplorer.close.all.command" name="Close All Command">
+   </command>
+   <command categoryId="org.eclipse.papyrus.editor.category" description="The Command to duplicate the selected element" id="org.eclipse.papyrus.views.modelexplorer.duplicate.command" name="Duplicate ">
+   </command>
+</extension>
+<extension point="org.eclipse.ui.handlers">
+   <handler commandId="org.eclipse.papyrus.views.modelexplorer.popup.close.command">
+      <activeWhen>
+         <with variable="selection">
+            <and>
+               <test forcePluginActivation="true" property="org.eclipse.papyrus.views.modelexplorer.tester.isPage" value="true">
+               </test>
+            </and>
+         </with>
+      </activeWhen>
+      <class class="org.eclipse.papyrus.views.modelexplorer.handler.CloseHandler">
+         <parameter name="close_parameter" value="selection">
+         </parameter>
+      </class>
+   </handler>
+   <handler commandId="org.eclipse.papyrus.views.modelexplorer.close.all.command">
+      <class class="org.eclipse.papyrus.views.modelexplorer.handler.CloseHandler">
+         <parameter name="close_parameter" value="all">
+         </parameter>
+      </class>
+      <activeWhen>
+         <with variable="selection">
+            <and>
+               <test forcePluginActivation="true" property="org.eclipse.papyrus.views.modelexplorer.tester.isPage" value="true">
+               </test>
+            </and>
+         </with>
+      </activeWhen>
+   </handler>
+   <handler commandId="org.eclipse.papyrus.views.modelexplorer.popup.open.command">
+      <activeWhen>
+         <with variable="selection">
+            <and>
+               <test forcePluginActivation="true" property="org.eclipse.papyrus.views.modelexplorer.tester.isPage" value="true">
+               </test>
+            </and>
+         </with>
+      </activeWhen>
+      <class class="org.eclipse.papyrus.views.modelexplorer.handler.OpenHandler">
+         <parameter name="open_parameter" value="close">
+         </parameter>
+      </class>
+   </handler>
+   <handler commandId="org.eclipse.papyrus.views.modelexplorer.popup.open.new.command">
+      <activeWhen>
+         <with variable="selection">
+            <and>
+               <test forcePluginActivation="true" property="org.eclipse.papyrus.views.modelexplorer.tester.isPage" value="true">
+               </test>
+            </and>
+         </with>
+      </activeWhen>
+      <class class="org.eclipse.papyrus.views.modelexplorer.handler.OpenHandler">
+         <parameter name="open_parameter" value="already_open">
+         </parameter>
+      </class>
+   </handler>
+   <handler class="org.eclipse.papyrus.views.modelexplorer.handler.CutHandler" commandId="org.eclipse.ui.edit.cut">
+      <activeWhen>
+         <and>
+            <with variable="activePart">
+               <instanceof value="org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView">
+               </instanceof>
+            </with>
+            <with variable="selection">
+                  <!-- We add this test in order to refresh the Cut action in the menu edit -->
+               <test forcePluginActivation="true" property="org.eclipse.papyrus.views.modelexplorer.tester.isEObject" value="true">
+               </test>
+            </with>
+         </and>
+      </activeWhen>
+   </handler>
+   <handler class="org.eclipse.papyrus.views.modelexplorer.handler.UndoHandler" commandId="org.eclipse.ui.edit.undo">
+      <activeWhen>
+         <and>
+            <with variable="activePart">
+               <instanceof value="org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView">
+               </instanceof>
+            </with>
+            <with variable="activePart">
+                  <!-- We add this test in order to refresh the Undo action in the menu file -->
+               <test forcePluginActivation="true" property="org.eclipse.papyrus.views.modelexplorer.tester.view.isModelExplorer" value="true">
+               </test>
+            </with>
+         </and>
+      </activeWhen>
+   </handler>
+   <handler class="org.eclipse.papyrus.views.modelexplorer.handler.RedoHandler" commandId="org.eclipse.ui.edit.redo">
+      <activeWhen>
+         <and>
+            <with variable="activePart">
+               <instanceof value="org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView">
+               </instanceof>
+            </with>
+            <with variable="activePart">
+                  <!-- We add this test in order to refresh the Redo action in the menu edit -->
+               <test forcePluginActivation="true" property="org.eclipse.papyrus.views.modelexplorer.tester.view.isModelExplorer" value="true">
+               </test>
+            </with>
+         </and>
+      </activeWhen>
+   </handler>
+</extension>
+<extension point="org.eclipse.core.expressions.propertyTesters">
+      <!-- the property tester is used to enabled/disabled handler -->
+   <propertyTester class="org.eclipse.papyrus.views.modelexplorer.provider.PropertyTester" id="org.eclipse.papyrus.views.modelexplorer.tester" namespace="org.eclipse.papyrus.views.modelexplorer.tester" properties="isEObject, isPage" type="org.eclipse.jface.viewers.IStructuredSelection">
+   </propertyTester>
+   <propertyTester class="org.eclipse.papyrus.views.modelexplorer.provider.PropertyTester" id="org.eclipse.papyrus.views.modelexplorer.tester.view" namespace="org.eclipse.papyrus.views.modelexplorer.tester.view" properties="isModelExplorer" type="org.eclipse.ui.IWorkbenchPart">
+   </propertyTester>
+</extension>
+<!--<extension
+      point="org.eclipse.emf.facet.infra.query.registration">
+   <modelqueryset
+         file="resources/PapyrusEcoreBrowserQuery.querySet">
+   </modelqueryset>
+</extension>
+
+   <extension point="org.eclipse.emf.facet.infra.browser.custom.core.registration">
+      <browserCustomization file="resources/PapyrusEcoreBrowser.uiCustom"/>
+   </extension>
+   
+   <extension point="org.eclipse.emf.facet.infra.facet.registration">
+      <facetset file="resources/PapyrusUMLFacet.facetSet">
+      </facetset>
+   </extension>
+   <extension point="org.eclipse.emf.facet.infra.browser.custom.core.registration">
+      <browserCustomization
+            file="resources/UMLFacetDefaultBrowserCustomization.uiCustom"
+            loadByDefault="true"/>
+      <browserCustomization
+            file="resources/UMLPapyrusDefaultBrowserCustomization.uiCustom"
+            loadByDefault="true">
+      </browserCustomization>
+      <browserCustomization
+            file="resources/NotationCustomization.uiCustom"
+            loadByDefault="true">
+      </browserCustomization>
+   </extension>
+-->
+</plugin>
