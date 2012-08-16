@@ -521,7 +521,6 @@ public class ModelicaMLElementsCreator {
 							
 							setMonitorTaskName("Creating component: " + component.getQName());
 							addToLog("Creating component: " + component.getQName());
-	//						System.out.println("Creating component: " + component.getQName());
 							
 							// set the component type (uml class that was just created) 
 							Element type = treeBuilder.getTypeElement(component.getComponentTypeQame());
@@ -534,8 +533,14 @@ public class ModelicaMLElementsCreator {
 							component.setModelicaMLProxy(modelicaMLPropertyProxy);
 							treeBuilder.addProxyToMaps((NamedElement) modelicaMLPropertyProxy);
 							
-							// update (stereotype) properties
-							updateProperty(owningClass, modelicaMLPropertyProxy, component, applyProxyStereotype);
+							/*
+							 * Note, the update operation (i.e. set stereotype etc.) is moved into the createProperty operation
+							 * in order to avoid live validation messages caused by the fact the the stereotype was not
+							 * applied yet. 
+							 */
+//							// update (stereotype) properties
+//							updateProperty(owningClass, modelicaMLPropertyProxy, component, applyProxyStereotype);
+							
 						}
 						else { // update the existing proxy
 							if (update) {
@@ -543,7 +548,6 @@ public class ModelicaMLElementsCreator {
 									// indicate
 									setMonitorTaskName("Updating component: " + ((NamedElement)modelicaMLPropertyProxy).getQualifiedName());
 									addToLog("Updating component: " + ((NamedElement)modelicaMLPropertyProxy).getQualifiedName());
-	//								System.out.println("Updating component: " + ((NamedElement)modelicaMLPropertyProxy).getQualifiedName());
 								}
 								// update
 								
@@ -555,6 +559,8 @@ public class ModelicaMLElementsCreator {
 							}
 						}
 					}
+					
+					
 					
 					// create extends relations
 					if (treeObject instanceof ExtendsRelationItem && owningClass instanceof Classifier) {
@@ -1073,6 +1079,7 @@ public class ModelicaMLElementsCreator {
 				protected void doExecute() {
 					
 					Element updatedProperty = updatePropertyCommand(owningClass, property, componentTreeObject, applyProxyStereotype);
+					
 					if (updatedProperty != null) {
 						updatedProperties.add(updatedProperty);
 					}
