@@ -147,11 +147,11 @@
          point="org.eclipse.emf.validation.constraintProviders">
       <category
             id="org.openmodelica.modelicaml.validation.batch"
-            name="Batch">
+            name="ModelicaML Batch">
       </category>
       <category
             id="org.openmodelica.modelicaml.validation.live"
-            name="Live">
+            name="ModelicaML Live">
       </category>
       <constraintProvider
             cache="true">

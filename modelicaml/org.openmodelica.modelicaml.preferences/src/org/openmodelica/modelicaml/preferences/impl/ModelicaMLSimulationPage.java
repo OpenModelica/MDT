@@ -66,7 +66,7 @@ public class ModelicaMLSimulationPage
 	public ModelicaMLSimulationPage() {
 		super(GRID);
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		setDescription("Preferences for Modelica simulation");
+		setDescription("Preferences for ModelicaML simulation");
 	}
 	
 	/**

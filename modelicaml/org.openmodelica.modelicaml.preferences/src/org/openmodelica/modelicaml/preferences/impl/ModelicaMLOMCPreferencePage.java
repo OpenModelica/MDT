@@ -66,7 +66,7 @@ public class ModelicaMLOMCPreferencePage
 	public ModelicaMLOMCPreferencePage() {
 		super(GRID);
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		setDescription("ModelicaML preferences for the communication with OpenModelica compiler:");
+		setDescription("ModelicaML preferences for the communication with OpenModelica compiler (OMC):");
 	}
 	
 	/**

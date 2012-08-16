@@ -80,7 +80,7 @@ public class ModelicaMLMainPreferencesPage
 					"Use multiple items dialog for the creation of new elements.", getFieldEditorParent()));
 		addField(
 				new BooleanFieldEditor("linkClassComponentsTreeWithModelExplorer",
-						"Link Class Components Tree with ModelExplorer.", getFieldEditorParent()));
+						"Link Class Components Tree with Model Explorer.", getFieldEditorParent()));
 	}
 
 	/* (non-Javadoc)

@@ -86,7 +86,7 @@ public class ModelicaMLModelicaModelsSynchronization
 						getFieldEditorParent()));
 		addField(
 				new StringFieldEditor("modelsToExcludeFromLoadingWhenSynchronizing", 
-						"Qualified names of models (comma separated) to discard:", 
+						"Qualified names of models (comma-separated) to discard:", 
 						getFieldEditorParent()));
 	}
 
