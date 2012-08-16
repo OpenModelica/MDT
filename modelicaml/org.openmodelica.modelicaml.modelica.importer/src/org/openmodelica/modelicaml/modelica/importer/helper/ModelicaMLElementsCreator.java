@@ -591,10 +591,15 @@ public class ModelicaMLElementsCreator {
 							// set proxy
 							extendsRelation.setModelicaMLProxy(modelicaMLGeneralizationProxy);
 							
-							if (modelicaMLGeneralizationProxy != null) {
-								// update
-								updateExtendsRelation(modelicaMLGeneralizationProxy, extendsRelation, applyProxyStereotype);
-							}
+							
+							/*
+							 * Note, the update operations was moved to the create operation in order to avoid live valiation problems 
+							 * due to unapplied stereotypes.
+							 */
+//							if (modelicaMLGeneralizationProxy != null) {
+//								// update
+//								updateExtendsRelation(modelicaMLGeneralizationProxy, extendsRelation, applyProxyStereotype);
+//							}
 						}
 						else {
 							if (update) {
@@ -762,7 +767,12 @@ public class ModelicaMLElementsCreator {
 //					System.err.println("Could not create Generalization for " + extendsRelationTreeObject.getSourceQname());
 				}
 				
+				/*
+				 *  Update (i.e. apply sterotypes, etc.) after creating in order to avoid live validation problems
+				 */
 				if (createdElement instanceof Generalization) {
+					
+					Element updatedRelation = updateExtendsRelationCommand(createdElement, extendsRelationTreeObject, applyProxyStereotype);
 				}			
 				else {
 					addToLog("Could not apply ModelicaML stereotype 'ExtendsRelation'. Please make sure that the ModelicaML profile is applied.");
