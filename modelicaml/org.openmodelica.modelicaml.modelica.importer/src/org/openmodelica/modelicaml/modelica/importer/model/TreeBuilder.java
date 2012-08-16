@@ -98,6 +98,8 @@ public class TreeBuilder {
 	private Boolean loadMSL = null;
 	
 	private IProgressMonitor monitor;
+	
+	private String errorLog = "";
 
 	class ModelicaComponentData {
 		private String typeQName;
@@ -226,7 +228,7 @@ public class TreeBuilder {
 	public ArrayList<TreeObject> createClassNodes(TreeParent treeParent, String classQName, boolean recursive){
 		ArrayList<TreeObject> createdItems = new ArrayList<TreeObject>();
 		if (classQName != null) {
-			List<String> classes = getItems(omcc.getClassNames(classQName));
+			List<String> classes = omcc.getClassNames(classQName);
 			if (classes != null) {
 				for (String className : classes) {
 					
@@ -261,11 +263,8 @@ public class TreeBuilder {
 							// add to the return list
 							createdItems.add(item);
 							
-//							System.err.println("Loading: " + item + " (" + item.getQName() + ")");
-							
 							if (recursive) {
 								// recursive call
-//								System.err.println("Creating class nodes for: " + qName);
 								createdItems.addAll(createClassNodes(item, qName, recursive));
 							}
 						}
@@ -355,9 +354,7 @@ public class TreeBuilder {
 				
 				// create components nodes
 				if (components.size() > 0) {
-//					System.err.println("Creating Components in " + classQName);
 					
-//					for (ModelicaComponentData component : components) {
 					for (int i = 0; i < components.size(); i++) {
 						
 						ModelicaComponentData component = components.get(i);
@@ -572,6 +569,10 @@ public class TreeBuilder {
 	}
 	
 	
+	
+	// isReplaceable(TwoTanksExample.Design, "SystemEnvironment")
+	
+	
 	private void setClassProperties(ClassItem item, String classQName){
 		
 		/*
@@ -610,15 +611,25 @@ public class TreeBuilder {
 			
 			// set is enumeration
 			String isEnumerationReply = omcc.isEnumeration(classQName);
-			if (isEnumerationReply.trim().contains("true")) {
+			if (isEnumerationReply!= null 
+					&& !isEnumerationReply.isEmpty() 
+					&& isEnumerationReply.trim().contains("true")) {
+				
 				item.setIsEnumeration(true);
 			}
 			
-			// set is replaceable if there is parent that is a Modelica class
+			// set is replaceable if there is parent is a Modelica class
 			TreeParent parent = item.getParent();
 			if (parent instanceof ClassItem) {
-				String isReplaceableReply = omcc.isReplaceable(parent.getQName(), classQName);
-				if (isReplaceableReply != null && isReplaceableReply.length() > 0 && isReplaceableReply.trim().contains("true")) {
+				/*
+				 * NOTE: Note, the isReplaceable() works only for nested classes
+				 * and return an error if the class is not nested. 
+				 */
+				String isReplaceableReply = omcc.isReplaceable(parent.getQName(), item.getName());
+				if (isReplaceableReply != null 
+						&& !isReplaceableReply.isEmpty() 
+						&& isReplaceableReply.trim().startsWith("true")) {
+					
 					item.setIsReplaceable(true);
 				}
 			}
@@ -674,9 +685,9 @@ public class TreeBuilder {
 			item.setEncapsulated(isEncapsulated);
 		}
 		
-//		if (classInfo.equals("Error") ) {
 		if (ModelicaMLServices.containsOMCErrorMessage(classInfo)) {
-			// TODO: collect errors
+			
+			// Collect errors
 			String errorString = omcc.getErrorString();	
 			String msg = Utilities.extractErrorMessage(errorString);
 			
@@ -782,10 +793,9 @@ public class TreeBuilder {
 			}
 		}
 
-//		if (string.equals("Error")) {
 		if (ModelicaMLServices.containsOMCErrorMessage(string)) {
 			
-			// TODO: collect errors
+			// collect errors
 			String errorString = omcc.getErrorString();	
 			String msg = Utilities.extractErrorMessage(errorString);
 
@@ -807,7 +817,6 @@ public class TreeBuilder {
 			if (!declarationString.equals("Error") && !declarationString.equals("false") && !declarationString.equals("")) {
 				declaration = "= " + declarationString; 
 			}
-//			if (declarationString.equals("Error")) {
 			if (ModelicaMLServices.containsOMCErrorMessage(declarationString)) {
 				// TODO: collect errors
 				String errorString = omcc.getErrorString();	
@@ -826,7 +835,7 @@ public class TreeBuilder {
 	private EList<String> getComponentModifications(ComponentItem component, String classQName){
 		EList<String> modifications = new BasicEList<String>();
 		if (!classQName.equals("")) {
-			List<String> componentModifiers = getItems(omcc.getComponentModifierNames(classQName, component.getName()));
+			List<String> componentModifiers = omcc.getComponentModifierNames(classQName, component.getName());
 			
 			setMonitorTaskName("Retrieving modifications for component " + component.getName());
 			
@@ -848,8 +857,7 @@ public class TreeBuilder {
 		
 		if (!extendsRelationItem.getSourceQname().equals("") && !extendsRelationItem.getTargetQname().equals("")) {
 
-			List<String> componentModifiers = getItems(omcc.getExtendsModifierNames(extendsRelationItem.getSourceQname(), 
-					extendsRelationItem.getTargetQname()));
+			List<String> componentModifiers = omcc.getExtendsModifierNames(extendsRelationItem.getSourceQname(), extendsRelationItem.getTargetQname());
 			
 			setMonitorTaskName("Retrieving extends modifications for class " + classQName);
 			
@@ -907,36 +915,8 @@ public class TreeBuilder {
 		}
 		return foundObject;
 	}
-
-
-	private List<String> getItems(String string){
-		List<String> items = new ArrayList<String>();
-		
-		if (string != null && string.trim().length() > 0 && !string.trim().equals("Error") && !string.trim().equals("false")) {
-			String[] splitted = string.trim().substring(1, string.length() - 2).split(",");
-			if (splitted.length > 0 ) {
-				for (int i = 0; i < splitted.length; i++) {
-					String item = splitted[i].trim();
-					if (!item.equals("")) {
-						items.add(item);
-					}
-				}
-			}
-		}
-		if (string.trim().equals("Error")){
-			// TODO: collect errors
-//			String errorString = omcc.getErrorString();	
-		}
-		
-		if (items.size() > 0 ) {
-			return items;	
-		}
-		else {
-			return null;
-		}
-	}
-
-
+	
+	
 	public Element getTypeElement(String typeQName){
 		Element  type = proxyQNameToElement.get(typeQName);
 		// if the type is not a predefined type
@@ -1415,163 +1395,6 @@ public class TreeBuilder {
 	}
 	
 	
-	
-	
-	
-	
-	
-	// Marker *****************************************
-	
-//	private String markerType = Constants.MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES;
-//	
-//	public IMarker createMarker(Element elt, String sourceID, String criticality, String msg){
-//		if (elt != null) {
-//			IResource r = null;
-//			URI eUri = elt.eResource().getURI();
-//			
-//			if (eUri.isPlatformResource()) {
-//				String platformString = eUri.toPlatformString(true);
-//				r = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
-////				r = ResourcesPlugin.getWorkspace().getRoot().findMember(umlModel.getResource().getURI().toPlatformString(true));
-//			}
-//			try {
-//				
-//				IMarker marker = r.createMarker(markerType);
-//				marker.setAttribute(IMarker.MESSAGE, msg);
-//				if ( criticality.equals("error") ) 	{ marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);	}
-//				else 								{ marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO) ; }
-//				marker.setAttribute(IMarker.SOURCE_ID, sourceID);
-//				
-//				if (elt instanceof NamedElement) {
-//					marker.setAttribute(IMarker.LOCATION, ((NamedElement)elt).getQualifiedName());	
-//				}
-//				else{
-//					marker.setAttribute(IMarker.LOCATION, elt.toString());
-//				}
-//				marker.setAttribute(EValidator.URI_ATTRIBUTE, EcoreUtil.getURI(elt).toString());//elt.eResource().getURI().toString());
-//
-//				return marker;
-//				
-//			} catch (CoreException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		return null;
-//	}
-//	
-//	private String extractErrorMessage(String fullString){
-//		String errorString = "";
-//		Pattern patternVisibility = Pattern.compile("Error:.*");
-//		Matcher matcherVisibility = patternVisibility.matcher(fullString);
-//		while (matcherVisibility.find()) {
-//			errorString = matcherVisibility.group(0).replaceFirst("Error:", "").trim();
-//		}
-//		return errorString;
-//	}
-//	
-//	
-//	public IMarker createOMCMarker(TreeObject treeObject, String criticality, String msg){
-//		if (isCreateOMCMarker() && !msg.trim().equals("") ) {
-//			String markerType = Constants.MARKERTYPE_MODELICA_MODELS_LOADING;
-//			
-//			if ( ModelicaMLModel != null ) {
-//				IResource r = null;
-//				URI eUri = ModelicaMLModel.getResource().getURI();
-//				try {
-//					ModelicaMLRoot = ModelicaMLModel.lookupRoot();
-//				} catch (NotFoundException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-//				
-//				if (eUri.isPlatformResource()) {
-//					String platformString = eUri.toPlatformString(true);
-//					r = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
-//				}
-//				try {
-//					IMarker marker = r.createMarker(markerType);
-//					marker.setAttribute(IMarker.MESSAGE, msg);
-//					
-//					if ( criticality.equals("error") ) 	{ marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);	}
-//					else 								{ marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO) ; }
-//					
-//					if ( treeObject != null) {
-//						marker.setAttribute(IMarker.SOURCE_ID, treeObject.getQName());
-//						marker.setAttribute(IMarker.LOCATION, treeObject.getQName());	
-//					}
-//					return marker;
-//					
-//				} catch (CoreException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//		return null;
-//	}
-//
-//
-//	public void deleteProxyValidationMarkers(IProject iProject, String namespace) {
-//		IMarker[] markers = null;
-//		try {
-//			if (iProject != null) {
-//				List<String> markerTypes = new ArrayList<String>();
-//				markerTypes.add(Constants.MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES);
-//				
-//				for (String markerType : markerTypes) {
-//					markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
-//					for (IMarker marker : markers) {
-//						if ( namespace!= null && !namespace.trim().equals("") && marker.getAttribute(IMarker.LOCATION, "").startsWith(namespace) ) {
-//							marker.delete();
-//						}
-//					}
-//				}
-//			}
-//		} catch (CoreException e) {
-//			//e.printStackTrace();
-//		}
-//	}
-//	
-//	public void deleteProxyValidationMarkers(IProject iProject) {
-//		IMarker[] markers = null;
-//		try {
-//			if (iProject != null) {
-//				List<String> markerTypes = new ArrayList<String>();
-//				markerTypes.add(Constants.MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES);
-//				
-//				for (String markerType : markerTypes) {
-//					markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
-//					for (IMarker marker : markers) {
-//						marker.delete();
-//					}
-//				}
-//			}
-//		} catch (CoreException e) {
-//			//e.printStackTrace();
-//		}
-//	}
-//	
-//	public void deleteOMCLoadingMarkers(IProject iProject) {
-//		IMarker[] markers = null;
-//		try {
-//			if (iProject != null) {
-//				List<String> markerTypes = new ArrayList<String>();
-//				markerTypes.add(Constants.MARKERTYPE_MODELICA_MODELS_LOADING);
-//				
-//				for (String markerType : markerTypes) {
-//					markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
-//					for (IMarker marker : markers) {
-//						marker.delete();
-//					}
-//				}
-//			}
-//		} catch (CoreException e) {
-//			//e.printStackTrace();
-//		}
-//	}
-
-
-	
-	
 	public IProgressMonitor getMonitor() {
 		return monitor;
 	}
@@ -1623,5 +1446,29 @@ public class TreeBuilder {
 		this.loadMSL = loadMSL;
 	}
 
+	public String getErrorLog() {
+		
+		String string = "";
+		
+		if (!this.errorLog.trim().isEmpty()) {
+			string += "Modelica Models Tree Builder Error Log **************************************************************** \n"
+					+ this.errorLog;
+		}
+		if (!omcc.getErrorLog().trim().isEmpty()) {
+			string += "\nOMC Error Log ************************************************************************************* \n"
+					+ omcc.getErrorLog();
+		}
+		
+		return string; 	
+	}
+
+	public void setErrorLog(String errorLog) {
+		this.errorLog = errorLog;
+	}
+
+	private void addToErrorLog(String msg){
+		this.errorLog += "\n\n" + msg;
+	}
+	
 }
 

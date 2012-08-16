@@ -219,6 +219,22 @@ public class StringHandler {
 	    return lst; // ERROR?
 	}
 	
+	
+	public static String getStringInCurlyBraces(String value){
+
+		value = value.trim();
+	    String res = "";
+	    
+	    if (value.charAt(0) != '{') return res; // ERROR?
+	    int i=1;
+	    while (value.charAt(i) != '}') {
+	        res = CONSUME_CHAR(value,res,i);
+	        i++;
+	    }
+	    return res; // ERROR?
+	}
+	
+	
 	public static String getConnectEndsString(String value){
 	    value = value.trim();
 	    String connectEndsString = "";

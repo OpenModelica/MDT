@@ -368,18 +368,18 @@ public class ModelicaMLServices {
 	 * OMC handling
 	 */
 	public static boolean containsOMCErrorMessage(String msg){
-		if (	msg.contains("Error: ")
-				|| msg.contains("rror occured")
-				|| msg.contains("No reply from OMC")
+		if (	msg.toLowerCase().contains("Error:")
+				|| msg.toLowerCase().contains("Warning:")
+				|| msg.toLowerCase().contains("Error occured")
+				|| msg.toLowerCase().contains("No reply from OMC")
 			) {
 			// TODO: create a full list of possible OMC error messages
 			return true;
 		}
-		if (msg.trim().equals("false")
-				|| msg.trim().toLowerCase().equals("error")
-				) {
+		if (msg.trim().toLowerCase().equals("false")) {
 			return true;
 		}
+		
 		return false;
 	}
 	

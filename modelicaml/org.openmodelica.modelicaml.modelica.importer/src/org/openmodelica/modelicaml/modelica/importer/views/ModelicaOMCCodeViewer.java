@@ -59,6 +59,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
@@ -457,6 +458,16 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 //		drillDownAdapter.addNavigationActions(manager);
 	}
 
+	
+	private void showErrorLogDialog(){
+		// show error log 
+		String errorLog = treeBuilder.getErrorLog();
+		if(!errorLog.trim().isEmpty()){
+			DialogMessage dialog = new DialogMessage(new Shell(), "Modelica Models Loading Error Log", "The following errors were detected: ", errorLog, true);
+			dialog.open();
+		}
+	}
+	
 	private void makeActions() {
 		
 		// Load job listener
@@ -465,6 +476,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 	            if (event.getResult().isOK()) {
 	            	Display.getDefault().asyncExec(new Runnable() {
 	        			public void run() {
+	        				
+	        				showErrorLogDialog();
 	        				
 	        				Object[] expandedElements = viewer.getExpandedElements();
 	        				TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
@@ -612,6 +625,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								// build tree
 								treeBuilder.buildTree(treeRoot, null);
 								
+								monitor.done();
+								done(Status.OK_STATUS);
 								return Status.OK_STATUS;
 							}
 						};
@@ -991,6 +1006,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								
 							}
 						}
+						
+						done(Status.OK_STATUS);
 						return Status.OK_STATUS;
 					}
 				};
@@ -1430,6 +1447,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 							protected IStatus run(IProgressMonitor monitor) {
 								treeBuilder.setMonitor(monitor);
 								treeBuilder.collectModelicaModelProxies();
+								
+								done(Status.OK_STATUS);
 								return Status.OK_STATUS;
 							}
 						};
@@ -1489,6 +1508,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 										treeBuilder.createClassElementNodes(parent, false);
 
 										monitor.done();
+										done(Status.OK_STATUS);
 										return Status.OK_STATUS;
 									}
 								};
@@ -1661,7 +1681,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					MessageDialog.openError(getSite().getShell(), "Modelica Models Sync. Error", "Could not validate the sub-tree starting with '" + treeObject.getName() + "'" );
 				}
 				
-				
+				done(Status.OK_STATUS);
 				return Status.OK_STATUS;
 			}
 		};
@@ -1715,7 +1735,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					}
 					
 					monitor.done();
-					
+					done(Status.OK_STATUS);
 					return Status.OK_STATUS;
 				}
 			};
@@ -1766,6 +1786,9 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 			            if (event.getResult().isOK()) {
 			            	Display.getDefault().asyncExec(new Runnable() {
 			        			public void run() {
+			        				
+//			        				showErrorLogDialog();
+			        				
 			        				viewer.refresh(); 				
 			        			}
 			        		});
@@ -1794,6 +1817,9 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				            if (event.getResult().isOK()) {
 				            	Display.getDefault().asyncExec(new Runnable() {
 				        			public void run() {
+				        				
+				        				showErrorLogDialog();
+				        				
 				        				syncSubTreeJob.setUser(true);
 				        				syncSubTreeJob.schedule();				
 				        			}
@@ -1847,6 +1873,9 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		            if (event.getResult().isOK()) {
 		            	Display.getDefault().asyncExec(new Runnable() {
 		        			public void run() {
+		        				
+		        				showErrorLogDialog();
+		        				
 		        				viewer.refresh(parent);
 		    					viewer.expandToLevel(parent, 1);
 		        			}

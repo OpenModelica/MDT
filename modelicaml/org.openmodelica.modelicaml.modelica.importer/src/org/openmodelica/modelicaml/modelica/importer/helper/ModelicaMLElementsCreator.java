@@ -1,6 +1,5 @@
 package org.openmodelica.modelicaml.modelica.importer.helper;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -19,7 +18,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.papyrus.infra.core.resource.NotFoundException;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
@@ -67,7 +65,7 @@ import org.openmodelica.modelicaml.modelica.importer.model.TreeBuilder;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeObject;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeParent;
 
-public class ModelicaMLElementsCreator implements IRunnableWithProgress {
+public class ModelicaMLElementsCreator {
 	
 	private ServicesRegistry serviceRegistry = null;
 	private TransactionalEditingDomain editingDomain = null;
@@ -78,6 +76,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 	public final static String COMPONENT_DESCRIPTION_PORT = "port";
 	public final static String COMPONENT_DESCRIPTION_VARIABLE = "variable";
 	public final static String COMPONENT_DESCRIPTION_COMPONENT= "component";
+	
 	private List<Element> createdClasses = new ArrayList<Element>();
 	private List<Element> createdProperties = new ArrayList<Element>();
 	private List<Element> createdGeneralizations = new ArrayList<Element>();
@@ -160,7 +159,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 								
 	//							System.out.println("Creating class: " + treeObject.getQName());
 								addToLog("Creating class: " + treeObject.getQName());
-								setMonitorSubTaskName("Creating class " + treeObject.getQName());
+								setMonitorTaskName("Creating class " + treeObject.getQName());
 								
 								modelicaMLProxy = createClass(parent, (ClassItem) treeObject, applyProxyStereotype);
 								createdClasses.add(modelicaMLProxy);
@@ -188,7 +187,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 									addToLog("Updating class: " + ((NamedElement)modelicaMLProxy).getQualifiedName());
 								}
 								
-								setMonitorSubTaskName("Updating class " + ModelicaMLServices.getQualifiedName(modelicaMLProxy));
+								setMonitorTaskName("Updating class " + ModelicaMLServices.getQualifiedName(modelicaMLProxy));
 								
 								// update
 								updateClass(modelicaMLProxy, (ClassItem) treeObject, applyProxyStereotype);
@@ -520,6 +519,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 						
 						if (modelicaMLPropertyProxy == null) { // if there is no proxy -> create one
 							
+							setMonitorTaskName("Creating component: " + component.getQName());
 							addToLog("Creating component: " + component.getQName());
 	//						System.out.println("Creating component: " + component.getQName());
 							
@@ -541,6 +541,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 							if (update) {
 								if (modelicaMLPropertyProxy instanceof NamedElement) {
 									// indicate
+									setMonitorTaskName("Updating component: " + ((NamedElement)modelicaMLPropertyProxy).getQualifiedName());
 									addToLog("Updating component: " + ((NamedElement)modelicaMLPropertyProxy).getQualifiedName());
 	//								System.out.println("Updating component: " + ((NamedElement)modelicaMLPropertyProxy).getQualifiedName());
 								}
@@ -581,6 +582,9 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 						}
 						// if there is no generalization pointing to the same target -> create a new one
 						if ( !exisitingTargets.contains(target) ) {
+							
+							setMonitorTaskName("Creating extends relation in: " + ((NamedElement)owningClass).getQualifiedName());
+							
 							// create element
 							modelicaMLGeneralizationProxy = createExtendsRelation(owningClass, extendsRelation, applyProxyStereotype);
 	
@@ -596,8 +600,9 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 							if (update) {
 								if ( modelicaMLGeneralizationProxy != null ) {
 									// indicate
-									addToLog("Updating generalization: " + extendsRelation.getSourceQname() + " -> " + 
-											extendsRelation.getTargetQname());
+									addToLog("Updating generalization: " + extendsRelation.getSourceQname() + " -> " + extendsRelation.getTargetQname());
+									setMonitorTaskName("Updating generalization: " + extendsRelation.getSourceQname() + " -> " + extendsRelation.getTargetQname());
+									
 	//								System.out.println("Updating generalization: " + extendsRelation.getSourceQname() + " -> " + extendsRelation.getTargetQname());
 									
 									// update
@@ -631,6 +636,8 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 
 	
 	public void createImportRelation(Class owningClass, TreeParent treeItem){
+		
+		setMonitorTaskName("Creating imports in : " + owningClass.getQualifiedName() );
 		
 		// delete all existing import dependencies
 		EList<Dependency> depList = owningClass.getClientDependencies();
@@ -1926,11 +1933,11 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 		}
 	}
 	
-	private void setMonitorSubTaskName(String name){
-		if (this.monitor != null) {
-			monitor.subTask(name);
-		}
-	}
+//	private void setMonitorSubTaskName(String name){
+//		if (this.monitor != null) {
+//			monitor.subTask(name);
+//		}
+//	}
 	
 	
 	private String getPropertyStereotypeQName(ComponentItem componentTreeObject){
@@ -2073,9 +2080,7 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 	
 	
 	
-	
-	
-	
+	// Project data and editing domain **********************************************************************************
 	
 	private void setModelicaMLRootElement(){
 		umlModel = UmlUtils.getUmlModel();
@@ -2107,37 +2112,37 @@ public class ModelicaMLElementsCreator implements IRunnableWithProgress {
 	 * Monitor *****************************************************************************************************
 	 */
 	
-	// The total sleep time
-	private static final int TOTAL_TIME = 1000;
-	// The increment sleep time
-	private static final int INCREMENT = 10;
-	// process time´is unknown
-	private boolean indeterminate = true; 
-	
-	private String progressMonitorTitle = "Modelica Model Proxies Creation ";
-	private String monitorText1 = "Collecting data ...";
-	private String monitorText2 = "Creating elements ...";
-	
-	@Override
-	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		
-		monitor.beginTask(progressMonitorTitle + " is running." , indeterminate ? IProgressMonitor.UNKNOWN : TOTAL_TIME);
-	    for (int total = 0; total < TOTAL_TIME && !monitor.isCanceled(); total += INCREMENT) {
-	      Thread.sleep(INCREMENT);
-	      monitor.worked(INCREMENT);
-	      if (total == TOTAL_TIME / 100) {
-	    	  monitor.subTask(monitorText1);
-	      }
-	      else {
-	    	  monitor.subTask(monitorText2);
-	      }
-//	      if (total == TOTAL_TIME / 2) monitor.subTask(monitorText2);
-	    }
-	    monitor.done();
-	    if (monitor.isCanceled()){
-	    	throw new InterruptedException(progressMonitorTitle + " was cancelled.");
-	    }   
-	}
+//	// The total sleep time
+//	private static final int TOTAL_TIME = 1000;
+//	// The increment sleep time
+//	private static final int INCREMENT = 10;
+//	// process time´is unknown
+//	private boolean indeterminate = true; 
+//	
+//	private String progressMonitorTitle = "Modelica Model Proxies Creation ";
+//	private String monitorText1 = "Collecting data ...";
+//	private String monitorText2 = "Creating elements ...";
+//	
+//	@Override
+//	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+//		
+//		monitor.beginTask(progressMonitorTitle + " is running." , indeterminate ? IProgressMonitor.UNKNOWN : TOTAL_TIME);
+//	    for (int total = 0; total < TOTAL_TIME && !monitor.isCanceled(); total += INCREMENT) {
+//	      Thread.sleep(INCREMENT);
+//	      monitor.worked(INCREMENT);
+//	      if (total == TOTAL_TIME / 100) {
+//	    	  monitor.subTask(monitorText1);
+//	      }
+//	      else {
+//	    	  monitor.subTask(monitorText2);
+//	      }
+////	      if (total == TOTAL_TIME / 2) monitor.subTask(monitorText2);
+//	    }
+//	    monitor.done();
+//	    if (monitor.isCanceled()){
+//	    	throw new InterruptedException(progressMonitorTitle + " was cancelled.");
+//	    }   
+//	}
 
 	
 	

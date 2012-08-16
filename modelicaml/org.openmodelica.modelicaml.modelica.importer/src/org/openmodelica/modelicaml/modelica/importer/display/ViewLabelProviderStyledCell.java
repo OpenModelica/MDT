@@ -111,7 +111,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 //		}
 //		super.dispose();
 //	}
-//	
+
 	
 	@Override
 	public void update(ViewerCell cell) {
@@ -203,77 +203,6 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			
 			setImage(treeObject);
 			cell.setImage((Image) overlayIconImage);
-			
-//			if ( treeObject.getName().equals(Constants.folderName_code_sync)) {
-//				cell.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER));
-//			}
-//			
-//			// components
-//			else if ( treeObject instanceof ComponentItem && ((ComponentItem)treeObject).isComponent()) {
-//				cell.setImage(decorateImage( treeObject , "/icons/component.png", null ));
-//			}
-//
-//			else if ( treeObject instanceof ComponentItem && ((ComponentItem)treeObject).isPort()) {
-//				cell.setImage(decorateImage( treeObject , "/icons/port.gif", null ));
-//			}
-//			else if ( treeObject instanceof ComponentItem && ((ComponentItem)treeObject).isVariable()) {
-//				cell.setImage(decorateImage( treeObject , "/icons/variable.png", null ));
-//			}
-//			else if ( treeObject instanceof ComponentItem 
-//					&& ((ComponentItem)treeObject).isFunctionArgument() 
-//					&& ((ComponentItem)treeObject).getCausality().equals("input")) {
-//				cell.setImage(decorateImage( treeObject , "/icons/Parameter_in.gif", null ));
-//			}
-//			else if ( treeObject instanceof ComponentItem 
-//					&& ((ComponentItem)treeObject).isFunctionArgument() 
-//					&& ((ComponentItem)treeObject).getCausality().equals("output")) {
-//				cell.setImage(decorateImage( treeObject , "/icons/Parameter_return.gif", null ));
-//			}
-//			else if ( treeObject instanceof ComponentItem && ((ComponentItem)treeObject).isFunctionArgument()) {
-//				cell.setImage(decorateImage( treeObject , "/icons/Parameter.gif", null ));
-//			}
-//			
-//			//classes 
-//			else if ( treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("package")) {
-//				cell.setImage(decorateImage( treeObject , "/icons/Package.gif", null ));
-//			}
-//			else if ( treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("class")) {
-//				cell.setImage(decorateImage( treeObject , "/icons/modelicaClass.gif", null ));
-//			}
-//			else if ( treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("model")) {
-//				cell.setImage(decorateImage( treeObject , "/icons/model.gif", null ));
-//			}
-//			else if ( treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("block")) {
-//				cell.setImage(decorateImage( treeObject , "/icons/block.gif", null ));
-//			}
-//			else if ( treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().contains("connector")) {
-//				cell.setImage(decorateImage( treeObject , "/icons/connector.gif", null ));
-//			}
-//			else if ( treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("record")) {
-//				cell.setImage(decorateImage( treeObject , "/icons/record.gif", null ));
-//			}
-//			else if ( treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("type")) {
-//				cell.setImage(decorateImage( treeObject , "/icons/type.gif", null ));
-//			}
-//			else if ( treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("function")) {
-//				cell.setImage(decorateImage( treeObject , "/icons/FunctionBehavior.gif", null ));
-//			}
-//			else if ( treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().contains("operator")) {
-//				cell.setImage(decorateImage( treeObject , "/icons/operator.gif", null ));
-//			}
-//			else if ( treeObject instanceof ExtendsRelationItem ) {
-//				cell.setImage(decorateImage( treeObject , "/icons/Generalization.gif", null ));
-//			}
-//			else {
-////				cell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/reload.png"));
-//				cell.setImage(decorateImage( treeObject , "/icons/reload.png", null ));
-//			}
-//		}
-//		else {
-//			// default
-//			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
-////			String imageKey = ISharedImages.IMG_OBJ_FOLDER;
-//			cell.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(imageKey));
 		}
 
 		super.update(cell);
@@ -323,7 +252,6 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		
 		//root node - the code-sync folder
 		if ( treeObject.getName().equals(Constants.folderName_code_sync)) {
-//			overlayIconImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 			
 			if (codeSyncFolderExists()) {
 				overlayIconImage = ResourceManager.decorateImage(
@@ -365,7 +293,6 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 		else if ( treeObject instanceof ComponentItem && ((ComponentItem)treeObject).isEnumarationLiteral()) {
 //			overlayIconImage = decorateImage( treeObject , "/icons/EnumerationLiteral.gif", null );
 			overlayIconImage = ResourceManager.getPluginImage("org.eclipse.uml2.uml.edit", "/icons/full/obj16/EnumerationLiteral.gif");
-
 		}
 
 		
@@ -401,16 +328,12 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			overlayIconImage = decorateImage( treeObject , "/icons/operator.gif", null );
 		}
 		else if ( treeObject instanceof ExtendsRelationItem ) {
-//			overlayIconImage = decorateImage( treeObject , "/icons/Generalization.gif", null );
 			overlayIconImage = ResourceManager.getPluginImage("org.eclipse.uml2.uml.edit", "/icons/full/obj16/Generalization.gif");
 		}
 		else if ( treeObject instanceof ImportRelationItem ) {
-//			overlayIconImage = decorateImage( treeObject , "/icons/Dependency.gif", null );
 			overlayIconImage = ResourceManager.getPluginImage("org.eclipse.uml2.uml.edit", "/icons/full/obj16/ElementImport.gif");
 		}
 		else {
-//			cell.setImage(SWTResourceManager.getImage(Activator.class, "/icons/reload.png"));
-//			overlayIconImage = decorateImage( treeObject , "/icons/reload.png", null );
 			overlayIconImage = decorateImage( treeObject , "/icons/unknown_obj.gif", null );
 		}
 	}
@@ -522,14 +445,12 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 					// sync status
 					if ( (element instanceof ClassItem || element instanceof ComponentItem) 
 							&& ((TreeParent)element).getModelicaMLProxy() == null ) {
-//						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, warningImageDescriptor, IDecoration.BOTTOM_RIGHT);
 						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, syncIncomingImageDescriptor, IDecoration.BOTTOM_RIGHT);
 						return overlayIcon.createImage();
 					}
 					else if ((element instanceof ClassItem || isTreeRoot((TreeParent) element)) 
 							&& hasEmptyProxies((TreeParent) element)) {
 						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, warningImageDescriptor, IDecoration.BOTTOM_RIGHT);
-//						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, syncIncomingImageDescriptor, IDecoration.BOTTOM_RIGHT);
 						return overlayIcon.createImage();
 					}
 				}
@@ -634,6 +555,7 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 	}
 	
 	public boolean hasMarkers(TreeObject item){
+		
 		HashSet<String> markerTypes = new HashSet<String>(); 
 		markerTypes.add(Constants.MARKERTYPE_MODELICA_MODELS_LOADING);
 		markerTypes.add(Constants.MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES);
@@ -673,7 +595,6 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 	public void setDecorateItem(boolean decorateItem) {
 		this.decorateItem = decorateItem;
 	}
-
 
 	public boolean isDecorateItem() {
 		return decorateItem;

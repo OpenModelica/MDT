@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 
 public class TreeParent extends TreeObject {
+	
 	private ArrayList<TreeObject> children;
+	
 	public TreeParent(String name) {
 		super(name);
 		children = new ArrayList<TreeObject>();
@@ -26,9 +28,6 @@ public class TreeParent extends TreeObject {
 			
 			String msg = "OMC loading error for '" + getQName() + "': " + errorString;
 			Utilities.createOMCMarker(this, "error", msg);
-			
-			//TODO: for debug only, remove it.
-			System.err.println(msg);
 		}
 	}
 	
