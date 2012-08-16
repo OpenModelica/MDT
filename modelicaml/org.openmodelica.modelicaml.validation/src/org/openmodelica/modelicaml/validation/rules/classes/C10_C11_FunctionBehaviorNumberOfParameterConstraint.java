@@ -14,6 +14,7 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.EnumerationLiteral;
 import org.eclipse.uml2.uml.FunctionBehavior;
 import org.eclipse.uml2.uml.Parameter;
+import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 
@@ -29,8 +30,8 @@ import org.openmodelica.modelicaml.common.constants.Constants;
  *
  * C11:
  * 	Rule :	A UML FunctionBehavior  with the ModelicaML stereotype <<Function>>  applied 
- * 		   	must have at least one UML Parameter with causality input and exactly 
- * 			one UML Parameter with the causality output. 
+ * 		   	must have at least one UML Parameter with causality input and at least one 
+ * 			UML::Parameter with the causality output. 
  * 
  * 	Severity : ERROR
  * 
@@ -63,37 +64,71 @@ public class C10_C11_FunctionBehaviorNumberOfParameterConstraint extends
 		}
 		
 		if((eObj instanceof FunctionBehavior) && ((((FunctionBehavior)eObj).getAppliedStereotype(Constants.stereotypeQName_Function)) != null)){
+			
 			FunctionBehavior functionBehavior = (FunctionBehavior) eObj;
+			Stereotype functionStereotype = functionBehavior.getAppliedStereotype(Constants.stereotypeQName_FunctionArgument);
+			
+			boolean isPartial = (Boolean) functionBehavior.getValue(functionStereotype, Constants.propertyName_partial);
+			if (isPartial) {
+				/*
+				 * a partial function can be "empty"
+				 */
+				return ctx.createSuccessStatus();
+			}
+
+			
 			List<Element> functionBehaviorElements = functionBehavior.allOwnedElements();
+			
+			/*
+			 * TODO: Get all inherited attributes. For that we need to search through all inheritance relations ... 
+			 * 
+			 * This is a workaround. The indicator is used to assume that 
+			 * the function inherits from another function which in turn will 
+			 * have inputs and outouts. 
+			 */
+			boolean hasExtendsRelation = functionBehavior.getGeneralizations().size() >  0;
+			
+			
 			boolean atleastOneInput = false;
-			boolean atMostOneOutput = false;
+			boolean atleastOneOutput= false;
+//			boolean atMostOneOutput = false;
 			for (Element element : functionBehaviorElements) {
 				
 				if(element instanceof Parameter && (element.getAppliedStereotype(Constants.stereotypeQName_FunctionArgument) != null)){
+					
 					Stereotype parameterStereotype = element.getAppliedStereotype(Constants.stereotypeQName_FunctionArgument);
 					String causalityValue = ((EnumerationLiteral)element.getValue(parameterStereotype, Constants.propertyName_causality)).getName();
+					
+					
 					
 					if(causalityValue.equalsIgnoreCase("input")){
 						atleastOneInput = true;
 					}
 					else if(causalityValue.equalsIgnoreCase("output")){
-						if(atMostOneOutput == true){
-							return ctx.createFailureStatus(new Object[]{ Constants.validationKeyWord_NOT_VALID + ": Function '"
-									+ ((FunctionBehavior)eObj).getName() +"' has more than one variables with causality set to 'output'."});
-						}
-						else if(atMostOneOutput == false){
-							atMostOneOutput = true;
-						}
+						atleastOneOutput = true;
+						
+//						if(atMostOneOutput == true && !hasExtendsRelation){
+//							return ctx.createFailureStatus(new Object[]{ Constants.validationKeyWord_NOT_VALID + ": Function '"
+//									+ ((FunctionBehavior)eObj).getName() +"' has more than one variables with causality set to 'output'."});
+//						}
+//						else if(atMostOneOutput == false){
+//							atMostOneOutput = true;
+//						}
 					}
 					else {
-						return ctx.createFailureStatus(new Object[]{ "Parameter "+ ((Parameter)element).getName() +" must have its causality set to 'input' or 'output'"});
+						if (!hasExtendsRelation) {
+							return ctx.createFailureStatus(new Object[]{ "Parameter "+ ((Parameter)element).getName() +" must have its causality set to 'input' or 'output'"});
+						}
 					}
-					
 				}
 			}
-			if(atleastOneInput == false)
-			{
-				return ctx.createFailureStatus(new Object[]{  "Function "+ ((FunctionBehavior)eObj).getName() +" should have atleast one Parameter's causality set to 'input'"});
+			
+			if(atleastOneInput == false && !hasExtendsRelation){
+				return ctx.createFailureStatus(new Object[]{  "Function "+ ((FunctionBehavior)eObj).getName() +" should have atleast one parameter's causality set to 'input'"});
+			}
+			
+			if (atleastOneOutput == false && !hasExtendsRelation){
+				return ctx.createFailureStatus(new Object[]{  "Function "+ ((FunctionBehavior)eObj).getName() +" should have atleast one parameter's causality set to 'output'"});
 			}
 		}
 	

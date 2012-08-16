@@ -100,7 +100,7 @@ AbstractModelConstraint {
 					
 					Type type  = ((Property)element).getType();
 					
-					if (type != null && type.getAppliedStereotype(Constants.stereotypeQName_Record) != null) {
+					if (type != null && type.getAppliedStereotype(Constants.stereotypeQName_Record) != null || type instanceof Enumeration) {
 						// ok, a Modelica package can have a variable of type record.
 					}
 					else {

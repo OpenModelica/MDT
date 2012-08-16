@@ -12,6 +12,7 @@ import org.eclipse.emf.validation.EMFEventType;
 import org.eclipse.emf.validation.IValidationContext;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.Enumeration;
 import org.eclipse.uml2.uml.FunctionBehavior;
 import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.NamedElement;
@@ -60,7 +61,12 @@ public class C19_ClassInheritanceRulesConstraint extends AbstractModelConstraint
 
 					for (Element element : elementList) {
 
-						if( !(element instanceof Class && element.getAppliedStereotype(Constants.stereotypeQName_ModelicaPackage) != null)) {
+						if( !(element instanceof Class 
+								&& ( element.getAppliedStereotype(Constants.stereotypeQName_ModelicaPackage) != null
+										|| element.getAppliedStereotype(Constants.stereotypeQName_ModelicaClass) != null) 
+									)
+							) {
+
 							return ctx.createFailureStatus(new Object[] {Constants.validationKeyWord_NOT_VALID + ": Modelica package ('"+((NamedElement) eObj).getName()
 									+ "') can only extend a Modelica packages."});
 						}
@@ -146,9 +152,14 @@ public class C19_ClassInheritanceRulesConstraint extends AbstractModelConstraint
 
 					for (Element element : elementList) {
 
-						if( !(( element instanceof Class && ((element.getAppliedStereotype(Constants.stereotypeQName_Connector) != null) 
-									|| element.getAppliedStereotype(Constants.stereotypeQName_Record) != null )) 
-									|| element instanceof PrimitiveType && element.getAppliedStereotype(Constants.stereotypeQName_Type) != null )){
+						if( !(( element instanceof Class 
+								&& (
+										(element.getAppliedStereotype(Constants.stereotypeQName_Connector) != null) 
+											|| element.getAppliedStereotype(Constants.stereotypeQName_Record) != null )) 
+		//									|| element instanceof PrimitiveType && element.getAppliedStereotype(Constants.stereotypeQName_Type) != null 
+											|| element instanceof PrimitiveType 
+											|| element instanceof Enumeration 
+									)){
 							
 							return ctx.createFailureStatus(new Object[] { Constants.validationKeyWord_NOT_VALID + ": Connector '"
 									+((NamedElement) eObj).getName()+ "' can only extend Modelica connectors."});

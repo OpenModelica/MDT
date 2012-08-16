@@ -2428,10 +2428,12 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	
 	@SuppressWarnings("unchecked")
 	private List<Object> getCurrentSelections() {
-		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
-		if(selection instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
-			return structuredSelection.toList();
+		if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() != null && PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService() != null) {
+			ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
+			if(selection instanceof IStructuredSelection) {
+				IStructuredSelection structuredSelection = (IStructuredSelection)selection;
+				return structuredSelection.toList();
+			}	
 		}
 		return null;
 	}

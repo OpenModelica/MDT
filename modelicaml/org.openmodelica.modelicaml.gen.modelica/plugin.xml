@@ -230,9 +230,9 @@
    </extension>-->
    
    
-   <!-- THIS is a temp. soluation. We "reactivated" the old validation because (up to now 14.08.2012) 
-   the EMF Validation (v1.6.0) is not supported in Eclipse 3.8 (Juno) --> 
+   <!-- OBSOLETE: Replaced by the ModelicaML validation plugin that is based on EMF Validation Framework. --> 
    
+   <!--
     <extension point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
@@ -267,7 +267,7 @@
          </toolbar>
       </menuContribution>
    </extension>
-   
+   -->
    
    
    

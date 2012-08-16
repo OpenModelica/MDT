@@ -59,8 +59,27 @@
    </extension>
    
    
+   <extension
+         id="org.openmodelica.modelicaml.marker.validation.problem"
+         name="ModelicaML Validation"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.emf.ecore.diagnostic">
+      </super>
+      <super
+            type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent
+            value="false">
+      </persistent>
+      <attribute
+            name="generatedBy">
+      </attribute>
+   </extension>
+   
+   
    <!-- TODO: Reactivate this menu as soon as the EMF Validation is supported in Eclipse 3.8 (Juno)  -->
-   <!--
+
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -96,7 +115,6 @@
          </toolbar>
       </menuContribution>
    </extension>
-   -->
    
    
    <extension
@@ -800,6 +818,9 @@
          </markerTypeReference>
          <markerTypeReference
                id="org.openmodelica.modelicaml.marker.modelicaloading">
+         </markerTypeReference>
+         <markerTypeReference
+               id="org.openmodelica.modelicaml.marker.modelicamlproxies">
          </markerTypeReference>
          <markerTypeReference
                id="org.openmodelica.modelicaml.marker.omc">

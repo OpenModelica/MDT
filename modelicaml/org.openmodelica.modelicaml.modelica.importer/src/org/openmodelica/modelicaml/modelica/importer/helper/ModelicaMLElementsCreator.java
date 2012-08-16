@@ -761,7 +761,16 @@ public class ModelicaMLElementsCreator {
 //				Element source = owningClass;
 				Element target = treeBuilder.getTypeElement(extendsRelation.getTargetQname());
 				
-				if (target instanceof Classifier) {
+				TreeParent owningClass = extendsRelation.getParent();
+				
+				/*
+				 * Avoid creating extends relations that point to the element it self. 
+				 * This may happen when anonym classes are used in Modelica.
+				 */
+				if (target instanceof Classifier 
+						&& !extendsRelation.getTargetQname().equals(extendsRelation.getSourceQname())
+						&& !extendsRelation.getTargetQname().equals(owningClass.getQName())
+						) {
 //					System.out.println("Creating extends relation: " + extendsRelationTreeObject.getSourceQname() + " -> " + extendsRelation.getTargetQname());
 					addToLog("Creating extends relation: " + extendsRelationTreeObject.getSourceQname() + " -> " + extendsRelation.getTargetQname());
 					
