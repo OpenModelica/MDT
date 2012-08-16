@@ -117,7 +117,7 @@ public class C01_C02_NonSimilarNamesConstraint extends AbstractModelConstraint {
 							String propertyName = property.getName();
 							
 							for (Property property2 : propertyList) {
-								if(!(property2.equals(property)) && (property2.getName().equalsIgnoreCase(propertyName))){
+								if(!(property2.equals(property)) && (property2.getName().equals(propertyName))){
 									return ctx.createFailureStatus(new Object[] {((Class)root_element).getQualifiedName()+" contains properties with same name "+propertyName});
 								}
 							}

@@ -101,6 +101,7 @@ public class ModelicaMLValidationAction implements IHandler {
 		
 		Job job = new Job("ModelicaML Model Validation") {
 			protected IStatus run(IProgressMonitor monitor) {
+				
 				IBatchValidator validator = (IBatchValidator)ModelValidationService.getInstance().newValidator(EvaluationMode.BATCH);
 				
 				// include live constraints, also, in batch validation

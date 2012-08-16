@@ -19,6 +19,7 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
+import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.validation.util.Utility;
 
@@ -67,12 +68,15 @@ AbstractModelConstraint {
 				Element element = (Element) eObj;
 
 				if((element instanceof Dependency) || (element instanceof Comment) || (element instanceof Enumeration) || (element instanceof PrimitiveType)){
-
+					// ok, a Modelica package can have imports, comments, enumerations and any nested primitive types
 				}
-				else if(element instanceof Generalization || element instanceof FunctionBehavior || element instanceof Class){
+				else if(element instanceof Generalization || element instanceof FunctionBehavior || element instanceof Class) {
+					
 					if(Utility.isElementHaveModelicaMLStereotypeApplied(element)){
 						return ctx.createSuccessStatus();
 					}
+					
+					
 					if (element instanceof NamedElement) {
 						return ctx.createFailureStatus(new Object[] { "'"+element.eClass().getName()+"(s)' ('"+((NamedElement)element).getName()+"') cannot be a part of a Modelica package." });
 					}
@@ -81,6 +85,8 @@ AbstractModelConstraint {
 					}
 				}
 				else if((element instanceof Property) && (element.getAppliedStereotype(Constants.stereotypeQName_Variable) != null)){
+
+					// a Modelica package can only have constants 
 					
 					Stereotype property_variable_stereotype = ((Property)element).getAppliedStereotype(Constants.stereotypeQName_Variable);
 
@@ -91,17 +97,24 @@ AbstractModelConstraint {
 					}
 				}
 				else if(element instanceof Property){
-					return ctx.createFailureStatus(new Object[]{ Constants.validationKeyWord_NOT_VALID + ": variable in a Modelica package must have <<Variable>> stereotype applied."});
+					
+					Type type  = ((Property)element).getType();
+					
+					if (type != null && type.getAppliedStereotype(Constants.stereotypeQName_Record) != null) {
+						// ok, a Modelica package can have a variable of type record.
+					}
+					else {
+						// any variable must have a stereotype applied
+						return ctx.createFailureStatus(new Object[]{ Constants.validationKeyWord_NOT_VALID + ": variable in a Modelica package must have <<Variable>> stereotype applied."});
+					}
 				}
 				else {
+					// any unknown element for ModelicaML
 					return ctx.createFailureStatus(new Object[] { "'"+element.eClass().getName()+"(s)' ('"+((NamedElement)element).getName()+"') cannot be a part of a Modelica package." });
 				}
 			}
 		}
 
-
-
 		return ctx.createSuccessStatus();
 	}
-
 }
