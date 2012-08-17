@@ -2131,8 +2131,11 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	        	 * avoid the case the the view provides its own selection and re-builds the tree again.
 	        	 */
 
-	        	if (selectedElement instanceof Element && !selectedElement.equals(selectedClass)) {
-					if (actionLinkWithEditor.isChecked()) {
+	        	if (selectedElement instanceof Class 
+	        			&& isValid((Class) selectedElement)
+	        			&& !selectedElement.equals(selectedClass)) {
+
+	        		if (actionLinkWithEditor.isChecked()) {
 						showSelection(sourcepart, selection);
 						viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
 					}
