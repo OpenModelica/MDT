@@ -905,7 +905,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 					
 					lineDelimiterString + 
 					"\nTest Scenario: '"+((NamedElement)testScenario).getName()+"'("+((NamedElement)testScenario).getQualifiedName()+")" +
-					getAdditionalModelsString(tsmc.getRequiredModels_testScenario(), tsmc, testScenario) 
+					getAdditionalModelsString(tsmc.getRequiredModels_scenario(), tsmc, testScenario) 
 					;
 			
 			if (mode == Constants.MODE_VEM_GENERATION) {
@@ -1011,7 +1011,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 	
 	private String getUnsatisfiedClients(String prefix, Element element, VeMScenarioReqCombinationsCreator tsmc){
 		String string = "";
-		String unsatisfiedClientsString = tsmc.getClientsDotPathAsString(tsmc.getUnsatisfiedRequiredClients(element));
+		String unsatisfiedClientsString = tsmc.getClientsDotPathAsString(tsmc.getUnsatisfiedMandatoryClients(element));
 		if (!unsatisfiedClientsString.trim().equals("")) {
 			string = prefix + "- unsatisfied required clients: " + "\n";
 			string = string + prefix + "         " + unsatisfiedClientsString;

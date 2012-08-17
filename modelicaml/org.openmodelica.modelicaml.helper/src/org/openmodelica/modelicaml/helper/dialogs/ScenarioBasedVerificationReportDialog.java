@@ -1247,7 +1247,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 			
 			item.setData(data);
 
-			// Add clients (isMandatory, binding)
+			// Add clients
 			getClientItems(ci, item, VeM, requirement);
 			
 			}

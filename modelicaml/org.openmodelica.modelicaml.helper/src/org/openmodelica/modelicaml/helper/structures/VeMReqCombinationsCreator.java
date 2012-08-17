@@ -388,14 +388,14 @@ public class VeMReqCombinationsCreator {
 		boolean allRequiredClientsAreSatisfied = true;
 		vbc.updateAllBindings(valueMediatorsPackage, null, treeParentToStartTheCheckOn, virtualInstantiationTreeRoot, false, true, false, true);
 		
-		if ( vbc.getAllRequiredClientsFound().size() > 0 
-				&& !vbc.getAllClientsWithPossibleBindingCodeDerivation().containsAll(vbc.getAllRequiredClientsFound())) {
+		if ( vbc.getAllMandatoryClientsFound().size() > 0 
+				&& !vbc.getAllClientsWithPossibleBindingCodeDerivation().containsAll(vbc.getAllMandatoryClientsFound())) {
 			allRequiredClientsAreSatisfied = false;
 		}
 		
 		// Collect all mandatory clients that are not satisfied.
 		HashSet<TreeObject> unsatisfiedRequiredClients = new HashSet<TreeObject>();
-		unsatisfiedRequiredClients.addAll(vbc.getAllRequiredClientsFound());
+		unsatisfiedRequiredClients.addAll(vbc.getAllMandatoryClientsFound());
 		unsatisfiedRequiredClients.removeAll(vbc.getAllClientsWithPossibleBindingCodeDerivation());
 
 		if (unsatisfiedRequiredClients.size() > 0 ) {

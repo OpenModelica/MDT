@@ -15,6 +15,7 @@ import org.eclipse.uml2.uml.TypedElement;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.helper.datacollection.VerificationScenariosCollector;
 import org.openmodelica.modelicaml.helper.generators.CreatorValueBinding;
 
@@ -43,14 +44,14 @@ public class VeMScenarioReqCombinationsCreator {
 	/* 
 	 * verification scenario that is used to stimulate the system model
 	 */
-	private Element testScenario;
+	private Element scenario;
 
 
 
 	/*
 	 * All required models that are referenced (directly or indirectly) by the verification scenario model 
 	 */
-	private HashSet<Element> requiredModels_testScenario = new HashSet<Element>();
+	private HashSet<Element> requiredModels_scenario = new HashSet<Element>();
 	
 	/*
 	 * A set of requirements to be verified
@@ -92,8 +93,12 @@ public class VeMScenarioReqCombinationsCreator {
 	private TreeParent virtualInstantiationTreeRoot;
 
 	// contains tree objects (instantiation roots of models) with all mandatory clients that are NOT satisfied.
-	private HashMap<TreeParent, HashSet<TreeObject>> requiredClients_unsatisfied = new HashMap<TreeParent, HashSet<TreeObject>>();
+	private HashMap<TreeParent, HashSet<TreeObject>> mandatoryClients_unsatisfied = new HashMap<TreeParent, HashSet<TreeObject>>();
 
+	// models and their clients.
+	private HashMap<TreeParent, HashSet<TreeObject>>  modelClients = new HashMap<TreeParent, HashSet<TreeObject>> ();
+	
+	
 	// collector of verification data (scenarios, requirements etc.)
 	private VerificationScenariosCollector collector;
 
@@ -113,7 +118,7 @@ public class VeMScenarioReqCombinationsCreator {
 	private boolean isError = false;
 	
 	public VeMScenarioReqCombinationsCreator(Class systemModel, 
-			Class testScenario, 
+			Class scenario, 
 			HashSet<Element> requirements,
 			Package valueMediatorsPackage,
 			HashSet<Element> allAlwaysIncludeFound,
@@ -124,7 +129,7 @@ public class VeMScenarioReqCombinationsCreator {
 		this.collector = collector;
 		
 		this.systemModel = systemModel;
-		this.testScenario = testScenario;
+		this.scenario = scenario;
 		this.requirements = requirements;
 		this.valueMediatorsPackage = valueMediatorsPackage;
 		
@@ -145,12 +150,12 @@ public class VeMScenarioReqCombinationsCreator {
 		 *  This is used to indicate that these models should not be considered as additional models.   
 		 */
 		initialSetOfModels.add(systemModel);
-		initialSetOfModels.add(testScenario);
+		initialSetOfModels.add(scenario);
 		initialSetOfModels.addAll(requirements);
 		
 		// collect all models that are required in addition (deep search)
 		requiredModels_systemModel.addAll(findAdditionModels(systemModel));
-		requiredModels_testScenario.addAll(findAdditionModels(testScenario));
+		requiredModels_scenario.addAll(findAdditionModels(scenario));
 		
 		for (Element requirement : requirements) {
 			requiredModels_requirements.put(requirement, findAdditionModels(requirement));
@@ -305,24 +310,34 @@ public class VeMScenarioReqCombinationsCreator {
 
 		// Note, isDiscarded is false by default. There is no need to set it to false.
 		TreeParent systemModelInstantiationTreeRoot = modelToItsInstantiation.get(this.systemModel).getTreeRoot();
-		TreeParent testScenarioInstantiationTreeRoot = modelToItsInstantiation.get(this.testScenario).getTreeRoot();
+		TreeParent scenarioInstantiationTreeRoot = modelToItsInstantiation.get(this.scenario).getTreeRoot();
 		
-		if (systemModelInstantiationTreeRoot != null && testScenarioInstantiationTreeRoot != null) {
-			if (!areAllRequiredClientsSatisfied(virtualInstantiationTreeRoot, systemModelInstantiationTreeRoot)) {
+		if (systemModelInstantiationTreeRoot != null && scenarioInstantiationTreeRoot != null) {
+			
+			if (!areAllMandatoryClientsSatisfied(virtualInstantiationTreeRoot, systemModelInstantiationTreeRoot)) {
 
+				// discard this combination
 				setDiscarded(true);
+				
 				String message = "DISCARDED(02): The combination " +
-						"\n   - Scenario: '" + ((NamedElement)this.testScenario).getQualifiedName() + "'" +
+						"\n   - Scenario: '" + ((NamedElement)this.scenario).getQualifiedName() + "'" +
 						"\n   - System Model: '" + ((NamedElement)this.systemModel).getQualifiedName() + "'" +
 						"\nis discarded because the following mandatory clients of the system model are not satisfied: " +
-						"\n" + getClientsDotPathAsString(requiredClients_unsatisfied.get(systemModelInstantiationTreeRoot));
+						"\n" + getClientsDotPathAsString(mandatoryClients_unsatisfied.get(systemModelInstantiationTreeRoot));
 				addToLog(message);
 			}
-			if (!isAtLeastOneProviderUsed(virtualInstantiationTreeRoot, testScenarioInstantiationTreeRoot)) {
+			/*
+			 * TODO: What if all clients of the system model are satisfied by additional models, which in 
+			 * turn are satisfied by scenarios? Then the code below would discard this combination.
+			 * Should we consider this case?
+			 */
+			if (!isAtLeastOneProviderUsed(virtualInstantiationTreeRoot, scenarioInstantiationTreeRoot)) {
 				
+				// discard this combination
 				setDiscarded(true);
+				
 				String message = "DISCARDED(03): The combination " +
-						"\n   - Scenario: '" + ((NamedElement)this.testScenario).getQualifiedName() + "'" +
+						"\n   - Scenario: '" + ((NamedElement)this.scenario).getQualifiedName() + "'" +
 						"\n   - System Model: '" + ((NamedElement)this.systemModel).getQualifiedName() + "'" +
 						"\nis discarded because none of the scenario providers is used to stimulate the model. ";
 				addToLog(message);
@@ -345,16 +360,36 @@ public class VeMScenarioReqCombinationsCreator {
 //		System.err.println("Starting the validation of system model, scenario and requirements.");
 		
 		for (Element requirement : requirements) {
+			
 			TreeParent requirementInstantiationTreeRootItem = modelToItsInstantiation.get(requirement).getTreeRoot();
+			
 			if (requirementInstantiationTreeRootItem != null) {
+
 				// this method validates and collects the unsatisfied mandatory clients at the same time.
-				areAllRequiredClientsSatisfied(virtualInstantiationTreeRoot, requirementInstantiationTreeRootItem);
+				areAllMandatoryClientsSatisfied(virtualInstantiationTreeRoot, requirementInstantiationTreeRootItem);
+				
+				/*
+				 * check if if requirement has clients at all and all mandatory are satisfied
+				 */
 				
 				// add unsatisfied mandatory clients to log
-				if (getUnsatisfiedRequiredClients(requirement) != null) {
-					String message = "PROBLEM(05): Requirement " + ((NamedElement)requirement).getQualifiedName() + "'" +
+				HashSet<TreeObject> unsatisfiedClients = getUnsatisfiedMandatoryClients(requirement); 
+				if (unsatisfiedClients != null) {
+					String message = "PROBLEM(05): Requirement " 
+							+ ModelicaMLServices.getRequirementID(requirement) + ": " 
+							+ ModelicaMLServices.getName(requirement) 
+							+ " (" + ((NamedElement)requirement).getQualifiedName() + ")" +
 					"\n has the following mandatory clients which are not satisfied: " +
-					"\n" +getClientsDotPathAsString(getUnsatisfiedRequiredClients(requirement));
+					"\n" +getClientsDotPathAsString(unsatisfiedClients);
+					
+					addToLog(message);
+				}
+				else if (getModelClients(requirement) == null) {
+					String message = "PROBLEM(05.1): Requirement " 
+							+ ModelicaMLServices.getRequirementID(requirement) + ": " 
+							+ ModelicaMLServices.getName(requirement) 
+							+ " (" + ((NamedElement)requirement).getQualifiedName() + ")" +
+					"\n has no clients at all.";
 					
 					addToLog(message);
 				}
@@ -399,40 +434,96 @@ public class VeMScenarioReqCombinationsCreator {
 	}
 	
 	
-	private boolean areAllRequiredClientsSatisfied(TreeParent virtualInstantiationTreeRoot, TreeParent treeParentToStartTheCheckOn){
+	private boolean areAllMandatoryClientsSatisfied(TreeParent virtualInstantiationTreeRoot, TreeParent treeParentToStartTheCheckOn){
 		
 		/* 
-		 * Get the list of clients for which the code could be derived (even if a user interaction would be necessary) 
+		 * Get the list of clients for which the code could be derived 
+		 * (even if a user interaction would be necessary) 
 		*/
 		CreatorValueBinding vbc = new CreatorValueBinding();
 		
 		// pass the pre-collected mediators in oder to avoid searching once again 
 		vbc.setAllMediators(collector.getAllMediators()); 
 		
+		
+		boolean allMandatoryClientsAreSatisfied = false;
+		
 		/* Note, the updateAllBindings() is called with the last argument simulateOnly = true  
 		 * so that no modifications are created in components because we only want to analyze possible bindings.
 		 */
-		boolean allRequiredClientsAreSatisfied = true;
-		
 		// TODO: check the performance 
 		vbc.updateAllBindings(valueMediatorsPackage, null, treeParentToStartTheCheckOn, virtualInstantiationTreeRoot, false, true, false, true);
 		
-		if ( vbc.getAllRequiredClientsFound().size() > 0 
-				&& !vbc.getAllClientsWithPossibleBindingCodeDerivation().containsAll(vbc.getAllRequiredClientsFound())) {
-			allRequiredClientsAreSatisfied = false;
+		/*
+		 * If there are no clients at all: This case is considered 
+		 * being not a valid combination.
+		 */
+		HashSet<TreeObject> allClients = vbc.getAllClientsFound();  
+		
+		if (allClients == null || allClients.size() == 0) {
+			return false;
+		}
+		/*
+		 * Collect all models that have clients in order to be able to
+		 * determine if, for example, a requirement should be discarded because it has no clients at all.  
+		 */
+		else if (allClients != null){
+			modelClients.put(treeParentToStartTheCheckOn, allClients);
+		}
+		
+
+		// check if all mandatory clients are satisfied
+		if ( vbc.getAllMandatoryClientsFound().size() > 0 
+				&& vbc.getAllClientsWithPossibleBindingCodeDerivation().containsAll(vbc.getAllMandatoryClientsFound())) {
+			allMandatoryClientsAreSatisfied = true;
+		}
+		else if (vbc.getAllClientsFound().size() > 0) {
+			/*
+			 * If there are optional clients then we conclude that all mandatory are satisfied.
+			 * After that we will check of at least one client is used from the scenario. 
+			 * This is used in order to avoid rejecting of combinations in which 
+			 * the system model has only optional clients. 
+			 */
+			allMandatoryClientsAreSatisfied = true;
 		}
 		
 		// Collect all mandatory clients that are not satisfied.
 		HashSet<TreeObject> unsatisfiedRequiredClients = new HashSet<TreeObject>();
-		unsatisfiedRequiredClients.addAll(vbc.getAllRequiredClientsFound());
+		unsatisfiedRequiredClients.addAll(vbc.getAllMandatoryClientsFound());
 		unsatisfiedRequiredClients.removeAll(vbc.getAllClientsWithPossibleBindingCodeDerivation());
 
 		if (unsatisfiedRequiredClients.size() > 0 ) {
-			requiredClients_unsatisfied.put(treeParentToStartTheCheckOn, unsatisfiedRequiredClients);
+			mandatoryClients_unsatisfied.put(treeParentToStartTheCheckOn, unsatisfiedRequiredClients);
 		}
 		
-		return allRequiredClientsAreSatisfied;
+		if (!allMandatoryClientsAreSatisfied) {
+			System.err.println("HIER");
+		}
+		
+		return allMandatoryClientsAreSatisfied;
 	}
+	
+	
+//	private boolean hasClients(TreeParent virtualInstantiationTreeRoot, TreeParent treeParentToStartTheCheckOn){
+//		
+//		/* 
+//		 * Get the list of clients for which the code could be derived 
+//		 * (even if a user interaction would be necessary) 
+//		*/
+//		CreatorValueBinding vbc = new CreatorValueBinding();
+//		
+//		// pass the pre-collected mediators in oder to avoid searching once again 
+//		vbc.setAllMediators(collector.getAllMediators()); 
+//		
+//		
+//		/* Note, the updateAllBindings() is called with the last argument simulateOnly = true  
+//		 * so that no modifications are created in components because we only want to analyze possible bindings.
+//		 */
+//		// TODO: check the performance 
+//		vbc.updateAllBindings(valueMediatorsPackage, null, treeParentToStartTheCheckOn, virtualInstantiationTreeRoot, false, true, false, true);
+//		
+//		return vbc.getAllClientsFound().size() > 0;
+//	}
 	
 	
 	public void removeNotUsedRequirements(HashSet<Element> newRequirementsSubSet){
@@ -480,12 +571,12 @@ public class VeMScenarioReqCombinationsCreator {
 		return additionalModels;
 	}
 	
-	public HashSet<Element> getAdditionalTestScenarioModels(boolean prune){
+	public HashSet<Element> getAdditionalScenarioModels(boolean prune){
 		if (!prune) {
-			return this.requiredModels_testScenario;
+			return this.requiredModels_scenario;
 		}
 		HashSet<Element> additionalModels = new HashSet<Element>();
-		for (Element additionalModel : this.requiredModels_testScenario) {
+		for (Element additionalModel : this.requiredModels_scenario) {
 			TreeParent additionalModelInstantiation = this.modelToItsInstantiation.get(additionalModel).getTreeRoot();
 			if (additionalModelInstantiation != null) {
 				if (alwaysInclude.contains(additionalModel) 
@@ -529,12 +620,12 @@ public class VeMScenarioReqCombinationsCreator {
 	
 	// Utls **********************************************************************
 	
-	public HashSet<TreeObject> getUnsatisfiedRequiredClients(Element model){
+	public HashSet<TreeObject> getUnsatisfiedMandatoryClients(Element model){
 		if (model != null) {
 			TreeParent modelInstantiation = modelToItsInstantiation.get(model).getTreeRoot();
 			
 			if (modelInstantiation != null) {
-				HashSet<TreeObject> unsatisfiedClients = requiredClients_unsatisfied.get(modelInstantiation);
+				HashSet<TreeObject> unsatisfiedClients = mandatoryClients_unsatisfied.get(modelInstantiation);
 
 				if (unsatisfiedClients != null && unsatisfiedClients.size() > 0 ) {
 					return unsatisfiedClients;
@@ -544,6 +635,22 @@ public class VeMScenarioReqCombinationsCreator {
 		return null;
 	}
 	
+	
+	public HashSet<TreeObject> getModelClients(Element model) {
+		if (model != null) {
+			TreeParent modelInstantiation = modelToItsInstantiation.get(model).getTreeRoot();
+		
+			if (modelInstantiation != null) {
+				HashSet<TreeObject> allClients = modelClients.get(modelInstantiation);
+
+				if (allClients != null && allClients.size() > 0 ) {
+					return allClients;
+				}
+			}
+		}
+		return null;
+	}
+
 	
 	
 	public String getClientsDotPathAsString(HashSet<TreeObject> items) {
@@ -617,7 +724,7 @@ public class VeMScenarioReqCombinationsCreator {
 //		"---------------------------------------------------" +
 		"--------------------------------------------------- \n" +
 		"Log for the combination:" +
-			"\n   - Scenario '" + ((NamedElement)this.testScenario).getQualifiedName() + "'" +
+			"\n   - Scenario '" + ((NamedElement)this.scenario).getQualifiedName() + "'" +
 			"\n   - System Model '" + ((NamedElement)this.systemModel).getQualifiedName() + "'" +
 			"\n";
 	}
@@ -633,7 +740,7 @@ public class VeMScenarioReqCombinationsCreator {
 	}
 	
 	public Element getTestScenario() {
-		return testScenario;
+		return scenario;
 	}
 	
 	public String getLog() {
@@ -644,8 +751,8 @@ public class VeMScenarioReqCombinationsCreator {
 		return requiredModels_systemModel;
 	}
 
-	public HashSet<Element> getRequiredModels_testScenario() {
-		return requiredModels_testScenario;
+	public HashSet<Element> getRequiredModels_scenario() {
+		return requiredModels_scenario;
 	}
 
 	public HashMap<Element, HashSet<Element>> getRequiredModels_requirements() {
@@ -683,7 +790,7 @@ public class VeMScenarioReqCombinationsCreator {
 	
 
 	public HashMap<TreeParent, HashSet<TreeObject>> getRequiredClients_unsatisfied() {
-		return requiredClients_unsatisfied;
+		return mandatoryClients_unsatisfied;
 	}
 
 
@@ -711,4 +818,5 @@ public class VeMScenarioReqCombinationsCreator {
 	public HashSet<Element> getAlwaysInclude() {
 		return alwaysInclude;
 	}
+
 }

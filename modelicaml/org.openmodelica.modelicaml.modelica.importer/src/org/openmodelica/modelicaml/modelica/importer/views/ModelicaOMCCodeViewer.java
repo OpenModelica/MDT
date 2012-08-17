@@ -87,6 +87,7 @@ import org.openmodelica.modelicaml.modelica.importer.model.ComponentItem;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeBuilder;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeObject;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeParent;
+import org.openmodelica.modelicaml.modelica.importer.model.Utilities;
 
 public class ModelicaOMCCodeViewer extends ViewPart {
 
@@ -416,8 +417,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		if (obj instanceof ClassItem || (obj instanceof TreeParent && ((TreeParent)obj).getName().equals(Constants.folderName_code_sync) )) {
 			if (!viewer.getExpandedState(obj)) {
 				actionExpandCollapse.setText("Expand");
-//				actionExpandCollapse.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 				actionExpandCollapse.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/expand.gif"));
+
 				// Disable expand action when the reload sub tree job is running
 				if (reloadSubTreeJob.getState() == Job.RUNNING) {
 					actionExpandCollapse.setEnabled(false);
@@ -428,7 +429,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 			}
 			else {
 				actionExpandCollapse.setText("Collapse");
-//				actionExpandCollapse.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
 				actionExpandCollapse.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/collapse.gif"));
 
 				actionExpandCollapse.setEnabled(true);
@@ -619,8 +619,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								IWorkspaceRoot root = workspace.getRoot();
 								IProject iProject = root.getProject(projectName);
 
-//								treeBuilder.deleteOMCLoadingMarkers(iProject);
-								org.openmodelica.modelicaml.modelica.importer.model.Utilities.deleteOMCLoadingMarkers(iProject);
+								Utilities.deleteOMCLoadingMarkers(iProject);
 								
 								// build tree
 								treeBuilder.buildTree(treeRoot, null);
@@ -639,105 +638,10 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 								"Could not access the Papyrus editing domain and the uml model.");
 					}
 				}
-				
-				//******************************** Using ProgressMonitor
-//				try {
-//					new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()).run(true, true, treeBuilder);
-//
-//					Object[] expandedElements = viewer.getExpandedElements();
-//					TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
-//					
-//					TreeObject[] children = treeRoot.getChildren();
-//					for (int i = 0; i < children.length; i++) {
-//						treeRoot.removeChild(children[i]);
-//					}
-//					
-//					treeBuilder.buildTree(treeRoot);
-//					
-//					if (treeRoot.hasChildren()) {
-//						actionSynchronize.setEnabled(true);
-//					}
-//					else {
-//						actionSynchronize.setEnabled(false);
-//					}
-//
-//					viewer.setInput(getViewSite());
-//					
-//					viewer.setExpandedElements(expandedElements);
-//					viewer.setExpandedTreePaths(expandedTreePaths);
-//
-//				} catch (InvocationTargetException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-				
-
-				//************************** Using a GUI Job
-//				UmlModel umlModel = UmlUtils.getUmlModel();
-//				Object ModelicaMLRoot = null;
-//				try {
-//					ModelicaMLRoot = umlModel.lookupRoot();
-//				} catch (NotFoundException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				
-//				ServicesRegistry serviceRegistry = null;
-//				TransactionalEditingDomain editingDomain = null;
-//				try {
-//					serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-//					editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
-//				} catch (ServiceException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				
-//				
-//				if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
-//					UIJob UIjob = new UIJob("Loading Modelica models ...") {
-//						public IStatus runInUIThread(IProgressMonitor monitor) {
-//							
-//							Object[] expandedElements = viewer.getExpandedElements();
-//							TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
-//							
-//							TreeObject[] children = treeRoot.getChildren();
-//							for (int i = 0; i < children.length; i++) {
-//								treeRoot.removeChild(children[i]);
-//							}
-//
-//							treeBuilder.buildTree(treeRoot);
-//							
-//							if (treeRoot.hasChildren()) {
-//								actionSynchronize.setEnabled(true);
-//							}
-//							else {
-//								actionSynchronize.setEnabled(false);
-//							}
-//
-//							viewer.setInput(getViewSite());
-//							
-//							viewer.setExpandedElements(expandedElements);
-//							viewer.setExpandedTreePaths(expandedTreePaths);
-//							
-//							return Status.OK_STATUS;
-//						}
-//					};
-//					UIjob.setUser(true);
-//					UIjob.schedule();
-//				}
-//				else {
-//					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Invocation error", "Could not load Modelica models.");
-//				}
 			}
 		};
 		actionReload.setText("(Re)Load All");
 		actionReload.setToolTipText("(Re)Load All");
-//		actionReload.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEF_VIEW));
-//		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/load.png"));
-//		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/import_obj.gif"));
 		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/import_resource_wiz.gif"));
 		
 		
@@ -746,7 +650,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				TreeObject[] children = treeRoot.getChildren();
 				for (int i = 0; i < children.length; i++) {
 					viewer.collapseToLevel(children[i], AbstractTreeViewer.ALL_LEVELS);
-//					viewer.collapseToLevel(children[i], 1); // collapse current element in the tree
 				}			
 			}
 		};
@@ -788,7 +691,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		};
 		actionRefreshAndValidate.setText("Validate All");
 		actionRefreshAndValidate.setToolTipText("Validate All");
-//		actionRefresh.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/reload.png"));
 		actionRefreshAndValidate.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/validate_co.gif"));
 		actionRefreshAndValidate.setEnabled(false);
 		
@@ -819,8 +721,8 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				IWorkspaceRoot root = workspace.getRoot();
 				IProject iProject = root.getProject(projectName);
 
-//				treeBuilder.deleteOMCLoadingMarkers(iProject);
-				org.openmodelica.modelicaml.modelica.importer.model.Utilities.deleteOMCLoadingMarkers(iProject);
+				Utilities.deleteOMCLoadingMarkers(iProject);
+				
 				// collapse the tree root and refresh
 				viewer.setExpandedState(treeRoot, false);
 				viewer.refresh();
@@ -1017,89 +919,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 			
 			public void run() {
 				
-				//********** with ProgressMonitor
-//				try {
-//					new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()).run(true, true,
-//							new IRunnableWithProgress() {
-//								@Override
-//								public void run(final IProgressMonitor monitor)
-//										throws InvocationTargetException,
-//										InterruptedException {
-//									monitor.beginTask("Creating ModelicaML Proxies ...",IProgressMonitor.UNKNOWN);
-//									
-//									for (int total = 1; total < 2; total++) {
-//										if (monitor.isCanceled())
-//											throw new OperationCanceledException();
-//										Thread.sleep(1000l); //TODO [20100506] CAN BE DELETED
-//										
-//										switch (total) {
-//										case 1:
-//											monitor.setTaskName("Creating ModelicaML Elements ...");
-//											getSite().getShell().getDisplay().asyncExec(new Runnable() {
-//												public void run() {
-//													ModelicaMLElementsCreator ec = new ModelicaMLElementsCreator();
-//													TreeObject[] modelicaRoots = treeRoot.getChildren();
-//													for (int i = 0; i < modelicaRoots.length; i++) {
-//														TreeObject treeObject = modelicaRoots[i];
-//														EObject modelicaRoot = ec.createProxyRoot(treeObject.getName());
-//														
-//														if (modelicaRoot instanceof Element && treeObject instanceof TreeParent) {
-//															ec.createClasses((Element)modelicaRoot, (TreeParent)treeObject, false);
-//														}
-//													}
-//												}
-//											});
-//											monitor.worked(1);
-//											break;
-//										case 2:
-//											monitor.setTaskName("Step: " + total + ", Creating ModelicaML Elements ...");
-//											getSite().getShell().getDisplay().asyncExec(new Runnable() {
-//												public void run() {
-//
-//												}
-//											});
-//											monitor.worked(2);
-//											break;
-//										default:
-//											break;
-//										}
-//									}
-//									monitor.done();
-//								}
-//							});
-//				} catch (InvocationTargetException e) {
-//					e.printStackTrace();
-//				} catch (InterruptedException e) {
-//					System.out.println("InterruptedException");
-//				} catch (OperationCanceledException e){
-//					System.out.println("OperationCanceledException");
-//				}
-								
-				
-				//***************** simple
-//				ModelicaMLElementsCreator ec = new ModelicaMLElementsCreator();
-//				TreeObject[] modelicaRoots = treeRoot.getChildren();
-//				for (int i = 0; i < modelicaRoots.length; i++) {
-//					TreeObject treeObject = modelicaRoots[i];
-//					EObject modelicaRoot = ec.createProxyRoot(treeObject.getName());
-//					
-//					if (modelicaRoot instanceof Element && treeObject instanceof TreeParent) {
-//						try {
-//							new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()).run(true, true, ec);
-//							ec.createClasses((Element)modelicaRoot, (TreeParent)treeObject, false);
-//						} catch (InvocationTargetException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						} catch (InterruptedException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
-//						
-////						ec.createClasses((Element)modelicaRoot, (TreeParent)treeObject, false);
-//					}
-//				}
-				
-				
 				if (!EditorServices.isVisiblePapyrusModelExplorerView()) {
 					MessageDialog.openError(getSite().getShell(), "Modelica Model Proxies Synchronization Error", 
 							"When synchronizing proxies the Model Explorer View must be visible " +
@@ -1161,18 +980,9 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
 										
 					if (createProxiesAfterLoadingModelicaClasses) {
+
 						// no dialog. use default values
-						
-//							// default values
-//							boolean applyProxyStereotype = true;
-//							boolean update = true;
-//							boolean deleteNotUsedProxies = false;
-						
 						Job job = createSynchJob(
-//								serviceRegistry, 
-//								editingDomain, 
-//								umlModel, 
-//								ModelicaMLRoot, 
 								applyProxyStereotype, 
 								update, 
 								deleteNotUsedProxies);
@@ -1220,33 +1030,11 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 							job.schedule();
 						}
 					}
-						
-//							UIJob UIjob = new UIJob("Create ModelicaML Proxies ...") {
-//							
-//							public IStatus runInUIThread(IProgressMonitor monitor) {
-//								ModelicaMLElementsCreator ec = new ModelicaMLElementsCreator(serviceRegistry, editingDomain, umlModel, ModelicaMLRoot);
-//								TreeObject[] modelicaRoots = treeRoot.getChildren();
-//								for (int i = 0; i < modelicaRoots.length; i++) {
-//									
-//									TreeObject treeObject = modelicaRoots[i];
-//									
-//									EObject modelicaRoot = ec.createProxyRoot(treeObject.getName());
-//									ec.createClasses((Element)modelicaRoot, (TreeParent)treeObject, false);
-//								}
-//								return Status.OK_STATUS;
-//							}
-//							
-//							
-//						};
-//						UIjob.setUser(true);
-//						UIjob.schedule();
-					}
+				}
 			}
 		};
 		actionSynchronize.setText("Synchronize All");
 		actionSynchronize.setToolTipText("Synchronize All");
-//		actionSynchronize.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
-//		actionSynchronize.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/compare.png"));
 		actionSynchronize.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/copy_edit.gif"));
 		actionSynchronize.setEnabled(false);
 		
@@ -1266,8 +1054,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		};
 		actionLoadSubTree.setText("(Re)Load Sub-Tree");
 		actionLoadSubTree.setToolTipText("(Re)Load Sub-Tree");
-//		actionLoadSubTree.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/load.png"));
-//		actionLoadSubTree.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/import_obj.gif"));
 		actionLoadSubTree.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/import_resource_wiz.gif"));
 		
 		
@@ -1286,7 +1072,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 		};
 		actionSynchronizeSubTree.setText("Synchronize Sub-Tree");
 		actionSynchronizeSubTree.setToolTipText("Synchronize Sub-Tree");
-//		actionSynchronizeSubTree.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/compare.png"));
 		actionSynchronizeSubTree.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/copy_edit.gif"));
 		
 		
@@ -1665,8 +1450,7 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					
 					ec.deleteInvalidProxyElements(treeObject.getQName());
 					
-//					treeBuilder.deleteProxyValidationMarkers(getProject(), treeObject.getQName());
-					org.openmodelica.modelicaml.modelica.importer.model.Utilities.deleteProxyValidationMarkers(getProject(), treeObject.getQName());
+					Utilities.deleteProxyValidationMarkers(getProject(), treeObject.getQName());
 				}
 				
 				/*
@@ -1675,7 +1459,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 				IProject project = getProject();
 				if (project != null && treeObject.getModelicaMLProxy() != null) {
 					treeBuilder.validateProxies(project, (TreeParent)treeObject);
-//					System.err.println("Validating sub-tree starting with " + parent.getName());
 				}
 				else {
 					MessageDialog.openError(getSite().getShell(), "Modelica Models Sync. Error", "Could not validate the sub-tree starting with '" + treeObject.getName() + "'" );
@@ -1728,7 +1511,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 					IProject project = getProject();
 					if (project != null && parent.getModelicaMLProxy() != null) {
 						treeBuilder.validateProxies(project, parent);
-//						System.err.println("Validating sub-tree starting with " + parent.getName());
 					}
 					else{
 //						System.err.println("Could not validate the sub-tree starting with " + parent.getName());
@@ -1947,11 +1729,6 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 //						modelsToBeExcluded.add("ModelicaServices");
 						
 						treeBuilder.setModelsToBeExcluded(modelsToBeExcluded);
-						
-//						IWorkspace workspace = ResourcesPlugin.getWorkspace();
-//						IWorkspaceRoot root = workspace.getRoot();
-//						IProject iProject = root.getProject(projectName);
-//						treeBuilder.deleteOMCMarkers(iProject);
         				
 					}
 					else {

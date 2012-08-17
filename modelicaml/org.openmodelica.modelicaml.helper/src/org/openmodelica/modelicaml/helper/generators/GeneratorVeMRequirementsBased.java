@@ -360,7 +360,7 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 		/*
 		 * Determine if there were models for which no correct bindings could be generated
 		 */
-		HashSet<TreeObject> allMandClients = vbc.getAllRequiredClientsFound();
+		HashSet<TreeObject> allMandClients = vbc.getAllMandatoryClientsFound();
 		HashSet<TreeObject> allMandClientsWithPossibleBindins = vbc.getAllClientsWithPossibleBindingCodeDerivation();
 		
 		if (!allMandClientsWithPossibleBindins.containsAll(allMandClients)) {

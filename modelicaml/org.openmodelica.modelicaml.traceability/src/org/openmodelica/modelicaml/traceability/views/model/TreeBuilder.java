@@ -325,10 +325,14 @@ public class TreeBuilder {
 				HashSet<Element> requirements = tsmc.getRequirements();
 				for (Element requirement : requirements) {
 					addToMapList(reqToScenarios, requirement, scenario);
-					if (tsmc.getUnsatisfiedRequiredClients(requirement) != null) {
+					
+					
+					//if NOT all mandatory are satisfied 
+					if (tsmc.getModelClients(requirement) != null && tsmc.getUnsatisfiedMandatoryClients(requirement) != null) {
 						requirementsWithUnsatisfiedClients.add(requirement);
 					}
-					else {
+					// if requirement has clients at all
+					else if (tsmc.getModelClients(requirement) != null) {
 						requirementsValid.add(requirement);
 					}
 				}
@@ -565,7 +569,7 @@ public class TreeBuilder {
 				if (combination != null) {
 					
 					// get unsatisfied clients
-					HashSet<org.openmodelica.modelicaml.common.instantiation.TreeObject> unsatisfiedClients = combination.getUnsatisfiedRequiredClients(req);
+					HashSet<org.openmodelica.modelicaml.common.instantiation.TreeObject> unsatisfiedClients = combination.getUnsatisfiedMandatoryClients(req);
 					if (unsatisfiedClients != null) {
 						for (org.openmodelica.modelicaml.common.instantiation.TreeObject treeObject : unsatisfiedClients) {
 							//sort it into the map

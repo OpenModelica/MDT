@@ -701,21 +701,25 @@ public class ModelicaMLElementsCreator {
 			
 			@Override
 			protected void doExecute() {
-				createdElement = sourceClass.createDependency(targetClass);
 				
-				Stereotype s = createdElement.getApplicableStereotype(StereotypeQname);
-				if (s != null) {
-					createdElement.applyStereotype(s);
-					if (treeObject instanceof ImportRelationItem) {
-						ImportRelationItem importRelationItem = (ImportRelationItem) treeObject;
-						((Dependency)createdElement).setName(importRelationItem.getSourceQname() + " imports " + importRelationItem.getTargetQname());
-						createdElement.setValue(s, Constants.propertyName_alias, importRelationItem.getAlias());
+				// prevent cyclic dependencies
+				if (sourceClass.equals(targetClass)) {
+					
+					createdElement = sourceClass.createDependency(targetClass);
+					
+					Stereotype s = createdElement.getApplicableStereotype(StereotypeQname);
+					if (s != null) {
+						createdElement.applyStereotype(s);
+						if (treeObject instanceof ImportRelationItem) {
+							ImportRelationItem importRelationItem = (ImportRelationItem) treeObject;
+							((Dependency)createdElement).setName(importRelationItem.getSourceQname() + " imports " + importRelationItem.getTargetQname());
+							createdElement.setValue(s, Constants.propertyName_alias, importRelationItem.getAlias());
+						}
+					}
+					else {
+						addToLog("Could not apply the import stereotype to the element '" + treeObject.getQName() + "'");
 					}
 				}
-				else {
-					addToLog("Could not apply the import stereotype to the element '" + treeObject.getQName() + "'");
-				}
-				
 			}
 		};
 		
@@ -761,15 +765,15 @@ public class ModelicaMLElementsCreator {
 //				Element source = owningClass;
 				Element target = treeBuilder.getTypeElement(extendsRelation.getTargetQname());
 				
-				TreeParent owningClass = extendsRelation.getParent();
+				TreeParent owningClassItem = extendsRelation.getParent();
 				
 				/*
 				 * Avoid creating extends relations that point to the element it self. 
 				 * This may happen when anonym classes are used in Modelica.
 				 */
 				if (target instanceof Classifier 
-						&& !extendsRelation.getTargetQname().equals(extendsRelation.getSourceQname())
-						&& !extendsRelation.getTargetQname().equals(owningClass.getQName())
+						&& !extendsRelation.getTargetQname().equals(extendsRelation.getSourceQname()) 
+						&& !extendsRelation.getTargetQname().equals(owningClassItem.getQName()) // TODO: this should actually be the same like extendsRelation.getSourceQname() 
 						) {
 //					System.out.println("Creating extends relation: " + extendsRelationTreeObject.getSourceQname() + " -> " + extendsRelation.getTargetQname());
 					addToLog("Creating extends relation: " + extendsRelationTreeObject.getSourceQname() + " -> " + extendsRelation.getTargetQname());

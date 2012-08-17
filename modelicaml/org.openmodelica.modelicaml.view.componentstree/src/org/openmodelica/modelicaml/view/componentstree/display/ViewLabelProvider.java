@@ -37,6 +37,7 @@ package org.openmodelica.modelicaml.view.componentstree.display;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -45,9 +46,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
@@ -61,8 +59,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.TextStyle;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
@@ -81,7 +77,6 @@ import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
-import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
 
 
 // TODO: Auto-generated Javadoc
@@ -103,7 +98,7 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 	/** The Constant requirementInstanceStereotypeQName. */
 	private static final String requirementInstanceStereotypeQName = Constants.stereotypeQName_RequirementInstance;
 	
-	private final ImageDescriptor warningImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/warning_ovr.gif");
+//	private final ImageDescriptor warningImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/warning_ovr.gif");
 //	private final ImageDescriptor errorImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/error_ovr.gif");
 	private final ImageDescriptor errorImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/error_ovr.gif");
 
@@ -397,10 +392,13 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 	 * @param stereotype the stereotype
 	 * @return the boolean
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Boolean hasArraySize(TypedElement element, Stereotype stereotype){
-		EList<String> modList = (EList<String>) element.getValue(stereotype, "arraySize");
-		if (modList != null && modList.size() > 0) {
-			for (String string : modList) {
+		Object modList = element.getValue(stereotype, Constants.propertyName_arraySize);
+//		EList<String> modList = (EList<String>) element.getValue(stereotype, Constants.propertyName_arraySize);
+		if (modList != null && modList instanceof List && ((List)modList).size() > 0) {
+			List<String> list = (List)modList;
+			for (String string : list) {
 				if (!string.trim().equals("")) {
 					return true;
 				}

@@ -87,7 +87,7 @@ public class CreatorValueBinding implements IRunnableWithProgress {
 	 * All clients that have isRequired checked to indicate that they always need a bindings
 	 * even if the default value is set in its declaration.
 	 */
-	private HashSet<TreeObject> allRequiredClientsFound = new HashSet<TreeObject>();
+	private HashSet<TreeObject> allMandatoryClientsFound = new HashSet<TreeObject>();
 	
 	
 	/* All providers that were used for deriving the code for all clients found */
@@ -228,8 +228,8 @@ public class CreatorValueBinding implements IRunnableWithProgress {
 				allClientsFound.add(item);
 				
 				// add to required clients list
-				if (deriveCodeHelper.isRequiredClient()) {
-					allRequiredClientsFound.add(item);
+				if (deriveCodeHelper.isMandatoryClient()) {
+					allMandatoryClientsFound.add(item);
 					if (code == null) {
 						if ( !onlySimulate ) {
 							// Generate marker 
@@ -342,12 +342,12 @@ public class CreatorValueBinding implements IRunnableWithProgress {
 		return updatedItemsToNewModification;
 	}
 
-	public void setAllRequiredClientsFound(HashSet<TreeObject> allRequiredClientsFound) {
-		this.allRequiredClientsFound = allRequiredClientsFound;
+	public void setAllMandatoryClientsFound(HashSet<TreeObject> allMandatoryClientsFound) {
+		this.allMandatoryClientsFound = allMandatoryClientsFound;
 	}
 
-	public HashSet<TreeObject> getAllRequiredClientsFound() {
-		return allRequiredClientsFound;
+	public HashSet<TreeObject> getAllMandatoryClientsFound() {
+		return allMandatoryClientsFound;
 	}
 	
 	// The total sleep time

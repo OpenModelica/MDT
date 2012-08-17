@@ -271,6 +271,8 @@ public class BindingsDataCollector {
 										}
 										else {
 											//TODO: log that the mediator or its providers was discarded because they are not used in the instantiation tree.
+											String message = "DISCARDED: Provider '" + ((NamedElement)element).getQualifiedName() + "' for mediator '"+mediator.getQualifiedName()+"' is not used in the instantiated class.";
+											addToLog(message);
 										}
 									}
 									// it is a provider

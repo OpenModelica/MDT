@@ -5,7 +5,7 @@
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
-            application="org.eclipse.ui.ide.workbench"
+            application="org.eclipse.e4.ui.workbench.swt.E4Application"
             name="ModelicaML">
          <property
                name="appName"

@@ -624,76 +624,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	 * Make actions.
 	 */
 	private void makeActions() {
-		
-//		actionAddValueProvider = new Action("actionAddValueProvider") {
-//			public void run() {
-//				
-//				ISelection selection = viewer.getSelection();
-//				Object obj = ((IStructuredSelection) selection).getFirstElement();
-//				if (obj instanceof TreeObject) {
-//					TreeObject item = (TreeObject)obj;
-//					if (item.isValueClient()) {
-//						List<String> listOfAllowedMetaClassesNames = new ArrayList<String>();
-//						listOfAllowedMetaClassesNames.add("Property");
-//						String title = "Value Provider Selection";
-//						String message = "Click on a model element to be associated as Value Provider."; 
-//
-//						NOT_USED_SelectValueClientOrProviderDialog dialog = new NOT_USED_SelectValueClientOrProviderDialog(
-//								new Shell(), 
-//								SWTResourceManager.getImage(NOT_USED_SelectValueClientOrProviderDialog.class,"/icons/selectOnly.png"), 
-//								title, 
-//								message, 
-//								listOfAllowedMetaClassesNames,
-//								item,
-//								viewer,
-//								NOT_USED_SelectValueClientOrProviderDialog.MODE_ADD_PROVIDER,
-//								actionEditModification,
-//								actionLinkWithEditor);
-//						dialog.open();
-//					}
-//				}
-//			}
-//		};
-//		actionAddValueProvider.setText("Add a Value Provider");
-//		actionAddValueProvider.setToolTipText("Add a Value Provider");
-//		actionAddValueProvider.setImageDescriptor(ImageDescriptor.createFromFile(NOT_USED_SelectValueClientOrProviderDialog.class, "/icons/addValueProviders.png"));
-
-		
-		
-//		actionAddValueClient = new Action("actionAddValueClient") {
-//			public void run() {
-//				
-//				ISelection selection = viewer.getSelection();
-//				Object obj = ((IStructuredSelection) selection).getFirstElement();
-//				if (obj instanceof TreeObject) {
-//					TreeObject item = (TreeObject)obj;
-//					if (item.isValueProvider()) {
-//						List<String> listOfAllowedMetaClassesNames = new ArrayList<String>();
-//						listOfAllowedMetaClassesNames.add("Property");
-//						String title = "Value Client Selection";
-//						String message = "Click on a model element to be associated as Value Client."; 
-//
-//						NOT_USED_SelectValueClientOrProviderDialog dialog = new NOT_USED_SelectValueClientOrProviderDialog(
-//								new Shell(), 
-//								SWTResourceManager.getImage(NOT_USED_SelectValueClientOrProviderDialog.class,"/icons/selectOnly.png"), 
-//								title, 
-//								message, 
-//								listOfAllowedMetaClassesNames,
-//								item,
-//								viewer,
-//								NOT_USED_SelectValueClientOrProviderDialog.MODE_ADD_CLIENT,
-//								actionEditModification,
-//								actionLinkWithEditor);
-//						dialog.open();
-//					}
-//				}
-//			}
-//		};
-//		actionAddValueClient.setText("Add a Value Client");
-//		actionAddValueClient.setToolTipText("Add a Value actionAddValueClient");
-//		actionAddValueClient.setImageDescriptor(ImageDescriptor.createFromFile(NOT_USED_SelectValueClientOrProviderDialog.class, "/icons/addValueClient.png"));
-
-		
+	
 		actionAllDeleteModifications = new Action("actionAllDeleteModifications") {
 			public void run() {
 				ISelection selection = viewer.getSelection();
@@ -871,12 +802,13 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						boolean deleteOldBindings = confirmationDialog.deleteAllBindings();
 						
 						// update bindings
-//						ValueBindingCreator vc = new ValueBindingCreator();
-//						vc.updateAllBindings(root.getSelectedClass().getModel(), item, root, deleteOldBindings, confirmationDialog.isAutomaticSelectionOfProviders(), true, false);
-
 						try {
 							// update bindings
 							CreatorValueBinding vc = new CreatorValueBinding();
+							
+							//pass pre-collected mediators in order to avoid new search
+							vc.setAllMediators(getAst().getAllMediators());
+							
 							vc.updateAllBindings(root.getSelectedClass().getModel(), 
 										org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation, 
 										item, 
@@ -950,11 +882,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 			}
 		};
-//		actionUpdateBindings.setText("Update bindings in all sub-components");
-//		actionUpdateBindings.setToolTipText("Update bindings in all sub-components");
 		actionUpdateBindings.setText("Update bindings");
 		actionUpdateBindings.setToolTipText("Update bindings in all sub-components");
-//		actionUpdateBindings.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/updateBindings.png"));
 		actionUpdateBindings.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.view.valuebindings", "/icons/valueMediator.png")));
 		
 		

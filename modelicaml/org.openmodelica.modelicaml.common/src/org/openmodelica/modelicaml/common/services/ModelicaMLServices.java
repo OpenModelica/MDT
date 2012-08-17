@@ -41,14 +41,12 @@ import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
-//import org.eclipse.papyrus.core.utils.BusinessModelResolver;
-//import org.eclipse.papyrus.resource.uml.UmlModel;
-//import org.eclipse.papyrus.ui.toolbox.notification.builders.NotificationBuilder;
 
 public class ModelicaMLServices {
 
@@ -247,6 +245,21 @@ public class ModelicaMLServices {
 			}
 		}
 		return false;
+	}
+	
+	
+	public static Stereotype getFirstModelicaMLComponentStereotype(Property property) {
+		Stereotype stereotype = null;
+		
+		stereotype = property.getAppliedStereotype(Constants.stereotypeQName_Component);
+		if (stereotype != null) { return stereotype; }
+		stereotype = property.getAppliedStereotype(Constants.stereotypeQName_Variable);
+		if (stereotype != null) { return stereotype; }
+		stereotype = property.getAppliedStereotype(Constants.stereotypeQName_RequirementInstance);
+		if (stereotype != null) { return stereotype; }
+		stereotype = property.getAppliedStereotype(Constants.stereotypeQName_CalculatedProperty);
+		if (stereotype != null) { return stereotype; }
+		return stereotype ;
 	}
 	
 	

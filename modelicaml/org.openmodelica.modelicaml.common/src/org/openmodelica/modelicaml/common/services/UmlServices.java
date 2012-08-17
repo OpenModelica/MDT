@@ -45,15 +45,12 @@ import org.eclipse.uml2.uml.Stereotype;
 
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class UmlServices.
  */
 public class UmlServices {
 
 
-	
-	
 	/**
 	 * Get the body of OpaqueBehavior ob with index corresponding to the
 	 * language index. We replace all \n text by newline.
@@ -62,6 +59,7 @@ public class UmlServices {
 	 * @param language the language to find.
 	 * @return the content body.
 	 */
+	@Deprecated
 	public String getBody(OpaqueBehavior ob, String language){
 		List<String> languages = ob.getLanguages();
 		int i = 0;
@@ -89,6 +87,7 @@ public class UmlServices {
 	 * @param stereotype Stereotype to return.
 	 * @return the stereotype.
 	 */
+	@Deprecated
 	public static Stereotype getStereotype(Element elt, String stereotype){
 		Stereotype result = null;
 		// search with real stereotype
@@ -109,6 +108,7 @@ public class UmlServices {
 	 * @param propertyName the property name
 	 * @return Object contain the value.
 	 */
+	@Deprecated
 	public static Object getStereotypeValue(Element elt, String stereotype,
 			String propertyName) {
 		// search with real stereotype
@@ -128,6 +128,7 @@ public class UmlServices {
 	 * @param stereotype Stereotype to search.
 	 * @return true if found. false else.
 	 */
+	@Deprecated
 	public static boolean hasStereotype(Element elt, String stereotype){
 		return (getStereotype(elt, stereotype) != null);
 	}
@@ -138,6 +139,7 @@ public class UmlServices {
 	 * @param aClass Class to.
 	 * @return Boolean return true if aClass is a behavior.
 	 */
+	@Deprecated
 	public Boolean isBehavior(Class aClass) {
 		if (aClass instanceof Behavior) {
 			return Boolean.TRUE;

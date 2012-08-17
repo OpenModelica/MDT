@@ -58,6 +58,7 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
+import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.valuebindings.helpers.BindingsDataCollector;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.SelectValueMediatorDialog;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.SelectValueProviderDialog;
@@ -197,8 +198,11 @@ public class DeriveValueBindingCodeHelper {
 	}
 	
 	public String translateClientScript(TreeObject clientTreeObject, String clientOperation, String codeDerivedFromMediator){
+
+		String clientDotPath = clientTreeObject.getDotPath();
+		
 		if (clientTreeObject != null && clientOperation != null) {
-			clientOperation = clientOperation.replaceAll(Constants.MACRO_clientPath, clientTreeObject.getDotPath());
+			clientOperation = clientOperation.replaceAll(Constants.MACRO_clientPath, clientDotPath);
 			if (codeDerivedFromMediator != null) {
 				clientOperation = clientOperation.replaceAll(Constants.MACRO_getBinding+ "\\((\\s+)?\\)", codeDerivedFromMediator);				
 			}
@@ -336,12 +340,18 @@ public class DeriveValueBindingCodeHelper {
 
 	
 	public String deriveCodeFromProvider(TreeObject provider, String providerOperation){
+
+		String providerDotPath = provider.getDotPath();
+		
 		if (providerOperation != null ) {
-			providerOperation = providerOperation.replaceAll(Constants.MACRO_providerPath, provider.getDotPath());
+			providerOperation = providerOperation.replaceAll(Constants.MACRO_providerPath, providerDotPath);
+			
 			return providerOperation;
 		}
-		return provider.getDotPath();
+		return providerDotPath;
 	}
+	
+	
 	
 	private List<TreeObject> getSortedList(HashSet<TreeObject> set){
 		List<TreeObject> providersSorted = new ArrayList<TreeObject>(set);
@@ -995,7 +1005,7 @@ public class DeriveValueBindingCodeHelper {
 		return providers;
 	}
 	
-	public boolean isRequiredClient() {
+	public boolean isMandatoryClient() {
 		return isRequiredClient;
 	}
 

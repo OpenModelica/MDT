@@ -59,8 +59,8 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
-import org.openmodelica.modelicaml.common.services.UmlServices;
 import org.openmodelica.modelicaml.common.valuebindings.helpers.BindingsDataCollector;
 
 public class ClassInstantiation {
@@ -217,9 +217,9 @@ public class ClassInstantiation {
 						mergedSet.addAll(inheritedProperties); // add all class attribute to list
 						
 						for (Property propertyInherited : inheritedProperties) { // iterate over the class attributes
-							String nameInheritedProperty = propertyInherited.getName();
+							String nameInheritedProperty = StringUtls.replaceSpecChar(propertyInherited.getName());
 							for (Property propertyPassed : passedAList) { // iterate over the passed list
-								String namePropertyPassed = propertyPassed.getName();
+								String namePropertyPassed = StringUtls.replaceSpecChar(propertyPassed.getName());
 								if (nameInheritedProperty.equals(namePropertyPassed)) { // if a duplicate is found ...
 									mergedSet.remove(propertyInherited); // remove duplicate from the final list.
 									// System.out.println("removed: " + propertyInherited.getName());
@@ -252,10 +252,12 @@ public class ClassInstantiation {
 			}
 	
 			String newDotPath = "";
+			String name = StringUtls.replaceSpecChar(property.getName());
+			
 			if (!dotPath.equals("")) {
-				newDotPath = dotPath + "." + property.getName();
+				newDotPath = dotPath + "." + name;
 			} else {
-				newDotPath = property.getName();
+				newDotPath = name;
 			}
 	
 			if (isPrimitiveType(property)) { // if it is a primitive which value can be modified
@@ -263,7 +265,7 @@ public class ClassInstantiation {
 				addClassComponentsModifications(property, dotPath);
 				HashSet<String> modifications = null;
 				
-				TreeParent child = new TreeParent(property.getName(), property, firstLevelComponent, newDotPath, true, false, modifications, selectedClass, includeStateMachines);
+				TreeParent child = new TreeParent(name, property, firstLevelComponent, newDotPath, true, false, modifications, selectedClass, includeStateMachines);
 				parent.addChild(child);
 				allTreeObjects.add(child);
 				addToElementToInstantiationTreeObjectMap(property, child);
@@ -296,7 +298,7 @@ public class ClassInstantiation {
 				}
 				
 				HashSet<String> modifications = null;
-				TreeParent newParent = new TreeParent(property.getName(), property, firstLevelComponent, newDotPath, false, false, modifications, selectedClass, includeStateMachines);
+				TreeParent newParent = new TreeParent(name, property, firstLevelComponent, newDotPath, false, false, modifications, selectedClass, includeStateMachines);
 				parent.addChild(newParent);
 				allTreeObjects.add(newParent);
 				addToElementToInstantiationTreeObjectMap(property, newParent);
@@ -311,7 +313,8 @@ public class ClassInstantiation {
 				// make sure that the tree object gets its redeclared type.
 				newParent.setComponentType(pType); 
 				
-				if (pType instanceof Class && (Class) pType != aClass && !(pType instanceof Stereotype)) { // TODO: // prevent endless looping, implement it correctly!
+				// TODO: // prevent endless looping, implement it correctly!
+				if (pType instanceof Class && (Class) pType != aClass && !(pType instanceof Stereotype)) { 
 					buildNextTreeLevel((Class) pType, firstLevelComponent, newParent, newDotPath);
 				}
 			}
@@ -331,13 +334,30 @@ public class ClassInstantiation {
 	 *            the component
 	 * @return the component modifications
 	 */
+//	@SuppressWarnings("unchecked")
+//	public HashSet<String> getComponentModifications(Property component) {
+//		HashSet<String> mList = new HashSet<String>();
+//		String stereotypeName = getFirstModelicaMLComponentStereotypeName(component);
+//		List<String> modificationList = new ArrayList<String>();
+//		if (stereotypeName != null) {
+//			Object o = UmlServices.getStereotypeValue((Element) component, getFirstModelicaMLComponentStereotypeName(component), "modification");
+//			if (o instanceof List<?>) {
+//				modificationList = (List<String>) o;
+//			}
+//			for (String string : modificationList) {
+//				mList.add(StringUtls.removeOutterBraces(string));
+//			}
+//		}
+//		return mList;
+//	}
+	
 	@SuppressWarnings("unchecked")
 	public HashSet<String> getComponentModifications(Property component) {
 		HashSet<String> mList = new HashSet<String>();
-		String stereotypeName = getFirstModelicaMLComponentStereotypeName(component);
+		Stereotype stereotype = ModelicaMLServices.getFirstModelicaMLComponentStereotype(component);
 		List<String> modificationList = new ArrayList<String>();
-		if (stereotypeName != null) {
-			Object o = UmlServices.getStereotypeValue((Element) component, getFirstModelicaMLComponentStereotypeName(component), "modification");
+		if (stereotype != null) {
+			Object o = component.getValue(stereotype, Constants.propertyName_modification);
 			if (o instanceof List<?>) {
 				modificationList = (List<String>) o;
 			}
@@ -353,20 +373,17 @@ public class ClassInstantiation {
 		EList<Generalization> extendsRelations = aClass.getGeneralizations();
 		
 		for (Generalization generalization : extendsRelations) {
-			Stereotype stereotype = getGeneralizationStereotype(generalization);
-			if ( stereotype != null ) {
-				EList<String> modList = getGeneralizationModifications(generalization, stereotype);
-				for (String string : modList) {
-					addToModificationList(string, dotPath, aClass);
+			EList<String> modList = getGeneralizationModifications(generalization);
+			for (String string : modList) {
+				addToModificationList(string, dotPath, aClass);
+			}
+			
+			// recursive call to the next inheritance level
+			EList<Element> targets = generalization.getTargets();
+			for (Element element : targets) {
+				if (element instanceof Class) {
+					addInheritedClassModifications((Class)element, dotPath); 
 				}
-				// recursive call to the next inheritance level
-				EList<Element> targets = generalization.getTargets();
-				for (Element element : targets) {
-					if (element instanceof Class) {
-						addInheritedClassModifications((Class)element, dotPath); 
-					}
-				}
-				
 			}
 		}
 	}
@@ -513,20 +530,21 @@ public class ClassInstantiation {
 				for (Property p : ModelicaPredefinedTypeProperties) {
 
 					boolean skip = false;
-					if (predefinedPropertyName != null && !p.getName().equals(predefinedPropertyName)) {
+					if (predefinedPropertyName != null && !StringUtls.replaceSpecChar(p.getName()).equals(predefinedPropertyName)) {
 						skip = true;
 					}
 					
 					if (!skip) {
 						String newDotPath = "";
+						String name = StringUtls.replaceSpecChar(p.getName());
 						if (!dotPath.equals("")) {
-							newDotPath = dotPath + "." + p.getName();
+							newDotPath = dotPath + "." + name;
 						} else {
-							newDotPath = p.getName();
+							newDotPath = name;
 						}
 
 						HashSet<String> modifications = null;
-						TreeParent child = new TreeParent(p.getName(), p, firstLevelComponent, newDotPath, true, false, modifications, selectedClass, false);
+						TreeParent child = new TreeParent(name, p, firstLevelComponent, newDotPath, true, false, modifications, selectedClass, false);
 						parent.addChild(child);
 						allTreeObjects.add(child);
 						addToElementToInstantiationTreeObjectMap(p, child);
@@ -575,23 +593,23 @@ public class ClassInstantiation {
 	
 	
 
-	/**
-	 * Gets the generalization stereotype.
-	 * 
-	 * @param extendsRelation
-	 *            the extends relation
-	 * @return the generalization stereotype
-	 */
-	private static Stereotype getGeneralizationStereotype(Generalization extendsRelation) {
-		Stereotype stereotype = null;
-		if (UmlServices.hasStereotype((Element) extendsRelation, "ExtendsRelation"))
-			return stereotype = extendsRelation.getAppliedStereotype("ModelicaML::ModelicaRelationsConstructs::ExtendsRelation");
-		
-		if (UmlServices.hasStereotype((Element) extendsRelation, "TypeRelation"))
-			return stereotype = extendsRelation.getAppliedStereotype("ModelicaML::ModelicaRelationsConstructs::TypeRelation");
-		
-		return stereotype;
-	}
+//	/**
+//	 * Gets the generalization stereotype.
+//	 * 
+//	 * @param extendsRelation
+//	 *            the extends relation
+//	 * @return the generalization stereotype
+//	 */
+//	private static Stereotype getGeneralizationStereotype(Generalization extendsRelation) {
+//		Stereotype stereotype = null;
+//		if (UmlServices.hasStereotype((Element) extendsRelation, "ExtendsRelation"))
+//			return stereotype = extendsRelation.getAppliedStereotype("ModelicaML::ModelicaRelationsConstructs::ExtendsRelation");
+//		
+//		if (UmlServices.hasStereotype((Element) extendsRelation, "TypeRelation"))
+//			return stereotype = extendsRelation.getAppliedStereotype("ModelicaML::ModelicaRelationsConstructs::TypeRelation");
+//		
+//		return stereotype;
+//	}
 
 	/**
 	 * Gets the generalization modifications.
@@ -602,13 +620,34 @@ public class ClassInstantiation {
 	 *            the stereotype
 	 * @return the generalization modifications
 	 */
+//	@SuppressWarnings("unchecked")
+//	private EList<String> getGeneralizationModifications(Generalization extendsRelation, Stereotype stereotype) {
+//		EList<String> mList = new BasicEList<String>();
+//		
+//		List<String> modificationList = new ArrayList<String>();
+//		if (stereotype != null) {
+//			Object o = UmlServices.getStereotypeValue((Element) extendsRelation, stereotype.getName(), "modification");
+//			if (o instanceof List<?>) {
+//				modificationList = (List<String>) o;
+//			}
+//			mList.addAll(modificationList);
+//		}
+//		return mList;
+//	}
+	
 	@SuppressWarnings("unchecked")
-	private EList<String> getGeneralizationModifications(Generalization extendsRelation, Stereotype stereotype) {
+	private EList<String> getGeneralizationModifications(Generalization extendsRelation) {
 		EList<String> mList = new BasicEList<String>();
 		
 		List<String> modificationList = new ArrayList<String>();
+		
+		Stereotype stereotype = extendsRelation.getAppliedStereotype(Constants.stereotypeQName_ExtendsRelation);
+		if (stereotype == null) {
+			stereotype = extendsRelation.getAppliedStereotype(Constants.stereotypeQName_TypeRelation);
+		}
+		
 		if (stereotype != null) {
-			Object o = UmlServices.getStereotypeValue((Element) extendsRelation, stereotype.getName(),"modification");
+			Object o = extendsRelation.getValue(stereotype, Constants.propertyName_modification);
 			if (o instanceof List<?>) {
 				modificationList = (List<String>) o;
 			}
@@ -617,21 +656,35 @@ public class ClassInstantiation {
 		return mList;
 	}
 
-	/**
-	 * Gets the first modelica ml component stereotype name.
-	 * 
-	 * @param property
-	 *            the property
-	 * @return the first modelica ml component stereotype name
-	 */
-	private String getFirstModelicaMLComponentStereotypeName(Property property) {
-		String name = null;
-		if (UmlServices.hasStereotype((Element) property, "Component")) return "Component";
-		if (UmlServices.hasStereotype((Element) property, "Variable")) return "Variable";
-		if (UmlServices.hasStereotype((Element) property, "RequirementInstance")) return "RequirementInstance";
-		if (UmlServices.hasStereotype((Element) property, "CalculatedProperty")) return "CalculatedProperty";
-		return name;
-	}
+//	/**
+//	 * Gets the first modelica ml component stereotype name.
+//	 * 
+//	 * @param property
+//	 *            the property
+//	 * @return the first modelica ml component stereotype name
+//	 */
+//	private String getFirstModelicaMLComponentStereotypeName(Property property) {
+//		String name = null;
+//		if (UmlServices.hasStereotype((Element) property, "Component")) return "Component";
+//		if (UmlServices.hasStereotype((Element) property, "Variable")) return "Variable";
+//		if (UmlServices.hasStereotype((Element) property, "RequirementInstance")) return "RequirementInstance";
+//		if (UmlServices.hasStereotype((Element) property, "CalculatedProperty")) return "CalculatedProperty";
+//		return name;
+//	}
+	
+//	private Stereotype getFirstModelicaMLComponentStereotype(Property property) {
+//		Stereotype stereotype = null;
+//		
+//		stereotype = property.getAppliedStereotype(Constants.stereotypeQName_Component);
+//		if (stereotype != null) { return stereotype; }
+//		stereotype = property.getAppliedStereotype(Constants.stereotypeQName_Variable);
+//		if (stereotype != null) { return stereotype; }
+//		stereotype = property.getAppliedStereotype(Constants.stereotypeQName_RequirementInstance);
+//		if (stereotype != null) { return stereotype; }
+//		stereotype = property.getAppliedStereotype(Constants.stereotypeQName_CalculatedProperty);
+//		if (stereotype != null) { return stereotype; }
+//		return stereotype ;
+//	}
 	
 	
 	// Value Clients or Providers handling ************************************************************************
@@ -906,6 +959,18 @@ public class ClassInstantiation {
 
 
 	public HashSet<Element> getAllMediators() {
+		if (getValueBindingsDataCollector().getAllMediators() != null ) {
+
+			if (allMediators == null) {
+				/*
+				 * TODO: not clear when this happens
+				 */
+				return getValueBindingsDataCollector().getAllMediators();
+			}
+			else {
+				this.allMediators.addAll(getValueBindingsDataCollector().getAllMediators());
+			}
+		}
 		return allMediators;
 	}
 

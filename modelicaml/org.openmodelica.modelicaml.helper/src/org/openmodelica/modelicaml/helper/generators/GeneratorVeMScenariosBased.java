@@ -487,10 +487,13 @@ public class GeneratorVeMScenariosBased {
 					// add to selected or discarded requirements
 					HashSet<Element> requirements = tsmc.getRequirements();
 					for (Element requirement : requirements) {
-						if (tsmc.getUnsatisfiedRequiredClients(requirement) != null) {
+
+						//if NOT all mandatory are satisfied 
+						if (tsmc.getUnsatisfiedMandatoryClients(requirement) != null) {
 							requirementsDiscarded.add(requirement);
 						}
-						else {
+						// if requirement has clients at all
+						else if (tsmc.getModelClients(requirement) != null) {
 							requirementsToBeInstantiated.add(requirement);
 						}
 					}
@@ -764,7 +767,7 @@ public class GeneratorVeMScenariosBased {
 						 * Hereby, prune all that are not used, i.e. those that don't have at least
 						 * one provider used in the combination.
 						 */
-						createAdditionalModels(simulationModel, tsmc.getAdditionalTestScenarioModels(true), 
+						createAdditionalModels(simulationModel, tsmc.getAdditionalScenarioModels(true), 
 								Constants.verificationScenarioPropertyNamePrefix + Constants.additionalModelPrefix);
 						
 						//************************************************************************************
@@ -981,7 +984,7 @@ public class GeneratorVeMScenariosBased {
 						/*
 						 * Determine if there were models for which no correct bindings could be generated
 						 */
-						HashSet<TreeObject> allMandClients = vbc.getAllRequiredClientsFound();
+						HashSet<TreeObject> allMandClients = vbc.getAllMandatoryClientsFound();
 						HashSet<TreeObject> allMandClientsWithPossibleBindings = vbc.getAllClientsWithPossibleBindingCodeDerivation();
 						HashSet<TreeObject> allMandClientsWithUserDecisionRequired = vbc.getAllClientsWithUserDecisionRequiredForCodeDerivation();
 						

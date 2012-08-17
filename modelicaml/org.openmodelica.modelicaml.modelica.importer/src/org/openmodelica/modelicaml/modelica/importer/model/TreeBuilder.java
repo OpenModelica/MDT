@@ -312,15 +312,12 @@ public class TreeBuilder {
 			}
 			else {
 				// Create Import relations nodes
-//				System.err.println("Creating Import Relations in " + classQName);
 				createdItems.addAll(createImportRelationNodes(treeParent, classQName));
 				
 				// Create extends relation nodes
 				List<String> inheritedClasses = omcc.getInheritedClasses(classQName);
 				if (inheritedClasses.size() > 0) {
 					for (String inheritedClassQName : inheritedClasses) {
-						
-//						System.err.println("Creating ExtendsRelationItem in " + classQName);
 						
 						setMonitorTaskName("Creating extends relations in " + inheritedClassQName);
 						
@@ -1194,9 +1191,7 @@ public class TreeBuilder {
 
 							ModelicaModelProxiesCollector pc = new ModelicaModelProxiesCollector();
 							pc.setStereotypeQName(Constants.stereotypeQName_ModelicaModelProxy);
-//							pc.collectElementsFromModel(root, Constants.stereotypeQName_ModelicaModelProxy);
 							pc.collectElementsFromModel(root);
-		//					proxies = pc.getElements();
 							proxies.addAll(pc.getElements());
 							
 							EList<Element> classAttributesProxies = new BasicEList<Element>();
@@ -1207,7 +1202,6 @@ public class TreeBuilder {
 							HashSet<Element> proxiesCopy = new HashSet<Element>();
 							proxiesCopy.addAll(proxies);
 							
-		//					for (Element proxy : proxies) {
 							for (Element proxy : proxiesCopy) {
 								if (proxy instanceof NamedElement) {
 									addProxyToMaps((NamedElement)proxy);
@@ -1462,13 +1456,13 @@ public class TreeBuilder {
 		return string; 	
 	}
 
-	public void setErrorLog(String errorLog) {
-		this.errorLog = errorLog;
-	}
-
-	private void addToErrorLog(String msg){
-		this.errorLog += "\n\n" + msg;
-	}
+//	public void setErrorLog(String errorLog) {
+//		this.errorLog = errorLog;
+//	}
+//
+//	private void addToErrorLog(String msg){
+//		this.errorLog += "\n\n" + msg;
+//	}
 	
 }
 

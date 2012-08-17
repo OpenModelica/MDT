@@ -41,7 +41,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView;
 import org.eclipse.papyrus.views.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
@@ -71,7 +70,6 @@ import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
-import org.openmodelica.modelicaml.common.services.UmlServices;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 
 public class PropertySectionDetails extends AbstractPropertySection {
@@ -269,40 +267,17 @@ public class PropertySectionDetails extends AbstractPropertySection {
 		else {
 			return " ## Could not identify the modification source ...## ";
 		}
-		
 
-//		NamedElement modSourceElement = item.getFinalModificationSource();
-//		if (modSourceElement != null ) {
-//	//		modSource = modSourceElement.eClass().getName() + " '" + modSourceElement.getQualifiedName() + "' ";
-//			if ( item.isInherited() ) { // the modification is stored in  
-//				return "'" + item.getSelectedClass().getQualifiedName() + "' ";	
-//			}
-//			else { // then it is a component modification
-//				return "'" + modSourceElement.getName() + "' ";
-//			}
-//		}
 		return "";
 	}
 	
 	private String getModificationTitle(){
-//		String modSource = "";
-//	//	if (ModificationManager.isInModModListOfComponent(treeObject.getFirstLevelComponent(), treeObject.getDotPathWithoutFirstLevelComponent())) {
-//	//		modSource = " in '" + treeObject.getFirstLevelComponent().getName() + "' ";
-//	//	}
-//		NamedElement modSourceElement = item.getFinalModificationSource();
-//		if (modSourceElement != null ) {
-//	//		modSource = modSourceElement.eClass().getName() + " '" + modSourceElement.getQualifiedName() + "' ";
-//			modSource = "'" + modSourceElement.getQualifiedName() + "' ";
-//		}
 		
 		String modDescription = "";
 		if (item.getFinalModificationDescription() != null) {
 			modDescription = item.getFinalModificationDescription();
-//			return "Overriden " + modDescription  + " in " + modSource + ": ";
 			return "Overriden " + modDescription  + " in";
 		}
-		
-//		label_modification.setToolTipText(modSource);
 
 		return "";
 	}
@@ -328,9 +303,9 @@ public class PropertySectionDetails extends AbstractPropertySection {
 		if (item.isLeaf() && item.getProperty() != null ) {
 	        String declarationString = "";
 			if (item.getProperty() != null) {
-				Stereotype stereotype = item.getProperty().getAppliedStereotype("ModelicaML::ModelicaCompositeConstructs::Variable");
+				Stereotype stereotype = item.getProperty().getAppliedStereotype(Constants.stereotypeQName_Variable);
 				if (stereotype != null) {
-					Object declarationEquationOrAssignment = UmlServices.getStereotypeValue((Element)item.getProperty(), stereotype.getName(), "declarationEquationOrAssignment");
+					Object declarationEquationOrAssignment = item.getProperty().getValue(stereotype, Constants.propertyName_declarationEquationOrAssignment);
 					if (declarationEquationOrAssignment instanceof String) {
 						declarationString = " " + declarationEquationOrAssignment.toString().trim();
 						return declarationString;

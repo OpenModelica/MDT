@@ -52,7 +52,6 @@ import org.eclipse.uml2.uml.UMLPackage;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
-import org.openmodelica.modelicaml.common.services.UmlServices;
 
 
 /**
@@ -424,7 +423,8 @@ public class ModificationManager {
 		final Property p = inputsClass.getOwnedAttribute(StringUtls.replaceSpecChar(componentDotPath), component.getType(), true, UMLPackage.Literals.PROPERTY, false);
 
 		// apply ModelicaML stereotype to the properties
-		if ( !UmlServices.hasStereotype(p, Constants.stereotypeQName_Variable) ) {
+//		if ( !UmlServices.hasStereotype(p, Constants.stereotypeQName_Variable) ) {
+		if ( p.getAppliedStereotype(Constants.stereotypeQName_Variable) == null) {
 			final Stereotype pStereotype = p.getApplicableStereotype(Constants.stereotypeQName_Variable);
 			//########## storing start
 			TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
@@ -566,7 +566,8 @@ public class ModificationManager {
 		final Property p = outputsClass.getOwnedAttribute(StringUtls.replaceSpecChar(componentDotPath), component.getType(), true, UMLPackage.Literals.PROPERTY, false);
 		
 		// apply ModelicaML stereotype to the properties
-		if ( !UmlServices.hasStereotype(p, Constants.stereotypeQName_Variable) ) {
+//		if ( !UmlServices.hasStereotype(p, Constants.stereotypeQName_Variable) ) {
+		if ( p.getAppliedStereotype(Constants.stereotypeQName_Variable) == null ) {
 			final Stereotype pStereotype = p.getApplicableStereotype(Constants.stereotypeQName_Variable);
 			
 			//########## storing start

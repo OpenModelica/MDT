@@ -51,7 +51,6 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.StringUtls;
-import org.openmodelica.modelicaml.common.services.UmlServices;
 
 
 
@@ -114,7 +113,7 @@ public class TreeObject implements IAdaptable {
 	private Element modificationSource = null;
 	
 	/** The final modification description. */
-	private String finalModificationDescription = null;
+//	private String finalModificationDescription = null;
 	
 	// TODO: implement getter and setter
 	/** The element. */
@@ -230,7 +229,7 @@ public class TreeObject implements IAdaptable {
 		if (this.property != null) {
 			Stereotype stereotype = property.getAppliedStereotype(stereotypeQName_Variable );
 			if (stereotype != null) {
-				Object declarationEquationOrAssignment = UmlServices.getStereotypeValue((Element)property, stereotype.getName(), "declarationEquationOrAssignment");
+				Object declarationEquationOrAssignment = property.getValue(stereotype, Constants.propertyName_declarationEquationOrAssignment);
 				if (declarationEquationOrAssignment instanceof String) {
 					return this.declaration = " " + declarationEquationOrAssignment.toString().trim();
 				}	
@@ -488,14 +487,40 @@ public class TreeObject implements IAdaptable {
 	 *            the causality string
 	 * @return the boolean
 	 */
+//	private Boolean isInputOrOutputVariable(Property property, String causalityString){
+//		Boolean result = false;
+//		Object causality = null;
+//		if (property instanceof Port) {
+//			causality = UmlServices.getStereotypeValue(property, Constants.stereotypeQName_ConnectionPort, Constants.propertyName_causality);				
+//		}
+//		else if (property instanceof Property) {
+//			causality = UmlServices.getStereotypeValue(property, Constants.stereotypeQName_Variable, Constants.propertyName_causality);								
+//		}
+//
+//		if (causality != null) {
+//			String causalityValue = ((EnumerationLiteral)causality).getName(); 
+//			if (causalityValue.equals(causalityString) ) {
+//				result = true;
+//			}
+//		}
+//		return result;
+//	}
+	
+	
 	private Boolean isInputOrOutputVariable(Property property, String causalityString){
 		Boolean result = false;
 		Object causality = null;
 		if (property instanceof Port) {
-			causality = UmlServices.getStereotypeValue(property, Constants.stereotypeQName_ConnectionPort, Constants.propertyName_causality);				
+			Stereotype sPort = property.getAppliedStereotype(Constants.stereotypeQName_ConnectionPort);
+			if (sPort != null) {
+				causality = property.getValue(sPort, Constants.propertyName_causality);
+			}
 		}
 		else if (property instanceof Property) {
-			causality = UmlServices.getStereotypeValue(property, Constants.stereotypeQName_Variable, Constants.propertyName_causality);								
+			Stereotype sVariable = property.getAppliedStereotype(Constants.stereotypeQName_Variable);
+			if (sVariable != null) {
+				causality = property.getValue(sVariable, Constants.propertyName_causality);
+			}
 		}
 
 		if (causality != null) {
@@ -506,6 +531,7 @@ public class TreeObject implements IAdaptable {
 		}
 		return result;
 	}
+	
 	
 	
 	public void setFinalModificationSource(Element finalModificationSource) {
@@ -673,7 +699,7 @@ public class TreeObject implements IAdaptable {
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	@Override
-	public Object getAdapter(java.lang.Class adapter) {
+	public Object getAdapter(@SuppressWarnings("rawtypes") java.lang.Class adapter) {
 		if (adapter == EObject.class) {
 			if (isRoot) { 
 				return selectedClass;

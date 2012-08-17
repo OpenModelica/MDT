@@ -1,6 +1,7 @@
 package org.openmodelica.modelicaml.common.helpers;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -534,9 +535,48 @@ public class VerificationServices {
 	}
 	
 	
+	private static TreeObject findTreeObject(ClassInstantiation ci, TreeObject objectFromOtherClassInstantiation){
+		
+		for (TreeObject treeObject : ci.getAllTreeObjects()) {
+			
+			String name = treeObject.getName();
+			String dotPath = treeObject.getDotPath();
+			Element element = treeObject.getUmlElement();
+			
+			if (name.equals(objectFromOtherClassInstantiation.getName())
+					&& dotPath.equals(objectFromOtherClassInstantiation.getDotPath())
+					&& element.equals(objectFromOtherClassInstantiation.getUmlElement())) {
+				return treeObject;
+			}
+		}
+		return null;
+	}
 	
 	
 	public static List<TreeObject> getClientsTreeItems(ClassInstantiation ci, TreeObject treeItem, HashSet<TreeObject> collectedItems, boolean onlyMandatoryClients) {
+		
+		/*
+		 * TODO: sometimes treeItem is null. find the bug...
+		 */
+		if (treeItem == null) {
+			return new ArrayList<TreeObject>();
+		}
+
+		/*
+		 * Sometimes the passed treeItem is not contained within the passed instantiation.
+		 * This may happen when instantiations were cashed and or recreated before being passed. 
+		 * In order to avoid confusion we first make sure that we find the 
+		 * right treeObject inside the passed instantiation based on
+		 * the name, dotPath and the UML element of the passed treeItem.  
+		 */
+		if (!ci.getAllTreeObjects().contains(treeItem)) {
+			treeItem = findTreeObject(ci, treeItem);
+		}
+
+		if (treeItem == null) {
+			// empty
+			return new ArrayList<TreeObject>();
+		}
 		
 		HashSet<TreeObject> collectedItem_temp = new HashSet<TreeObject>();
 		collectedItem_temp.addAll(collectedItems);
