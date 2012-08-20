@@ -144,6 +144,11 @@ private EObject selectedElement = null;
 				else {
 					clazz.applyStereotype(stereotype);
 				}
+				
+				// locate in Papyrus
+				if ( clazz != null) {
+					EditorServices.locateInModelExplorer(clazz, true);
+				}
 //### END: adapt it for a new command handler
 				
 			}

@@ -219,6 +219,9 @@ private Class createElement(String name){
 			else {
 				element.applyStereotype(simStereotype);
 			}
+			
+			// locate in Papyrus
+			EditorServices.locateInModelExplorer(element, true);
 		}
 		return element;
 	}

@@ -18,8 +18,8 @@ import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
 import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Generalization;
+import org.openmodelica.modelicaml.common.datacollection.RelationsCollector;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
-import org.openmodelica.modelicaml.common.services.RelationsCollector;
 import org.openmodelica.modelicaml.relations.dialogs.SelectInvalidRelationsToDeleteDialog;
 
 

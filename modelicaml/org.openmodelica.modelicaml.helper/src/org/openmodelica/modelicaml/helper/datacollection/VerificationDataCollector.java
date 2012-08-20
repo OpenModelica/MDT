@@ -11,7 +11,7 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.services.ElementsCollector;
+import org.openmodelica.modelicaml.common.datacollection.ElementsCollector;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 
 public class VerificationDataCollector extends ElementsCollector {

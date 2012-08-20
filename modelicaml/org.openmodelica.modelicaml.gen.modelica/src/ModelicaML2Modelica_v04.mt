@@ -131,10 +131,13 @@ annotation(<%g_annotation%>);
 
 <%-- ############## Overriden: Annotation --%>
 <%script type="uml.Class" name="annotation" post="trim()"%><%-- overriden--%>
+<%if (ownedComment[hasStereotype(getProperty("s_annotation"))] != null){%>annotation(<%g_annotation%>)<%}%>
+<%--
 <%if (ownedComment[hasStereotype(getProperty("s_annotation"))] != null){%>
-annotation(<%if (g_annotation != "" ){%><%g_annotation%>, <%}%><%ownedComment[hasStereotype(getProperty("s_annotation"))].body.sepStr(", ")%>)
+  annotation(<%if (g_annotation != "" ){%><%g_annotation%>, <%}%><%ownedComment[hasStereotype(getProperty("s_annotation"))].body.sepStr(", ")%>)
 <%}else{%>annotation(<%g_annotation%>)
 <%}%>
+--%>
 <%-- ############## Overriden: Annotation END --%>
 
 

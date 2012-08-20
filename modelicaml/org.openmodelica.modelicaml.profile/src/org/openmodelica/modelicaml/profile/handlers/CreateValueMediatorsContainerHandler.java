@@ -143,6 +143,11 @@ private Element createdElement = null;
 					clazz.applyStereotype(stereotype);
 					createdElement = clazz;
 				}
+				
+				// locate in Papyrus
+				if ( clazz != null) {
+					EditorServices.locateInModelExplorer(clazz, true);
+				}
 //### END: adapt it for a new command handler
 				
 			}

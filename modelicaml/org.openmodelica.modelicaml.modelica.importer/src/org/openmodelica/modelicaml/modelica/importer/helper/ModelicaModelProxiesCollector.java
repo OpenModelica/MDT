@@ -2,7 +2,7 @@ package org.openmodelica.modelicaml.modelica.importer.helper;
 
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
-import org.openmodelica.modelicaml.common.services.ElementsCollector;
+import org.openmodelica.modelicaml.common.datacollection.ElementsCollector;
 
 public class ModelicaModelProxiesCollector extends ElementsCollector {
 	

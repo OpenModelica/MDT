@@ -193,6 +193,11 @@ private EObject selectedElement = null;
 								else {
 									element.applyStereotype(stereotype);
 								}
+								
+								// locate in Papyrus
+								if ( element != null) {
+									EditorServices.locateInModelExplorer(element, true);
+								}
 								//**************************************
 							}
 						}
@@ -227,6 +232,11 @@ private EObject selectedElement = null;
 						}
 						else {
 							element.applyStereotype(stereotype);
+						}
+						
+						// locate in Papyrus
+						if ( element != null) {
+							EditorServices.locateInModelExplorer(element, true);
 						}
 					}
 				}

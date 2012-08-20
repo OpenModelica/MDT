@@ -120,6 +120,11 @@ private EObject selectedElement = null;
 					System.err.println("Could not create a " + "Signal" + " in " + selectedElement.getClass().getName());
 				}
 				
+				// locate in Papyrus
+				if ( sl != null) {
+					EditorServices.locateInModelExplorer(sl, true);
+				}
+				
 //				// apply ModelicaML stereotype
 //				if (stereotype == null) {
 //					Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();

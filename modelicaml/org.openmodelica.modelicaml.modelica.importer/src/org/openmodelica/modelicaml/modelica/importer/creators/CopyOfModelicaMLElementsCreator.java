@@ -1,5 +1,6 @@
-package org.openmodelica.modelicaml.modelica.importer.helper;
+package org.openmodelica.modelicaml.modelica.importer.creators;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.papyrus.infra.core.resource.NotFoundException;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
@@ -55,8 +57,8 @@ import org.eclipse.uml2.uml.TypedElement;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.eclipse.uml2.uml.VisibilityKind;
 import org.openmodelica.modelicaml.common.constants.Constants;
-import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
+import org.openmodelica.modelicaml.modelica.importer.helper.StringHandler;
 import org.openmodelica.modelicaml.modelica.importer.model.ClassItem;
 import org.openmodelica.modelicaml.modelica.importer.model.ComponentItem;
 import org.openmodelica.modelicaml.modelica.importer.model.ExtendsRelationItem;
@@ -65,7 +67,7 @@ import org.openmodelica.modelicaml.modelica.importer.model.TreeBuilder;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeObject;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeParent;
 
-public class ModelicaMLElementsCreator {
+public class CopyOfModelicaMLElementsCreator implements IRunnableWithProgress {
 	
 	private ServicesRegistry serviceRegistry = null;
 	private TransactionalEditingDomain editingDomain = null;
@@ -76,7 +78,6 @@ public class ModelicaMLElementsCreator {
 	public final static String COMPONENT_DESCRIPTION_PORT = "port";
 	public final static String COMPONENT_DESCRIPTION_VARIABLE = "variable";
 	public final static String COMPONENT_DESCRIPTION_COMPONENT= "component";
-	
 	private List<Element> createdClasses = new ArrayList<Element>();
 	private List<Element> createdProperties = new ArrayList<Element>();
 	private List<Element> createdGeneralizations = new ArrayList<Element>();
@@ -90,30 +91,24 @@ public class ModelicaMLElementsCreator {
 	// log entries
 	private List<String> log = new ArrayList<String>();
 	
-	private IProgressMonitor monitor;
 	
-	
-	
-	public ModelicaMLElementsCreator(){
+	public CopyOfModelicaMLElementsCreator(){
 		setEditingDomain();
 		setModelicaMLRootElement();
 	}
 
-	public ModelicaMLElementsCreator(
+	public CopyOfModelicaMLElementsCreator(
 			ServicesRegistry serviceRegistry, 
 			TransactionalEditingDomain editingDomain, 
 			UmlModel umlModel, 
 			EObject ModelicaMLRoot,
-			TreeBuilder treeBuilder,
-			IProgressMonitor monitor){
+			TreeBuilder treeBuilder){
 		
 		this.serviceRegistry = serviceRegistry;
 		this.editingDomain = editingDomain;
 		this.umlModel = umlModel;
 		this.ModelicaMLRoot = ModelicaMLRoot;
 		this.treeBuilder = treeBuilder;
-		
-		this.monitor = monitor;
 		
 	}
 
@@ -125,14 +120,12 @@ public class ModelicaMLElementsCreator {
 		this.log.clear();
 		
 		// first create classes, because they will type the properties
-		setMonitorTaskName("Creating classes ("+treeBuilder.getLoadedClasses().size()+" are loaded)");
-		
 		createClasses(parent, treeParent, update, applyProxyStereotype, recursive);
 		// create properties and extends relations
-
-		setMonitorTaskName("Creating class elements in "+treeParent.getName()+"");
 		createClassElements(treeParent, update, applyProxyStereotype, recursive);
 	}
+	
+	
 	
 	
 	
@@ -141,9 +134,7 @@ public class ModelicaMLElementsCreator {
 	 */
 
 	public void createClasses(Element parent, TreeParent treeParent, boolean update, boolean applyProxyStereotype, boolean recursive){
-			
-			int counter = 1;
-			
+	
 			if (parent != null && treeParent.hasChildren()) {
 				TreeObject[] children = treeParent.getChildren();
 				
@@ -156,10 +147,8 @@ public class ModelicaMLElementsCreator {
 						if (modelicaMLProxy == null) {
 							// create element
 							if (parent instanceof NamedElement) {
-								
 	//							System.out.println("Creating class: " + treeObject.getQName());
 								addToLog("Creating class: " + treeObject.getQName());
-								setMonitorTaskName("Creating class " + treeObject.getQName());
 								
 								modelicaMLProxy = createClass(parent, (ClassItem) treeObject, applyProxyStereotype);
 								createdClasses.add(modelicaMLProxy);
@@ -167,16 +156,8 @@ public class ModelicaMLElementsCreator {
 								treeObject.setModelicaMLProxy(modelicaMLProxy);
 								treeBuilder.addProxyToMaps((NamedElement) modelicaMLProxy);
 								
-								/*
-								 * Note, the updateClass was moved into createClass operation in order
-								 * to avoid live validation messages caused by the fact the the stereotype was not
-								 * applied yet. 
-								 */
-								
 								// update
-//								updateClass(modelicaMLProxy, (ClassItem) treeObject, applyProxyStereotype);
-								
-								counter ++;
+								updateClass(modelicaMLProxy, (ClassItem) treeObject, applyProxyStereotype);
 							}
 						}
 						else {
@@ -186,13 +167,8 @@ public class ModelicaMLElementsCreator {
 	//								System.out.println("Updating class: " + ((NamedElement)modelicaMLProxy).getQualifiedName());
 									addToLog("Updating class: " + ((NamedElement)modelicaMLProxy).getQualifiedName());
 								}
-								
-								setMonitorTaskName("Updating class " + ModelicaMLServices.getQualifiedName(modelicaMLProxy));
-								
 								// update
-								updateClass(modelicaMLProxy, (ClassItem) treeObject, applyProxyStereotype);
-								
-								counter ++;
+								updateClass(modelicaMLProxy, (ClassItem) treeObject, applyProxyStereotype);			
 							}
 						}
 						
@@ -262,23 +238,11 @@ public class ModelicaMLElementsCreator {
 							createdElement = ((Class)parent).createNestedClassifier(classItem.getName(), UMLPackage.Literals.CLASS);
 						}
 					}
-					
-					
 					if (createdElement instanceof Element) {
 	//					Stereotype appliedStereotype = applyModelicaMLClassStereotype((Element)createdElement, (ClassItem) treeObject, applyProxyStereotype);
 					}			
 					else {
 						addToLog("Could not create a ModelicaML class '"+classItem.getClassRestriction()+"'.");
-					}
-					
-					// update the created element
-					/*
-					 * Note, we should update (i.e. set stereotype etc.) in order
-					 * to avoid live validation messages caused by the fact the the stereotype was not
-					 * applied yet. 
-					 */
-					if (createdElement instanceof Class) {
-						updateClass(createdElement, (ClassItem) classItem, applyProxyStereotype);
 					}
 				}
 			};
@@ -319,63 +283,54 @@ public class ModelicaMLElementsCreator {
 				
 				@Override
 				protected void doExecute() {
-					Element updatedClass = updateClassCommand(classElement, classItem, applyProxyStereotype);
-					if (updatedClass != null) {
+					
+					// get or apply the appropriate stereotype 
+					Stereotype appropriateStereotype = null;
+					appropriateStereotype = applyModelicaMLClassStereotype(classElement, classItem, applyProxyStereotype);
+					
+					if (classElement instanceof Classifier && appropriateStereotype != null) {
 						
-						// add to command result
-						updatedElement = updatedClass;
+						// set encapsulated
+						((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_encapsulated, classItem.isEncapsulated());
+						
+						// set partial
+						((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_partial, classItem.isPartial());
+						((Classifier)classElement).setIsAbstract(classItem.isPartial());
+						
+						// set final
+						((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_final, classItem.isFinal());
+						
+						// set replaceable
+						((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_replaceable, classItem.isReplaceable());
+						
+						// set expandable connector
+						if (classItem.getClassRestriction().contains(Constants.propertyName_expandable)) {
+							((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_expandable, true);
+						}
+						
+						// sync. comment and annotations
+						updateCommentsAndAnnotation(classElement, classItem);
+						
+						// delete unappropriated stereotypes
+						// get all possible ModelicaML property stereotypes
+						HashSet<Stereotype> possibleStereotype = getClassApplicableStereotypes(classElement);
+						
+						// unapply all stereotypes from the list (see above) except the appropriate one!
+						for (Stereotype stereotype : possibleStereotype) {
+							if (stereotype != null && !stereotype.equals(appropriateStereotype)) {
+								if (classElement.isStereotypeApplied(stereotype)) {
+									classElement.unapplyStereotype(stereotype);	
+								}
+							}
+						}
 						
 						// add to updated classes list
-						updatedClasses.add(updatedClass);	
+						updatedClasses.add(classElement);
 					}
-					
-//					// get or apply the appropriate stereotype 
-//					Stereotype appropriateStereotype = null;
-//					appropriateStereotype = applyModelicaMLClassStereotype(classElement, classItem, applyProxyStereotype);
-//					
-//					if (classElement instanceof Classifier && appropriateStereotype != null) {
-//						
-//						// set encapsulated
-//						((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_encapsulated, classItem.isEncapsulated());
-//						
-//						// set partial
-//						((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_partial, classItem.isPartial());
-//						((Classifier)classElement).setIsAbstract(classItem.isPartial());
-//						
-//						// set final
-//						((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_final, classItem.isFinal());
-//						
-//						// set replaceable
-//						((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_replaceable, classItem.isReplaceable());
-//						
-//						// set expandable connector
-//						if (classItem.getClassRestriction().contains(Constants.propertyName_expandable)) {
-//							((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_expandable, true);
-//						}
-//						
-//						// sync. comment and annotations
-//						updateCommentsAndAnnotation(classElement, classItem);
-//						
-//						// delete unappropriated stereotypes
-//						// get all possible ModelicaML property stereotypes
-//						HashSet<Stereotype> possibleStereotype = getClassApplicableStereotypes(classElement);
-//						
-//						// unapply all stereotypes from the list (see above) except the appropriate one!
-//						for (Stereotype stereotype : possibleStereotype) {
-//							if (stereotype != null && !stereotype.equals(appropriateStereotype)) {
-//								if (classElement.isStereotypeApplied(stereotype)) {
-//									classElement.unapplyStereotype(stereotype);	
-//								}
-//							}
-//						}
-//						
-//						// add to updated classes list
-//						updatedClasses.add(classElement);
-//					}
-//					else {
-//						addToLog("The proxy for '" + classItem.getQName() + "' is not a UML Classifier.");
-//	//					System.err.println("The proxy for '" + classItem.getQName() + "' is not a UML Classifier.");
-//					}
+					else {
+						addToLog("The proxy for '" + classItem.getQName() + "' is not a UML Classifier.");
+	//					System.err.println("The proxy for '" + classItem.getQName() + "' is not a UML Classifier.");
+					}
 				}
 			};
 			
@@ -392,62 +347,6 @@ public class ModelicaMLElementsCreator {
 			return null;
 		}
 
-		private Element updateClassCommand(Element classElement, ClassItem classItem, boolean applyProxyStereotype){
-			
-			Element updatedElement = null;
-			
-			// get or apply the appropriate stereotype 
-			Stereotype appropriateStereotype = null;
-			appropriateStereotype = applyModelicaMLClassStereotype(classElement, classItem, applyProxyStereotype);
-			
-			if (classElement instanceof Classifier && appropriateStereotype != null) {
-				
-				// set encapsulated
-				((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_encapsulated, classItem.isEncapsulated());
-				
-				// set partial
-				((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_partial, classItem.isPartial());
-				((Classifier)classElement).setIsAbstract(classItem.isPartial());
-				
-				// set final
-				((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_final, classItem.isFinal());
-				
-				// set replaceable
-				((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_replaceable, classItem.isReplaceable());
-				
-				// set expandable connector
-				if (classItem.getClassRestriction().contains(Constants.propertyName_expandable)) {
-					((Classifier)classElement).setValue(appropriateStereotype, Constants.propertyName_expandable, true);
-				}
-				
-				// sync. comment and annotations
-				updateCommentsAndAnnotation(classElement, classItem);
-				
-				// delete unappropriated stereotypes
-				// get all possible ModelicaML property stereotypes
-				HashSet<Stereotype> possibleStereotype = getClassApplicableStereotypes(classElement);
-				
-				// unapply all stereotypes from the list (see above) except the appropriate one!
-				for (Stereotype stereotype : possibleStereotype) {
-					if (stereotype != null && !stereotype.equals(appropriateStereotype)) {
-						if (classElement.isStereotypeApplied(stereotype)) {
-							classElement.unapplyStereotype(stereotype);	
-						}
-					}
-				}
-				
-				// add to updated classes list
-				updatedElement= classElement;
-			}
-			else {
-				addToLog("The proxy for '" + classItem.getQName() + "' is not a UML Classifier.");
-//					System.err.println("The proxy for '" + classItem.getQName() + "' is not a UML Classifier.");
-			}
-			
-			return updatedElement;
-		}
-	
-	
 		private Stereotype applyModelicaMLClassStereotype(Element element, ClassItem classItemObject, boolean applyProxyStereotype){
 			Stereotype appliedStereotype = null;
 			
@@ -491,10 +390,6 @@ public class ModelicaMLElementsCreator {
 			return appliedStereotype;
 		}
 
-		
-		
-		
-		
 	public void createClassElements(TreeParent treeParent, boolean update, boolean applyProxyStereotype, boolean recursive){
 			
 			Element owningClass = treeParent.getModelicaMLProxy();
@@ -519,8 +414,8 @@ public class ModelicaMLElementsCreator {
 						
 						if (modelicaMLPropertyProxy == null) { // if there is no proxy -> create one
 							
-							setMonitorTaskName("Creating component: " + component.getQName());
 							addToLog("Creating component: " + component.getQName());
+	//						System.out.println("Creating component: " + component.getQName());
 							
 							// set the component type (uml class that was just created) 
 							Element type = treeBuilder.getTypeElement(component.getComponentTypeQame());
@@ -533,21 +428,15 @@ public class ModelicaMLElementsCreator {
 							component.setModelicaMLProxy(modelicaMLPropertyProxy);
 							treeBuilder.addProxyToMaps((NamedElement) modelicaMLPropertyProxy);
 							
-							/*
-							 * Note, the update operation (i.e. set stereotype etc.) is moved into the createProperty operation
-							 * in order to avoid live validation messages caused by the fact the the stereotype was not
-							 * applied yet. 
-							 */
-//							// update (stereotype) properties
-//							updateProperty(owningClass, modelicaMLPropertyProxy, component, applyProxyStereotype);
-							
+							// update (stereotype) properties
+							updateProperty(owningClass, modelicaMLPropertyProxy, component, applyProxyStereotype);
 						}
 						else { // update the existing proxy
 							if (update) {
 								if (modelicaMLPropertyProxy instanceof NamedElement) {
 									// indicate
-									setMonitorTaskName("Updating component: " + ((NamedElement)modelicaMLPropertyProxy).getQualifiedName());
 									addToLog("Updating component: " + ((NamedElement)modelicaMLPropertyProxy).getQualifiedName());
+	//								System.out.println("Updating component: " + ((NamedElement)modelicaMLPropertyProxy).getQualifiedName());
 								}
 								// update
 								
@@ -559,8 +448,6 @@ public class ModelicaMLElementsCreator {
 							}
 						}
 					}
-					
-					
 					
 					// create extends relations
 					if (treeObject instanceof ExtendsRelationItem && owningClass instanceof Classifier) {
@@ -588,36 +475,27 @@ public class ModelicaMLElementsCreator {
 						}
 						// if there is no generalization pointing to the same target -> create a new one
 						if ( !exisitingTargets.contains(target) ) {
-							
-							setMonitorTaskName("Creating extends relation in: " + ((NamedElement)owningClass).getQualifiedName());
-							
 							// create element
 							modelicaMLGeneralizationProxy = createExtendsRelation(owningClass, extendsRelation, applyProxyStereotype);
 	
 							// set proxy
 							extendsRelation.setModelicaMLProxy(modelicaMLGeneralizationProxy);
 							
-							
-							/*
-							 * Note, the update operations was moved to the create operation in order to avoid live valiation problems 
-							 * due to unapplied stereotypes.
-							 */
-//							if (modelicaMLGeneralizationProxy != null) {
-//								// update
-//								updateExtendsRelation(modelicaMLGeneralizationProxy, extendsRelation, applyProxyStereotype);
-//							}
+							if (modelicaMLGeneralizationProxy != null) {
+								// update
+								updateGeneralization(modelicaMLGeneralizationProxy, extendsRelation, applyProxyStereotype);
+							}
 						}
 						else {
 							if (update) {
 								if ( modelicaMLGeneralizationProxy != null ) {
 									// indicate
-									addToLog("Updating generalization: " + extendsRelation.getSourceQname() + " -> " + extendsRelation.getTargetQname());
-									setMonitorTaskName("Updating generalization: " + extendsRelation.getSourceQname() + " -> " + extendsRelation.getTargetQname());
-									
+									addToLog("Updating generalization: " + extendsRelation.getSourceQname() + " -> " + 
+											extendsRelation.getTargetQname());
 	//								System.out.println("Updating generalization: " + extendsRelation.getSourceQname() + " -> " + extendsRelation.getTargetQname());
 									
 									// update
-									updateExtendsRelation(modelicaMLGeneralizationProxy, extendsRelation, applyProxyStereotype);			
+									updateGeneralization(modelicaMLGeneralizationProxy, extendsRelation, applyProxyStereotype);			
 								}
 							}
 						}
@@ -647,8 +525,6 @@ public class ModelicaMLElementsCreator {
 
 	
 	public void createImportRelation(Class owningClass, TreeParent treeItem){
-		
-		setMonitorTaskName("Creating imports in : " + owningClass.getQualifiedName() );
 		
 		// delete all existing import dependencies
 		EList<Dependency> depList = owningClass.getClientDependencies();
@@ -701,25 +577,21 @@ public class ModelicaMLElementsCreator {
 			
 			@Override
 			protected void doExecute() {
+				createdElement = sourceClass.createDependency(targetClass);
 				
-				// prevent cyclic dependencies
-				if (sourceClass.equals(targetClass)) {
-					
-					createdElement = sourceClass.createDependency(targetClass);
-					
-					Stereotype s = createdElement.getApplicableStereotype(StereotypeQname);
-					if (s != null) {
-						createdElement.applyStereotype(s);
-						if (treeObject instanceof ImportRelationItem) {
-							ImportRelationItem importRelationItem = (ImportRelationItem) treeObject;
-							((Dependency)createdElement).setName(importRelationItem.getSourceQname() + " imports " + importRelationItem.getTargetQname());
-							createdElement.setValue(s, Constants.propertyName_alias, importRelationItem.getAlias());
-						}
-					}
-					else {
-						addToLog("Could not apply the import stereotype to the element '" + treeObject.getQName() + "'");
+				Stereotype s = createdElement.getApplicableStereotype(StereotypeQname);
+				if (s != null) {
+					createdElement.applyStereotype(s);
+					if (treeObject instanceof ImportRelationItem) {
+						ImportRelationItem importRelationItem = (ImportRelationItem) treeObject;
+						((Dependency)createdElement).setName(importRelationItem.getSourceQname() + " imports " + importRelationItem.getTargetQname());
+						createdElement.setValue(s, Constants.propertyName_alias, importRelationItem.getAlias());
 					}
 				}
+				else {
+					addToLog("Could not apply the import stereotype to the element '" + treeObject.getQName() + "'");
+				}
+				
 			}
 		};
 		
@@ -765,16 +637,7 @@ public class ModelicaMLElementsCreator {
 //				Element source = owningClass;
 				Element target = treeBuilder.getTypeElement(extendsRelation.getTargetQname());
 				
-				TreeParent owningClassItem = extendsRelation.getParent();
-				
-				/*
-				 * Avoid creating extends relations that point to the element it self. 
-				 * This may happen when anonym classes are used in Modelica.
-				 */
-				if (target instanceof Classifier 
-						&& !extendsRelation.getTargetQname().equals(extendsRelation.getSourceQname()) 
-						&& !extendsRelation.getTargetQname().equals(owningClassItem.getQName()) // TODO: this should actually be the same like extendsRelation.getSourceQname() 
-						) {
+				if (target instanceof Classifier) {
 //					System.out.println("Creating extends relation: " + extendsRelationTreeObject.getSourceQname() + " -> " + extendsRelation.getTargetQname());
 					addToLog("Creating extends relation: " + extendsRelationTreeObject.getSourceQname() + " -> " + extendsRelation.getTargetQname());
 					
@@ -786,12 +649,7 @@ public class ModelicaMLElementsCreator {
 //					System.err.println("Could not create Generalization for " + extendsRelationTreeObject.getSourceQname());
 				}
 				
-				/*
-				 *  Update (i.e. apply sterotypes, etc.) after creating in order to avoid live validation problems
-				 */
 				if (createdElement instanceof Generalization) {
-					
-					Element updatedRelation = updateExtendsRelationCommand(createdElement, extendsRelationTreeObject, applyProxyStereotype);
 				}			
 				else {
 					addToLog("Could not apply ModelicaML stereotype 'ExtendsRelation'. Please make sure that the ModelicaML profile is applied.");
@@ -814,7 +672,7 @@ public class ModelicaMLElementsCreator {
 		return null;
 	}
 	
-	private Element updateExtendsRelation(
+	private Element updateGeneralization(
 			final Element extendsRelationElement, 
 			final ExtendsRelationItem extendsRelationItem, 
 			final boolean applyProxyStereotype){
@@ -836,71 +694,63 @@ public class ModelicaMLElementsCreator {
 			@Override
 			protected void doExecute() {
 				
-//				// get or apply the appropriate stereotype 
-//				Stereotype appropriateStereotype = null;
-//				if (extendsRelationItem.getTarget() instanceof PrimitiveType) {
-//					appropriateStereotype = extendsRelationElement.getApplicableStereotype(Constants.stereotypeQName_TypeRelation);
-//				}
-//				else {
-//					appropriateStereotype = extendsRelationElement.getApplicableStereotype(Constants.stereotypeQName_ExtendsRelation);
-//				}
-//				
-//				if (appropriateStereotype == null) {
-//					addToLog("Could not find appropriate stereotype for " + extendsRelationElement);
-//				}
-//				
-//				if (appropriateStereotype != null && !extendsRelationElement.isStereotypeApplied(appropriateStereotype)) {
-//					extendsRelationElement.applyStereotype(appropriateStereotype);	
-//				}
-//				
-//				if (appropriateStereotype != null) {
-//					
-//					// set modifications
-//					if (extendsRelationItem.getModifications() != null) {
-//						extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_modification, extendsRelationItem.getModifications());
-//					}
-//					else {
-//						// make sure that old data is deleted
-//						extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_modification, new BasicEList<String>());
-//					}
-//					
-//					// set array size 
-//					if (appropriateStereotype.getQualifiedName().equals(Constants.stereotypeQName_TypeRelation) ) {
-//						if (extendsRelationItem.getArraySize() != null) {
-//							extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_arraySize, extendsRelationItem.getArraySize());
-//						}
-//						else {
-//							// make sure that old data is deleted
-//							extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_arraySize, new BasicEList<String>());
-//						}
-//					}
-//				}
-//				
-//				// delete unappropriated stereotypes
-//				// get all possible ModelicaML property stereotypes
-//				HashSet<Stereotype> possibleStereotype = new HashSet<Stereotype>();
-//				possibleStereotype.add(extendsRelationElement.getApplicableStereotype(Constants.stereotypeQName_TypeRelation));
-//				possibleStereotype.add(extendsRelationElement.getApplicableStereotype(Constants.stereotypeQName_ExtendsRelation));
-//				
-//				// unapply all stereotypes from the list (see above) except the appropriate one!
-//				for (Stereotype stereotype : possibleStereotype) {
-//					if (stereotype != null && !stereotype.equals(appropriateStereotype)) {
-//						if (extendsRelationElement.isStereotypeApplied(stereotype)) {
-//							extendsRelationElement.unapplyStereotype(stereotype);	
-//						}
-//					}
-//				}
-				
-				
-				Element updatedRelation = updateExtendsRelationCommand(extendsRelationElement, extendsRelationItem, applyProxyStereotype);
-				if (updatedRelation != null) {
-					
-					// add to command result
-					updatedElement = updatedRelation;
-					
-					// add to updated classes list
-					updatedGeneralizations.add(extendsRelationElement);
+				// get or apply the appropriate stereotype 
+				Stereotype appropriateStereotype = null;
+				if (extendsRelationItem.getTarget() instanceof PrimitiveType) {
+					appropriateStereotype = extendsRelationElement.getApplicableStereotype(Constants.stereotypeQName_TypeRelation);
 				}
+				else {
+					appropriateStereotype = extendsRelationElement.getApplicableStereotype(Constants.stereotypeQName_ExtendsRelation);
+				}
+				
+				if (appropriateStereotype == null) {
+					addToLog("Could not find appropriate stereotype for " + extendsRelationElement);
+				}
+				
+				if (appropriateStereotype != null && !extendsRelationElement.isStereotypeApplied(appropriateStereotype)) {
+					extendsRelationElement.applyStereotype(appropriateStereotype);	
+				}
+				
+				if (appropriateStereotype != null) {
+					
+					// set modifications
+					if (extendsRelationItem.getModifications() != null) {
+						extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_modification, extendsRelationItem.getModifications());
+					}
+					else {
+						// make sure that old data is deleted
+						extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_modification, new BasicEList<String>());
+					}
+					
+					// set array size 
+					if (appropriateStereotype.getQualifiedName().equals(Constants.stereotypeQName_TypeRelation) ) {
+						if (extendsRelationItem.getArraySize() != null) {
+							extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_arraySize, extendsRelationItem.getArraySize());
+						}
+						else {
+							// make sure that old data is deleted
+							extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_arraySize, new BasicEList<String>());
+						}
+					}
+				}
+				
+				// delete unappropriated stereotypes
+				// get all possible ModelicaML property stereotypes
+				HashSet<Stereotype> possibleStereotype = new HashSet<Stereotype>();
+				possibleStereotype.add(extendsRelationElement.getApplicableStereotype(Constants.stereotypeQName_TypeRelation));
+				possibleStereotype.add(extendsRelationElement.getApplicableStereotype(Constants.stereotypeQName_ExtendsRelation));
+				
+				// unapply all stereotypes from the list (see above) except the appropriate one!
+				for (Stereotype stereotype : possibleStereotype) {
+					if (stereotype != null && !stereotype.equals(appropriateStereotype)) {
+						if (extendsRelationElement.isStereotypeApplied(stereotype)) {
+							extendsRelationElement.unapplyStereotype(stereotype);	
+						}
+					}
+				}
+				
+				// add to updated classes list
+				updatedGeneralizations.add(extendsRelationElement);
 			}
 		};
 		
@@ -917,74 +767,6 @@ public class ModelicaMLElementsCreator {
 		return null;
 	}
 
-	
-	
-	private Element updateExtendsRelationCommand(
-			Element extendsRelationElement, 
-			ExtendsRelationItem extendsRelationItem, 
-			boolean applyProxyStereotype){
-		
-		Element updatedElement = null;
-		
-		// get or apply the appropriate stereotype 
-		Stereotype appropriateStereotype = null;
-		if (extendsRelationItem.getTarget() instanceof PrimitiveType) {
-			appropriateStereotype = extendsRelationElement.getApplicableStereotype(Constants.stereotypeQName_TypeRelation);
-		}
-		else {
-			appropriateStereotype = extendsRelationElement.getApplicableStereotype(Constants.stereotypeQName_ExtendsRelation);
-		}
-		
-		if (appropriateStereotype == null) {
-			addToLog("Could not find appropriate stereotype for " + extendsRelationElement);
-		}
-		
-		if (appropriateStereotype != null && !extendsRelationElement.isStereotypeApplied(appropriateStereotype)) {
-			extendsRelationElement.applyStereotype(appropriateStereotype);	
-		}
-		
-		if (appropriateStereotype != null) {
-			
-			// set modifications
-			if (extendsRelationItem.getModifications() != null) {
-				extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_modification, extendsRelationItem.getModifications());
-			}
-			else {
-				// make sure that old data is deleted
-				extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_modification, new BasicEList<String>());
-			}
-			
-			// set array size 
-			if (appropriateStereotype.getQualifiedName().equals(Constants.stereotypeQName_TypeRelation) ) {
-				if (extendsRelationItem.getArraySize() != null) {
-					extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_arraySize, extendsRelationItem.getArraySize());
-				}
-				else {
-					// make sure that old data is deleted
-					extendsRelationElement.setValue(appropriateStereotype, Constants.propertyName_arraySize, new BasicEList<String>());
-				}
-			}
-		}
-		
-		// delete unappropriated stereotypes
-		// get all possible ModelicaML property stereotypes
-		HashSet<Stereotype> possibleStereotype = new HashSet<Stereotype>();
-		possibleStereotype.add(extendsRelationElement.getApplicableStereotype(Constants.stereotypeQName_TypeRelation));
-		possibleStereotype.add(extendsRelationElement.getApplicableStereotype(Constants.stereotypeQName_ExtendsRelation));
-		
-		// unapply all stereotypes from the list (see above) except the appropriate one!
-		for (Stereotype stereotype : possibleStereotype) {
-			if (stereotype != null && !stereotype.equals(appropriateStereotype)) {
-				if (extendsRelationElement.isStereotypeApplied(stereotype)) {
-					extendsRelationElement.unapplyStereotype(stereotype);	
-				}
-			}
-		}
-		
-		updatedElement = extendsRelationElement;
-		
-		return updatedElement;
-	}
 
 	
 	
@@ -1042,16 +824,6 @@ public class ModelicaMLElementsCreator {
 					addToLog("Could not create ModelicaML component '"+componentTreeObject.getQName()+"'.");
 //					System.err.println("Could not create ModelicaML component '"+componentTreeObject.getQName()+"'.");
 				}
-				
-				
-				/*
-				 * Note, we should update (i.e. set stereotype etc.) in order
-				 * to avoid live validation messages caused by the fact the the stereotype was not
-				 * applied yet. 
-				 */
-				if (createdElement instanceof Element) {
-					updateProperty(owningClass, createdElement, componentTreeObject, applyProxyStereotype);
-				}
 			}
 		};
 		
@@ -1091,50 +863,43 @@ public class ModelicaMLElementsCreator {
 				@Override
 				protected void doExecute() {
 					
-					Element updatedProperty = updatePropertyCommand(owningClass, property, componentTreeObject, applyProxyStereotype);
+					// update component type
+					if (property instanceof TypedElement) {
+						// update type
+						Element type = componentTreeObject.getComponentTypeProxy();
+						if (type instanceof Classifier) {
+							((TypedElement)property).setType((Classifier)type);
+						}
+						else if (componentTreeObject.getComponentTypeProxy() == null) {
+							((TypedElement)property).setType(null);
+						}
+					}
+					else {
+						addToLog("The proxy for '" + componentTreeObject.getQName() + "' is not a UML TypedElement.");
+	//					System.err.println("The proxy for '" + componentTreeObject.getQName() + "' is not a UML TypedElement.");
+					}
+	
+					// get or apply the appropriate stereotype 
+					Stereotype appropriateStereotype = null;
+					appropriateStereotype = applyModelicaMLPropertyStereotype(property, componentTreeObject, applyProxyStereotype);
 					
-					if (updatedProperty != null) {
-						updatedProperties.add(updatedProperty);
+					// update stereotype properties
+					updateComponentStereotypeProperties(componentTreeObject, property, appropriateStereotype);
+	
+					// delete unappropriated stereotypes
+					// get all possible ModelicaML property stereotypes
+					HashSet<Stereotype> possibleStereotype = getCompomentApplicableStereotypes(property);
+					// unapply all stereotypes from the list (see above) except the appropriate one!
+					for (Stereotype stereotype : possibleStereotype) {
+						if (stereotype != null && !stereotype.equals(appropriateStereotype)) {
+							if (property.isStereotypeApplied(stereotype)) {
+								property.unapplyStereotype(stereotype);	
+							}
+						}
 					}
 					
-					
-//					// update component type
-//					if (property instanceof TypedElement) {
-//						// update type
-//						Element type = componentTreeObject.getComponentTypeProxy();
-//						if (type instanceof Classifier) {
-//							((TypedElement)property).setType((Classifier)type);
-//						}
-//						else if (componentTreeObject.getComponentTypeProxy() == null) {
-//							((TypedElement)property).setType(null);
-//						}
-//					}
-//					else {
-//						addToLog("The proxy for '" + componentTreeObject.getQName() + "' is not a UML TypedElement.");
-//	//					System.err.println("The proxy for '" + componentTreeObject.getQName() + "' is not a UML TypedElement.");
-//					}
-//	
-//					// get or apply the appropriate stereotype 
-//					Stereotype appropriateStereotype = null;
-//					appropriateStereotype = applyModelicaMLPropertyStereotype(property, componentTreeObject, applyProxyStereotype);
-//					
-//					// update stereotype properties
-//					updateComponentStereotypeProperties(componentTreeObject, property, appropriateStereotype);
-//	
-//					// delete unappropriated stereotypes
-//					// get all possible ModelicaML property stereotypes
-//					HashSet<Stereotype> possibleStereotype = getCompomentApplicableStereotypes(property);
-//					// unapply all stereotypes from the list (see above) except the appropriate one!
-//					for (Stereotype stereotype : possibleStereotype) {
-//						if (stereotype != null && !stereotype.equals(appropriateStereotype)) {
-//							if (property.isStereotypeApplied(stereotype)) {
-//								property.unapplyStereotype(stereotype);	
-//							}
-//						}
-//					}
-//					
-//					// add to updated components list
-//					updatedProperties.add(property);
+					// add to updated components list
+					updatedProperties.add(property);
 				}
 			};
 			
@@ -1151,56 +916,7 @@ public class ModelicaMLElementsCreator {
 			return null;
 		}
 
-	
-	private Element updatePropertyCommand(
-			Element owningClass, 
-			Element property, 
-			ComponentItem componentTreeObject, 
-			boolean applyProxyStereotype){
-		
-		Element updatedElement = null;
-		// update component type
-		if (property instanceof TypedElement) {
-			// update type
-			Element type = componentTreeObject.getComponentTypeProxy();
-			if (type instanceof Classifier) {
-				((TypedElement)property).setType((Classifier)type);
-			}
-			else if (componentTreeObject.getComponentTypeProxy() == null) {
-				((TypedElement)property).setType(null);
-			}
-		}
-		else {
-			addToLog("The proxy for '" + componentTreeObject.getQName() + "' is not a UML TypedElement.");
-//					System.err.println("The proxy for '" + componentTreeObject.getQName() + "' is not a UML TypedElement.");
-		}
-
-		// get or apply the appropriate stereotype 
-		Stereotype appropriateStereotype = null;
-		appropriateStereotype = applyModelicaMLPropertyStereotype(property, componentTreeObject, applyProxyStereotype);
-		
-		// update stereotype properties
-		updateComponentStereotypeProperties(componentTreeObject, property, appropriateStereotype);
-
-		// delete unappropriated stereotypes
-		// get all possible ModelicaML property stereotypes
-		HashSet<Stereotype> possibleStereotype = getCompomentApplicableStereotypes(property);
-		// unapply all stereotypes from the list (see above) except the appropriate one!
-		for (Stereotype stereotype : possibleStereotype) {
-			if (stereotype != null && !stereotype.equals(appropriateStereotype)) {
-				if (property.isStereotypeApplied(stereotype)) {
-					property.unapplyStereotype(stereotype);	
-				}
-			}
-		}
-		
-		updatedElement = property;
-		
-		return updatedElement;
-	}
-	
 	private void updateComponentStereotypeProperties(ComponentItem componentItem, Element componentElement, Stereotype componentStereotype){
-		
 			if (componentStereotype != null ) {
 				
 				// set visibility
@@ -1331,8 +1047,6 @@ public class ModelicaMLElementsCreator {
 			}
 		}
 
-	
-	
 	private Stereotype applyModelicaMLPropertyStereotype(
 				Element element, 
 				ComponentItem componentTreeObject, 
@@ -1957,19 +1671,6 @@ public class ModelicaMLElementsCreator {
 	 * Utls *****************************************************************************************************
 	 */
 	
-	private void setMonitorTaskName(String name){
-		if (this.monitor != null) {
-			monitor.setTaskName(name);
-		}
-	}
-	
-//	private void setMonitorSubTaskName(String name){
-//		if (this.monitor != null) {
-//			monitor.subTask(name);
-//		}
-//	}
-	
-	
 	private String getPropertyStereotypeQName(ComponentItem componentTreeObject){
 		if (componentTreeObject.isComponent()) 			{ return Constants.stereotypeQName_Component;}
 		if (componentTreeObject.isPort()) 				{ return Constants.stereotypeQName_ConnectionPort;}
@@ -2110,7 +1811,9 @@ public class ModelicaMLElementsCreator {
 	
 	
 	
-	// Project data and editing domain **********************************************************************************
+	
+	
+	
 	
 	private void setModelicaMLRootElement(){
 		umlModel = UmlUtils.getUmlModel();
@@ -2142,37 +1845,37 @@ public class ModelicaMLElementsCreator {
 	 * Monitor *****************************************************************************************************
 	 */
 	
-//	// The total sleep time
-//	private static final int TOTAL_TIME = 1000;
-//	// The increment sleep time
-//	private static final int INCREMENT = 10;
-//	// process time´is unknown
-//	private boolean indeterminate = true; 
-//	
-//	private String progressMonitorTitle = "Modelica Model Proxies Creation ";
-//	private String monitorText1 = "Collecting data ...";
-//	private String monitorText2 = "Creating elements ...";
-//	
-//	@Override
-//	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-//		
-//		monitor.beginTask(progressMonitorTitle + " is running." , indeterminate ? IProgressMonitor.UNKNOWN : TOTAL_TIME);
-//	    for (int total = 0; total < TOTAL_TIME && !monitor.isCanceled(); total += INCREMENT) {
-//	      Thread.sleep(INCREMENT);
-//	      monitor.worked(INCREMENT);
-//	      if (total == TOTAL_TIME / 100) {
-//	    	  monitor.subTask(monitorText1);
-//	      }
-//	      else {
-//	    	  monitor.subTask(monitorText2);
-//	      }
-////	      if (total == TOTAL_TIME / 2) monitor.subTask(monitorText2);
-//	    }
-//	    monitor.done();
-//	    if (monitor.isCanceled()){
-//	    	throw new InterruptedException(progressMonitorTitle + " was cancelled.");
-//	    }   
-//	}
+	// The total sleep time
+	private static final int TOTAL_TIME = 1000;
+	// The increment sleep time
+	private static final int INCREMENT = 10;
+	// process time´is unknown
+	private boolean indeterminate = true; 
+	
+	private String progressMonitorTitle = "Modelica Model Proxies Creation ";
+	private String monitorText1 = "Collecting data ...";
+	private String monitorText2 = "Creating elements ...";
+	
+	@Override
+	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		
+		monitor.beginTask(progressMonitorTitle + " is running." , indeterminate ? IProgressMonitor.UNKNOWN : TOTAL_TIME);
+	    for (int total = 0; total < TOTAL_TIME && !monitor.isCanceled(); total += INCREMENT) {
+	      Thread.sleep(INCREMENT);
+	      monitor.worked(INCREMENT);
+	      if (total == TOTAL_TIME / 100) {
+	    	  monitor.subTask(monitorText1);
+	      }
+	      else {
+	    	  monitor.subTask(monitorText2);
+	      }
+//	      if (total == TOTAL_TIME / 2) monitor.subTask(monitorText2);
+	    }
+	    monitor.done();
+	    if (monitor.isCanceled()){
+	    	throw new InterruptedException(progressMonitorTitle + " was cancelled.");
+	    }   
+	}
 
 	
 	

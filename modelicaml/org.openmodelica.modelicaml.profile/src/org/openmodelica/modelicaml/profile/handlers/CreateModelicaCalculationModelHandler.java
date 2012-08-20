@@ -212,6 +212,11 @@ private Class createElement(String name){
 			else {
 				element.applyStereotype(stereotype);
 			}
+			
+			// locate in Papyrus
+			if ( element != null) {
+				EditorServices.locateInModelExplorer(element, true);
+			}
 		}
 		return element;
 	}

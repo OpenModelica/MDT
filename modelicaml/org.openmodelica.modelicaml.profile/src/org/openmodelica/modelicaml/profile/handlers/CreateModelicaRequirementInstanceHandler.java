@@ -133,6 +133,11 @@ private EObject selectedElement = null;
 				else {
 					py.applyStereotype(stereotype);
 				}
+				
+				// locate in Papyrus
+				if ( py != null) {
+					EditorServices.locateInModelExplorer(py, true);
+				}
 //### END: adapt it for a new command handler
 				
 			}

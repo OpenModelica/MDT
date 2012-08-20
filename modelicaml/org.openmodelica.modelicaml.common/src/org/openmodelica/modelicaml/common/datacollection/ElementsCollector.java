@@ -32,7 +32,7 @@
  *   Uwe Pohlmann, University of Paderborn 2009-2010, contribution to the Modelica code generation for state machine behavior, contribution to Papyrus GUI adoptations
  *   Parham Vasaiely, EADS Innovation Works / Hamburg University of Applied Sciences 2009-2011, implementation of simulation plugins
  */
-package org.openmodelica.modelicaml.common.services;
+package org.openmodelica.modelicaml.common.datacollection;
 
 import java.util.HashSet;
 import java.util.Iterator;

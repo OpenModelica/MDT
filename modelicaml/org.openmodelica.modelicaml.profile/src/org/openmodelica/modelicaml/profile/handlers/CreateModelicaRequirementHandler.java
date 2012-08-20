@@ -250,6 +250,9 @@ private EObject selectedElement = null;
 			else {
 				element.applyStereotype(stereotype);
 			}
+			
+			// locate in Papyrus
+			EditorServices.locateInModelExplorer(element, true);
 		}
 		return element;
 	}

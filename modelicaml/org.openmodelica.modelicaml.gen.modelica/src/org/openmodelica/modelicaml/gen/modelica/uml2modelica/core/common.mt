@@ -14,8 +14,9 @@ import org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlService
 <%if (getProperty("c_includeModelComments") && ownedComment[!hasStereotype(getProperty("s_annotation"))]!=null){%>"<%for (ownedComment[!hasStereotype(getProperty("s_annotation"))]){%><%body.replaceAll("\\n","").replaceAll("\\r","").replaceAll("\"", "'")%> <%}%>"<%}%>
 
 <%script type="uml.Element" name="annotation" post="trim()"%>
-<%if (ownedComment[hasStereotype(getProperty("s_annotation"))] != null){%>
-annotation(<%ownedComment[hasStereotype(getProperty("s_annotation"))].body.sepStr(", ")%>)
+<%if (ownedComment[hasStereotype(getProperty("s_annotation"))] != null){%>#
+<%-- TODO: get the fullAnnotationString instead ... 
+annotation(<%ownedComment[hasStereotype(getProperty("s_annotation"))].body.sepStr(", ")%>)  --%>
 <%}%>
 
 <%-- ################## Placeholder for additional includes --%>

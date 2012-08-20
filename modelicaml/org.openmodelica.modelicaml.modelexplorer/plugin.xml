@@ -1060,7 +1060,24 @@
             allPopups="false"
             locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
          <separator
-               name="org.openmodelica.modelicaml.profile.separator2"
+               name="org.openmodelica.modelicaml.modelexplorer.separator2"
+               visible="true">
+         </separator>
+         <command
+               commandId="org.openmodelica.modelicaml.modelexplorer.locate"
+               icon="icons/editor/ModelExplorer.png"
+               label="Locate"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
+         <separator
+               name="org.openmodelica.modelicaml.profile.separator3"
                visible="true">
          </separator>
          <menu
@@ -1129,7 +1146,7 @@
          -->
       </menu>
       <separator
-            name="org.openmodelica.modelicaml.modelexplorer.separator1"
+            name="org.openmodelica.modelicaml.modelexplorer.separator4"
             visible="true">
       </separator>
    </menuContribution>
@@ -1140,7 +1157,7 @@
             allPopups="false"
             locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
          <separator
-               name="org.openmodelica.modelicaml.profile.separator3"
+               name="org.openmodelica.modelicaml.profile.separator5"
                visible="true">
          </separator>
          <menu
@@ -1214,7 +1231,7 @@
             allPopups="false"
             locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
          <separator
-               name="org.openmodelica.modelicaml.profile.separator4"
+               name="org.openmodelica.modelicaml.profile.separator6"
                visible="true">
          </separator>
          <menu
@@ -1261,7 +1278,7 @@
             </visibleWhen>
          </menu>
          <separator
-               name="org.openmodelica.modelicaml.modelexplorer.separator2"
+               name="org.openmodelica.modelicaml.modelexplorer.separator7"
                visible="true">
          </separator>
       </menuContribution>

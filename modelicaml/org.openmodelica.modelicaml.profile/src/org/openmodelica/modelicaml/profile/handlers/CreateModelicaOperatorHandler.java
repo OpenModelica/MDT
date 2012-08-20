@@ -58,6 +58,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.UMLPackage;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.profile.Activator;
 
 
@@ -135,6 +136,11 @@ private EObject selectedElement = null;
 				}
 				else {
 					clas.applyStereotype(stereotype);
+				}
+				
+				// locate in Papyrus
+				if ( clas != null) {
+					EditorServices.locateInModelExplorer(clas, true);
 				}
 //### END: adapt it for a new command handler
 				

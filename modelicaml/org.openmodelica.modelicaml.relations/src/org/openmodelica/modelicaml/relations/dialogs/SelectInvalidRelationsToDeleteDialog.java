@@ -135,6 +135,7 @@ public class SelectInvalidRelationsToDeleteDialog extends Dialog {
 			}
 		});
 		btnLocate.setText("Locate");
+		btnLocate.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.relations","icons/editor/ModelExplorer.png"));
 		
 		Composite composite_1 = new Composite(composite, SWT.NONE);
 		GridData gd_composite_1 = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
@@ -210,7 +211,8 @@ public class SelectInvalidRelationsToDeleteDialog extends Dialog {
 		
 		allTreeItems.clear();
 		
-		List<Element> relations = ModelicaMLServices.getSortedByName(invalidRelations); 
+//		List<Element> relations = ModelicaMLServices.getSortedByName(invalidRelations); 
+		List<Element> relations = ModelicaMLServices.getSortedByEClassName(invalidRelations);
 		if (relations != null) {
 			for (Element relation : relations) {
 				

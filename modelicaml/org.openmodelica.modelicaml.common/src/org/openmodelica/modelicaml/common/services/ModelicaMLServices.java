@@ -309,6 +309,30 @@ public class ModelicaMLServices {
 		return listSorted;
 	}
 	
+	
+	public static  List<Element> getSortedByEClassName(HashSet<Element> set){
+		if (set == null) { return null; }
+
+		List<Element> listSorted = new ArrayList<Element>(set);
+		Comparator<Element> c = new Comparator<Element>() {
+			@Override
+			public int compare(Element arg0, Element arg1) {
+				if (arg0 instanceof Element) {
+					
+					String name1 = ((Element)arg0).eClass().getName();
+					String name2 = ((Element)arg1).eClass().getName();
+					
+					return name1.compareToIgnoreCase( name2 );
+				}
+				return arg0.toString().compareToIgnoreCase(arg1.toString());
+			}
+		};
+		
+		Collections.sort(listSorted, c);
+		
+		return listSorted;
+	}
+	
 	public static  List<Element> getSortedByQName(HashSet<Element> set){
 		if (set == null) { return null; }
 
@@ -386,10 +410,13 @@ public class ModelicaMLServices {
 				|| msg.toLowerCase().contains("Error occured")
 				|| msg.toLowerCase().contains("No reply from OMC")
 			) {
+			
 			// TODO: create a full list of possible OMC error messages
 			return true;
 		}
-		if (msg.trim().toLowerCase().equals("false")) {
+		if (	msg.trim().toLowerCase().equals("false") 
+				|| msg.trim().equals("Error")) {
+			
 			return true;
 		}
 		

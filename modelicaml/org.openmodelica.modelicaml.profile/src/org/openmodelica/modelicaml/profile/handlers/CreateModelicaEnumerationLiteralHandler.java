@@ -115,6 +115,11 @@ private EObject selectedElement = null;
 					System.err.println("Could not create a Modelica  Enumeration Literal in " + selectedElement.getClass().getName());
 				}
 				
+				// locate in Papyrus
+				if ( el != null) {
+					EditorServices.locateInModelExplorer(el, true);
+				}
+				
 //				// apply ModelicaML stereotype
 //				if (stereotype == null) {
 //					Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();

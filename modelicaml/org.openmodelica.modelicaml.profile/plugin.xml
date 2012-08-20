@@ -1549,6 +1549,10 @@
             id="org.openmodelica.modelicaml.commands.CreateValueMediatorsContainerCommand"
             name="Create new Value Mediators Container">
       </command>
+      <command
+            id="org.openmodelica.modelicaml.modelexplorer.locate"
+            name="Locate">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -3010,6 +3014,23 @@
                            </not>
                         </and>
                      </and>
+                  </adapt>
+               </iterate>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.profile.handlers.LocateHandler"
+            commandId="org.openmodelica.modelicaml.modelexplorer.locate">
+         <activeWhen>
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <adapt
+                        type="org.eclipse.emf.ecore.EObject">
                   </adapt>
                </iterate>
             </with>

@@ -158,6 +158,9 @@ private EObject selectedElement = null;
 
 							for (String string : list) {
 								element = (Package) ((Package)selectedElement).createPackagedElement(string, UMLPackage.Literals.PACKAGE);
+								
+								// locate in Papyrus
+								EditorServices.locateInModelExplorer(element, true);
 							}
 						}
 					}
@@ -166,6 +169,9 @@ private EObject selectedElement = null;
 						element.setName("PackageName");
 						element.setNestingPackage((Package)selectedElement);
 						//element = (Package) ((org.eclipse.uml2.uml.Package)selectedElement).createPackagedElement("PackageName", UMLPackage.Literals.PACKAGE);
+						
+						// locate in Papyrus
+						EditorServices.locateInModelExplorer(element, true);
 					}
 				}
 				

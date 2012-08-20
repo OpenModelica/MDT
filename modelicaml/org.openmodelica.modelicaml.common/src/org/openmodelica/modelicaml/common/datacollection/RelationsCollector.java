@@ -1,4 +1,4 @@
-package org.openmodelica.modelicaml.common.services;
+package org.openmodelica.modelicaml.common.datacollection;
 
 import java.util.HashSet;
 

@@ -22,12 +22,15 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views.properties.tabbed;bundle-version="3.5.300"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.openmodelica.modelicaml.common.constants,
+Export-Package: org.openmodelica.modelicaml.common,
+ org.openmodelica.modelicaml.common.constants,
  org.openmodelica.modelicaml.common.contentassist,
+ org.openmodelica.modelicaml.common.datacollection,
  org.openmodelica.modelicaml.common.dialogs,
  org.openmodelica.modelicaml.common.display,
  org.openmodelica.modelicaml.common.helpers,
  org.openmodelica.modelicaml.common.instantiation,
+ org.openmodelica.modelicaml.common.listeners,
  org.openmodelica.modelicaml.common.services,
  org.openmodelica.modelicaml.common.utls,
  org.openmodelica.modelicaml.common.validation.services,

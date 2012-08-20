@@ -130,6 +130,11 @@ private EObject selectedElement = null;
 				else {
 					ct.applyStereotype(stereotype);
 				}
+				
+				// locate in Papyrus
+				if ( ct != null) {
+					EditorServices.locateInModelExplorer(ct, true);
+				}
 //### END: adapt it for a new command handler
 				
 			}

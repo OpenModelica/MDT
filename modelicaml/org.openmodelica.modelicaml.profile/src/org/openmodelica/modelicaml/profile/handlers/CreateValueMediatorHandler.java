@@ -181,6 +181,11 @@ private EList<Element> createdElements = new BasicEList<Element>();
 									element.applyStereotype(stereotype);
 									createdElements.add(element);
 								}
+								
+								// locate in Papyrus
+								if ( element != null) {
+									EditorServices.locateInModelExplorer(element, true);
+								}
 								//**************************************
 							}
 						}
@@ -200,6 +205,11 @@ private EList<Element> createdElements = new BasicEList<Element>();
 						else {
 							element.applyStereotype(stereotype);
 							createdElements.add(element);
+							
+							// locate in Papyrus
+							if ( element != null) {
+								EditorServices.locateInModelExplorer(element, true);
+							}
 						}
 						//**************************************
 					}

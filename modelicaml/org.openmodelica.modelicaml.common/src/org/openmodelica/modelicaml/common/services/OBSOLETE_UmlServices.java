@@ -48,7 +48,7 @@ import org.eclipse.uml2.uml.Stereotype;
 /**
  * The Class UmlServices.
  */
-public class UmlServices {
+public class OBSOLETE_UmlServices {
 
 
 	/**
