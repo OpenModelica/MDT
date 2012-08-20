@@ -10,6 +10,12 @@
       </page>
       <page
             category="org.openmodelica.modelicaml.preferences.mainpage"
+            class="org.openmodelica.modelicaml.preferences.impl.ModelicaMLVeMGeneration"
+            id="org.openmodelica.modelicaml.preferences.vemGeneration"
+            name="Verification Models Generation">
+      </page>
+      <page
+            category="org.openmodelica.modelicaml.preferences.mainpage"
             class="org.openmodelica.modelicaml.preferences.impl.ModelicaMLOMCPreferencePage"
             id="org.openmodelica.modelicaml.preferences.omc"
             name="OpenModelica Compiler Settings">

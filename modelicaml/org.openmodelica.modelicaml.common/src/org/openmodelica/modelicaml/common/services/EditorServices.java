@@ -31,8 +31,13 @@ public class EditorServices {
 			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
 
 		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
+			ModelicaMLServices.notify("ModelicaML: Papyrus Editing Domain Access", 
+					"Could not access the Papyrus Editing Domain." +
+					"\nPlease make sure that your model is open in editor.", 
+					2,
+					2);
 		}
 		
 		return editingDomain;

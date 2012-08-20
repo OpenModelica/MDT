@@ -66,7 +66,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault("RegenerateCodeBeforeEachSimulation", true);
 		store.setDefault("synchronizationWithOMC", "files");
 		
-		store.setDefault("linkClassComponentsTreeWithModelExplorer", true);
+		store.setDefault("linkClassComponentsTreeWithModelExplorer", false);
 		
 		store.setDefault("loadMSLBeforeSynchronizing", true);
 		
@@ -78,6 +78,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(Constants.propertyName_tolerance, "0.000001");
 		store.setDefault(Constants.propertyName_solver, "dassl");
 		store.setDefault(Constants.propertyName_outputFormat, "mat");
+		
+		
+		store.setDefault("generateVerdict", false);
 		
 //		store.setDefault(PreferenceConstants.P_BOOLEAN, true);
 //		store.setDefault(PreferenceConstants.P_CHOICE, "choice2");

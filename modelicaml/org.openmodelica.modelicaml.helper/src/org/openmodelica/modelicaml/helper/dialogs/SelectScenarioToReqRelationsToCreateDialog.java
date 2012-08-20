@@ -818,7 +818,7 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		requirementItem.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/requirement.gif"));
 		requirementItem.setChecked(isPreselected);
 
-		String name = getModelName(requirement);
+		String name = ModelicaMLServices.getRequirementID(requirement) + " - " + ModelicaMLServices.getName(requirement);
 
 		//Get the requirement TreeObject and determine it was violated
 		// Add it to the name as indication and decorate as warning

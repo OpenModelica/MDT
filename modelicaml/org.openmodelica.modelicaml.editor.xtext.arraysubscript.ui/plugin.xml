@@ -47,6 +47,7 @@
             </and>
         </definition>
     </extension>
+    <!--
     <extension
             point="org.eclipse.ui.preferencePages">
         <page
@@ -70,6 +71,7 @@
             <keywordReference id="org.openmodelica.modelicaml.editor.xtext.array.ui.keyword_Arraysubscript"/>
         </page>
     </extension>
+    -->
     <extension
         point="org.eclipse.ui.keywords">
         <keyword

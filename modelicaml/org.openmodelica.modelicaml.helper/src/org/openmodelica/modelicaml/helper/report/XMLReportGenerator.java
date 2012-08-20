@@ -607,11 +607,15 @@ public class XMLReportGenerator {
 	
 	private String getClientItems(ClassInstantiation ci, Element VeM, TreeObject treeObject){
 		String string = "";
+		
 		for (TreeObject client : VerificationServices.getClientsTreeItems(ci, treeObject, new HashSet<TreeObject>(), false)) {
+			
 			String isMandatory = "false";
+			
 			if (client.isValueClient_required()) {
 				isMandatory = "true";
 			}
+			
 			string += "<"+XMLTagName_client+" " +  
 						XMLTagName_uid +"=\""+getUid()+"\" "+		
 						
@@ -626,9 +630,11 @@ public class XMLReportGenerator {
 						XMLTagName_plotLink +"=\"" + StringEscapeUtils.escapeXml(getPlotLink(VeM, client)) + "\" " +
 								">";
 			String binding = client.getFinalModificationRightHand();
+			
 			if (binding != null) {
 				string += "<"+XMLTagName_binding+">" + StringEscapeUtils.escapeHtml(binding) + "</"+XMLTagName_binding+">";
 			}
+			
 			string += "</"+XMLTagName_client+">";
 		}
 		return string;
@@ -640,6 +646,7 @@ public class XMLReportGenerator {
 	
 	private String getVeMforScenario(Element usedScenario){
 		String string = "";
+		
 		// loop over all VeM and see if this requirement is in the 
 		for (Element VeM :  ModelicaMLServices.getSortedByName(gmd.getGeneratedModels())) {
 			HashSet<TreeObject> scenarios = gmd.getScenarios(VeM);

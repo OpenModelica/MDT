@@ -1645,8 +1645,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			actionLinkWithEditor.setChecked(true); 
 		}
 
-		actionLinkWithEditor.setText("Link with Papyrus Model Explorer");
-		actionLinkWithEditor.setToolTipText("Link with Papyrus Model Explorer");
+		actionLinkWithEditor.setText("Link with Model Explorer");
+		actionLinkWithEditor.setToolTipText("Link with Model Explorer");
 		actionLinkWithEditor.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
 	
 		actionCollapseAll = new Action("actionCollapsAll") { //obviously a check box style
@@ -2183,7 +2183,9 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			EObject selectedElement = null;
         
 			if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
+				
 				selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
+				
 				if (selectedElement instanceof Class ) {
 					selectedClass = (Class) selectedElement;
 

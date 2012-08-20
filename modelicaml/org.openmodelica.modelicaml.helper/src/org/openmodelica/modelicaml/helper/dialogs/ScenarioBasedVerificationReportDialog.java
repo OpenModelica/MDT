@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -17,8 +16,6 @@ import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.papyrus.infra.core.resource.uml.ExtendedUmlModel;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
-import org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView;
-import org.eclipse.papyrus.views.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -39,9 +36,6 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.jfree.data.xy.XYSeries;
@@ -50,6 +44,7 @@ import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.helpers.VerificationServices;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
@@ -307,36 +302,69 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		btnLocate.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
-
-				ModelExplorerPageBookView modelExplorerPageBookView = null;
-				if (view instanceof ModelExplorerPageBookView) {
-					modelExplorerPageBookView = (ModelExplorerPageBookView)view;
-				   }
 				
-				if (modelExplorerPageBookView != null) {
-					Tree activeTree = getActiveTree();
-					HashSet<Object> selectedObjects = new HashSet<Object>();
-					if (activeTree != null) {
-						TreeItem[] items = activeTree.getSelection();
-						for (TreeItem treeItem : items) {
-							TreeItemData data = (TreeItemData) treeItem.getData();
-							if (data != null && data.getUMLElement() != null) {
-								selectedObjects.add(data.getUMLElement());
-							}
+				
+				Tree activeTree = getActiveTree();
+				
+				if (activeTree != null) {
+					TreeItem[] items = activeTree.getSelection();
+					for (TreeItem treeItem : items) {
+						TreeItemData data = (TreeItemData) treeItem.getData();
+						if (data != null && data.getUMLElement() != null) {
+							// locate in model explorer
+							Element elementToLocate = data.getUMLElement();
+							EditorServices.locateInModelExplorer(elementToLocate, true);
 						}
 					}
-					if (selectedObjects.size() > 0) {
-						CommonViewer modelExplorerView = ((ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class)).getCommonViewer();
-						List<Object> items = new ArrayList<Object>();
-						for (Object object2 : selectedObjects) {
-							if (object2 instanceof EObject) {
-//								items.add(modelExplorerPageBookView.findElementForEObject( modelExplorerView, (EObject) object2));
-								items.add((EObject) object2);
-								ModelExplorerView.reveal(items, modelExplorerView);
+				}
+				
+				TreeObject treeObjectToLocate = null;
+				Element VeMToLocate = null;
+				
+				if (activeTree != null) {
+					TreeItem[] items = activeTree.getSelection();
+					for (TreeItem treeItem : items) {
+						TreeItemData data = (TreeItemData) treeItem.getData();
+						if (data != null) {
+
+							// VeM
+							if (data.isVeM()) {
+								VeMToLocate = data.getUMLElement();
+							}
+							
+							// a property of the VeM to plot
+							TreeObject treeObject = data.getTreeObject();
+							if (treeObject != null) {
+								
+								if (data.isClientProperty()) {
+									
+									treeObjectToLocate = treeObject;
+									
+									// get the VeM (2 levels up)
+									TreeItem VeMItem = treeItem.getParentItem().getParentItem();
+									VeMToLocate = ((TreeItemData)VeMItem.getData()).getUMLElement();
+									
+								}
+								else if (data.isProperty()) {
+
+									treeObjectToLocate = treeObject;
+									
+									// get the VeM (2 levels up)
+									TreeItem VeMItem = treeItem.getParentItem();
+									VeMToLocate = ((TreeItemData)VeMItem.getData()).getUMLElement();
+								}
+							}
+							
+							if (VeMToLocate != null && treeObjectToLocate != null) {
+								
+								// locate in model explorer
+								EditorServices.locateInModelExplorer(VeMToLocate, true);
+
+								// locate in components tree
+								EditorServices.locateInComponentsTreeView(treeObjectToLocate.getDotPath());
+								
 							}
 						}
-//						modelExplorerView.setSelection(new StructuredSelection(items), true);
 					}
 				}
 			}
@@ -350,27 +378,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		btnPlot.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-//				String filePath= null;
-//				String dotPath= null;
-//				
-//				List<String> fileAndVariableData = getFilePathAndDotPath();
-//				if (fileAndVariableData != null && fileAndVariableData.size()==2) {
-//					filePath = fileAndVariableData.get(0);
-//					dotPath = fileAndVariableData.get(1);
-//					
-//					if (filePath != null) {
-//						// plot
-//						PlotResultsFileAction plotAction = new PlotResultsFileAction();
-//						plotAction.setFilePath(filePath);
-//						HashSet<String> preselectedVariablesToPlot = new HashSet<String>();
-//						preselectedVariablesToPlot.add(dotPath);
-//						if (dotPath != null) {
-//							plotAction.setPreSelectedVariablesToPlot(preselectedVariablesToPlot);
-//						}
-//						plotAction.run(null);
-//					}
-//				}
-				
+
 				Tree activeTree = getActiveTree();
 				
 				if (activeTree != null) {
@@ -525,26 +533,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 
 	
 	private void setButtonsEnablement(){
-//		String filePath= null;
-////		String dotPath= null;
-//		
-//		List<String> fileAndVariableData = getFilePathAndDotPath();
-//		if (fileAndVariableData != null && fileAndVariableData.size() > 0 ) {
-//			filePath = fileAndVariableData.get(0);
-////			dotPath = fileAndVariableData.get(1);
-//			
-//			// enable/disable plot button
-//			if (filePath != null) {
-//				btnPlot.setEnabled(true);
-//			}
-//			else {
-//				btnPlot.setEnabled(false);
-//			}
-//		}
-//		
-//		// locate button
-//		btnLocate.setEnabled(true);
-		
+
 		Tree activeTree = getActiveTree();
 		
 		if (activeTree != null) {

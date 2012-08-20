@@ -40,6 +40,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.common.util.EList;
@@ -115,11 +116,15 @@ public class CreatorVerificationVerdictElements {
 			Command command = new RecordingCommand(editingDomain) {
 				@Override
 				protected void doExecute() {
-					Boolean result = createVerificationVerdictElements(selectedClass);
-					if (result) {
-						MessageDialog.openInformation(shell, "Confirmation", "The following verification verdict elements were created or updated succesfuly:" +
-								"\n     - a nested class '"+resultsClassName+"' containing additional variables and behavior"+ 
-								"\n     - a component '"+resultsPropertyName+"' of type '"+resultsClassName+"'");
+					
+					Boolean generateVerdict = Platform.getPreferencesService().getBoolean("org.openmodelica.modelicaml.preferences", "generateVerdict", false, null);
+					if (generateVerdict) {
+						Boolean result = createVerificationVerdictElements(selectedClass);
+						if (result) {
+							MessageDialog.openInformation(shell, "Confirmation", "The following verification verdict elements were created or updated succesfuly:" +
+									"\n     - a nested class '"+resultsClassName+"' containing additional variables and behavior"+ 
+									"\n     - a component '"+resultsPropertyName+"' of type '"+resultsClassName+"'");
+						}
 					}
 				}
 			};
@@ -136,6 +141,14 @@ public class CreatorVerificationVerdictElements {
 	 *            the selected class
 	 */
 	public static Boolean createVerificationVerdictElements(Class selectedClass) {
+		
+		// check preferences 
+		Boolean generateVerdict = Platform.getPreferencesService().getBoolean("org.openmodelica.modelicaml.preferences", "generateVerdict", false, null);
+		if (!generateVerdict) {
+			return false;
+		}
+		
+		
 		String violatedExpression = "", evaluatedExpression = "";
 		
 		EList<Property> allAttributes = selectedClass.getAllAttributes();

@@ -81,7 +81,12 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 	
 	// default options selection
 	private boolean simulate = true;
-	private boolean recordOnlyRequirements = true;
+	/*
+	 * TODO: by default we want to record only requirement status and clients.
+	 * However, now there seems to be an issue with simulation varFilters. 
+	 * Solve this issue and make this option be active by default. 
+	 */
+	private boolean recordOnlyRequirements = false;
 	private String resultFilesFolderPath;
 	
 	// scenario based models generator

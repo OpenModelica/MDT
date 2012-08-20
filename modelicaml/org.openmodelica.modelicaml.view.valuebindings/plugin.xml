@@ -22,7 +22,7 @@
          point="org.eclipse.ui.views">
       <category
             id="org.openmodelica.modelicaml.view.valuebindings"
-            name="Value Bindings"
+            name="Bindings"
             parentCategory="org.openmodelica.modelicaml.category">
       </category>
       <view
@@ -31,7 +31,7 @@
             class="org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView"
             icon="icons/valueMediator.png"
             id="org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView"
-            name="Value Bindings">
+            name="Bindings">
       </view>
    </extension>
    <extension
