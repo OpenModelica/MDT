@@ -764,7 +764,22 @@ public class VeMGenerationOptionsDialog extends Dialog {
       			if (button != null && !button.isDisposed()) {
       				if (button.equals(btnSystemModel)) {
             			// Update data and button
-            			if (selectedElement instanceof Class && hasModelicaMLStereotype((Element) selectedElement)) {
+      					
+      					if (selectedElement instanceof Class && 
+      							( 
+      								((Class) selectedElement).getAppliedStereotype(Constants.stereotypeQName_VerificationModel) != null 
+      								|| ((Class) selectedElement).getAppliedStereotype(Constants.stereotypeQName_VerificationScenario) != null
+      								|| ((Class) selectedElement).getAppliedStereotype(Constants.stereotypeQName_Function) != null
+      								|| ((Class) selectedElement).getAppliedStereotype(Constants.stereotypeQName_Record) != null
+      								|| ((Class) selectedElement).getAppliedStereotype(Constants.stereotypeQName_Requirement) != null
+      								
+      							)
+      						){
+      								
+      						setSelectionHintMode(true, notValidString + "Verification models, scenarios, requirements, functions or records are not allowed.");
+      						
+      					}
+      					else if (selectedElement instanceof Class && hasModelicaMLStereotype((Element) selectedElement)) {
             				setSystemModel((Element) selectedElement);
             				button.setSelection(false);
             				updateButton(button);

@@ -34,6 +34,7 @@
  */
 package org.openmodelica.modelicaml.view.valuebindings.views;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -53,6 +54,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -198,9 +201,38 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 			// add the selection listener
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(selectionListener);
 			
-			invisibleRoot = new TreeParent("");
-			treeBuilder.buildTreeFromUmlModel(invisibleRoot);
-			((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
+			
+			
+			ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
+			progressDialog.getProgressMonitor().setTaskName("Collecting building data ...");
+			
+			try {
+				progressDialog.run(false, true, new IRunnableWithProgress() {
+					
+					@Override
+					public void run(IProgressMonitor monitor) throws InvocationTargetException,
+							InterruptedException {
+
+						monitor.subTask("Building tree from the ModelicaML model ...");
+						
+						invisibleRoot = new TreeParent("");
+						treeBuilder.buildTreeFromUmlModel(invisibleRoot);
+						((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
+						
+						monitor.done();
+					}
+				});
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+				MessageDialog.openError(ModelicaMLServices.getShell(), "Collecting Binding Data Error", "Could not invoce bindings reload.");
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				MessageDialog.openInformation(ModelicaMLServices.getShell(), "Collecting Binding Data Canceled", "Bindings reload was canceled");
+			}
+			
+//			invisibleRoot = new TreeParent("");
+//			treeBuilder.buildTreeFromUmlModel(invisibleRoot);
+//			((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
 		}
 	}
 	
@@ -593,36 +625,76 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		
 		actionReload = new Action("actionReload") {
 			public void run() {
-//				ISelection selection = viewer.getSelection();
-//				Object obj = ((IStructuredSelection)selection).getFirstElement();
 				
-				Object[] expandedElements = viewer.getExpandedElements();
-				TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
+				ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
+				progressDialog.getProgressMonitor().setTaskName("Reloading bindings view");
 				
-				TreeObject[] children = invisibleRoot.getChildren();
-				for (int i = 0; i < children.length; i++) {
-					invisibleRoot.removeChild(children[i]);
-				}
-				
-				if (actionInstantiatedClassMode.isChecked()) {
-					treeBuilder.buildTreeFromInstantiatedClass(invisibleRoot, org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation, org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot);
-					((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
-				}
-				else {
-					treeBuilder.buildTreeFromUmlModel(invisibleRoot);
-					((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
-				}
-				viewer.setInput(getViewSite());
+				try {
+					progressDialog.run(false, true, new IRunnableWithProgress() {
+						
+						@Override
+						public void run(IProgressMonitor monitor) throws InvocationTargetException,
+								InterruptedException {
 
-				// validate the client, mediator or provider operation code
-				actionValidate.run();
-				
-				viewer.setExpandedElements(expandedElements);
-				viewer.setExpandedTreePaths(expandedTreePaths);
-				
-//				// select in view
-//				TreeUtls.selectInView(obj, invisibleRoot, viewer);
-//				viewer.expandToLevel(ValueBindingsView.DEFAULT_EXPAND_LEVEL);
+//							ISelection selection = viewer.getSelection();
+//							Object obj = ((IStructuredSelection)selection).getFirstElement();
+
+							Object[] expandedElements = viewer.getExpandedElements();
+							TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
+							
+							TreeObject[] children = invisibleRoot.getChildren();
+							for (int i = 0; i < children.length; i++) {
+								invisibleRoot.removeChild(children[i]);
+							}
+							
+							if (actionInstantiatedClassMode.isChecked()) {
+								
+								monitor.subTask("Building tree from the instantiated class ...");
+								
+								treeBuilder.buildTreeFromInstantiatedClass(invisibleRoot, org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation, org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot);
+								((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
+							}
+							else {
+								
+								monitor.subTask("Building tree from the ModelicaML model ...");
+								
+								treeBuilder.buildTreeFromUmlModel(invisibleRoot);
+								((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
+							}
+							viewer.setInput(getViewSite());
+
+							// validate the client, mediator or provider operation code
+							monitor.subTask("Validating clients, mediators and provider operation code ...");
+							
+							for (int i = 0; i < children.length; i++) {
+								TreeObject treeObject = children[i];
+								if (!treeObject.isReadOnly() && treeObject instanceof TreeParent) {
+									ValueBindingsValidator validator = new ValueBindingsValidator((TreeParent) treeObject);
+									validator.setUmlModel(treeBuilder.getUmlModel());
+									validator.validate();
+									
+									viewer.refresh();
+								}
+							}
+							
+							// refresh the viewer
+							viewer.setExpandedElements(expandedElements);
+							viewer.setExpandedTreePaths(expandedTreePaths);
+							
+//							// select in view
+//							TreeUtls.selectInView(obj, invisibleRoot, viewer);
+//							viewer.expandToLevel(ValueBindingsView.DEFAULT_EXPAND_LEVEL);
+							
+							monitor.done();
+						}
+					});
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+					MessageDialog.openError(ModelicaMLServices.getShell(), "Bindings View Reload Error", "Could not invoce bindings reload.");
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					MessageDialog.openInformation(ModelicaMLServices.getShell(), "Bindings View Reload Canceled", "Bindings reload was canceled");
+				}
 
 			}
 		};
@@ -650,12 +722,17 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		
 		
 		
-		
-		
-		
 		actionFind = new Action("actionFind") {
 			public void run() {
-				SearchDialog searchDialog = new SearchDialog(ModelicaMLServices.getShell(), viewer, invisibleRoot, actionShowClientPerspective.isChecked(), actionShowProviderPerspective.isChecked());
+				TreeObject[] children =  invisibleRoot.getChildren();
+				TreeParent root = invisibleRoot;
+				
+				if (children != null && children.length > 0) {
+					if (children[0] instanceof TreeParent) {
+						root = (TreeParent) children[0];
+					}
+				}
+				SearchDialog searchDialog = new SearchDialog(ModelicaMLServices.getShell(), viewer, root, actionShowClientPerspective.isChecked(), actionShowProviderPerspective.isChecked());
 				searchDialog.open();
 			}
 		};
@@ -745,26 +822,77 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 
 		actionInstantiatedClassMode = new Action("actionInstantiatedClassMode", 2) { //obviously a check box style
 			public void run() {
-				if (actionInstantiatedClassMode.isChecked()) {
-					TreeObject[] children = invisibleRoot.getChildren();
-					for (int i = 0; i < children.length; i++) {
-						invisibleRoot.removeChild(children[i]);
-					}
-					treeBuilder.buildTreeFromInstantiatedClass(invisibleRoot, org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation, org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot);
-					viewer.setInput(getViewSite());
-					viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
+				
+				ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
+//				progressDialog.getProgressMonitor().setTaskName("Collecting building data ...");
+				
+				try {
+					progressDialog.run(false, true, new IRunnableWithProgress() {
+						
+						@Override
+						public void run(IProgressMonitor monitor) throws InvocationTargetException,
+								InterruptedException {
+
+							if (actionInstantiatedClassMode.isChecked()) {
+								
+								monitor.subTask("Building tree from the instantiated class ...");
+								
+								TreeObject[] children = invisibleRoot.getChildren();
+								for (int i = 0; i < children.length; i++) {
+									invisibleRoot.removeChild(children[i]);
+								}
+								treeBuilder.buildTreeFromInstantiatedClass(invisibleRoot, org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation, org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot);
+								viewer.setInput(getViewSite());
+								viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
+							}
+							else {
+								
+								monitor.subTask("Building tree from the ModelicaML model ...");
+								
+								TreeObject[] children = invisibleRoot.getChildren();
+								for (int i = 0; i < children.length; i++) {
+									invisibleRoot.removeChild(children[i]);
+								}
+								treeBuilder.buildTreeFromUmlModel(invisibleRoot);
+								((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
+								
+								viewer.setInput(getViewSite());
+								viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
+							}
+							
+							monitor.done();
+						}
+					});
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+					MessageDialog.openError(ModelicaMLServices.getShell(), "Collecting Binding Data Error", "Could not invoce bindings reload.");
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					MessageDialog.openInformation(ModelicaMLServices.getShell(), "Collecting Binding Data Canceled", "Bindings reload was canceled");
 				}
-				else {
-					TreeObject[] children = invisibleRoot.getChildren();
-					for (int i = 0; i < children.length; i++) {
-						invisibleRoot.removeChild(children[i]);
-					}
-					treeBuilder.buildTreeFromUmlModel(invisibleRoot);
-					((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
-					
-					viewer.setInput(getViewSite());
-					viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
-				}
+				
+				
+				
+//				if (actionInstantiatedClassMode.isChecked()) {
+//					TreeObject[] children = invisibleRoot.getChildren();
+//					for (int i = 0; i < children.length; i++) {
+//						invisibleRoot.removeChild(children[i]);
+//					}
+//					treeBuilder.buildTreeFromInstantiatedClass(invisibleRoot, org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation, org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot);
+//					viewer.setInput(getViewSite());
+//					viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
+//				}
+//				else {
+//					TreeObject[] children = invisibleRoot.getChildren();
+//					for (int i = 0; i < children.length; i++) {
+//						invisibleRoot.removeChild(children[i]);
+//					}
+//					treeBuilder.buildTreeFromUmlModel(invisibleRoot);
+//					((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
+//					
+//					viewer.setInput(getViewSite());
+//					viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
+//				}
 			}
 		};
 //		actionInstantiatedClassMode.setChecked(true);
