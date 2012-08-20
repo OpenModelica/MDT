@@ -61,6 +61,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -2178,7 +2179,18 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
 		
 		// build new tree
-		createTree();
+		if (sel instanceof IStructuredSelection) {
+			EObject selectedElement = null;
+        
+			if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
+				selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
+				if (selectedElement instanceof Class ) {
+					selectedClass = (Class) selectedElement;
+
+					createTree();
+				}
+			}
+		}
 		
 		// set new input from the selection.
 		viewer.setInput(getViewSite());
@@ -2279,7 +2291,20 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			// add the selection listener
 			getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
 			
-			createTree();
+			if (sel instanceof IStructuredSelection) {
+				EObject selectedElement = null;
+	        
+				if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
+					selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
+					if (selectedElement instanceof Class ) {
+						selectedClass = (Class) selectedElement;
+
+						createTree();
+					}
+				}
+			}
+			
+//			createTree();
 		}
 	}
 
@@ -2291,9 +2316,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	 *            the selected class
 	 */
 	private void createClassTree(Class selectedClass){
-		// reset
-//		org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot = null;
-		
+
 		if (selectedClass != null && !(selectedClass instanceof Behavior) && isValid(selectedClass)) {
 			
 			ast = new ClassInstantiation(selectedClass, actionShowStateMachines.isChecked(), actionShowPredefinedTypesProperties.isChecked(), null, true);
@@ -2303,7 +2326,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			invisibleRoot = ast.getInvisibleRoot();
 			root = ast.getTreeRoot();
 			
-			// set the static variable to be used by other plugins. This is done in order to avoid cyclic plugin dependecies
+			// set the static variable to be used by other plugins. This is done in order to avoid cyclic plugin dependencies
 			org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation = ast;
 			org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot = root;
 			org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeViewer = viewer;
@@ -2313,34 +2336,114 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	
 	public void createTree(){
 		
-		if (sel instanceof IStructuredSelection) {
-			EObject selectedElement = null;
-        
-			if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
-				selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
-			}
+		if (selectedClass != null && !(selectedClass instanceof Behavior) && isValid(selectedClass)) {
 			
-			if (selectedElement instanceof Class ) {
-				selectedClass = (Class) selectedElement;
-				
-				if (selectedClass != null && !(selectedClass instanceof Behavior) && isValid(selectedClass)) {
-					actionSimulate.setEnabled(true);
-					actionValidate.setEnabled(true);
-					actionReload.setEnabled(true);
-					actionCollapseAll.setEnabled(true);
+			// set actions
+			actionSimulate.setEnabled(true);
+			actionValidate.setEnabled(true);
+			actionReload.setEnabled(true);
+			actionCollapseAll.setEnabled(true);
+			
+			ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
+			progressDialog.getProgressMonitor().setTaskName("Instantiating " + ModelicaMLServices.getName(selectedClass));
+			
+			try {
+				progressDialog.run(false, true, new IRunnableWithProgress() {
 					
-					createClassTree(selectedClass); // build the entire tree
-				}
-				else {
-					actionSimulate.setEnabled(false);
-					actionValidate.setEnabled(false);
-					actionReload.setEnabled(false);
-					actionCollapseAll.setEnabled(false);
-				}
+					@Override
+					public void run(IProgressMonitor monitor) throws InvocationTargetException,
+							InterruptedException {
+
+						monitor.subTask("Creating class components tree ...");
+						// instantiate the selected class
+						createClassTree(selectedClass); // build the entire tree
+						
+						//validate component modifications
+						monitor.subTask("Validating component modifications ...");
+
+						ComponentModificationValidator validator = new ComponentModificationValidator(root);
+						validator.validate();
+						
+						viewer.refresh();
+						
+						monitor.done();
+					}
+				});
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+				MessageDialog.openError(ModelicaMLServices.getShell(), "Class Instantiation Error", "Could not invoce the class instantiation operation.");
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				MessageDialog.openInformation(ModelicaMLServices.getShell(), "Class Instantiation Canceled", "Class instantiation operation was canceled.");
 			}
+		}
+		else {
+			actionSimulate.setEnabled(false);
+			actionValidate.setEnabled(false);
+			actionReload.setEnabled(false);
+			actionCollapseAll.setEnabled(false);
+		}
+		
+		
+//		if (sel instanceof IStructuredSelection) {
+//			EObject selectedElement = null;
+//        
+//			if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
+//				selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
+//			}
+//			
+//			if (selectedElement instanceof Class ) {
+//				selectedClass = (Class) selectedElement;
+//				
+//				if (selectedClass != null && !(selectedClass instanceof Behavior) && isValid(selectedClass)) {
+//					actionSimulate.setEnabled(true);
+//					actionValidate.setEnabled(true);
+//					actionReload.setEnabled(true);
+//					actionCollapseAll.setEnabled(true);
+//					
+//					ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
+//					progressDialog.getProgressMonitor().setTaskName("Instantiating " + ModelicaMLServices.getName(selectedClass));
+//					
+//					try {
+//						progressDialog.run(false, true, new IRunnableWithProgress() {
+//							
+//							@Override
+//							public void run(IProgressMonitor monitor) throws InvocationTargetException,
+//									InterruptedException {
+//
+//								monitor.subTask("Creating class components tree ...");
+//								// instantiate the selected class
+//								createClassTree(selectedClass); // build the entire tree
+//								
+//								//validate component modifications
+//								monitor.subTask("Validating component modifications ...");
+//
+//								ComponentModificationValidator validator = new ComponentModificationValidator(root);
+//								validator.validate();
+//								
+//								viewer.refresh();
+//								
+//								monitor.done();
+//							}
+//						});
+//					} catch (InvocationTargetException e) {
+//						e.printStackTrace();
+//						MessageDialog.openError(ModelicaMLServices.getShell(), "Class Instantiation Error", "Could not invoce the class instantiation operation.");
+//					} catch (InterruptedException e) {
+//						e.printStackTrace();
+//						MessageDialog.openInformation(ModelicaMLServices.getShell(), "Class Instantiation Canceled", "Class instantiation operation was canceled.");
+//					}
+//				}
+//				else {
+//					actionSimulate.setEnabled(false);
+//					actionValidate.setEnabled(false);
+//					actionReload.setEnabled(false);
+//					actionCollapseAll.setEnabled(false);
+//				}
+//			}
 
 //			createTree(selectedClass); // build the entire tree
-		}
+//		}
 	}
 	
 	private boolean isValid(Class aClass){
