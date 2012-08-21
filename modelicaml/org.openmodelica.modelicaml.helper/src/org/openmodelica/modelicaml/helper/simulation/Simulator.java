@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
@@ -102,7 +103,15 @@ public class Simulator {
 		 * TODO: sometimes, when it happens that the OMC CORBA connection takes longer to initiate, 
 		 * OMC returns strange responses ... 
 		 */
-
+		// check if the CORBA connection was established successfully 
+		if (!reply.trim().equals("true")) {
+			
+			// quit in order to enforce a new instance the next time
+			omcc.quit();
+			ModelicaMLServices.notify("Simulation Error", "Could not establish a connection to the OpenModelica compiler. Please try it again.", 2, 3);
+			System.err.println("Could not establish a connection to the OpenModelica compiler. Please try it again.");
+			return;
+		}
 		
 		simulationResultsFolderPath =  omcc.getTempDirectoryPath();
 		// correct the path
