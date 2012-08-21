@@ -68,12 +68,14 @@ public class C10_C11_FunctionBehaviorNumberOfParameterConstraint extends
 			FunctionBehavior functionBehavior = (FunctionBehavior) eObj;
 			Stereotype functionStereotype = functionBehavior.getAppliedStereotype(Constants.stereotypeQName_FunctionArgument);
 			
-			boolean isPartial = (Boolean) functionBehavior.getValue(functionStereotype, Constants.propertyName_partial);
-			if (isPartial) {
-				/*
-				 * a partial function can be "empty"
-				 */
-				return ctx.createSuccessStatus();
+			if (functionStereotype != null) {
+				boolean isPartial =  (Boolean) functionBehavior.getValue(functionStereotype, Constants.propertyName_partial);
+				if (isPartial) {
+					/*
+					 * a partial function can be "empty"
+					 */
+					return ctx.createSuccessStatus();
+				}
 			}
 
 			

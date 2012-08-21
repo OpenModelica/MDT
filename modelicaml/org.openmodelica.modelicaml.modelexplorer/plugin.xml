@@ -1030,7 +1030,7 @@
          <command
                commandId="org.openmodelica.modelicaml.commands.deleteTopLevelModelPackage"
                icon="resources/icons/icons16/delete.gif"
-               label="Delete Top-Level Model"
+               label="Delete top-level model"
                style="push">
             <visibleWhen
                   checkEnabled="true">
@@ -1071,6 +1071,7 @@
          </command>
       </menuContribution>
    </extension>
+   <!--
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -1114,10 +1115,15 @@
          </menu>
       </menuContribution>
    </extension>
+   -->
 <extension
       point="org.eclipse.ui.menus">
    <menuContribution
          locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
+      <separator
+            name="org.openmodelica.modelicaml.modelexplorer.separator4"
+            visible="true">
+      </separator>
       <menu
             icon="icons/import_wiz_16x16-papyrusColor.gif"
             id="org.eclipse.papyrus.uml.import.menu"
@@ -1145,10 +1151,22 @@
          </command>
          -->
       </menu>
+   </menuContribution>
+</extension>
+<extension
+      point="org.eclipse.ui.menus">
+   <menuContribution
+         locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
       <separator
-            name="org.openmodelica.modelicaml.modelexplorer.separator4"
+            name="org.openmodelica.modelicaml.modelexplorer.separator41"
             visible="true">
       </separator>
+      <command
+            commandId="org.openmodelica.modelicaml.relations.findReferences"
+            icon="icons/search_references.gif"
+            label="Find references"
+            style="push">
+      </command>
    </menuContribution>
 </extension>
    <extension
@@ -1163,11 +1181,13 @@
          <menu
                icon="resources/icons/icons16/generate_code.gif"
                label="Validation and Code Generation">
+           
+           <!-- TODO: the Papyrus command does not work. Enable again after fix.  
             <command
-                  commandId="org.eclipse.papyrus.modelexplorer.ValidateDelMarkersFromSubtreeCommand"
+                  commandId="org.eclipse.papyrus.validation.ValidateDelMarkersFromSubtreeCommand"
                   icon="resources/icons/icons16/errorwarning_tab.gif"
-                  id="org.eclipse.papyrus.modelexplorer.DelMarkersFromSubtree"
-                  label="Remove markers"
+                  id="org.eclipse.papyrus.validation.ValidateDelMarkersFromSubtreeCommand"
+                  label="Remove markers from sub-tree"
                   tooltip="Remove markers from sub-tree">
                <visibleWhen
                      checkEnabled="true">
@@ -1179,6 +1199,33 @@
                      <iterate>
                         <adapt
                               type="org.eclipse.emf.ecore.EObject">
+                        </adapt>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            -->
+            <command
+                  commandId="org.eclipse.papyrus.validation.ValidateDelMarkersFromModelCommand"
+                  icon="resources/icons/icons16/errorwarning_tab.gif"
+                  id="org.eclipse.papyrus.validation.ValidateDelMarkersFromModelCommand"
+                  label="Remove all model markers"
+                  tooltip="Remove markers from sub-tree">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <count
+                           value="1">
+                     </count>
+                     <iterate>
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <and>
+                              <instanceof
+                                    value="org.eclipse.uml2.uml.Model">
+                              </instanceof>
+                           </and>
                         </adapt>
                      </iterate>
                   </with>
@@ -1199,16 +1246,31 @@
                      </count>
                      <iterate>
                         <adapt
-                              type="org.eclipse.emf.ecore.EObject">
-                           <or>
-                              <instanceof
-                                    value="org.eclipse.uml2.uml.Package">
-                              </instanceof>
-                              <instanceof
-                                    value="org.eclipse.uml2.uml.Class">
-                              </instanceof>
-                           </or>
-                        </adapt>
+		                        type="org.eclipse.emf.ecore.EObject">
+		                     <or>
+		                        <instanceof
+		                              value="org.eclipse.uml2.uml.Package">
+		                        </instanceof>
+		                        <instanceof
+		                              value="org.eclipse.uml2.uml.Model">
+		                        </instanceof>
+		                        <and>
+		                           <instanceof
+		                                 value="org.eclipse.uml2.uml.Class">
+		                           </instanceof>
+		                           <not>
+		                              <instanceof
+		                                    value="org.eclipse.uml2.uml.Behavior">
+		                              </instanceof>
+		                           </not>
+		                           <not>
+		                              <instanceof
+		                                    value="org.eclipse.uml2.uml.StateMachine">
+		                              </instanceof>
+		                           </not>
+		                        </and>
+		                     </or>
+		                  </adapt>
                      </iterate>
                   </with>
                </visibleWhen>

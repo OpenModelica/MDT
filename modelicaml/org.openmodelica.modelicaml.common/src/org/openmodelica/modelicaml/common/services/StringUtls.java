@@ -36,6 +36,9 @@ package org.openmodelica.modelicaml.common.services;
 
 import java.util.regex.Pattern;
 
+import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.NamedElement;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class StringUtls.
@@ -71,6 +74,16 @@ public class StringUtls {
 		return newString.replaceAll(patternString, exceptString);
 	}
 
+	
+	public static String getDotPath(Element element) {
+		String dotPath = null;
+		if (element instanceof NamedElement && ((NamedElement)element).getQualifiedName() != null) {
+			dotPath = StringUtls.replaceSpecCharExceptThis( ((NamedElement)element).getQualifiedName().replaceAll("::", "."), "\\." );
+		}
+		return dotPath;
+	}
+	
+	
 	/**
 	 * Removes the last char.
 	 *

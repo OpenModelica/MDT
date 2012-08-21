@@ -252,7 +252,8 @@ public class Constants {
 	public final static String MARKERTYPE_ACTION_CODE 						= "org.openmodelica.modelicaml.marker.actionCode";
 	public final static String MARKERTYPE_MODELICAML_MODELICA_MODEL_PROXIES = "org.openmodelica.modelicaml.marker.modelicamlproxies";
 	public final static String MARKERTYPE_MODELICA_MODELS_LOADING 			= "org.openmodelica.modelicaml.marker.modelicaloading";
-	public final static String MARKERTYPE_VALIDATION_PROBLEM 				= "org.openmodelica.modelicaml.marker.validation.problem";
+	public final static String MARKERTYPE_VALIDATION_PROBLEM 				= "org.openmodelica.modelicaml.marker.validation.problemmarker";
+//	public final static String MARKERTYPE_VALIDATION_PROBLEM 				= "org.eclipse.emf.ecore.diagnostic";
 //	public final static String MARKERTYPE_VALIDATION 						= "org.openmodelica.modelicaml.marker.validation";
 	
 	

@@ -25,12 +25,20 @@
             id="org.openmodelica.modelicaml.relations.commands.toolbar.findInvalidRelations"
             name="Find Invalid Relations">
       </command>
+      <command
+            id="org.openmodelica.modelicaml.relations.findReferences"
+            name="Find References">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
             class="org.openmodelica.modelicaml.relations.handlers.FindInvalidRelationsToolbarHandler"
             commandId="org.openmodelica.modelicaml.relations.commands.toolbar.findInvalidRelations">
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.relations.handlers.FindReferencesPopupHandler"
+            commandId="org.openmodelica.modelicaml.relations.findReferences">
       </handler>
    </extension>
    <extension

@@ -30,11 +30,16 @@
             file="contexts.xml">
       </contexts>
    </extension>
+   
+      <!-- NOTE: all marker types are defined in the mml.common plugin 
    <extension
          id="org.openmodelica.modelicaml.marker.modelicamlproxies"
          name="Modelica Model Proxies Synchronization"
          point="org.eclipse.core.resources.markers">
       <super
+            type="org.eclipse.emf.validation.problem">
+      </super>
+      <super
             type="org.eclipse.emf.ecore.diagnostic">
       </super>
       <super
@@ -43,14 +48,14 @@
       <persistent
             value="false">
       </persistent>
-      <attribute
-            name="generatedBy">
-      </attribute>
    </extension>
    <extension
          id="org.openmodelica.modelicaml.marker.modelicaloading"
          name="OMC Modelica Models Loading"
          point="org.eclipse.core.resources.markers">
+       <super
+            type="org.eclipse.emf.validation.problem">
+      </super>
       <super
             type="org.eclipse.emf.ecore.diagnostic">
       </super>
@@ -60,10 +65,8 @@
       <persistent
             value="false">
       </persistent>
-      <attribute
-            name="generatedBy">
-      </attribute>
    </extension>
+   -->
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution

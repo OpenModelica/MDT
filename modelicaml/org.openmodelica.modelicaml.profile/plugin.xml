@@ -2,14 +2,6 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         id="org.openmodelica.modelicaml.marker"
-         name="ModelicaML"
-         point="org.eclipse.core.resources.markers">
-      <persistent
-            value="false">
-      </persistent>
-   </extension>
-   <extension
          point="org.eclipse.emf.ecore.uri_mapping">
       <mapping
             source="pathmap://PALETTE_PROFILE/"
@@ -301,7 +293,7 @@
             </command>
             <command
                   commandId="org.openmodelica.modelicaml.commands.CreateModelicaFunctionArgumentCommand"
-                  icon="resources\icons\icons16\Parameter.gif"
+                  icon="resources/icons/icons16/Parameter.gif"
                   label="Function Argument"
                   style="push">
                <visibleWhen
@@ -1138,7 +1130,7 @@
             </command>
             -->
             <command
-                  commandId="org.eclipse.papyrus.modelexplorer.ValidateDelMarkersFromSubtreeCommand"
+                  commandId="org.eclipse.papyrus.validation.ValidateDelMarkersFromModelCommand"
                   icon="resources/icons/icons16/errorwarning_tab.gif"
                   id="org.eclipse.papyrus.modelexplorer.DelMarkersFromSubtree"
                   label="Remove markers"
@@ -1173,20 +1165,36 @@
                      </count>
                      <iterate>
                         <adapt
-                              type="org.eclipse.emf.ecore.EObject">
-                           <or>
-                              <instanceof
-                                    value="org.eclipse.uml2.uml.Package">
-                              </instanceof>
-                              <instanceof
-                                    value="org.eclipse.uml2.uml.Class">
-                              </instanceof>
-                           </or>
-                        </adapt>
+                       	 	type="org.eclipse.emf.ecore.EObject">
+		                     <or>
+		                        <instanceof
+		                              value="org.eclipse.uml2.uml.Package">
+		                        </instanceof>
+		                        <instanceof
+		                              value="org.eclipse.uml2.uml.Model">
+		                        </instanceof>
+		                        <and>
+		                           <instanceof
+		                                 value="org.eclipse.uml2.uml.Class">
+		                           </instanceof>
+		                           <not>
+		                              <instanceof
+		                                    value="org.eclipse.uml2.uml.Behavior">
+		                              </instanceof>
+		                           </not>
+		                           <not>
+		                              <instanceof
+		                                    value="org.eclipse.uml2.uml.StateMachine">
+		                              </instanceof>
+		                           </not>
+		                        </and>
+		                     </or>
+		                  </adapt>
                      </iterate>
                   </with>
                </visibleWhen>
             </command>
+
             <visibleWhen
                   checkEnabled="false">
                <with

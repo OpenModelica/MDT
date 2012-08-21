@@ -40,12 +40,16 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EValidator;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -90,6 +94,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
@@ -103,6 +108,7 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
+import org.openmodelica.modelicaml.modelexplorer.ModelExplorerPage;
 import org.openmodelica.modelicaml.profile.handlers.CreateValueMediatorHandler;
 import org.openmodelica.modelicaml.profile.handlers.CreateValueMediatorsContainerHandler;
 import org.openmodelica.modelicaml.view.valuebindings.Activator;
@@ -117,7 +123,7 @@ import org.openmodelica.modelicaml.view.valuebindings.model.TreeParent;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
 import org.openmodelica.modelicaml.view.valuebindings.validation.ValueBindingsValidator;
 
-public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetPageContributor, IAdaptable {
+public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetPageContributor, IAdaptable, IGotoMarker {
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -1410,4 +1416,40 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
         }
         return super.getAdapter(adapter);
     }
+
+	@Override
+	public void gotoMarker(IMarker marker) {
+		String uriAttribute = marker.getAttribute(EValidator.URI_ATTRIBUTE, null);
+		if(uriAttribute != null) {
+			
+			URI uri = URI.createURI(uriAttribute);
+			
+			IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
+			EObject eObject = null;
+			if(viewPart instanceof ModelExplorerPageBookView) {
+				org.eclipse.ui.part.IPage page =  ((ModelExplorerPageBookView)viewPart).getCurrentPage();
+				
+				if (page instanceof ModelExplorerPage) {
+					ModelExplorerView modelExplorerView = (ModelExplorerView) ( (ModelExplorerPage) ((ModelExplorerPageBookView)viewPart ).getCurrentPage() ).getViewer();
+					EditingDomain domain = modelExplorerView.getEditingDomain();
+					eObject = domain.getResourceSet().getEObject(uri, false);
+					if(eObject != null) {
+						CommonViewer treeViewer = ((ModelExplorerView)modelExplorerView).getCommonViewer();
+						// The common viewer is in fact a tree viewer bug enhancement: use function in ModelExplorerView instead of findElementForEObject
+						List<Object> list = new ArrayList<Object>();
+						list.add(eObject);
+						ModelExplorerView.reveal(list, treeViewer);
+					}
+				}
+			}
+			
+			// bindings view 
+			IViewPart viewPartBindigns = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_VALUE_BINDINGS);
+			if(viewPartBindigns instanceof ValueBindingsView) {
+				if (eObject instanceof Element) {
+					TreeUtls.locate((Element)eObject, ((ValueBindingsView)viewPartBindigns).getTreeRoot(), ((ValueBindingsView)viewPartBindigns).getViewer());
+				}
+			}
+		}
+	}
 }

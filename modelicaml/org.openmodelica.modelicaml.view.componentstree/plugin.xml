@@ -62,10 +62,15 @@
          </propertySection>
       </propertySections>
    </extension>
+
+<!-- NOTE: all marker types are defined in the mml.common plugin 
    <extension
          id="org.openmodelica.modelicaml.marker.actionCode.componentmodification"
          name="ModelicaML Component Modifications"
          point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.emf.validation.problem">
+      </super>
       <super
             type="org.eclipse.emf.ecore.diagnostic">
       </super>
@@ -75,8 +80,6 @@
       <persistent
             value="true">
       </persistent>
-      <attribute
-            name="generatedBy">
-      </attribute>
    </extension>
+   -->
 </plugin>

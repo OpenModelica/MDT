@@ -47,10 +47,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EValidator;
-import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -136,12 +134,10 @@ import org.openmodelica.modelicaml.view.componentstree.display.TreeUtls;
 import org.openmodelica.modelicaml.view.componentstree.display.ViewLabelProvider;
 import org.openmodelica.modelicaml.view.componentstree.listeners.DragListener;
 import org.openmodelica.modelicaml.view.componentstree.validation.ComponentModificationValidator;
-
-import com.google.common.collect.Lists;
 /**
  * The Class ComponentsTree.
  */
-public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPageContributor  {
+public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPageContributor, IGotoMarker  {
 
 	/** The viewer. */
 	private TreeViewer viewer;
@@ -2516,5 +2512,18 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 
 	public void locate(String dotPath) {
 		EditorServices.locateInComponentsTreeView(dotPath);
+	}
+
+	@Override
+	public void gotoMarker(IMarker marker) {
+		String uriAttribute = marker.getAttribute(EValidator.URI_ATTRIBUTE, null);
+		if(uriAttribute != null) {
+//			URI uri = URI.createURI(uriAttribute);
+			// components view 
+			IViewPart viewPartComponentsTree = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_COMPONENT_TREE);
+			if(viewPartComponentsTree instanceof ComponentsTree) {
+				EditorServices.locateInComponentsTreeView(uriAttribute);
+			}
+		}
 	}
 }

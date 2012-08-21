@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -18,7 +19,10 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EValidator;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -67,6 +71,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
@@ -78,6 +83,7 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
+import org.openmodelica.modelicaml.modelexplorer.ModelExplorerPage;
 import org.openmodelica.modelicaml.modelica.importer.Activator;
 import org.openmodelica.modelicaml.modelica.importer.creators.ModelicaMLElementsCreator;
 import org.openmodelica.modelicaml.modelica.importer.dialogs.SynchronizeOptionsDialog;
@@ -89,7 +95,7 @@ import org.openmodelica.modelicaml.modelica.importer.model.TreeObject;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeParent;
 import org.openmodelica.modelicaml.modelica.importer.model.Utilities;
 
-public class ModelicaOMCCodeViewer extends ViewPart {
+public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -1899,6 +1905,50 @@ public class ModelicaOMCCodeViewer extends ViewPart {
 
 	public TreeParent getTreeRoot() {
 		return treeRoot;
+	}
+
+	@Override
+	public void gotoMarker(IMarker marker) {
+		String uriAttribute = marker.getAttribute(EValidator.URI_ATTRIBUTE, null);
+		if(uriAttribute != null) {
+			
+			URI uri = URI.createURI(uriAttribute);
+			
+			IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
+			EObject eObject = null;
+			if(viewPart instanceof ModelExplorerPageBookView) {
+				org.eclipse.ui.part.IPage page =  ((ModelExplorerPageBookView)viewPart).getCurrentPage();
+				
+				if (page instanceof ModelExplorerPage) {
+					ModelExplorerView modelExplorerView = (ModelExplorerView) ( (ModelExplorerPage) ((ModelExplorerPageBookView)viewPart ).getCurrentPage() ).getViewer();
+					EditingDomain domain = modelExplorerView.getEditingDomain();
+					eObject = domain.getResourceSet().getEObject(uri, false);
+					if(eObject != null) {
+						CommonViewer treeViewer = ((ModelExplorerView)modelExplorerView).getCommonViewer();
+						// The common viewer is in fact a tree viewer bug enhancement: use function in ModelExplorerView instead of findElementForEObject
+						List<Object> list = new ArrayList<Object>();
+						list.add(eObject);
+						ModelExplorerView.reveal(list, treeViewer);
+					}
+				}
+			}
+			
+			// Modelica code view 
+			IViewPart viewPartModelicaCodeSynchonization = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELICA_CODE_SYNCHRONIZATION);
+			if(viewPartModelicaCodeSynchonization instanceof ModelicaOMCCodeViewer) {
+				((ModelicaOMCCodeViewer)viewPartModelicaCodeSynchonization).locate((Element) eObject);
+			}
+		}
+		
+		// Modelica code view for markers without UML elements but having LOCATION path defined 
+		String location = marker.getAttribute(IMarker.LOCATION, null);
+		if (!location.isEmpty() && location != null) {
+			IViewPart viewPartModelicaCodeSynchonization = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELICA_CODE_SYNCHRONIZATION);
+			if(viewPartModelicaCodeSynchonization instanceof ModelicaOMCCodeViewer) {
+				// for code importer use the marker attribute location
+				((ModelicaOMCCodeViewer)viewPartModelicaCodeSynchonization).locate(location);
+			}
+		}
 	}
 
 }

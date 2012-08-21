@@ -24,9 +24,11 @@
          </parameter>
       </module>
    </extension>
+
+   <!--
    <extension
          point="org.eclipse.ui.views">
-      <!--
+
       <category
             id="org.openmodelica.modelicaml.gen.modelica.category1"
             name="ModelicaML">
@@ -45,17 +47,10 @@
             This view displays the validation errors and messages detected by the ModelicaML validator.
          </description>
       </view>
-      -->
    </extension>
-<extension id="org.openmodelica.modelicaml.marker.validation" point="org.eclipse.core.resources.markers" name="ModelicaML Validation">
-  <super  type="org.eclipse.emf.ecore.diagnostic"/>
-  <super type="org.eclipse.core.resources.marker"/>
-  <persistent value="true"/>
-  <attribute
-        name="generatedBy">
-  </attribute>
-</extension>
-    <!--
+   -->
+   
+   <!--
    <extension
          point="org.eclipse.ui.ide.markerSupport">
       <markerContentGenerator
@@ -103,131 +98,7 @@
          </markerTypeReference>
       </markerContentGenerator>
    </extension>
- <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.papyrus.modelexplorer.modelexplorer.popup">
-         <menu
-               icon="icons/launcher.gif"
-               label="ModelicaML: Validation and Code Generation">
-            <command
-                  commandId="com.eadsiw.modelicaml.commands.ValidateModelicaMLModel"
-                  icon="icons/validate.gif"
-                  label="Validate ModelicaML Model (entire model)"
-                  style="push"
-                  tooltip="Validate ModelicaML Model (entire model)">
-               <visibleWhen
-                     checkEnabled="true">
-                  <with
-                        variable="selection">
-                     <count
-                           value="1">
-                     </count>
-                     <iterate>
-                        <adapt
-                              type="org.eclipse.emf.ecore.EObject">
-                           <or>
-                              <instanceof
-                                    value="org.eclipse.uml2.uml.Package">
-                              </instanceof>
-                              <instanceof
-                                    value="org.eclipse.uml2.uml.Class">
-                              </instanceof>
-                           </or>
-                        </adapt>
-                     </iterate>
-                  </with>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="com.eadsiw.modelicaml.commands.GenerateModelicaCodeFromThisElement"
-                  icon="icons/launcher.gif"
-                  label="Generate Modelica Code (starting from this element)"
-                  style="push"
-                  tooltip="Generate Modelica Code (starting from this element)">
-               <visibleWhen
-                     checkEnabled="true">
-                  <with
-                        variable="selection">
-                     <count
-                           value="1">
-                     </count>
-                     <iterate>
-                        <adapt
-                              type="org.eclipse.emf.ecore.EObject">
-                           <or>
-                              <instanceof
-                                    value="org.eclipse.uml2.uml.Package">
-                              </instanceof>
-                              <instanceof
-                                    value="org.eclipse.uml2.uml.Class">
-                              </instanceof>
-                           </or>
-                        </adapt>
-                     </iterate>
-                  </with>
-               </visibleWhen>
-            </command>
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activeWorkbenchWindow.activePerspective">
-                  <equals
-                        value="org.openmodelica.modelicaml.perspective">
-                  </equals>
-               </with>
-            </visibleWhen>
-         </menu>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:org.eclipse.ui.main.toolbar">
-         <toolbar
-               id="com.eadsiw.modelicaml.toolbar2"
-               label="ModelicaML">
-            <command
-                  commandId="com.eadsiw.modelicaml.commands.GenerateModelicaCode"
-                  icon="icons/launcher.gif"
-                  label="Generate Modelica Code (from entire ModelicaML model)"
-                  style="push"
-                  tooltip="Generate Modelica Code (from entire ModelicaML model)">
-               <visibleWhen>
-                  <with
-                        variable="activeEditorId">
-                     <equals
-                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
-                     </equals>
-                  </with>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="com.eadsiw.modelicaml.commands.ValidateModelicaMLModel"
-                  icon="icons/validate.gif"
-                  label="Validate ModelicaML Model (entire model)"
-                  style="push"
-                  tooltip="Validate ModelicaML Model (entire model)">
-               <visibleWhen>
-                  <with
-                        variable="activeEditorId">
-                     <equals
-                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
-                     </equals>
-                  </with>
-               </visibleWhen>
-            </command>
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activeWorkbenchWindow.activePerspective">
-                  <equals
-                        value="org.openmodelica.modelicaml.perspective">
-                  </equals>
-               </with>
-            </visibleWhen>
-         </toolbar>
-      </menuContribution>
-   </extension>-->
+   -->
    
    
    <!-- OBSOLETE: Replaced by the ModelicaML validation plugin that is based on EMF Validation Framework. --> 
@@ -271,22 +142,18 @@
    
    
    
-   
-   
-   
-   
-   
-   
    <extension
          point="org.eclipse.ui.commands">
       <command
             id="org.openmodelica.modelicaml.gen.modelica.commands.GenerateModelicaCode"
             name="Generate Modelica Code">
       </command>
+      <!--
       <command
             id="org.openmodelica.modelicaml.gen.modelica.commands.ValidateModelicaMLModel"
             name="Validate ModelicaML Model">
       </command>
+      -->
       <command
             id="org.openmodelica.modelicaml.gen.modelica.commands.GenerateModelicaCodeFromThisElement"
             name="Generate Modelica Code From This Element">
@@ -298,10 +165,14 @@
             class="org.openmodelica.modelicaml.gen.modelica.popupactions.GenerateModelicaCodeFromEntireModelicaMLModelAction"
             commandId="org.openmodelica.modelicaml.gen.modelica.commands.GenerateModelicaCode">
       </handler>
+      <!--
       <handler
             class="org.openmodelica.modelicaml.gen.modelica.popupactions.ValidateEntireModelicaMLModelAction"
             commandId="org.openmodelica.modelicaml.gen.modelica.commands.ValidateModelicaMLModel">
       </handler>
+      -->
+      
+      
       <handler
             class="org.openmodelica.modelicaml.gen.modelica.popupactions.GenerateModelicaCodeStartingFromThisElementOfModelicaMLModelAction"
             commandId="org.openmodelica.modelicaml.gen.modelica.commands.GenerateModelicaCodeFromThisElement">
@@ -314,16 +185,29 @@
                <iterate>
                   <adapt
                         type="org.eclipse.emf.ecore.EObject">
-                     <and>
-                        <not>
-                           <instanceof
-                                 value="org.eclipse.uml2.uml.Behavior">
-                           </instanceof>
-                        </not>
+                     <or>
                         <instanceof
-                              value="org.eclipse.uml2.uml.Class">
+                              value="org.eclipse.uml2.uml.Package">
                         </instanceof>
-                     </and>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.Model">
+                        </instanceof>
+                        <and>
+                           <instanceof
+                                 value="org.eclipse.uml2.uml.Class">
+                           </instanceof>
+                           <not>
+                              <instanceof
+                                    value="org.eclipse.uml2.uml.Behavior">
+                              </instanceof>
+                           </not>
+                           <not>
+                              <instanceof
+                                    value="org.eclipse.uml2.uml.StateMachine">
+                              </instanceof>
+                           </not>
+                        </and>
+                     </or>
                   </adapt>
                </iterate>
             </with>

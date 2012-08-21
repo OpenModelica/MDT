@@ -30,6 +30,9 @@ public class FindInvalidRelationsToolbarHandler extends AbstractHandler{
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
+		// reset 
+		collector = null;
+		
 		// get UML model data
 		UmlModel umlModel = UmlUtils.getUmlModel();
 

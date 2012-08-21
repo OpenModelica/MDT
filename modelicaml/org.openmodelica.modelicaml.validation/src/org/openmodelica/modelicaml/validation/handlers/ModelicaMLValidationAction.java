@@ -131,6 +131,7 @@ public class ModelicaMLValidationAction implements IHandler {
 			        					"\nUpdating markers...",0, 2);
 			        			
 			        			MarkerUtil.updateMarkers(status, Constants.MARKERTYPE_VALIDATION_PROBLEM, new IMarkerConfigurator() {
+//			        			MarkerUtil.updateMarkers(status, EValidator.MARKER, new IMarkerConfigurator() {
 									
 									@Override
 									public void appendMarkerConfiguration(IMarker marker,
@@ -148,7 +149,6 @@ public class ModelicaMLValidationAction implements IHandler {
 
 									}
 								});
-			        			
 			        			
 			        			
 			        		} catch (CoreException e) {

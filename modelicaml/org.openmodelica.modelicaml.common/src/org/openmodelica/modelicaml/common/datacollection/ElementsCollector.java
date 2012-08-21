@@ -76,7 +76,7 @@ public class ElementsCollector {
 	}
 	
 	
-	private void collectElements(Element rootElement, boolean isImported){
+	protected void collectElements(Element rootElement, boolean isImported){
 		
 		// avoid cycles -> check if this element was already collected
 		if (!elements.contains(rootElement) && !importedPackages.contains(rootElement)) {

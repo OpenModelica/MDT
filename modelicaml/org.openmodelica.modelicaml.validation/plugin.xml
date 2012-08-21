@@ -59,24 +59,27 @@
    </extension>
    
    
+   <!-- NOTE: all marker types are defined in the mml.common plugin 
    <extension
-         id="org.openmodelica.modelicaml.marker.validation.problem"
+         id="org.openmodelica.modelicaml.marker.validation.problemmarker"
          name="ModelicaML Validation"
          point="org.eclipse.core.resources.markers">
       <super
-            type="org.eclipse.emf.ecore.diagnostic">
+            type="org.eclipse.emf.validation.problem">
       </super>
       <super
+            type="org.eclipse.emf.ecore.diagnostic">
+      </super>
+	  <super
             type="org.eclipse.core.resources.marker">
       </super>
+
       <persistent
             value="false">
       </persistent>
-      <attribute
-            name="generatedBy">
-      </attribute>
+
    </extension>
-   
+   -->
    
    <!-- TODO: Reactivate this menu as soon as the EMF Validation is supported in Eclipse 3.8 (Juno)  -->
 
@@ -786,26 +789,22 @@
       </menuContribution>
    </extension>
    <extension
-         id="org.openmodelica.modelicaml.marker.validation.problem"
-         name="ModelicaML Validation"
-         point="org.eclipse.core.resources.markers">
-      <super
-            type="org.eclipse.emf.ecore.diagnostic">
-      </super>
-      <persistent
-            value="true">
-      </persistent>
-   </extension>
-   <extension
          point="org.eclipse.ui.ide.markerSupport">
       <markerContentGenerator
             id="org.openmodelica.modelicaml.markerContentGenerator"
             name="ModelicaML marker generator">
          <markerTypeReference
-               id="org.openmodelica.modelicaml.marker.validation.problem">
+               id="org.eclipse.emf.validation.problem">
          </markerTypeReference>
          <markerTypeReference
-               id="org.openmodelica.modelicaml.marker.validation">
+               id="org.eclipse.emf.ecore.diagnostic">
+         </markerTypeReference>
+         <markerTypeReference
+               id="org.eclipse.core.resources.marker">
+         </markerTypeReference>
+ 
+         <markerTypeReference
+               id="org.openmodelica.modelicaml.marker.validation.problemmarker">
          </markerTypeReference>
          <markerTypeReference
                id="org.openmodelica.modelicaml.marker.bindings">
@@ -825,6 +824,7 @@
          <markerTypeReference
                id="org.openmodelica.modelicaml.marker.omc">
          </markerTypeReference>
+         
          <markerFieldReference
                id="org.eclipse.ui.ide.severityAndDescriptionField"
                visible="true">
@@ -841,8 +841,60 @@
                id="org.eclipse.ui.ide.markerType"
                visible="true">
          </markerFieldReference>
+         
       </markerContentGenerator>
    </extension>
+   <extension
+         point="org.eclipse.papyrus.infra.services.decoration.decorationSpecificFunctions">
+      <client
+            class="org.eclipse.papyrus.infra.services.validation.ValidationFunctions"
+            decorationType="org.openmodelica.modelicaml.marker.validation.problemmarker">
+      </client>
+   </extension>
+   <extension
+         point="org.eclipse.papyrus.infra.services.decoration.decorationSpecificFunctions">
+      <client
+            class="org.eclipse.papyrus.infra.services.validation.ValidationFunctions"
+            decorationType="org.openmodelica.modelicaml.marker.bindings">
+      </client>
+   </extension>
+   <extension
+         point="org.eclipse.papyrus.infra.services.decoration.decorationSpecificFunctions">
+      <client
+            class="org.eclipse.papyrus.infra.services.validation.ValidationFunctions"
+            decorationType="org.openmodelica.modelicaml.marker.actionCode.componentmodification">
+      </client>
+   </extension>
+   <extension
+         point="org.eclipse.papyrus.infra.services.decoration.decorationSpecificFunctions">
+      <client
+            class="org.eclipse.papyrus.infra.services.validation.ValidationFunctions"
+            decorationType="org.openmodelica.modelicaml.marker.actionCode">
+      </client>
+   </extension>
+   <extension
+         point="org.eclipse.papyrus.infra.services.decoration.decorationSpecificFunctions">
+      <client
+            class="org.eclipse.papyrus.infra.services.validation.ValidationFunctions"
+            decorationType="org.openmodelica.modelicaml.marker.modelicaloading">
+      </client>
+   </extension>
+   <extension
+         point="org.eclipse.papyrus.infra.services.decoration.decorationSpecificFunctions">
+      <client
+            class="org.eclipse.papyrus.infra.services.validation.ValidationFunctions"
+            decorationType="org.openmodelica.modelicaml.marker.modelicamlproxies">
+      </client>
+   </extension>
+   <extension
+         point="org.eclipse.papyrus.infra.services.decoration.decorationSpecificFunctions">
+      <client
+            class="org.eclipse.papyrus.infra.services.validation.ValidationFunctions"
+            decorationType="org.openmodelica.modelicaml.marker.omc">
+      </client>
+   </extension>
+   
+   
  <!--  <extension
          point="org.eclipse.emf.validation.ui.UIRegisteredClientContext">
       <clientContext

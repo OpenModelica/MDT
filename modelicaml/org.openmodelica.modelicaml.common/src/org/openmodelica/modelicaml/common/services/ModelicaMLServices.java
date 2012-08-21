@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -32,15 +33,26 @@ import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
 import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
 import org.eclipse.papyrus.infra.widgets.toolbox.notification.Type;
 import org.eclipse.papyrus.infra.widgets.toolbox.notification.builders.NotificationBuilder;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Comment;
+import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.Enumeration;
+import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.OpaqueBehavior;
+import org.eclipse.uml2.uml.Package;
+import org.eclipse.uml2.uml.OpaqueAction;
+import org.eclipse.uml2.uml.Port;
+import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
@@ -266,6 +278,32 @@ public class ModelicaMLServices {
 	/*
 	 * Utilities
 	 */
+	
+	
+	public static int getBodyIndex(OpaqueAction behavior, String language) {
+		int index = 0;
+		boolean isFound = false;
+
+		// test if the language exists
+		Iterator<String> it = behavior.getLanguages().iterator();
+		while (it.hasNext() && !isFound) {
+			String lang = it.next();
+			if (lang.equalsIgnoreCase(language)) {
+				isFound = true;
+			} else {
+				index++;
+			}
+		}
+		// returns -1 if not found
+		if (!isFound) {
+			index = -1;
+		}
+		return index;
+	}
+	
+	
+	
+	
 	public static List<TreeObject> getSortedByDotPath(HashSet<TreeObject> set){
 		if (set == null) { return null; }
 
@@ -309,29 +347,29 @@ public class ModelicaMLServices {
 		return listSorted;
 	}
 	
-	
-	public static  List<Element> getSortedByEClassName(HashSet<Element> set){
-		if (set == null) { return null; }
-
-		List<Element> listSorted = new ArrayList<Element>(set);
-		Comparator<Element> c = new Comparator<Element>() {
-			@Override
-			public int compare(Element arg0, Element arg1) {
-				if (arg0 instanceof Element) {
-					
-					String name1 = ((Element)arg0).eClass().getName();
-					String name2 = ((Element)arg1).eClass().getName();
-					
-					return name1.compareToIgnoreCase( name2 );
-				}
-				return arg0.toString().compareToIgnoreCase(arg1.toString());
-			}
-		};
-		
-		Collections.sort(listSorted, c);
-		
-		return listSorted;
-	}
+	// do not use it, it is very slow!
+//	public static  List<Element> getSortedByEClassName(HashSet<Element> set){
+//		if (set == null) { return null; }
+//
+//		List<Element> listSorted = new ArrayList<Element>(set);
+//		Comparator<Element> c = new Comparator<Element>() {
+//			@Override
+//			public int compare(Element arg0, Element arg1) {
+//				if (arg0 instanceof Element) {
+//					
+//					String name1 = ((Element)arg0).eClass().getName();
+//					String name2 = ((Element)arg1).eClass().getName();
+//					
+//					return name1.compareToIgnoreCase( name2 );
+//				}
+//				return arg0.toString().compareToIgnoreCase(arg1.toString());
+//			}
+//		};
+//		
+//		Collections.sort(listSorted, c);
+//		
+//		return listSorted;
+//	}
 	
 	public static  List<Element> getSortedByQName(HashSet<Element> set){
 		if (set == null) { return null; }
@@ -364,6 +402,89 @@ public class ModelicaMLServices {
 		
 		return listSorted;
 	}
+	
+	
+	public static Image getImage(Element element){
+		
+		if (element instanceof Package) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/papyrus/Package.gif");
+		}
+		else if (element.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/requirement.gif");
+		}
+		else if (element.getAppliedStereotype(Constants.stereotypeQName_Model) != null) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/model.gif");
+		}
+		else if (element.getAppliedStereotype(Constants.stereotypeQName_Function) != null) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/papyrus/FunctionBehavior.gif");
+		}
+		else if (element.getAppliedStereotype(Constants.stereotypeQName_Connector) != null) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/connector.gif");
+		}
+		else if (element.getAppliedStereotype(Constants.stereotypeQName_CalculationModel) != null) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/calculationModel.gif");
+		}
+		else if (element.getAppliedStereotype(Constants.stereotypeQName_VerificationScenario) != null) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/calculationModel.gif");
+		}
+		else if (element.getAppliedStereotype(Constants.stereotypeQName_ValueMediatorsContainer) != null) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/valueMediatorsContainer.png");
+		}
+		else if (element.getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/valueMediator.png");
+		}
+		else if (element.getAppliedStereotype(Constants.stereotypeQName_RequirementInstance) != null) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/requirementInstance.png");
+		}
+		else if (element.getAppliedStereotype(Constants.stereotypeQName_FunctionArgument) != null) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/Parameter.gif");
+		}
+		else if (element.getAppliedStereotype(Constants.stereotypeQName_Variable) != null) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/variable.png");
+		}
+		else if (element.getAppliedStereotype(Constants.stereotypeQName_Component) != null) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/component.png");
+		}
+		else if (element.getAppliedStereotype(Constants.stereotypeQName_CalculatedProperty) != null) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/calculatedProperty.png");
+		}
+		else if (element instanceof OpaqueBehavior) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/papyrus/OpaqueBehavior.gif");
+		}
+		else if (element instanceof PrimitiveType) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/type.gif");
+		}
+		else if (element instanceof Enumeration) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/papyrus/Enumeration.gif");
+		}
+		else if (element instanceof Class && ! (element instanceof Behavior)) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/Class.gif");
+		}
+		else if (element instanceof Port) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/Port.gif");
+		}
+		else if (element instanceof Property) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/Property.gif");
+		}
+		else if (element instanceof Port) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/Port.gif");
+		}
+		else if (element instanceof Comment) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/Comment.gif");
+		}
+		else if (element instanceof Generalization) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/Generalization.gif");
+		}
+		else if (element instanceof Dependency) {
+			return ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/Dependency.gif");
+		}
+		
+		// TODO: complete the list
+		
+		return null;
+	}
+	
+	
 	
 	public static String getTimeStamp(){
 		Calendar c1 = Calendar.getInstance(); // today

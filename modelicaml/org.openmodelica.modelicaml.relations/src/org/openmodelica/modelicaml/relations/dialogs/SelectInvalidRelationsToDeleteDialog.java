@@ -211,8 +211,8 @@ public class SelectInvalidRelationsToDeleteDialog extends Dialog {
 		
 		allTreeItems.clear();
 		
-//		List<Element> relations = ModelicaMLServices.getSortedByName(invalidRelations); 
-		List<Element> relations = ModelicaMLServices.getSortedByEClassName(invalidRelations);
+		List<Element> relations = ModelicaMLServices.getSortedByName(invalidRelations); 
+//		List<Element> relations = ModelicaMLServices.getSortedByEClassName(invalidRelations); // is far too slow! 
 		if (relations != null) {
 			for (Element relation : relations) {
 				

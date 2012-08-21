@@ -169,7 +169,7 @@ public class ModelicaMLValidationView extends MarkerSupportView {
 				
 			}
 
-			// Modelica code view 
+			// Modelica code view for markers without UML elements but having LOCATION path defined 
 			String location = iMarker.getAttribute(IMarker.LOCATION, null);
 			if (!location.isEmpty() && location != null) {
 				IViewPart viewPartModelicaCodeSynchonization = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELICA_CODE_SYNCHRONIZATION);

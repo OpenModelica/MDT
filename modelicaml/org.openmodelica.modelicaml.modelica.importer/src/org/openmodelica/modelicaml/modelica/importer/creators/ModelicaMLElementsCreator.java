@@ -704,7 +704,7 @@ public class ModelicaMLElementsCreator {
 			protected void doExecute() {
 				
 				// prevent cyclic dependencies
-				if (sourceClass.equals(targetClass)) {
+				if ( !sourceClass.equals(targetClass) ) {
 					
 					createdElement = sourceClass.createDependency(targetClass);
 					
