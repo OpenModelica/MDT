@@ -1166,6 +1166,55 @@
             icon="icons/search_references.gif"
             label="Find references"
             style="push">
+         <visibleWhen
+               checkEnabled="true">
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <adapt
+                        type="org.eclipse.emf.ecore.EObject">
+                     <or>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.Package">
+                        </instanceof>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.Model">
+                        </instanceof>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.Property">
+                        </instanceof>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.StateMachine">
+                        </instanceof>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.State">
+                        </instanceof>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.Class">
+                        </instanceof>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.PrimitiveType">
+                        </instanceof>
+                     </or>
+                     <and>
+                        <not>
+                           <instanceof
+                                 value="org.eclipse.uml2.uml.OpaqueAction">
+                           </instanceof>
+                        </not>
+                        <not>
+                           <instanceof
+                                 value="org.eclipse.uml2.uml.OpaqueBehavior">
+                           </instanceof>
+                        </not>
+                     </and>
+                  </adapt>
+               </iterate>
+            </with>
+         </visibleWhen>
       </command>
    </menuContribution>
 </extension>
