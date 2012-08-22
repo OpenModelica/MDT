@@ -65,8 +65,6 @@ import org.openmodelica.modelicaml.view.componentstree.views.ComponentsTree;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
 import org.openmodelica.modelicaml.view.valuebindings.views.ValueBindingsView;
 
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class ModelicaMLValidationView.
  */
@@ -82,9 +80,8 @@ public class ModelicaMLValidationView extends MarkerSupportView {
     @SuppressWarnings("restriction")
 	@Override
     public void createPartControl(Composite parent) {
-    	// TODO Auto-generated method stub
+
     	super.createPartControl(parent);
-    	
     	
     	Action locateAction = new Action("locateAction") {
     		@Override

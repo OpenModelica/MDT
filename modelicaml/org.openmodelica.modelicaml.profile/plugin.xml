@@ -1501,6 +1501,10 @@
             id="org.openmodelica.modelicaml.commands.CreateModelicaAnnotationCommand"
             name="Create new Annotation">
       </command>
+      <command
+            id="org.openmodelica.modelicaml.commands.CreateCommentCommand"
+            name="Create new Comment">
+      </command>
        <command
             id="org.openmodelica.modelicaml.commands.GenerateModelicaCode"
             name="Generate Modelica Code">
@@ -2558,6 +2562,93 @@
       <handler
             class="org.openmodelica.modelicaml.profile.handlers.CreateModelicaAnnotationHandler"
             commandId="org.openmodelica.modelicaml.commands.CreateModelicaAnnotationCommand">
+         <activeWhen>
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <adapt
+                        type="org.eclipse.emf.ecore.EObject">
+                     <not>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.Enumeration">
+                        </instanceof>
+                     </not>
+                     <or>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.Classifier">
+                        </instanceof>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.Package">
+                        </instanceof>
+                     </or>
+                     <and>
+                        <not>
+                           <instanceof
+                                 value="org.eclipse.uml2.uml.Behavior">
+                           </instanceof>
+                        </not>
+                        <or>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::ModelicaPackage"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Operator"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Model"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Connector"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Block"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Record"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Type"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Function"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::CalculationModel"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaRequirementConstructs::Requirement"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaSimulationConstructs::Simulation"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                        </or>
+                     </and>
+                  </adapt>
+               </iterate>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.profile.handlers.CreateCommentHandler"
+            commandId="org.openmodelica.modelicaml.commands.CreateCommentCommand">
          <activeWhen>
             <with
                   variable="selection">

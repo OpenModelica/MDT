@@ -104,9 +104,15 @@
             </visibleWhen>
          </toolbar>
       </menuContribution>
+      
+      <!-- NOTE: the menu is moved to the model explorer plugin.xml to appear at a certain position
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.papyrus.modelexplorer.modelexplorer.popup">
+            locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
+         <separator
+               name="org.openmodelica.modelicaml.modelica.importer.separator1"
+               visible="true">
+         </separator>
          <menu
                icon="icons/code2.png"
                label="ModelicaML: Modelica Models Synchronization">
@@ -186,6 +192,7 @@
             </visibleWhen>
          </menu>
       </menuContribution>
+      -->
    </extension>
    <extension
          point="org.eclipse.ui.commands">

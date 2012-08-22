@@ -688,6 +688,15 @@
                      checkEnabled="true">
                </visibleWhen>
             </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.commands.CreateCommentCommand"
+                  icon="resources/icons/papyrus/Comment.gif"
+                  label="Comment"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+               </visibleWhen>
+            </command>
             <separator
                   name="org.openmodelica.modelicaml.profile.separator10"
                   visible="true">
@@ -1228,8 +1237,37 @@
                visible="true">
          </separator>
          <menu
-               icon="resources/icons/icons16/generate_code.gif"
+               icon="icons/validate.gif"
                label="Validation and Code Generation">
+            <command
+                  commandId="org.openmodelica.modelicaml.validation.subtree"
+                  icon="icons/validate.gif"
+                  label="Validate sub-tree"
+                  style="push"
+                  tooltip="Validate sub-tree">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <count
+                           value="1">
+                     </count>
+                     <iterate>
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <or>
+                              <instanceof
+                                    value="org.eclipse.uml2.uml.Package">
+                              </instanceof>
+                              <instanceof
+                                    value="org.eclipse.uml2.uml.Class">
+                              </instanceof>
+                           </or>
+                        </adapt>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
            
            <!-- TODO: the Papyrus command does not work. Enable again after fix.  
             <command
@@ -1392,6 +1430,95 @@
                name="org.openmodelica.modelicaml.modelexplorer.separator7"
                visible="true">
          </separator>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
+         <separator
+               name="org.openmodelica.modelicaml.modelica.importer.separator1"
+               visible="true">
+         </separator>
+         <menu
+               icon="icons/code2.png"
+               label="ModelicaML: Modelica Models Synchronization">
+            <command
+                  commandId="org.openmodelica.modelicaml.modelica.commands.disconnectfromcodesync"
+                  icon="icons/launch_disconnect.gif"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.modelica.commands.connecttocodesync"
+                  icon="icons/connect_co.gif"
+                  style="push">
+            </command>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="org.openmodelica.modelicaml.perspective">
+                  </equals>
+                  <and>
+                     <with
+                           variable="selection">
+                        <count
+                              value="1">
+                        </count>
+                        <iterate>
+                           <adapt
+                                 type="org.eclipse.emf.ecore.EObject">
+                              <and>
+                                 <or>
+                                    <test
+                                          args="ModelicaML::ModelReferences::ModelicaModelProxy"
+                                          property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                    </test>
+                                    <instanceof
+                                          value="org.eclipse.uml2.uml.Class">
+                                    </instanceof>
+                                    <instanceof
+                                          value="org.eclipse.uml2.uml.Package">
+                                    </instanceof>
+                                    <test
+                                          args="ModelicaML::ModelicaClassConstructs::Block"
+                                          property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                    </test>
+                                    <test
+                                          args="ModelicaML::ModelicaClassConstructs::Model"
+                                          property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                    </test>
+                                    <test
+                                          args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                          property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                    </test>
+                                    <test
+                                          args="ModelicaML::ModelicaClassConstructs::ModelicaPackage"
+                                          property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                    </test>
+                                    <test
+                                          args="ModelicaML::ModelicaClassConstructs::Function"
+                                          property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                    </test>
+                                    <test
+                                          args="ModelicaML::ModelicaClassConstructs::Connector"
+                                          property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                    </test>
+                                    <test
+                                          args="ModelicaML::ModelicaClassConstructs::Record"
+                                          property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                    </test>
+                                 </or>
+                              </and>
+                           </adapt>
+                        </iterate>
+                     </with>
+                  </and>
+               </with>
+            </visibleWhen>
+         </menu>
       </menuContribution>
    </extension>
     <!--  

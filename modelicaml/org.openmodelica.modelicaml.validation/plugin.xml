@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-
-<!--
+   
+   <!-- Note, the menu was moved to the model explorer plugin.xml to appear at certain position
    <extension
          point="org.eclipse.ui.menus">
 
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.papyrus.modelexplorer.modelexplorer.popup">
+            locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
  
          <command
                commandId="org.openmodelica.modelicaml.validation.subtree"
                icon="icons/validate.gif"
-               label="ModelicaML: Validate"
+               label="Validate sub-tree"
                style="push"
-               tooltip="Validate ModelicaML model (entire model)">
+               tooltip="Validate sub-tree">
             <visibleWhen
                   checkEnabled="true">
                <with
@@ -41,7 +41,7 @@
          </command>
       </menuContribution>
    </extension>
-   -->
+	-->
    <extension
          point="org.eclipse.ui.views">
       <view
@@ -80,8 +80,6 @@
 
    </extension>
    -->
-   
-   <!-- TODO: Reactivate this menu as soon as the EMF Validation is supported in Eclipse 3.8 (Juno)  -->
 
    <extension
          point="org.eclipse.ui.menus">
@@ -122,12 +120,10 @@
    
    <extension
          point="org.eclipse.ui.commands">
-      <!--
       <command
             id="org.openmodelica.modelicaml.validation.subtree"
             name="Validate ModelicaML subtree">
       </command>
-      -->
       <command
             id="org.openmodelica.modelicaml.validation.entiremodel"
             name="Validate ModelicaML Entire Model">
@@ -135,12 +131,10 @@
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
-      <!--
       <handler
             class="org.openmodelica.modelicaml.validation.handlers.ModelicaMLValidationSubTreeAction"
             commandId="org.openmodelica.modelicaml.validation.subtree">
       </handler>
-      -->
       <handler
             class="org.openmodelica.modelicaml.validation.handlers.ModelicaMLValidationAction"
             commandId="org.openmodelica.modelicaml.validation.entiremodel">
@@ -843,6 +837,26 @@
          </markerFieldReference>
          
       </markerContentGenerator>
+      <problemFilter
+            enabled="true"
+            id="org.openmodelica.modelicaml.validation.warnings"
+            name="ModelicaML Validation Warnings"
+            scope="ON_SELECTED_AND_CHILDREN"
+            severity="WARNING">
+         <selectedType
+               markerId="org.openmodelica.modelicaml.marker.validation.problemmarker">
+         </selectedType>
+      </problemFilter>
+      <problemFilter
+            enabled="true"
+            id="org.openmodelica.modelicaml.validation.errors"
+            name="ModelicaML Validation Errors"
+            scope="ON_SELECTED_AND_CHILDREN"
+            severity="ERROR">
+         <selectedType
+               markerId="org.openmodelica.modelicaml.marker.validation.problemmarker">
+         </selectedType>
+      </problemFilter>
    </extension>
    <extension
          point="org.eclipse.papyrus.infra.services.decoration.decorationSpecificFunctions">

@@ -580,6 +580,7 @@ public class ModelicaMLElementsCreator {
 						if (owningClass instanceof Classifier) {
 							EList<Generalization> generalizations = ((Classifier)owningClass).getGeneralizations();
 							for (Generalization generalization : generalizations) {
+								
 								exisitingTargets.addAll(generalization.getTargets());
 								
 								if (generalization.getTargets().contains(target)) {
@@ -770,12 +771,14 @@ public class ModelicaMLElementsCreator {
 				
 				/*
 				 * Avoid creating extends relations that point to the element it self. 
-				 * This may happen when anonym classes are used in Modelica.
+				 * This may happen when Modelica classes extend themselves .
 				 */
 				if (target instanceof Classifier 
 						&& !extendsRelation.getTargetQname().equals(extendsRelation.getSourceQname()) 
 						&& !extendsRelation.getTargetQname().equals(owningClassItem.getQName()) // TODO: this should actually be the same like extendsRelation.getSourceQname() 
 						) {
+//				if (target instanceof Classifier) {
+					
 //					System.out.println("Creating extends relation: " + extendsRelationTreeObject.getSourceQname() + " -> " + extendsRelation.getTargetQname());
 					addToLog("Creating extends relation: " + extendsRelationTreeObject.getSourceQname() + " -> " + extendsRelation.getTargetQname());
 					
