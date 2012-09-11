@@ -284,4 +284,158 @@ public class CompilerProxy {
 		IModelicaCompiler compiler = getCompiler();
 		compiler.setConsoleOutputStream(outputStream);
 	}
+	
+
+	/**
+	 * @author Magnus Sjöstrand
+	 * @param command
+	 * @return the result of the command execution
+	 * @throws CompilerInstantiationException
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 */	
+	
+	public synchronized static ICompilerResult getNthInheritedClass(String className, int n)
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		ICompilerResult res = compiler.getNthInheritedClass(className, n);
+		return res;
+	}
+	
+	/**
+	 * @author Magnus Sjöstrand
+	 * @param command
+	 * @return the result of the command execution
+	 * @throws CompilerInstantiationException
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 */	
+	
+	public synchronized static int getInheritanceCount(String className) 
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		int resNum = compiler.getInheritanceCount(className);
+		
+		return resNum;
+	}
+	
+	/**
+	 * @author Magnus Sjöstrand
+	 * @param command
+	 * @return the result of the command execution
+	 * @throws CompilerInstantiationException
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 */	
+	
+	public synchronized static ICompilerResult getNthAlgorithmItem(String className, int n)
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		ICompilerResult res = compiler.getNthAlgorithmItem(className, n);
+		return res;
+	}
+	
+	/**
+	 * @author Magnus Sjöstrand
+	 * @param command
+	 * @return the result of the command execution
+	 * @throws CompilerInstantiationException
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 */	
+	
+	public synchronized static int getAlgorithmItemsCount(String className) 
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		int resNum = compiler.getAlgorithmItemsCount(className);
+		
+		return resNum;
+	}
+	
+	/**
+	 * @author Magnus Sjöstrand
+	 * @param command
+	 * @return the result of the command execution
+	 * @throws CompilerInstantiationException
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 */	
+	
+	public synchronized static ICompilerResult getNthEquationItem(String className, int n)
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		ICompilerResult res = compiler.getNthEquationItem(className, n);
+		return res;
+	}
+	
+	/**
+	 * @author Magnus Sjöstrand
+	 * @param command
+	 * @return the result of the command execution
+	 * @throws CompilerInstantiationException
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 */	
+	
+	public synchronized static int getEquationItemsCount(String className) 
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		int resNum = compiler.getEquationItemsCount(className);
+		
+		return resNum;
+	}
+	
+	/**
+	 * @author Magnus Sjöstrand
+	 * @param command
+	 * @return the result of the command execution
+	 * @throws CompilerInstantiationException
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 */	
+	
+	public synchronized static List getComponents(String className)
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		List componentList = compiler.getComponents(className);
+		return componentList;
+	}
+	
+	/**
+	 * @author Magnus Sjöstrand
+	 * @param command
+	 * @return the result of the command execution
+	 * @throws CompilerInstantiationException
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 */	
+	
+	public synchronized static boolean classExist(String className)
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		boolean exist = compiler.classExist(className);
+		return exist;
+	}
+	
+	public synchronized static boolean isPackage(String className)
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		boolean exist = compiler.isPackage(className);
+		return exist;
+	}
+	
+	public synchronized static ICompilerResult getErrorString()
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		ICompilerResult res = compiler.getErrorString();
+		return res;
+	}
+	
+	public synchronized static ICompilerResult loadFile(String classPath)
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		ICompilerResult res = compiler.loadFile(classPath);
+		
+		return res;
+	}
 }

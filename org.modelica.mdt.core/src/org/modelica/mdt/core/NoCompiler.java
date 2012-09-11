@@ -5,10 +5,12 @@ import java.util.Collection;
 
 import org.eclipse.core.resources.IFile;
 import org.modelica.mdt.core.IModelicaClass.Restriction;
+import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ElementInfo;
 import org.modelica.mdt.core.compiler.IClassInfo;
 import org.modelica.mdt.core.compiler.IModelicaCompiler;
 import org.modelica.mdt.core.compiler.IParseResults;
+import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 class NoCompiler implements IModelicaCompiler
 {
@@ -72,4 +74,59 @@ class NoCompiler implements IModelicaCompiler
 		/* do nothing */
 	}
 	
+	public ICompilerResult getNthInheritedClass(String className, int n)
+	{
+		return null;
+	}
+	
+	public int getInheritanceCount(String className)
+	{
+		return 0;
+	}
+	
+	public ICompilerResult getNthAlgorithmItem(String className, int n)
+	{
+		return null;
+	}
+	
+	public int getAlgorithmItemsCount(String className)
+	{
+		return 0;
+	}
+	
+	public ICompilerResult getNthEquationItem(String className, int n)
+	{
+		return null;
+	}
+	
+	public int getEquationItemsCount(String className)
+	{
+		return 0;
+	}
+	
+	
+	public List getComponents(String className)
+	{
+		return null;
+	}
+	
+	public boolean classExist(String className)
+	{
+		return false;
+	}
+	
+	public boolean isPackage(String className)
+	{
+		return false;
+	}
+	
+	public ICompilerResult getErrorString()
+	{
+		return null;
+	}
+	
+	public ICompilerResult loadFile(String classPath) throws ConnectException, UnexpectedReplyException {
+		
+		return null;
+	}
 }

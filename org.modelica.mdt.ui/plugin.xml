@@ -19,6 +19,10 @@
             icon="icons/obj16/mo_file.gif"
             id="org.modelica.mdt.ui.view.ModelicaConsoleView"
             name="OpenModelica Console"/>
+      <view class="org.modelica.mdt.ui.view.GraphView"
+            icon="icons/obj16/mo_file.gif"
+            id="org.modelica.mdt.ui.view.GraphView"
+            name="Graph View"/>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -150,6 +154,11 @@
          id="org.modelica.mdt.ui.actions.CommandToggleMarkOccurrencesId"
          name="Toggle Mark Occurrences">
          <!--<state class="org.eclipse.ui.handlers.RegistryToggleState:false" id="org.eclipse.ui.commands.toggleState"></state>-->
+   </command>
+   <command
+         defaultHandler="org.modelica.mdt.ui.actions.CreateView"
+         id="org.modelica.mdt.ui.actions.CreateView"
+         name="Create View">
    </command>
    </extension>
    
@@ -366,5 +375,13 @@
            </command>
         </toolbar>
      </menuContribution>
+     <menuContribution
+            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+         <command
+               commandId="org.modelica.mdt.ui.actions.createview"
+               label="Cross-Reference Graph"
+               style="push">
+         </command>
+      </menuContribution>
   </extension>
 </plugin>

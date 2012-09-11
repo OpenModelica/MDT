@@ -155,7 +155,7 @@ public class EditorUtility
 	 * 
 	 * @param file the file to open
 	 */
-	private static IEditorPart openInEditor(IFile file) 
+	public static IEditorPart openInEditor(IFile file) 
 		throws PartInitException 
 	{
 		if (file != null) 

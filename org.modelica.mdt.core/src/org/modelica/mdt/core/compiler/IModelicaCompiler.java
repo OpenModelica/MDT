@@ -162,4 +162,86 @@ public interface IModelicaCompiler
 	 *
 	 */
 	public void setConsoleOutputStream(OutputStream outputStream);
+	
+	/**
+	 * Fetches the nth name of subclasses in a given class
+	 *
+	 * @param className is the name of the class where to look for subclasses, nth subclass
+	 * @return the list of the names of subclasses
+	 */
+	public ICompilerResult getNthInheritedClass(String className, int n)
+			throws ConnectException, UnexpectedReplyException;
+	
+	/**
+	 * Fetches the number of subclasses in a given class
+	 *
+	 * @param className is the name of the class where to look for amount of subclasses
+	 * @return integer amount of the names of subclasses
+	 */
+	public int getInheritanceCount(String className) 
+			throws ConnectException, UnexpectedReplyException;
+	
+	/**
+	 * Fetches the nth name of algorithm item in a given class
+	 *
+	 * @param className is the name of the class where to look for algorithm items, nth algorithm items
+	 * @return the list of the names of algorithm items
+	 */
+	public ICompilerResult getNthAlgorithmItem(String className, int n)
+			throws ConnectException, UnexpectedReplyException;
+	
+	/**
+	 * Fetches the number of algorithm items in a given class
+	 *
+	 * @param className is the name of the class where to look for amount of algorithm items
+	 * @return integer amount of the names of algorithm items
+	 */
+	public int getAlgorithmItemsCount(String className) 
+			throws ConnectException, UnexpectedReplyException;
+	
+	/**
+	 * Fetches the nth name of equation item in a given class
+	 *
+	 * @param className is the name of the class where to look for equation items, nth equation items
+	 * @return the list of the names of algorithm items
+	 */
+	public ICompilerResult getNthEquationItem(String className, int n)
+			throws ConnectException, UnexpectedReplyException;
+	
+	/**
+	 * Fetches the number of equation items in a given class
+	 *
+	 * @param className is the name of the class where to look for amount of equation items
+	 * @return integer amount of the names of equation items
+	 */
+	public int getEquationItemsCount(String className) 
+			throws ConnectException, UnexpectedReplyException;
+	
+	/**
+	 * Fetches the list of name of components in a given class
+	 *
+	 * @param className the name of the class where to look for components
+	 * @return the list of the names of components
+	 */
+	public List getComponents(String className)
+			throws ConnectException, UnexpectedReplyException;
+	
+	/**
+	 * Fetches the list of information of given class
+	 *
+	 * @param className the name of the class where to look for information
+	 * @return the list of the information of class
+	 */
+	public boolean classExist(String className)
+			throws ConnectException, UnexpectedReplyException;
+
+	public boolean isPackage(String className)
+			throws ConnectException, UnexpectedReplyException;
+	
+	public ICompilerResult getErrorString()
+			throws ConnectException, UnexpectedReplyException;
+	
+	public ICompilerResult loadFile(String classPath)
+			throws ConnectException, UnexpectedReplyException;
+
 }

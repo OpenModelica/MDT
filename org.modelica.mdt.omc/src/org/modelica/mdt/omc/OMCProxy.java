@@ -76,6 +76,7 @@ import org.modelica.mdt.core.IllegalRestrictionException;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.ModelicaParserException;
+import org.modelica.mdt.core.compiler.ComponentParser;
 import org.modelica.mdt.core.compiler.IClassInfo;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ElementInfo;
@@ -805,6 +806,8 @@ public class OMCProxy implements IModelicaCompiler
 	 */
 	public ParseResults loadSourceFile(IFile file) throws ConnectException, UnexpectedReplyException
 	{
+
+		//System.out.println("Look at this: " + file.getName());
 		synchronized (getLazyLoadList())
 		{						
 			// activate lazy load
@@ -831,7 +834,6 @@ public class OMCProxy implements IModelicaCompiler
 		String retval = ret.getFirstResult();
 		/* Always keep your stuff nice and tidy! */
 		retval = retval.trim();
-
 		String errorString = ret.getError();
 
 		if(isError(errorString))
@@ -1426,5 +1428,141 @@ public class OMCProxy implements IModelicaCompiler
         return fullyQualifiedExecutable;
     }
 	
-	
+    /*
+     * Extended by Magnus Sjöstrand
+     * 
+     */
+    
+    /**
+	 * gets the nth inheritance to the given class
+	 *  
+	 * @throws ConnectException if we're unable to start communicating with
+	 * the server
+	 */	
+    
+    public ICompilerResult getNthInheritedClass(String className, int n) throws ConnectException, UnexpectedReplyException {
+		ICompilerResult res = sendExpression("getNthInheritedClass("+ className + ", " + n + ")", true);
+		res.trimFirstResult();
+
+		return res;
+	}
+    
+    /**
+	 * gets the number of inheritances to the given class
+	 *  
+	 * @throws ConnectException if we're unable to start communicating with
+	 * the server
+	 */	
+    
+    public int getInheritanceCount(String className) throws ConnectException, UnexpectedReplyException {
+    	int resNum = 0;
+    	ICompilerResult res = sendExpression("getInheritanceCount(" + className + ")", true);
+		res.trimFirstResult();				  
+		if(!res.getFirstResult().isEmpty()){
+			resNum = Integer.parseInt(res.getFirstResult());
+		}
+		return resNum;
+	}
+    
+    /**
+	 * gets the nth algorithm in the given class
+	 *  
+	 * @throws ConnectException if we're unable to start communicating with
+	 * the server
+	 */	
+    
+    public ICompilerResult getNthAlgorithmItem(String className, int n) throws ConnectException, UnexpectedReplyException {
+		ICompilerResult res = sendExpression("getNthAlgorithmItem("+ className + ", " + n + ")", true);
+		res.trimFirstResult();
+
+		return res;
+	}
+    
+    /**
+   	 * gets the number of algorithms in the given class
+   	 *  
+   	 * @throws ConnectException if we're unable to start communicating with
+   	 * the server
+   	 */	
+       
+       public int getAlgorithmItemsCount(String className) throws ConnectException, UnexpectedReplyException {
+       	int resNum = 0;
+       	ICompilerResult res = sendExpression("getAlgorithmItemsCount(" + className + ")", true);
+   		res.trimFirstResult();				  
+   		if(!res.getFirstResult().isEmpty()){
+   			resNum = Integer.parseInt(res.getFirstResult());
+   		}
+   		return resNum;
+   	}
+    
+    /**
+	 * gets the nth equation in the given class
+	 *  
+	 * @throws ConnectException if we're unable to start communicating with
+	 * the server
+	 */	
+    
+    public ICompilerResult getNthEquationItem(String className, int n) throws ConnectException, UnexpectedReplyException {
+		ICompilerResult res = sendExpression("getNthEquationItem("+ className + ", " + n + ")", true);
+		res.trimFirstResult();
+
+		return res;
+	}
+    
+    /**
+   	 * gets the number of equations to the given class
+   	 *  
+   	 * @throws ConnectException if we're unable to start communicating with
+   	 * the server
+   	 */	
+       
+       public int getEquationItemsCount(String className) throws ConnectException, UnexpectedReplyException {
+       	int resNum = 0;
+       	ICompilerResult res = sendExpression("getEquationItemsCount(" + className + ")", true);
+   		res.trimFirstResult();				  
+   		if(!res.getFirstResult().isEmpty()){
+   			resNum = Integer.parseInt(res.getFirstResult());
+   		}
+   		return resNum;
+   	}
+    
+    /**
+	 * lists all of the components in class
+	 *  
+	 * @throws ConnectException if we're unable to start communicating with
+	 * the server
+	 */	
+    
+    public List getComponents(String className) throws ConnectException, UnexpectedReplyException {
+		ICompilerResult res = sendExpression("getComponents("+ className +")", true);
+		//System.out.println(res.getFirstResult());
+		List list = null;
+		try{
+			list = ComponentParser.parseList(res.getFirstResult());
+		}
+		catch(ModelicaParserException e){
+			throw new UnexpectedReplyException("Unable to parse list: " 
+					+ e.getMessage());
+		}
+		return list;
+	}
+    
+    public boolean classExist(String className) throws ConnectException, UnexpectedReplyException {
+		ICompilerResult res = sendExpression("classExist("+ className +")", true);
+		if (res.getFirstResult().toString().equals("true")){
+				return true;
+		}
+		return false;
+	}
+    
+    public ICompilerResult getErrorString() throws ConnectException, UnexpectedReplyException {
+		ICompilerResult res = sendExpression("getErrorString()", true);
+		return res;
+	}
+    
+    public ICompilerResult loadFile(String classPath) throws ConnectException, UnexpectedReplyException {
+		classPath = classPath.replace("\\", "/");
+		ICompilerResult res = sendExpression("loadFile(\""+ classPath +"\")", true);
+		return res;
+	}
 }
