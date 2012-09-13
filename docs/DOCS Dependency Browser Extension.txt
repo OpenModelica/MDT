@@ -20,7 +20,7 @@ It should contain the following dependencies:
   + Graphical Editing Framework Draw2D Source Feature
   + Graphical Editing Framework Zest Visualization Toolkit
 
-The current version has not been tested under Mac and isn't recommended until there is a stable Mac-version of MDT.
+The current version has not been tested under OS X and isn't recommended until there is a stable OS X-version of MDT.
 
 * FURTHER INFORMATION
 
