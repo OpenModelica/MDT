@@ -1,0 +1,27 @@
+THE MDT-GRAPHICAL DEPENDENCY BROWSER MANUAL
+
+* THESIS REPORT
+
+The thesis report will contain some information on how the implementation of this extension looks like so that
+others may improve on the current version.
+
+* REQUIREMENTS
+
+The most important thing to add in order to build this is the graphical Zest-library. It is based on SWT and Draw2D.
+You can find it by using the Eclipse update manager to install it under a correct updating site.
+The suggested updating site provided by the official homepage of Zest (GEF) is
+https://hudson.eclipse.org/hudson/job/gef-master/lastSuccessfulBuild/artifact/update-site/
+
+In case you don't find it there then you may have to unflag Group items by category to see Eclipse Zest.
+It should contain the following dependencies:
+
+  + Graphical Editing Framework Draw2d
+  + Graphical Editing Framework Draw2d SDK
+  + Graphical Editing Framework Draw2D Source Feature
+  + Graphical Editing Framework Zest Visualization Toolkit
+
+The current version has not been tested under Mac and isn't recommended until there is a stable Mac-version of MDT.
+
+* FURTHER INFORMATION
+
+A user guide will be added in the furture.
