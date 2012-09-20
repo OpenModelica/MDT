@@ -55,7 +55,6 @@ public class GraphView extends ViewPart {
 	private String oldFileName = "";
 	private String newFileName = "";
 	private String objName = "";
-	private int refLine = 0;
 	private String source;
 
 	private ISelectionListener listener = new ISelectionListener() {
@@ -124,7 +123,7 @@ public class GraphView extends ViewPart {
 					e.printStackTrace();
 				}
 				String fileName = selectedString.replace(".mo", "");
-				CrossAnalyzer.initAnalyze(fileName, selectedFile);
+				CrossAnalyzer.initAnalyze(fileName); //selectedFile);
 				try
 				{
 					CrossAnalyzer.analyzeError();
@@ -214,6 +213,7 @@ public class GraphView extends ViewPart {
 				
 				if (e.button == 3) { // right-click
 					if (!graph.getSelection().isEmpty()) {
+						final ArrayList<Integer> test = new ArrayList<Integer>();
 						
 						// TODO: Sometimes we want to go a line even in a code
 						// i.e. inside a package or a class that contains other classes i.e. test1.BC (BC definied inside test1)
@@ -237,12 +237,15 @@ public class GraphView extends ViewPart {
 									for (Iterator<String> it = keys.iterator(); it.hasNext();) {
 										String key =  it.next();
 										Object ia[] = CrossUtil.connections.get(i).lineRefs.get(key).toArray();
-										// TODO: This should be edited to support highlighting of multiple lines in the future
-										// Now only highlights the first occurrence
-							
-										// DEBUG: This is not working with dependencies to packages
-										refLine = (Integer) ia[0];
-										l.add(key);
+										// TODO: Should also be able to highlight multiple types of dependencies
+										//       Is this a possible case?
+										
+										// TODO: DEBUG: This is not working with dependencies to packages
+										
+										for (int index = 0; index < ia.length; index++){
+											test.add(CrossUtil.connections.get(i).lineRefs.get(key).get(index));
+											l.add(key + "<line: " + CrossUtil.connections.get(i).lineRefs.get(key).get(index) + ">");
+										}
 									}
 								}
 							}
@@ -264,7 +267,7 @@ public class GraphView extends ViewPart {
 
 							l.addListener (SWT.DefaultSelection, new Listener () {
 								public void handleEvent (Event e) {
-									openSelectedReference(source, refLine);
+									openSelectedReference(source, test.get(l.getFocusIndex()));
 									
 								}
 							});

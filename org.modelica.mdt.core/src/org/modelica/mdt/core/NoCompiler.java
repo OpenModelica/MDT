@@ -110,7 +110,7 @@ class NoCompiler implements IModelicaCompiler
 		return null;
 	}
 	
-	public boolean classExist(String className)
+	public boolean existClass(String className)
 	{
 		return false;
 	}
@@ -125,8 +125,13 @@ class NoCompiler implements IModelicaCompiler
 		return null;
 	}
 	
-	public ICompilerResult loadFile(String classPath) throws ConnectException, UnexpectedReplyException {
-		
+	public ICompilerResult loadFile(String classPath) throws ConnectException, UnexpectedReplyException 
+	{	
+		return null;
+	}
+	
+	public ICompilerResult getSourceFile(String className) throws ConnectException, UnexpectedReplyException 
+	{	
 		return null;
 	}
 }

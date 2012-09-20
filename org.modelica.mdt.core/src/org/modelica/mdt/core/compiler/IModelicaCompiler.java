@@ -227,21 +227,48 @@ public interface IModelicaCompiler
 			throws ConnectException, UnexpectedReplyException;
 	
 	/**
-	 * Fetches the list of information of given class
+	 * Fetches a boolean about if given class exists
 	 *
 	 * @param className the name of the class where to look for information
-	 * @return the list of the information of class
+	 * @return a boolean about the existence
 	 */
-	public boolean classExist(String className)
+	public boolean existClass(String className)
 			throws ConnectException, UnexpectedReplyException;
 
+	/**
+	 * Fetches a boolean about if given class is a package
+	 *
+	 * @param className the name of the class where to look for information
+	 * @return a boolean about the identity
+	 */
 	public boolean isPackage(String className)
 			throws ConnectException, UnexpectedReplyException;
 	
+	/**
+	 * Fetches the error-information of current run
+	 *
+	 * @param className the name of the class where to look for information
+	 * @return a list consisting the error
+	 */
 	public ICompilerResult getErrorString()
 			throws ConnectException, UnexpectedReplyException;
 	
+	/**
+	 * Loads a given file into the system
+	 *
+	 * @param classPath that is the files path
+	 * @return the list of the information of the loading
+	 */
 	public ICompilerResult loadFile(String classPath)
+			throws ConnectException, UnexpectedReplyException;
+	
+	/**
+	 * Fetches the list of information of given class
+	 *
+	 * @param className the name of the class we want to find source of
+	 * @return the list with the name of the source file
+	 */
+	public ICompilerResult getSourceFile(String className)
 			throws ConnectException, UnexpectedReplyException;
 
 }

@@ -410,10 +410,10 @@ public class CompilerProxy {
 	 * @throws UnexpectedReplyException
 	 */	
 	
-	public synchronized static boolean classExist(String className)
+	public synchronized static boolean existClass(String className)
 			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
 		IModelicaCompiler compiler = getCompiler();
-		boolean exist = compiler.classExist(className);
+		boolean exist = compiler.existClass(className);
 		return exist;
 	}
 	
@@ -435,7 +435,13 @@ public class CompilerProxy {
 			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
 		IModelicaCompiler compiler = getCompiler();
 		ICompilerResult res = compiler.loadFile(classPath);
-		
+		return res;
+	}
+	
+	public synchronized static ICompilerResult getSourceFile(String className)
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		ICompilerResult res = compiler.getSourceFile(className);
 		return res;
 	}
 }

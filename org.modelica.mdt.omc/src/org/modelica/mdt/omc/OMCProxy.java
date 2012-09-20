@@ -1547,9 +1547,9 @@ public class OMCProxy implements IModelicaCompiler
 		return list;
 	}
     
-    public boolean classExist(String className) throws ConnectException, UnexpectedReplyException {
-		ICompilerResult res = sendExpression("classExist("+ className +")", true);
-		if (res.getFirstResult().toString().equals("true")){
+    public boolean existClass(String className) throws ConnectException, UnexpectedReplyException {
+		ICompilerResult res = sendExpression("existClass("+ className +")", true);
+		if (res.getFirstResult().trim().toString().equals("true")){
 				return true;
 		}
 		return false;
@@ -1563,6 +1563,11 @@ public class OMCProxy implements IModelicaCompiler
     public ICompilerResult loadFile(String classPath) throws ConnectException, UnexpectedReplyException {
 		classPath = classPath.replace("\\", "/");
 		ICompilerResult res = sendExpression("loadFile(\""+ classPath +"\")", true);
+		return res;
+	}
+    
+    public ICompilerResult getSourceFile(String className) throws ConnectException, UnexpectedReplyException {
+		ICompilerResult res = sendExpression("getSourceFile(" + className +")", true);
 		return res;
 	}
 }

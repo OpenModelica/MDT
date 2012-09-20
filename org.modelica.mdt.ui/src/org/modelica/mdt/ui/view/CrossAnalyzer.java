@@ -17,31 +17,44 @@ import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.IModelicaCompiler;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
-import org.modelica.mdt.internal.core.ModelicaSourceFile;
 
 public class CrossAnalyzer {
 	static IModelicaCompiler currentCompiler;
-	static ModelicaSourceFile currentFile;
+	//static ModelicaSourceFile currentFile;
 	static int nid = 0;
 	static int cid = 0;
+	private static MyNode coreNode;
 
-	public static void initAnalyze(String className, ModelicaSourceFile file) {
-		currentFile = file;
+	public static void initAnalyze(String fileName) { //, ModelicaSourceFile file) {
+		//currentFile = file;
+		
 		try { 
 			currentCompiler = CompilerProxy.getCompiler();
 			System.out.println("[Analyze Operation] Found the compiler");
 			currentCompiler.getStandardLibrary();
 
+			String className = fileName;
+			
+			// TODO: This is a error we can't get by yet
+			//       We want to look at the class names rather than the file names (Dont mix them up!)
+			//String className = currentCompiler.getClassNames("").elementAt(0).toString();
+
+			//System.out.println("[Analyze Operation] The file " + fileName + " has the class " + className);
 			// Standard: (Useful in thesis report - optimizing development phase) 
 			// recursive = true
 
 			// Optional: (Useful in thesis report or as an optional settings - first development phase)
 			// recursive = false
 
-			// TODO: If this is a package it should be colored Purple
-			MyNode node = new MyNode(Integer.toString(nid), className, SWT.COLOR_GREEN);
-			node.expandable = false;
-			CrossUtil.nodes.add(node);
+			if(currentCompiler.isPackage(className)) {
+				createPackage(className);
+				coreNode = new MyNode(Integer.toString(nid), className, SWT.COLOR_MAGENTA);
+			} else {
+				coreNode = new MyNode(Integer.toString(nid), className, SWT.COLOR_GREEN);
+			}
+		
+			coreNode.expandable = false;
+			CrossUtil.nodes.add(coreNode);
 
 			analyzeClasses(0, className, false);
 
@@ -52,15 +65,18 @@ public class CrossAnalyzer {
 
 	public static void analyzeClasses(int prevID, String className, boolean recursive) throws ConnectException, UnexpectedReplyException, InvocationError {
 		System.out.println("[Analyze Operation] Finding classes of " + className + " (cid/nid: " + cid + "/" + nid + ")");
-		String classPath;
+		//String fileName = currentCompiler.getSourceFile(className).getFirstResult();
+			
+		/*
 		try {
-			classPath = currentCompiler.getClassLocation(className).getPath();
+			String classPath = currentCompiler.getClassLocation(className).getPath();
 		} catch (InvocationError e) {
-			classPath = null;
+			String classPath = null;
 			System.out.println("Couldn't find the path of " + className);
 			return;
 		}
 		currentCompiler.loadFile(classPath);
+		*/
 
 		// Find the underlying classes of a package
 		if(currentCompiler.isPackage(className)) {
@@ -86,6 +102,7 @@ public class CrossAnalyzer {
 			String nam = componentList.elementAt(j).toString();
 			createBond(className, recursive, nam, prevID, SWT.LINE_SOLID, SWT.COLOR_GREEN);
 		}
+		
 
 		// Find function-call-dependencies among algorithms
 		num =  currentCompiler.getAlgorithmItemsCount(className);
@@ -109,7 +126,7 @@ public class CrossAnalyzer {
 	}
 
 	public static void checkExist(String className, String trimRes, boolean recursive, int prevID) throws ConnectException, UnexpectedReplyException, InvocationError{
-		// Find the function-calls from a line of code
+		// Extract the function-calls from a line of code
 		int lastIndex = 0;
 		int count = 0;
 		while (lastIndex != -1) {
@@ -122,16 +139,19 @@ public class CrossAnalyzer {
 
 		while (count > 0){
 			
-			// TODO: This is not working properly
-			
-			//System.out.println("Analyzing code " + trimRes);
+			trimRes = trimRes.replaceAll("\"","");
 			String tempRes = trimRes.substring(0, trimRes.indexOf('('));
-			trimRes = trimRes.substring(tempRes.length());
-			tempRes = tempRes.substring(tempRes.lastIndexOf('"') + 1);
-			tempRes.replaceAll("\\s","");
+			
+			if (tempRes.contains(" ")) 
+				tempRes = trimRes.substring(tempRes.lastIndexOf(" ")+1, tempRes.length());
+			
+			String s = trimRes.substring(0, trimRes.indexOf(')')+1);
+			trimRes = trimRes.substring(s.length());
+			
 			// TODO: Should we make a list of all things that doesn't exist to avoid looking up same things over?
-			//System.out.println("does " + tempRes + " exist? " + currentCompiler.classExist(tempRes));
-			if (tempRes.length() != 0 && currentCompiler.classExist(tempRes))
+			System.out.println("does " + tempRes + " exist? " + currentCompiler.existClass(tempRes));
+			
+			if (tempRes.length() != 0 && currentCompiler.existClass(tempRes))
 				createBond(className, recursive, tempRes, prevID, SWT.LINE_SOLID, SWT.COLOR_GREEN);
 			count -=1;
 		}
@@ -143,15 +163,13 @@ public class CrossAnalyzer {
 		if (fullName.contains(".") && currentCompiler.isPackage(fullName.substring(0, fullName.lastIndexOf(".")))){
 			String packageName = fullName.substring(0, fullName.lastIndexOf("."));
 			createBond(fullName, recursive, packageName, prevID, SWT.LINE_DASH, SWT.COLOR_MAGENTA);
+			
 			//TODO: Add to package-array
 			addToPackage(packageName, fullName);
 		}
 	}
 
 	public static void createBond(String className, boolean rec, String elem, int prev, int style, int color) throws ConnectException, UnexpectedReplyException, InvocationError {
-
-		// TODO: Issue with generating it for a class under package?
-		// Find which line number inside a file this dependency was generated from
 		Path myPath = new Path(CrossAnalyzer.currentCompiler.getClassLocation(className).getPath());
 		ArrayList<Integer> lineNumbers = findLineNumber(myPath.toString(), elem);
 		//System.out.println("[Analyze Operation] found " + elem + " inside " + className + " at lines: " + lineNumbers);
@@ -257,13 +275,14 @@ public class CrossAnalyzer {
 	}
 
 	private static ArrayList<Integer> findLineNumber(String file, String text) throws ConnectException, UnexpectedReplyException {
+		// Finds all line numbers and stores them in a array that is returned, given a file name and a text
+		
 		Scanner fileScanner = null;
 		try
 		{
 			fileScanner = new Scanner(new File(file));
 		} catch (FileNotFoundException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}  
 		int lineID = 0;  
@@ -277,7 +296,8 @@ public class CrossAnalyzer {
 			if(matcher.find()){  
 				lineNumbers.add(lineID);
 			}  	  
-		}  
+		}
+		
 		return lineNumbers;
 	}
 }

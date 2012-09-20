@@ -120,7 +120,7 @@ public class CrossUtil {
 			GraphNode tempGraphNode = new GraphNode(graph, SWT.NONE, nodes.get(index).getName());
 			for(int i = 0; i < packages.size(); i++) {
 				if (packages.size() > 0)
-					System.out.println(packages.get(i).getNodes());
+					//System.out.println(packages.get(i).getNodes());
 					if (packages.get(i).getNodes().contains(nodes.get(index).getName())){
 						tempIndex = packages.get(i).getNodes().indexOf(nodes.get(index).getName());
 						tempGraphNode.setLocation(graphNodes.get(tempIndex).getLocation().x + 30, graphNodes.get(tempIndex).getLocation().y + 30);
