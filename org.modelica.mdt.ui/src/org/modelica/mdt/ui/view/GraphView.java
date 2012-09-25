@@ -105,7 +105,8 @@ public class GraphView extends ViewPart {
 			ModelicaSourceFile selectedFile=(ModelicaSourceFile)obj;
 
 			String selectedString = selectedFile.getElementName();
-			//IFile selectedIFile = selectedFile.getResource();
+			IFile selectedIFile = selectedFile.getResource();
+			IPath selectedPath = selectedIFile.getLocation();
 			newFileName = selectedString;
 			if (!newFileName.equals(oldFileName)){
 				System.out.println("[Graph Operation]  Updating Graph!");
@@ -123,7 +124,7 @@ public class GraphView extends ViewPart {
 					e.printStackTrace();
 				}
 				String fileName = selectedString.replace(".mo", "");
-				CrossAnalyzer.initAnalyze(fileName); //selectedFile);
+				CrossAnalyzer.initAnalyze(fileName, selectedPath);
 				try
 				{
 					CrossAnalyzer.analyzeError();
@@ -264,16 +265,11 @@ public class GraphView extends ViewPart {
 								} 
 							});
 
-
 							l.addListener (SWT.DefaultSelection, new Listener () {
 								public void handleEvent (Event e) {
-									openSelectedReference(source, test.get(l.getFocusIndex()));
-									
+									openSelectedReference(source, test.get(l.getFocusIndex()));									
 								}
 							});
-
-							// then:
-							// open a view for the selected connection and point to the correct line_number
 						}	
 					}
 				}
@@ -282,10 +278,7 @@ public class GraphView extends ViewPart {
 
 
 		// TODO: How do we draw the rectangles (packages) and also place the nodes in a clever and grouped way?
-		// 1. Create something in which the nodes will be created in
-		// 2. Places nodes that belong to the same class in the same rectangle
-		// 3. draw a rectangle according to the nodes smallest x, y - largest x, y
-
+		
 		/*
 		 * graph.translateToAbsolute(graph.getBounds().getLocation())
 		 */
@@ -296,7 +289,8 @@ public class GraphView extends ViewPart {
 				e.gc.setClipping((Region)null);
 				// Draw area for each package
 				for (int i = 0; i < CrossUtil.packages.size(); i++){
-					e.gc.drawRectangle(i*100, i*100, 100, 100);
+					
+					//e.gc.drawRectangle(i*100, i*100, 100, 100);
 				}
 			}
 		});

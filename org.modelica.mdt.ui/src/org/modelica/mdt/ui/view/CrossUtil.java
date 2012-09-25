@@ -16,8 +16,10 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 public class CrossUtil {
 
+	// TODO: We need to separate the arrays into matrices so that they can contain an array for each tree (from coreNode)
 	public static List<MyConnection> connections = new ArrayList<MyConnection>();
 	public static List<MyNode> nodes = new ArrayList<MyNode>();
+	
 	public static List<GraphPackage> packages = new ArrayList<GraphPackage>();
 	public static List<GraphNode> graphNodes;
 	public static List<GraphConnection> graphConnections;
@@ -70,8 +72,8 @@ public class CrossUtil {
 
 		graphConnections = new ArrayList<GraphConnection>();
 		for(int i = 0; i < connections.size(); i++) {
-			int tempSource = Integer.parseInt(connections.get(i).getSource().getId());
-			int tempDestination = Integer.parseInt(connections.get(i).getDestination().getId());
+			int tempSource = connections.get(i).getSource().getId();
+			int tempDestination = connections.get(i).getDestination().getId();
 			int tempStyle = connections.get(i).getStyle();
 			//System.out.println("connection - source id: " + tempSource + " to destination id: " + tempDestination);
 			GraphConnection tempGraphConnection = new GraphConnection(graph,  ZestStyles.CONNECTIONS_DIRECTED, graphNodes.get(tempSource), graphNodes.get(tempDestination));
@@ -100,8 +102,8 @@ public class CrossUtil {
 
 		graphConnections = new ArrayList<GraphConnection>();
 		for(int i = 0; i < connections.size(); i++) {
-			int tempSource = Integer.parseInt(connections.get(i).getSource().getId());
-			int tempDestination = Integer.parseInt(connections.get(i).getDestination().getId());
+			int tempSource = connections.get(i).getSource().getId();
+			int tempDestination = connections.get(i).getDestination().getId();
 			int tempStyle = connections.get(i).getStyle();
 			//System.out.println("connection - source id: " + tempSource + " to destination id: " + tempDestination);
 			GraphConnection tempGraphConnection = new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, graphNodes.get(tempSource), graphNodes.get(tempDestination));
@@ -133,8 +135,8 @@ public class CrossUtil {
 		// Create visuals for the connections (can only be made after nodes are created)
 		graphConnections = new ArrayList<GraphConnection>();
 		for(int i = 0; i < connections.size(); i++) {
-			int tempSource = Integer.parseInt(connections.get(i).getSource().getId());
-			int tempDestination = Integer.parseInt(connections.get(i).getDestination().getId());
+			int tempSource = connections.get(i).getSource().getId();
+			int tempDestination = connections.get(i).getDestination().getId();
 			int tempStyle = connections.get(i).getStyle();
 			//System.out.println("connection - source id: " + tempSource + " to destination id: " + tempDestination);
 			GraphConnection tempGraphConnection = new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, graphNodes.get(tempSource), graphNodes.get(tempDestination));

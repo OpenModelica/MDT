@@ -8,6 +8,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.SWT;
 import org.modelica.mdt.core.CompilerProxy;
@@ -20,63 +21,61 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
 public class CrossAnalyzer {
 	static IModelicaCompiler currentCompiler;
-	//static ModelicaSourceFile currentFile;
 	static int nid = 0;
 	static int cid = 0;
-	private static MyNode coreNode;
 
-	public static void initAnalyze(String fileName) { //, ModelicaSourceFile file) {
-		//currentFile = file;
-		
+	public static void initAnalyze(String fileName, IPath filePath) {
+		String className;
+		MyNode coreNode;
+
 		try { 
 			currentCompiler = CompilerProxy.getCompiler();
 			System.out.println("[Analyze Operation] Found the compiler");
 			currentCompiler.getStandardLibrary();
 
-			String className = fileName;
-			
-			// TODO: This is a error we can't get by yet
-			//       We want to look at the class names rather than the file names (Dont mix them up!)
-			//String className = currentCompiler.getClassNames("").elementAt(0).toString();
+			System.out.println(filePath.toString());
+			currentCompiler.loadFile(filePath.toString());
 
-			//System.out.println("[Analyze Operation] The file " + fileName + " has the class " + className);
-			// Standard: (Useful in thesis report - optimizing development phase) 
-			// recursive = true
+			List classList = currentCompiler.parseF(filePath.toString());
+			int startID = 0;
+			nid = 0;
+			for (int j = 0; j < classList.size(); j++) {
+				className = classList.elementAt(j).toString();
 
-			// Optional: (Useful in thesis report or as an optional settings - first development phase)
-			// recursive = false
+				// Standard: (Useful in thesis report - optimizing development phase) 
+				// recursive = true
 
-			if(currentCompiler.isPackage(className)) {
-				createPackage(className);
-				coreNode = new MyNode(Integer.toString(nid), className, SWT.COLOR_MAGENTA);
-			} else {
-				coreNode = new MyNode(Integer.toString(nid), className, SWT.COLOR_GREEN);
+				// Optional: (Useful in thesis report or as an optional settings - first development phase)
+				// recursive = false
+
+				
+				if (!nodesContains(className)) {
+					System.out.println("[Analyze Operation] Creating node " + className + " with nid:" + nid);
+					if(currentCompiler.isPackage(className)) {
+						createPackage(className);
+						coreNode = new MyNode(nid, className, SWT.COLOR_MAGENTA);
+					} else {
+						coreNode = new MyNode(nid, className, SWT.COLOR_GREEN);
+					}
+
+					coreNode.expandable = false;
+					CrossUtil.nodes.add(coreNode);
+				}
+				
+				// TODO: Test if this is correct when a dependency is found between class A to class B before class B has been analyzed
+				//		 Where class A and class B both comes from the same start-file
+				analyzeClasses(nid, className, false);
+				nid += 1;
 			}
-		
-			coreNode.expandable = false;
-			CrossUtil.nodes.add(coreNode);
 
-			analyzeClasses(0, className, false);
 
 		} catch (Exception e) {
 			currentCompiler = null;
 		}
 	}
 
-	public static void analyzeClasses(int prevID, String className, boolean recursive) throws ConnectException, UnexpectedReplyException, InvocationError {
+	public static int analyzeClasses(int prevID, String className, boolean recursive) throws ConnectException, UnexpectedReplyException, InvocationError {
 		System.out.println("[Analyze Operation] Finding classes of " + className + " (cid/nid: " + cid + "/" + nid + ")");
-		//String fileName = currentCompiler.getSourceFile(className).getFirstResult();
-			
-		/*
-		try {
-			String classPath = currentCompiler.getClassLocation(className).getPath();
-		} catch (InvocationError e) {
-			String classPath = null;
-			System.out.println("Couldn't find the path of " + className);
-			return;
-		}
-		currentCompiler.loadFile(classPath);
-		*/
 
 		// Find the underlying classes of a package
 		if(currentCompiler.isPackage(className)) {
@@ -100,9 +99,10 @@ public class CrossAnalyzer {
 		List componentList = currentCompiler.getComponents(className);
 		for (int j = 0; j < componentList.size(); j++) {
 			String nam = componentList.elementAt(j).toString();
+			System.out.println("We found component " + nam + " !");
 			createBond(className, recursive, nam, prevID, SWT.LINE_SOLID, SWT.COLOR_GREEN);
 		}
-		
+
 
 		// Find function-call-dependencies among algorithms
 		num =  currentCompiler.getAlgorithmItemsCount(className);
@@ -120,12 +120,16 @@ public class CrossAnalyzer {
 			checkExist(className, trimRes, recursive, prevID);
 		}
 
+		// TODO: We need to check the annotations as well
+
 		analyzeParent(prevID, className, recursive);
 
-		return;
+		return prevID;
 	}
 
 	public static void checkExist(String className, String trimRes, boolean recursive, int prevID) throws ConnectException, UnexpectedReplyException, InvocationError{
+		// TODO: This is only checked against equations, may also exist in the variables
+
 		// Extract the function-calls from a line of code
 		int lastIndex = 0;
 		int count = 0;
@@ -138,32 +142,32 @@ public class CrossAnalyzer {
 		}
 
 		while (count > 0){
-			
+
 			trimRes = trimRes.replaceAll("\"","");
 			String tempRes = trimRes.substring(0, trimRes.indexOf('('));
-			
+
 			if (tempRes.contains(" ")) 
 				tempRes = trimRes.substring(tempRes.lastIndexOf(" ")+1, tempRes.length());
-			
+
 			String s = trimRes.substring(0, trimRes.indexOf(')')+1);
 			trimRes = trimRes.substring(s.length());
-			
+
 			// TODO: Should we make a list of all things that doesn't exist to avoid looking up same things over?
 			System.out.println("does " + tempRes + " exist? " + currentCompiler.existClass(tempRes));
-			
+
 			if (tempRes.length() != 0 && currentCompiler.existClass(tempRes))
-				createBond(className, recursive, tempRes, prevID, SWT.LINE_SOLID, SWT.COLOR_GREEN);
+				createBond(className, recursive, tempRes, prevID, SWT.LINE_SOLID, SWT.COLOR_BLUE);
 			count -=1;
 		}
 	}
 
 	public static void analyzeParent(int prevID, String fullName, boolean recursive) throws ConnectException, UnexpectedReplyException, InvocationError{
 		System.out.println("[Analyze Operation] Analyzing if "+ fullName + " comes from a package");
-		
+
 		if (fullName.contains(".") && currentCompiler.isPackage(fullName.substring(0, fullName.lastIndexOf(".")))){
 			String packageName = fullName.substring(0, fullName.lastIndexOf("."));
 			createBond(fullName, recursive, packageName, prevID, SWT.LINE_DASH, SWT.COLOR_MAGENTA);
-			
+
 			//TODO: Add to package-array
 			addToPackage(packageName, fullName);
 		}
@@ -172,27 +176,46 @@ public class CrossAnalyzer {
 	public static void createBond(String className, boolean rec, String elem, int prev, int style, int color) throws ConnectException, UnexpectedReplyException, InvocationError {
 		Path myPath = new Path(CrossAnalyzer.currentCompiler.getClassLocation(className).getPath());
 		ArrayList<Integer> lineNumbers = findLineNumber(myPath.toString(), elem);
-		//System.out.println("[Analyze Operation] found " + elem + " inside " + className + " at lines: " + lineNumbers);
 
+		boolean familiar = true;
+		
 		// recursive
 		if (rec) {
 			if (!nodesContains(elem)) {
 				nid += 1;
-				MyNode node = new MyNode(Integer.toString(nid), elem, color);
+				System.out.println("[Analyze Operation] Creating node " + elem + " with nid:" + nid);
+				MyNode node = new MyNode(nid, elem, color);
 				CrossUtil.nodes.add(node);
+				familiar = false;
 			}
 			analyzeClasses(nid, elem, true);
+			
 
 			// non-recursive
 		} else if (!nodesContains(elem)) {
 			nid += 1;
-			MyNode node = new MyNode(Integer.toString(nid), elem, color);
+			MyNode node = new MyNode(nid, elem, color);
+			System.out.println("[Analyze Operation] Creating node " + elem + " with nid:" + nid);
 			CrossUtil.nodes.add(node);
+			familiar = false;
 		}
+		
+		// Fix for handling analyze of multiple trees of classes
+		int n = nid;
+		
+		if (familiar) {
+			for (int i = 0; i < CrossUtil.nodes.size(); i++)
+				if (CrossUtil.nodes.get(i).getName().endsWith(elem))
+					n = CrossUtil.nodes.get(i).getId();
+		}
+		
+		// < -  Change these so that we use n instead of nid - >
+		System.out.println("[Analyze Operation] Checking if connection exist between " + CrossUtil.nodes.get(prev).getName() + "(" + prev + ") and " +  CrossUtil.nodes.get(n).getName() + "(" + n + ")");
+		if (!connectionsContains(CrossUtil.nodes.get(prev).getName(), CrossUtil.nodes.get(n).getName()) &&
+				!CrossUtil.nodes.get(prev).getName().equals(CrossUtil.nodes.get(n).getName())) {
+			MyConnection connect = new MyConnection(Integer.toString(cid), "test", CrossUtil.nodes.get(prev), CrossUtil.nodes.get(n), style, elem, lineNumbers);
 
-		if (!connectionsContains(CrossUtil.nodes.get(prev).getName(), CrossUtil.nodes.get(nid).getName()) &&
-				!CrossUtil.nodes.get(prev).getName().equals(CrossUtil.nodes.get(nid).getName())) {
-			MyConnection connect = new MyConnection(Integer.toString(cid), "test", CrossUtil.nodes.get(prev), CrossUtil.nodes.get(nid), style, elem, lineNumbers);
+			System.out.println("[Analyze Operation] Creating connection between " +  CrossUtil.nodes.get(prev).getName() + "(" + prev + ") and " + CrossUtil.nodes.get(n).getName() + "(" + n + ")");
 
 			CrossUtil.connections.add(connect);	
 			cid += 1;
@@ -253,7 +276,7 @@ public class CrossAnalyzer {
 	}
 
 	public static void addToPackage(String packageName, String className) {
-		System.out.println("[Analyze Operation] Adding " + className + " to " + packageName);
+		System.out.println("[Analyze Operation] Adding " + className + " to package " + packageName);
 		createPackage(packageName);
 
 		for (int i = 0; i < CrossUtil.packages.size(); i++)
@@ -276,7 +299,7 @@ public class CrossAnalyzer {
 
 	private static ArrayList<Integer> findLineNumber(String file, String text) throws ConnectException, UnexpectedReplyException {
 		// Finds all line numbers and stores them in a array that is returned, given a file name and a text
-		
+
 		Scanner fileScanner = null;
 		try
 		{
@@ -297,7 +320,7 @@ public class CrossAnalyzer {
 				lineNumbers.add(lineID);
 			}  	  
 		}
-		
+
 		return lineNumbers;
 	}
 }

@@ -1570,4 +1570,22 @@ public class OMCProxy implements IModelicaCompiler
 		ICompilerResult res = sendExpression("getSourceFile(" + className +")", true);
 		return res;
 	}
+    
+    public List parseF(String fileName) throws ConnectException, UnexpectedReplyException
+	{
+		ICompilerResult retval = sendExpression("parseFile(\""+ fileName + "\")", true);
+
+		List list = null;
+		try
+		{
+			list = ModelicaParser.parseList(retval.getFirstResult());
+		}
+		catch(ModelicaParserException e)
+		{
+			throw new UnexpectedReplyException("Unable to parse list: " 
+					+ e.getMessage());
+		}
+
+		return list;
+	}
 }

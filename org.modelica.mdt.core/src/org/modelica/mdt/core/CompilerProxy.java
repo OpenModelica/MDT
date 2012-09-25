@@ -444,4 +444,11 @@ public class CompilerProxy {
 		ICompilerResult res = compiler.getSourceFile(className);
 		return res;
 	}
+	
+	public synchronized static List parseF(String fileName)
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		List res = compiler.parseF(fileName);
+		return res;
+	}
 }

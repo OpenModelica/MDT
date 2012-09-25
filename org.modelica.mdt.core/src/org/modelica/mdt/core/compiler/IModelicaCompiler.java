@@ -270,5 +270,14 @@ public interface IModelicaCompiler
 	 */
 	public ICompilerResult getSourceFile(String className)
 			throws ConnectException, UnexpectedReplyException;
+	
+	/**
+	 * Fetches the list of classes of given file
+	 *
+	 * @param fileName the name of the file we want to find classes in
+	 * @return the list with the names of the classes
+	 */
+	public List parseF(String fileName)
+			throws ConnectException, UnexpectedReplyException;
 
 }

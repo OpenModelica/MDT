@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyNode {
-	private final String id;
+	private final int id;
 	private final String name;
 	boolean expandable;
 	private List<MyNode> connections;
 	private int color;
 
-	public MyNode(String id, String name, int color) {
+	public MyNode(int id, String name, int color) {
 		this.id = id;
 		this.name = name;
 		this.expandable = true;
@@ -19,7 +19,7 @@ public class MyNode {
 		this.color = color;
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
