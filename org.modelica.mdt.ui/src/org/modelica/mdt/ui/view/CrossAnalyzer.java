@@ -38,7 +38,7 @@ public class CrossAnalyzer {
 
 			List classList = currentCompiler.parseF(filePath.toString());
 			int startID = 0;
-			nid = 0;
+			nid = -1;
 			for (int j = 0; j < classList.size(); j++) {
 				className = classList.elementAt(j).toString();
 
@@ -50,6 +50,7 @@ public class CrossAnalyzer {
 
 				
 				if (!nodesContains(className)) {
+					nid += 1;
 					System.out.println("[Analyze Operation] Creating node " + className + " with nid:" + nid);
 					if(currentCompiler.isPackage(className)) {
 						createPackage(className);
@@ -65,7 +66,7 @@ public class CrossAnalyzer {
 				// TODO: Test if this is correct when a dependency is found between class A to class B before class B has been analyzed
 				//		 Where class A and class B both comes from the same start-file
 				analyzeClasses(nid, className, false);
-				nid += 1;
+				//nid += 1;
 			}
 
 
@@ -141,17 +142,24 @@ public class CrossAnalyzer {
 			}
 		}
 
+		trimRes = trimRes.replaceAll("\"","");
+		
 		while (count > 0){
-
-			trimRes = trimRes.replaceAll("\"","");
+			
 			String tempRes = trimRes.substring(0, trimRes.indexOf('('));
-
-			if (tempRes.contains(" ")) 
-				tempRes = trimRes.substring(tempRes.lastIndexOf(" ")+1, tempRes.length());
-
-			String s = trimRes.substring(0, trimRes.indexOf(')')+1);
-			trimRes = trimRes.substring(s.length());
-
+			trimRes = trimRes.substring(tempRes.length()+1, trimRes.length());
+			
+			tempRes = tempRes.replaceAll("\\s","");
+			
+			tempRes = tempRes.replaceAll("\\+"," ");
+			tempRes = tempRes.replaceAll("\\-"," ");
+			tempRes = tempRes.replaceAll("\\*"," ");
+			tempRes = tempRes.replaceAll("\\="," ");
+			tempRes = tempRes.replaceAll("\\<"," ");
+			tempRes = tempRes.replaceAll("\\>"," ");
+			
+			tempRes = tempRes.substring(tempRes.lastIndexOf("\\s")+1,tempRes.length());
+				
 			// TODO: Should we make a list of all things that doesn't exist to avoid looking up same things over?
 			System.out.println("does " + tempRes + " exist? " + currentCompiler.existClass(tempRes));
 

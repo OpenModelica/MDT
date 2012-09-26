@@ -56,7 +56,7 @@ public class GraphView extends ViewPart {
 	private String newFileName = "";
 	private String objName = "";
 	private String source;
-
+	
 	private ISelectionListener listener = new ISelectionListener() {
 		public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
 			objName = "";
@@ -95,6 +95,8 @@ public class GraphView extends ViewPart {
 	}
 
 	public void updateGraph() {
+		// TODO: Change this later on
+		
 		System.out.println("[Graph Operation]  Check if update is possible");
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		ISelection selection = window.getSelectionService().getSelection("org.modelica.mdt.ui.view.ModelicaProjectsView");
@@ -137,11 +139,11 @@ public class GraphView extends ViewPart {
 				}
 
 				if (CrossAnalyzer.currentCompiler != null){
-					// Create visuals
+					
 					clearGraph(graph);
 					try
 					{
-						CrossUtil.generateNodes(graph, selectedString);
+						CrossUtil.generateNodes(graph, selectedString, false, 0);
 					} catch (ConnectException e)
 					{
 						// TODO Auto-generated catch block
@@ -176,15 +178,17 @@ public class GraphView extends ViewPart {
 						if (CrossUtil.nodes.get(i).getName().equals(select) && CrossUtil.nodes.get(i).isExpandable()) {
 							try
 							{
+								// This only analyze from the selected node (not everything)
 								System.out.println("[Graph Operation] Expanding " + select);
+								int size = CrossUtil.nodes.size();
 								CrossAnalyzer.analyzeClasses(i, select, false);
 								CrossUtil.nodes.get(i).expandable = false;
 
 								// Workaround for exception in Zest when removing a selected node
 								graph.setSelection(null);
 
-								clearGraph(graph);
-								CrossUtil.generateNodes(graph, select);
+								//clearGraph(graph);
+								CrossUtil.generateNodes(graph, select, true, size);
 
 								// TODO: Set back selection after generation?
 
@@ -277,8 +281,6 @@ public class GraphView extends ViewPart {
 		});
 
 
-		// TODO: How do we draw the rectangles (packages) and also place the nodes in a clever and grouped way?
-		
 		/*
 		 * graph.translateToAbsolute(graph.getBounds().getLocation())
 		 */
@@ -294,7 +296,6 @@ public class GraphView extends ViewPart {
 				}
 			}
 		});
-
 	}
 
 	public void openSelectedReference(String ref, int lineNumber){
@@ -359,19 +360,17 @@ public class GraphView extends ViewPart {
 		if (document != null) {
 			IRegion lineInfo = null;
 			try {
-				// line count internaly starts with 0, and not with 1 like in
-				// GUI
+				// line count internally starts with 0, and not with 1 like in
 				lineInfo = document.getLineInformation(lineNumber - 1);
 			} catch (BadLocationException e) {
-				// ignored because line number may not really exist in document,
-				// we guess this...
+				// ignored because line number may not really exist in document
 			}
 			if (lineInfo != null) {
 				editor.selectAndReveal(lineInfo.getOffset(), lineInfo.getLength());
 			}
 		}
 	}
-
+	
 	public void setFocus() {
 	}
 
