@@ -51,6 +51,7 @@ package org.modelica.mdt.omc;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -179,32 +180,36 @@ public class OMCProxy implements IModelicaCompiler
 	 * Reads in the OMC CORBA object reference from a file on disk.
 	 * @return the object reference as a <code>String</code>
 	 */
-	private  String readObjectFromFile() throws ConnectException
-	{
-		File f = new File(getPathToObject());
+	private  String readObjectFromFile() throws ConnectException {
+		String path = getPathToObject();
+		File f = new File(path);
 		String stringifiedObjectReference = null;
-
+		
 		BufferedReader br = null;
-		FileReader fr = null;
-		try
-		{
-			fr = new FileReader(f);
-		}
-		catch(IOException e)
-		{
-			throw new ConnectException("Unable to read OpenModelica Compiler CORBA object from "+ f.toString());
-		}
 
-		br = new BufferedReader(fr);
-
-		try
-		{
+		try {
+			FileReader fr = new FileReader(f);
+			 br = new BufferedReader(fr);
+			
 			stringifiedObjectReference = br.readLine();
 		}
-		catch(IOException e)
-		{
-			throw new ConnectException("Unable to read OpenModelica Compiler CORBA object from " + getPathToObject());
+		catch (FileNotFoundException e) {
+			throw new ConnectException("The OpenModelica Compiler CORBA object path '" + path + "' does not exist!");
 		}
+		catch (IOException e) {
+			throw new ConnectException("Unable to read OpenModelica Compiler CORBA object from '"+ path + "'");
+		}
+		finally {
+			try {
+				if (br != null) {
+					br.close();
+				}
+			}
+			catch (IOException e) {
+				System.err.println("Very weird error indeed, IOException when closing BufferedReader for file '" + path + "'.");
+			}
+		}
+		
 		return stringifiedObjectReference;
 	}
 
