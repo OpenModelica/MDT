@@ -135,7 +135,7 @@ class NoCompiler implements IModelicaCompiler
 		return null;
 	}
 	
-	public List parseF(String fileName) throws ConnectException, UnexpectedReplyException 
+	public List parseFile(String fileName) throws ConnectException, UnexpectedReplyException 
 	{	
 		return null;
 	}

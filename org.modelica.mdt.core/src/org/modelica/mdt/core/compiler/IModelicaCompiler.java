@@ -277,7 +277,7 @@ public interface IModelicaCompiler
 	 * @param fileName the name of the file we want to find classes in
 	 * @return the list with the names of the classes
 	 */
-	public List parseF(String fileName)
+	public List parseFile(String fileName)
 			throws ConnectException, UnexpectedReplyException;
 
 }

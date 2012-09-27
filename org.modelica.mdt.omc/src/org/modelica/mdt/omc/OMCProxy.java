@@ -1576,7 +1576,7 @@ public class OMCProxy implements IModelicaCompiler
 		return res;
 	}
     
-    public List parseF(String fileName) throws ConnectException, UnexpectedReplyException
+    public List parseFile(String fileName) throws ConnectException, UnexpectedReplyException
 	{
 		ICompilerResult retval = sendExpression("parseFile(\""+ fileName + "\")", true);
 

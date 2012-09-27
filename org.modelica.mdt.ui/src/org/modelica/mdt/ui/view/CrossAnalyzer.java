@@ -36,7 +36,7 @@ public class CrossAnalyzer {
 			System.out.println(filePath.toString());
 			currentCompiler.loadFile(filePath.toString());
 
-			List classList = currentCompiler.parseF(filePath.toString());
+			List classList = currentCompiler.parseFile(filePath.toString());
 			int startID = 0;
 			nid = -1;
 			for (int j = 0; j < classList.size(); j++) {
