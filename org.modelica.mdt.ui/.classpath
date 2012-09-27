@@ -3,5 +3,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.draw2d_3.8.0.201206112118.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.zest.core_1.3.0.201206112118.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.zest.layouts_1.1.0.201206112118.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

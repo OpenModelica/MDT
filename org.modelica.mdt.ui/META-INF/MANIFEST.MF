@@ -36,12 +36,6 @@ Export-Package: org.modelica.mdt.ui;x-friends:="org.modelica.mdt.test,org.modeli
  org.modelica.mdt.ui.util,
  org.modelica.mdt.ui.view,
  org.modelica.mdt.ui.wizards;x-friends:="org.modelica.mdt.test"
-Import-Package: org.eclipse.draw2d,
- org.eclipse.draw2d.geometry,
- org.eclipse.ltk.core.refactoring.participants,
- org.eclipse.ltk.ui.refactoring,
- org.eclipse.zest.core.viewers,
- org.eclipse.zest.core.widgets,
- org.eclipse.zest.layouts,
- org.eclipse.zest.layouts.algorithms
+Import-Package: org.eclipse.ltk.core.refactoring.participants,
+ org.eclipse.ltk.ui.refactoring
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
