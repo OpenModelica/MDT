@@ -54,7 +54,7 @@ public class CrossAnalyzer {
 					System.out.println("[Analyze Operation] Creating node " + className + " with nid:" + nid);
 					if(currentCompiler.isPackage(className)) {
 						createPackage(className);
-						coreNode = new MyNode(nid, className, SWT.COLOR_MAGENTA);
+						coreNode = new MyNode(nid, className, SWT.COLOR_GRAY);
 					} else {
 						coreNode = new MyNode(nid, className, SWT.COLOR_GREEN);
 					}
@@ -85,7 +85,7 @@ public class CrossAnalyzer {
 			for (int j = 0; j < classList.size(); j++) {
 				String nam = classList.elementAt(j).toString();
 				addToPackage(className, nam);
-				createBond(className, recursive, className + "." + nam, prevID, SWT.LINE_DASH, SWT.COLOR_MAGENTA);
+				createBond(className, recursive, className + "." + nam, prevID, SWT.LINE_DASH, SWT.COLOR_GRAY);
 			}
 		}
 
@@ -100,7 +100,7 @@ public class CrossAnalyzer {
 		List componentList = currentCompiler.getComponents(className);
 		for (int j = 0; j < componentList.size(); j++) {
 			String nam = componentList.elementAt(j).toString();
-			System.out.println("We found component " + nam + " !");
+			System.out.println("[Analyze Operation] We found object " + nam + " !");
 			createBond(className, recursive, nam, prevID, SWT.LINE_SOLID, SWT.COLOR_GREEN);
 		}
 
@@ -157,14 +157,17 @@ public class CrossAnalyzer {
 			tempRes = tempRes.replaceAll("\\="," ");
 			tempRes = tempRes.replaceAll("\\<"," ");
 			tempRes = tempRes.replaceAll("\\>"," ");
+			tempRes = tempRes.replaceAll("\\:"," ");
 			
-			tempRes = tempRes.substring(tempRes.lastIndexOf("\\s")+1,tempRes.length());
+			tempRes = tempRes.trim();
+			
+			tempRes = tempRes.substring(tempRes.lastIndexOf(" ")+1,tempRes.length());
 				
 			// TODO: Should we make a list of all things that doesn't exist to avoid looking up same things over?
-			System.out.println("does " + tempRes + " exist? " + currentCompiler.existClass(tempRes));
+			System.out.println("[Analyze Operation] Does " + tempRes + " exist? " + currentCompiler.existClass(tempRes));
 
 			if (tempRes.length() != 0 && currentCompiler.existClass(tempRes))
-				createBond(className, recursive, tempRes, prevID, SWT.LINE_SOLID, SWT.COLOR_BLUE);
+				createBond(className, recursive, tempRes, prevID, SWT.LINE_DOT, SWT.COLOR_GREEN);
 			count -=1;
 		}
 	}
@@ -174,7 +177,7 @@ public class CrossAnalyzer {
 
 		if (fullName.contains(".") && currentCompiler.isPackage(fullName.substring(0, fullName.lastIndexOf(".")))){
 			String packageName = fullName.substring(0, fullName.lastIndexOf("."));
-			createBond(fullName, recursive, packageName, prevID, SWT.LINE_DASH, SWT.COLOR_MAGENTA);
+			createBond(fullName, recursive, packageName, prevID, SWT.LINE_DASH, SWT.COLOR_GRAY);
 
 			//TODO: Add to package-array
 			addToPackage(packageName, fullName);
@@ -219,16 +222,36 @@ public class CrossAnalyzer {
 		
 		// < -  Change these so that we use n instead of nid - >
 		System.out.println("[Analyze Operation] Checking if connection exist between " + CrossUtil.nodes.get(prev).getName() + "(" + prev + ") and " +  CrossUtil.nodes.get(n).getName() + "(" + n + ")");
-		if (!connectionsContains(CrossUtil.nodes.get(prev).getName(), CrossUtil.nodes.get(n).getName()) &&
+		if (connectionsContains(CrossUtil.nodes.get(n).getName(), CrossUtil.nodes.get(prev).getName()) &&
 				!CrossUtil.nodes.get(prev).getName().equals(CrossUtil.nodes.get(n).getName())) {
-			MyConnection connect = new MyConnection(Integer.toString(cid), "test", CrossUtil.nodes.get(prev), CrossUtil.nodes.get(n), style, elem, lineNumbers);
-
+			// Connection exist in opposite direction
 			System.out.println("[Analyze Operation] Creating connection between " +  CrossUtil.nodes.get(prev).getName() + "(" + prev + ") and " + CrossUtil.nodes.get(n).getName() + "(" + n + ")");
 
+			// Bend what is already there
+			// TODO: This has to be regenerated somehow as well in order to be visualized
+			for (int i = 0; i < CrossUtil.connections.size(); i++) {
+				if (CrossUtil.connections.get(i).getSource().getName().equals(CrossUtil.nodes.get(n).getName()) &&
+						CrossUtil.connections.get(i).getDestination().getName().equals(CrossUtil.nodes.get(prev).getName())) 
+					CrossUtil.connections.get(i).setBending();
+			}
+			
+			// Bend the new connection at the same place
+			MyConnection connect = new MyConnection(Integer.toString(cid), "test", CrossUtil.nodes.get(prev), CrossUtil.nodes.get(n), style, elem, lineNumbers);
+			connect.setBending();
 			CrossUtil.connections.add(connect);	
 			cid += 1;
-
 		}
+		else if (!connectionsContains(CrossUtil.nodes.get(prev).getName(), CrossUtil.nodes.get(n).getName()) &&
+				!CrossUtil.nodes.get(prev).getName().equals(CrossUtil.nodes.get(n).getName())) {
+			// Connection doesn't exist in neither direction
+			System.out.println("[Analyze Operation] Creating connection between " +  CrossUtil.nodes.get(prev).getName() + "(" + prev + ") and " + CrossUtil.nodes.get(n).getName() + "(" + n + ")");
+
+			MyConnection connect = new MyConnection(Integer.toString(cid), "test", CrossUtil.nodes.get(prev), CrossUtil.nodes.get(n), style, elem, lineNumbers);
+			CrossUtil.connections.add(connect);	
+			cid += 1;
+		}
+		
+		
 		// DEBUG: Do we need this and is it working?
 		/*
 		else {

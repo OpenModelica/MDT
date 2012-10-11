@@ -13,6 +13,7 @@ public class MyConnection {
 	final MyNode destination;
 	final int style;
 	final Map<String, ArrayList<Integer>> lineRefs = new HashMap<String, ArrayList<Integer>>();
+	boolean bending = false;
 
 	public MyConnection(String id, String label, MyNode source, MyNode destination, int style, String connectionName, ArrayList<Integer> lines) {
 		this.id = id;
@@ -51,5 +52,12 @@ public class MyConnection {
 	public int getStyle() {
 		return style;
 	}
+	
+	public void setBending() {
+		this.bending = true;
+	}
 
+	public boolean isBending() {
+		return this.bending;
+	}
 } 

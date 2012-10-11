@@ -11,6 +11,13 @@ public class MyNode {
 	private List<MyNode> connections;
 	private int color;
 
+	// TODO: Also save info about...
+	// Type: model, package ...      typeOf(className) [What returns if it was a type?]
+	// Name: className               slutet av name-variabel (?)
+	// Description: <Description>    getClassComment(className) (?)
+	// Position: <Path>				 filePath-variabel i initAnalyze
+	// SearchPath: Class1.hej.hej2   name-variabel (?)
+	
 	public MyNode(int id, String name, int color) {
 		this.id = id;
 		this.name = name;
