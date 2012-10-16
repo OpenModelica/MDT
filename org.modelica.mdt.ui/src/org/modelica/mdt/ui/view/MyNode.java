@@ -4,7 +4,7 @@ package org.modelica.mdt.ui.view;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyNode {
+public class MyNode extends MyGraphObject{
 	private final int id;
 	private final String name;
 	boolean expandable;

@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.core.List;
@@ -24,17 +25,33 @@ public class CrossAnalyzer {
 	static int nid = 0;
 	static int cid = 0;
 
-	public static void initAnalyze(String fileName, IPath filePath) {
+	public static void initAnalyze(String fileName, final IPath filePath) {
 		String className;
 		MyNode coreNode;
 
 		try { 
 			currentCompiler = CompilerProxy.getCompiler();
 			System.out.println("[Analyze Operation] Found the compiler");
-			currentCompiler.getStandardLibrary();
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					try
+					{
+						currentCompiler.getStandardLibrary();
 
-			System.out.println(filePath.toString());
-			currentCompiler.loadFile(filePath.toString());
+						System.out.println(filePath.toString());
+						currentCompiler.loadFile(filePath.toString());
+
+					} catch (ConnectException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (UnexpectedReplyException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
 
 			List classList = currentCompiler.parseFile(filePath.toString());
 			int startID = 0;
@@ -48,7 +65,7 @@ public class CrossAnalyzer {
 				// Optional: (Useful in thesis report or as an optional settings - first development phase)
 				// recursive = false
 
-				
+
 				if (!nodesContains(className)) {
 					nid += 1;
 					System.out.println("[Analyze Operation] Creating node " + className + " with nid:" + nid);
@@ -62,7 +79,7 @@ public class CrossAnalyzer {
 					coreNode.expandable = false;
 					CrossUtil.nodes.add(coreNode);
 				}
-				
+
 				// TODO: Test if this is correct when a dependency is found between class A to class B before class B has been analyzed
 				//		 Where class A and class B both comes from the same start-file
 				analyzeClasses(nid, className, false);
@@ -143,14 +160,14 @@ public class CrossAnalyzer {
 		}
 
 		trimRes = trimRes.replaceAll("\"","");
-		
+
 		while (count > 0){
-			
+
 			String tempRes = trimRes.substring(0, trimRes.indexOf('('));
 			trimRes = trimRes.substring(tempRes.length()+1, trimRes.length());
-			
+
 			tempRes = tempRes.replaceAll("\\s","");
-			
+
 			tempRes = tempRes.replaceAll("\\+"," ");
 			tempRes = tempRes.replaceAll("\\-"," ");
 			tempRes = tempRes.replaceAll("\\*"," ");
@@ -158,11 +175,11 @@ public class CrossAnalyzer {
 			tempRes = tempRes.replaceAll("\\<"," ");
 			tempRes = tempRes.replaceAll("\\>"," ");
 			tempRes = tempRes.replaceAll("\\:"," ");
-			
+
 			tempRes = tempRes.trim();
-			
+
 			tempRes = tempRes.substring(tempRes.lastIndexOf(" ")+1,tempRes.length());
-				
+
 			// TODO: Should we make a list of all things that doesn't exist to avoid looking up same things over?
 			System.out.println("[Analyze Operation] Does " + tempRes + " exist? " + currentCompiler.existClass(tempRes));
 
@@ -189,7 +206,7 @@ public class CrossAnalyzer {
 		ArrayList<Integer> lineNumbers = findLineNumber(myPath.toString(), elem);
 
 		boolean familiar = true;
-		
+
 		// recursive
 		if (rec) {
 			if (!nodesContains(elem)) {
@@ -200,7 +217,7 @@ public class CrossAnalyzer {
 				familiar = false;
 			}
 			analyzeClasses(nid, elem, true);
-			
+
 
 			// non-recursive
 		} else if (!nodesContains(elem)) {
@@ -210,16 +227,16 @@ public class CrossAnalyzer {
 			CrossUtil.nodes.add(node);
 			familiar = false;
 		}
-		
+
 		// Fix for handling analyze of multiple trees of classes
 		int n = nid;
-		
+
 		if (familiar) {
 			for (int i = 0; i < CrossUtil.nodes.size(); i++)
 				if (CrossUtil.nodes.get(i).getName().endsWith(elem))
 					n = CrossUtil.nodes.get(i).getId();
 		}
-		
+
 		// < -  Change these so that we use n instead of nid - >
 		System.out.println("[Analyze Operation] Checking if connection exist between " + CrossUtil.nodes.get(prev).getName() + "(" + prev + ") and " +  CrossUtil.nodes.get(n).getName() + "(" + n + ")");
 		if (connectionsContains(CrossUtil.nodes.get(n).getName(), CrossUtil.nodes.get(prev).getName()) &&
@@ -234,7 +251,7 @@ public class CrossAnalyzer {
 						CrossUtil.connections.get(i).getDestination().getName().equals(CrossUtil.nodes.get(prev).getName())) 
 					CrossUtil.connections.get(i).setBending();
 			}
-			
+
 			// Bend the new connection at the same place
 			MyConnection connect = new MyConnection(Integer.toString(cid), "test", CrossUtil.nodes.get(prev), CrossUtil.nodes.get(n), style, elem, lineNumbers);
 			connect.setBending();
@@ -250,8 +267,8 @@ public class CrossAnalyzer {
 			CrossUtil.connections.add(connect);	
 			cid += 1;
 		}
-		
-		
+
+
 		// DEBUG: Do we need this and is it working?
 		/*
 		else {

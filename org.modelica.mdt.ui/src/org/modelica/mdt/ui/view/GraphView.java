@@ -10,9 +10,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -20,16 +19,20 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -40,6 +43,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphNode;
+import org.eclipse.zest.core.widgets.ZestStyles;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -56,7 +60,7 @@ public class GraphView extends ViewPart {
 	private String newFileName = "";
 	private String objName = "";
 	private String source;
-	
+
 	private ISelectionListener listener = new ISelectionListener() {
 		public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
 			objName = "";
@@ -71,12 +75,13 @@ public class GraphView extends ViewPart {
 			if (sourcepart != GraphView.this &&
 					objName.equals("org.modelica.mdt.internal.core.ModelicaSourceFile")) {
 				System.out.println("[Change Selection] Found a Modelica-file!");
+
+				// TODO: This update can be triggered mutiple times
 				updateGraph();
 			}
 			else {
 				System.out.println("[Change Selection] Not a Modelia-file");
 				System.out.println(objName + "  " + sourcepart.getTitle());
-				//clearGraph(graph);
 			}
 		}
 	};
@@ -96,11 +101,15 @@ public class GraphView extends ViewPart {
 
 	public void updateGraph() {
 		// TODO: Change this later on
-		
+
 		System.out.println("[Graph Operation]  Check if update is possible");
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		ISelection selection = window.getSelectionService().getSelection("org.modelica.mdt.ui.view.ModelicaProjectsView");
-
+		ISelection selection = null;
+		try {
+			selection = window.getSelectionService().getSelection("org.modelica.mdt.ui.view.ModelicaProjectsView");
+		} catch (NullPointerException e) {
+			// Nothing was selected
+		}
 		if(selection!=null && !selection.isEmpty()) {
 			IStructuredSelection selectedFileSelection = (IStructuredSelection) selection;
 			Object obj = selectedFileSelection.getFirstElement();
@@ -139,7 +148,7 @@ public class GraphView extends ViewPart {
 				}
 
 				if (CrossAnalyzer.currentCompiler != null){
-					
+
 					clearGraph(graph);
 					try
 					{
@@ -165,138 +174,144 @@ public class GraphView extends ViewPart {
 		permaParent = parent;
 		graph = new Graph(permaParent, SWT.NONE);
 
-		updateGraph();
-		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
-		graph.addMouseListener(new MouseListener(){
-
+		Job job = new Job("My Job") {
 			@Override
-			public void mouseDoubleClick(MouseEvent e)
-			{
-				if (CrossAnalyzer.currentCompiler != null && !graph.getSelection().isEmpty()) {
-					String select = graph.getSelection().get(0).toString().substring(16, graph.getSelection().get(0).toString().length());
-					for (int i = 0; i < CrossUtil.nodes.size(); i++) {
-						if (CrossUtil.nodes.get(i).getName().equals(select) && CrossUtil.nodes.get(i).isExpandable()) {
-							try
-							{
-								// This only analyze from the selected node (not everything)
-								System.out.println("[Graph Operation] Expanding " + select);
-								int size = CrossUtil.nodes.size();
-								CrossAnalyzer.analyzeClasses(i, select, false);
-								CrossUtil.nodes.get(i).expandable = false;
+			protected IStatus run(IProgressMonitor monitor) {
+				updateGraph();
+				getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
 
-								// Workaround for exception in Zest when removing a selected node
-								graph.setSelection(null);
-
-								//clearGraph(graph);
-								CrossUtil.generateNodes(graph, select, true, size);
-
-								// TODO: Set back selection after generation?
-
-							} catch (ConnectException e1)
-							{
-								e1.printStackTrace();
-							} catch (UnexpectedReplyException e1)
-							{
-								e1.printStackTrace();
-							} catch (InvocationError e1)
-							{
-								e1.printStackTrace();
-							}
-						}
-					}
-				}
-			}
-
-			@Override
-			public void mouseDown(MouseEvent e)
-			{
-			}
-
-			@Override
-			public void mouseUp(MouseEvent e)
-			{
 				
-				if (e.button == 3) { // right-click
-					if (!graph.getSelection().isEmpty()) {
-						final ArrayList<Integer> test = new ArrayList<Integer>();
-						
-						// TODO: Sometimes we want to go a line even in a code
-						// i.e. inside a package or a class that contains other classes i.e. test1.BC (BC definied inside test1)
-						Object selectedObject = graph.getSelection().get(0);
+				/*
+				 * graph.translateToAbsolute(graph.getBounds().getLocation())
+				 */
 
-						if (selectedObject instanceof GraphNode) {
+				return Status.OK_STATUS;
+			}
+		};
 
-							openSelectedReference(((GraphNode) selectedObject).getText(), 0);
+		job.schedule(); 
+		
+		
+		// TODO: Put this in a new function med throw exception
+		try{
+			graph.addMouseListener(
+					new MouseListener(){
 
-						} else if (selectedObject instanceof GraphConnection) {							
-							final List l = new List(graph, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
-							l.setBounds (e.x, e.y, 400, 100);
+						@Override
+						public void mouseDoubleClick(MouseEvent e) {
+							if (CrossAnalyzer.currentCompiler != null && !graph.getSelection().isEmpty()) {
+								String select = graph.getSelection().get(0).toString().substring(16, graph.getSelection().get(0).toString().length());
+								for (int i = 0; i < CrossUtil.nodes.size(); i++) {
+									if (CrossUtil.nodes.get(i).getName().equals(select) && CrossUtil.nodes.get(i).isExpandable()) {
+										try
+										{
+											// This only analyze from the selected node (not everything)
+											System.out.println("[Graph Operation] Expanding " + select);
+											int size = CrossUtil.nodes.size();
 
-							for (int i = 0; i < CrossUtil.connections.size(); i++) {
-								if(((GraphConnection) selectedObject).getSource().getText().equals(CrossUtil.connections.get(i).source.getName()) &&
-										((GraphConnection) selectedObject).getDestination().getText().equals(CrossUtil.connections.get(i).destination.getName())){
+											CrossAnalyzer.analyzeClasses(i, select, false);
+											CrossUtil.nodes.get(i).expandable = false;
 
-									source = ((GraphConnection) selectedObject).getSource().getText();
-									
-									Set<String> keys = CrossUtil.connections.get(i).lineRefs.keySet();
-									for (Iterator<String> it = keys.iterator(); it.hasNext();) {
-										String key =  it.next();
-										Object ia[] = CrossUtil.connections.get(i).lineRefs.get(key).toArray();
-										// TODO: Should also be able to highlight multiple types of dependencies
-										//       Is this a possible case?
-										
-										// TODO: DEBUG: This is not working with dependencies to packages
-										
-										for (int index = 0; index < ia.length; index++){
-											test.add(CrossUtil.connections.get(i).lineRefs.get(key).get(index));
-											l.add(key + "<line: " + CrossUtil.connections.get(i).lineRefs.get(key).get(index) + ">");
+											// Workaround for exception in Zest when removing a selected node
+											graph.setSelection(null);
+
+											//clearGraph(graph);
+											CrossUtil.generateNodes(graph, select, true, size);
+
+											// TODO: Set back selection after generation?
+
+										} catch (ConnectException e1)
+										{
+											e1.printStackTrace();
+										} catch (UnexpectedReplyException e1)
+										{
+											e1.printStackTrace();
+										} catch (InvocationError e1)
+										{
+											e1.printStackTrace();
 										}
 									}
 								}
 							}
+						}
 
-							// TODO: Hover-highlighting
+						@Override
+						public void mouseDown(MouseEvent e)
+						{
+						}
 
-							l.addMouseTrackListener(new MouseTrackListener() { 
-								public void mouseHover(MouseEvent e) {
-									// TODO: Is this needed?
-									l.redraw();
-								}    
-								public void mouseExit(MouseEvent e) { 
-									l.dispose();
-								}    
-								public void mouseEnter(MouseEvent e) { 
-								} 
-							});
+						@Override
+						public void mouseUp(MouseEvent e)
+						{
 
-							l.addListener (SWT.DefaultSelection, new Listener () {
-								public void handleEvent (Event e) {
-									openSelectedReference(source, test.get(l.getFocusIndex()));									
+							if (e.button == 3) { // right-click
+								if (!graph.getSelection().isEmpty()) {
+									final ArrayList<Integer> test = new ArrayList<Integer>();
+
+									// TODO: Sometimes we want to go a line even in a code
+									// i.e. inside a package or a class that contains other classes i.e. test1.BC (BC definied inside test1)
+									Object selectedObject = graph.getSelection().get(0);
+
+									if (selectedObject instanceof GraphNode) {
+
+										openSelectedReference(((GraphNode) selectedObject).getText(), 0);
+
+									} else if (selectedObject instanceof GraphConnection) {							
+										final List l = new List(graph, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
+										l.setBounds (e.x, e.y, 400, 100);
+
+										for (int i = 0; i < CrossUtil.connections.size(); i++) {
+											if(((GraphConnection) selectedObject).getSource().getText().equals(CrossUtil.connections.get(i).source.getName()) &&
+													((GraphConnection) selectedObject).getDestination().getText().equals(CrossUtil.connections.get(i).destination.getName())){
+
+												source = ((GraphConnection) selectedObject).getSource().getText();
+
+												Set<String> keys = CrossUtil.connections.get(i).lineRefs.keySet();
+												for (Iterator<String> it = keys.iterator(); it.hasNext();) {
+													String key =  it.next();
+													Object ia[] = CrossUtil.connections.get(i).lineRefs.get(key).toArray();
+													// TODO: Should also be able to highlight multiple types of dependencies
+													//       Is this a possible case?
+
+													// TODO: DEBUG: This is not working with dependencies to packages
+
+													for (int index = 0; index < ia.length; index++){
+														test.add(CrossUtil.connections.get(i).lineRefs.get(key).get(index));
+														l.add(key + "<line: " + CrossUtil.connections.get(i).lineRefs.get(key).get(index) + ">");
+													}
+												}
+											}
+										}
+
+										// TODO: Hover-highlighting
+
+										l.addMouseTrackListener(new MouseTrackListener() { 
+											public void mouseHover(MouseEvent e) {
+												// TODO: Is this needed?
+												l.redraw();
+											}    
+											public void mouseExit(MouseEvent e) { 
+												l.dispose();
+											}    
+											public void mouseEnter(MouseEvent e) { 
+											} 
+										});
+
+										l.addListener (SWT.DefaultSelection, new Listener () {
+											public void handleEvent (Event e) {
+												openSelectedReference(source, test.get(l.getFocusIndex()));									
+											}
+										});
+									}	
 								}
-							});
-						}	
-					}
-				}
+							}
+						}
+					});
+			} catch (SWTException e){
+				System.out.println("View-listener Error: " + e);
 			}
-		});
-
-
-		/*
-		 * graph.translateToAbsolute(graph.getBounds().getLocation())
-		 */
-		
-		graph.redraw();
-		graph.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				e.gc.setClipping((Region)null);
-				// Draw area for each package
-				for (int i = 0; i < CrossUtil.packages.size(); i++){
-					
-					//e.gc.drawRectangle(i*100, i*100, 100, 100);
-				}
-			}
-		});
 	}
+
 
 	public void openSelectedReference(String ref, int lineNumber){
 		System.out.println("[Graph Operation] Open up a new view referenced to the line " + ref);
@@ -370,7 +385,7 @@ public class GraphView extends ViewPart {
 			}
 		}
 	}
-	
+
 	public void setFocus() {
 	}
 
