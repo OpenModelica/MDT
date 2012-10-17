@@ -451,4 +451,18 @@ public class CompilerProxy {
 		List res = compiler.parseFile(fileName);
 		return res;
 	}
+	
+	public synchronized static ICompilerResult getClassRestriction(String className)
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		ICompilerResult res = compiler.getClassRestriction(className);
+		return res;
+	}
+	
+	public synchronized static ICompilerResult getClassComment(String className)
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		ICompilerResult res = compiler.getClassComment(className);
+		return res;
+	}
 }

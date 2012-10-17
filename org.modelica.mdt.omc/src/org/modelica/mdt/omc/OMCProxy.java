@@ -1614,4 +1614,14 @@ public class OMCProxy implements IModelicaCompiler
 
 		return list;
 	}
+    
+    public ICompilerResult getClassRestriction(String className) throws ConnectException, UnexpectedReplyException {
+		ICompilerResult res = sendExpression("getClassRestriction(" + className + ")", true);
+		return res;
+	}
+    
+    public ICompilerResult getClassComment(String className) throws ConnectException, UnexpectedReplyException {
+		ICompilerResult res = sendExpression("getClassComment(" + className + ")", true);
+		return res;
+	}
 }

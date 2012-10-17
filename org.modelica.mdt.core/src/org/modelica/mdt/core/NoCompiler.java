@@ -139,4 +139,14 @@ class NoCompiler implements IModelicaCompiler
 	{	
 		return null;
 	}
+	
+	public ICompilerResult getClassRestriction(String className) throws ConnectException, UnexpectedReplyException 
+	{	
+		return null;
+	}
+	
+	public ICompilerResult getClassComment(String className) throws ConnectException, UnexpectedReplyException 
+	{	
+		return null;
+	}
 }

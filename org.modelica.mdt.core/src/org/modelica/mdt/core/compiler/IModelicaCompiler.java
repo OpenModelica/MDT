@@ -280,4 +280,21 @@ public interface IModelicaCompiler
 	public List parseFile(String fileName)
 			throws ConnectException, UnexpectedReplyException;
 
+	/**
+	 * Fetches the type of given class
+	 *
+	 * @param className the name of the class we want to find type of
+	 * @return the list with the name of the type
+	 */
+	public ICompilerResult getClassRestriction(String className)
+			throws ConnectException, UnexpectedReplyException;
+	
+	/**
+	 * Fetches the comment of given class
+	 *
+	 * @param className the name of the class we want to find comment of
+	 * @return the list with the comment
+	 */
+	public ICompilerResult getClassComment(String className)
+			throws ConnectException, UnexpectedReplyException;
 }

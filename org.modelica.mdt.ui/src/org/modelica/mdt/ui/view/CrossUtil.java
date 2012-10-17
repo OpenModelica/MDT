@@ -99,9 +99,17 @@ public class CrossUtil {
 		
 		for(int index = startInt; index < nodes.size(); index++) {
 			//System.out.println("Create node " + nodes.get(index).getName() + " with int " + index );
-			GraphNode tempGraphNode = new GraphNode(graph, SWT.NONE, nodes.get(index).getName());
+			MyNode tempMyNode = nodes.get(index);
+			GraphNode tempGraphNode = new GraphNode(graph, SWT.NONE, tempMyNode.getName());
 			tempGraphNode.setBackgroundColor(graph.getDisplay().getSystemColor(nodes.get(index).getColor()));
-			tempGraphNode.setTooltip(new Label("Hello"));
+			ArrayList<String> toolTipList = tempMyNode.getToolTipInfo();
+			tempGraphNode.setTooltip(new Label(
+					      "Type: " + toolTipList.get(0) + "\n" +
+					      "Name: " + toolTipList.get(1) + "\n" +
+					"Descripton: " + toolTipList.get(2) + "\n" +
+					"Position: "   + toolTipList.get(3) + "\n" +
+					"Path: "       + toolTipList.get(4) + "\n"
+					));
 			graphNodes.add(tempGraphNode);
 		}
 		

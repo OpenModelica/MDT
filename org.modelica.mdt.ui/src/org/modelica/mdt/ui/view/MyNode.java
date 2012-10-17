@@ -11,13 +11,6 @@ public class MyNode extends MyGraphObject{
 	private List<MyNode> connections;
 	private int color;
 
-	// TODO: Also save info about...
-	// Type: model, package ...      typeOf(className) [What returns if it was a type?]
-	// Name: className               slutet av name-variabel (?)
-	// Description: <Description>    getClassComment(className) (?)
-	// Position: <Path>				 filePath-variabel i initAnalyze
-	// SearchPath: Class1.hej.hej2   name-variabel (?)
-	
 	public MyNode(int id, String name, int color) {
 		this.id = id;
 		this.name = name;
@@ -33,7 +26,7 @@ public class MyNode extends MyGraphObject{
 	public String getName() {
 		return name;
 	}
-	
+
 	public boolean isExpandable() {
 		return expandable;
 	}
@@ -44,5 +37,35 @@ public class MyNode extends MyGraphObject{
 
 	public int getColor() {
 		return color;
+	}
+
+	public void setClassType(String classType) {
+		this.classType = classType;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	public void setClassDescription(String classDescription) {
+		this.classDescription = classDescription;
+	}
+
+	public void setClassPosition(String classPosition) {
+		this.classPosition = classPosition;
+	}
+
+	public void setClassPath(String classPath) {
+		this.classPath = classPath;
+	}
+	
+	public ArrayList<String> getToolTipInfo() {
+		ArrayList<String> toolTipList = new ArrayList<String>();
+		toolTipList.add(this.classType);
+		toolTipList.add(this.className);
+		toolTipList.add(this.classDescription);
+		toolTipList.add(this.classPosition);
+		toolTipList.add(this.classPath);
+		return toolTipList;
 	}
 } 

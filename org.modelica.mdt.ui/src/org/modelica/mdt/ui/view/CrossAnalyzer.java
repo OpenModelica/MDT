@@ -75,7 +75,8 @@ public class CrossAnalyzer {
 					} else {
 						coreNode = new MyNode(nid, className, SWT.COLOR_GREEN);
 					}
-
+					setToolTipInfo(coreNode, className, filePath.toString());
+					
 					coreNode.expandable = false;
 					CrossUtil.nodes.add(coreNode);
 				}
@@ -94,7 +95,7 @@ public class CrossAnalyzer {
 
 	public static int analyzeClasses(int prevID, String className, boolean recursive) throws ConnectException, UnexpectedReplyException, InvocationError {
 		System.out.println("[Analyze Operation] Finding classes of " + className + " (cid/nid: " + cid + "/" + nid + ")");
-
+		
 		// Find the underlying classes of a package
 		if(currentCompiler.isPackage(className)) {
 			createPackage(className);
@@ -145,8 +146,25 @@ public class CrossAnalyzer {
 		return prevID;
 	}
 
-	public static void checkExist(String className, String trimRes, boolean recursive, int prevID) throws ConnectException, UnexpectedReplyException, InvocationError{
-		// TODO: This is only checked against equations, may also exist in the variables
+	private static void setToolTipInfo(MyNode node, String className, String classPath) throws ConnectException, UnexpectedReplyException {
+		currentCompiler.loadFile(classPath);
+		String classType = currentCompiler.getClassRestriction(className).getFirstResult().replace("\"", "");
+		classType = classType.trim();
+		String classComment = currentCompiler.getClassComment(className).getFirstResult().replace("\"", "");
+		classComment = classComment.trim();
+		node.setClassName(className);
+		if (className.contains(".")){
+			node.setClassName(className.substring(className.lastIndexOf(".")+1, className.length()));
+		}
+		node.setClassType(classType.substring(0, 1).toUpperCase() + classType.substring(1, classType.length()));
+		node.setClassDescription(classComment);
+		node.setClassPosition(className);
+		node.setClassPath(classPath);
+		
+	}
+	
+	private static void checkExist(String className, String trimRes, boolean recursive, int prevID) throws ConnectException, UnexpectedReplyException, InvocationError{
+		// TODO: This is only checked against equations, may also exist in the variables (?)
 
 		// Extract the function-calls from a line of code
 		int lastIndex = 0;
@@ -215,6 +233,7 @@ public class CrossAnalyzer {
 				MyNode node = new MyNode(nid, elem, color);
 				CrossUtil.nodes.add(node);
 				familiar = false;
+				setToolTipInfo(node, elem, myPath.toString());
 			}
 			analyzeClasses(nid, elem, true);
 
@@ -226,6 +245,7 @@ public class CrossAnalyzer {
 			System.out.println("[Analyze Operation] Creating node " + elem + " with nid:" + nid);
 			CrossUtil.nodes.add(node);
 			familiar = false;
+			setToolTipInfo(node, elem, myPath.toString());
 		}
 
 		// Fix for handling analyze of multiple trees of classes
@@ -280,7 +300,6 @@ public class CrossAnalyzer {
 			}
 		}
 		 */
-
 	}
 
 	public static boolean nodesContains(String comparingString) {
