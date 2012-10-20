@@ -87,7 +87,7 @@ public class ModelicaParser
 		/* Remove { and } */
 		str = str.substring(1, str.length() - 1);
 		
-		str.trim();
+		str = str.trim();
 		
 		if (str.startsWith("rec("))
 		{
