@@ -48,7 +48,7 @@ import java.util.LinkedList;
  * A modelica list representation. Modelica lists can be nested. A modelica
  * list can contain both an elements and other lists. Just think LISP. (()(())) 
  * 
- * This is basicaly a wrapper around a standard linked list.
+ * This is basically a wrapper around a standard linked list.
  */
 public class List extends ListElement implements Iterable<ListElement>
 {
