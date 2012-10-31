@@ -221,7 +221,7 @@ public class GraphView extends ViewPart {
 
 												
 												//clearGraph(graph);
-												CrossUtil.generateExpanding(graph);
+												CrossUtil.generateExpanding(graph, CrossUtil.nodes.get(i).getName());
 
 												// TODO: Set back selection after generation?
 

@@ -139,17 +139,28 @@ public class CrossUtil {
 		//syncWithUi(graph, expand);
 	}
 
-	static void generateExpanding(Graph graph) throws ConnectException, UnexpectedReplyException{
+	static void generateExpanding(Graph graph, String... selectedNode) throws ConnectException, UnexpectedReplyException{
 		System.out.println("[Graph Generation] Generating graph from expanding node");
 		System.out.println("[Graph Generation] Nodes to be generated = " + (nodes.size()-graphNodes.size()));
 
+		if ((nodes.size()-graphNodes.size()) == 0 && selectedNode != null){
+			System.out.println("[Graph Generation] We got to the end of a branch for " + selectedNode[0]);
+			for(int index = 0; index < graphNodes.size(); index++) {
+				if(graphNodes.get(index).getText().equals(selectedNode[0])){
+					graphNodes.get(index).setBorderWidth(3);
+					return;
+				}
+			}
+		}
+			
 		for(int index = graphNodes.size(); index < nodes.size(); index++) {
-			//System.out.println("Create node " + nodes.get(index).getName() + " with int " + index );
+			System.out.println("Create node " + nodes.get(index).getName() + " with int " + index );
 
 			MyNode tempMyNode = nodes.get(index);
 			GraphNode tempGraphNode = new GraphNode(graph, SWT.NONE, tempMyNode.getName());
 			tempGraphNode.setBackgroundColor(graph.getDisplay().getSystemColor(nodes.get(index).getColor()));
 			tempGraphNode.setBorderColor(org.eclipse.draw2d.ColorConstants.black);
+			System.out.println("Is this node expandable? " + tempMyNode.isExpandable());
 			if (!tempMyNode.isExpandable())
 				tempGraphNode.setBorderWidth(3);
 			ArrayList<String> toolTipList = tempMyNode.getToolTipInfo();
@@ -190,6 +201,7 @@ public class CrossUtil {
 			graphConnections.add(tempGraphConnection);
 		}  
 
+		// TODO: This requires a new expanded layout-algorithm which only change the location of new entities
 		graph.setLayoutAlgorithm(new RadialLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
 		graph.setNodeStyle(ZestStyles.NODES_NO_ANIMATION);
 	}

@@ -106,7 +106,7 @@ public class CrossAnalyzer {
 	public static int analyzeClasses(int prevID, String className, boolean recursive) throws ConnectException, UnexpectedReplyException, InvocationError {
 		System.out.println("[Analyze Operation] Finding classes of " + className + " (cid/nid: " + cid + "/" + nid + ")");
 
-		System.out.println("Now the number of ungenerated connections are " + CrossUtil.connections.size());
+		//System.out.println("Now the number of ungenerated connections are " + CrossUtil.connections.size());
 		
 		// Find the underlying classes of a package
 		if(currentCompiler.isPackage(className)) {
@@ -151,8 +151,6 @@ public class CrossAnalyzer {
 			checkExist(className, trimRes, recursive, prevID);
 		}
 
-		// TODO: We need to check the annotations as well
-
 		analyzeParent(prevID, className, recursive);
 
 		return prevID;
@@ -178,8 +176,6 @@ public class CrossAnalyzer {
 	}
 
 	private static void checkExist(String className, String trimRes, boolean recursive, int prevID) throws ConnectException, UnexpectedReplyException, InvocationError{
-		// TODO: This is only checked against equations, may also exist in the variables (?)
-
 		// Extract the function-calls from a line of code
 		int lastIndex = 0;
 		int count = 0;
@@ -235,9 +231,12 @@ public class CrossAnalyzer {
 
 	public static void createBond(String className, boolean rec, String elem, int prev, int style, int color) throws ConnectException, UnexpectedReplyException, InvocationError {
 
-		// TODO: Add here a condition to check if something is a Keyword (then it shouldn't create a bond)
-		if (elem.equals("Real"))
+		// TODO: OpenModelica is missing a good way of checking for a Keyword
+		if (elem.equals("Real") || elem.equals("assert")){
+			System.out.println("[Analyze Operation] " + elem + " is a Keyword and should not be generated or analyzed");
 			return;
+		}
+		
 
 		Path myPath = new Path(CrossAnalyzer.currentCompiler.getClassLocation(className).getPath());
 		ArrayList<Integer> lineNumbers = findLineNumber(myPath.toString(), elem);
@@ -387,7 +386,8 @@ public class CrossAnalyzer {
 		}  
 		int lineID = 0;  
 		ArrayList<Integer> lineNumbers = new ArrayList<Integer>();  
-		Pattern pattern =  Pattern.compile(text);
+		// TODO: Is this covering all cases of occurrences?
+		Pattern pattern =  Pattern.compile("\\b" + text);
 		Matcher matcher = null;  
 		while(fileScanner.hasNextLine()){  
 			String line = fileScanner.nextLine();  
