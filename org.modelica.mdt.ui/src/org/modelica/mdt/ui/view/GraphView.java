@@ -152,7 +152,7 @@ public class GraphView extends ViewPart {
 					clearGraph(graph);
 					try
 					{
-						CrossUtil.generateNodes(graph, selectedString, false, 0);
+						CrossUtil.generateNodes(graph, selectedString);
 					} catch (ConnectException e)
 					{
 						// TODO Auto-generated catch block
@@ -180,7 +180,7 @@ public class GraphView extends ViewPart {
 				updateGraph();
 				getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
 
-				
+
 				/*
 				 * graph.translateToAbsolute(graph.getBounds().getLocation())
 				 */
@@ -190,8 +190,8 @@ public class GraphView extends ViewPart {
 		};
 
 		job.schedule(); 
-		
-		
+
+
 		// TODO: Put this in a new function med throw exception
 		try{
 			graph.addMouseListener(
@@ -199,38 +199,66 @@ public class GraphView extends ViewPart {
 
 						@Override
 						public void mouseDoubleClick(MouseEvent e) {
+							System.out.println("------------ NEW OPERATION ----------");
 							if (CrossAnalyzer.currentCompiler != null && !graph.getSelection().isEmpty()) {
 								String select = graph.getSelection().get(0).toString().substring(16, graph.getSelection().get(0).toString().length());
 								for (int i = 0; i < CrossUtil.nodes.size(); i++) {
-									if (CrossUtil.nodes.get(i).getName().equals(select) && CrossUtil.nodes.get(i).isExpandable()) {
-										try
-										{
-											// This only analyze from the selected node (not everything)
-											System.out.println("[Graph Operation] Expanding " + select);
-											int size = CrossUtil.nodes.size();
+									if (CrossUtil.nodes.get(i).getName().equals(select)) {
+										// Workaround for exception in Zest when removing a selected node
+										graph.setSelection(null);
 
-											CrossAnalyzer.analyzeClasses(i, select, false);
-											CrossUtil.nodes.get(i).expandable = false;
+										
+										if (CrossUtil.nodes.get(i).isExpandable()) {
+											// Expand node's dependencies
+											try
+											{
+												// This only analyze from the selected node (not everything)
+												System.out.println("[Graph Operation] Expanding " + select);
+												//int size = CrossUtil.nodes.size();
 
-											// Workaround for exception in Zest when removing a selected node
-											graph.setSelection(null);
+												CrossAnalyzer.analyzeClasses(i, select, false);
+												CrossUtil.nodes.get(i).expandable = false;
 
-											//clearGraph(graph);
-											CrossUtil.generateNodes(graph, select, true, size);
+												
+												//clearGraph(graph);
+												CrossUtil.generateExpanding(graph);
 
-											// TODO: Set back selection after generation?
+												// TODO: Set back selection after generation?
 
-										} catch (ConnectException e1)
-										{
-											e1.printStackTrace();
-										} catch (UnexpectedReplyException e1)
-										{
-											e1.printStackTrace();
-										} catch (InvocationError e1)
-										{
-											e1.printStackTrace();
+											} catch (ConnectException e1)
+											{
+												e1.printStackTrace();
+											} catch (UnexpectedReplyException e1)
+											{
+												e1.printStackTrace();
+											} catch (InvocationError e1)
+											{
+												e1.printStackTrace();
+											}
+										} else {
+											// Shrink node's dependencies
+											
+											System.out.println("[Graph Operation] Shrinking " + select);
+											
+											CrossUtil.nodes.get(i).expandable = true;
+
+											ArrayList<Integer> destructedConnections = CrossAnalyzer.destructClasses(i, select);
+											
+											try
+											{
+												CrossUtil.removeDependencies(graph, destructedConnections, i);
+											} catch (ConnectException e1)
+											{
+												// TODO Auto-generated catch block
+												e1.printStackTrace();
+											} catch (UnexpectedReplyException e1)
+											{
+												// TODO Auto-generated catch block
+												e1.printStackTrace();
+											}
+
 										}
-									}
+									} 
 								}
 							}
 						}
@@ -245,6 +273,7 @@ public class GraphView extends ViewPart {
 						{
 
 							if (e.button == 3) { // right-click
+								System.out.println("------------ NEW OPERATION ----------");
 								if (!graph.getSelection().isEmpty()) {
 									final ArrayList<Integer> test = new ArrayList<Integer>();
 
@@ -307,13 +336,14 @@ public class GraphView extends ViewPart {
 							}
 						}
 					});
-			} catch (SWTException e){
-				System.out.println("View-listener Error: " + e);
-			}
+		} catch (SWTException e){
+			System.out.println("View-listener Error: " + e);
+		}
 	}
 
 
 	public void openSelectedReference(String ref, int lineNumber){
+		System.out.println("------------ NEW OPERATION ----------");
 		System.out.println("[Graph Operation] Open up a new view referenced to the line " + ref);
 
 		// TODO: Find a better way of locating files outside workspace

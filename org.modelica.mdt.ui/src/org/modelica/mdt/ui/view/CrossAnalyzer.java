@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Display;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.core.List;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.IModelicaCompiler;
 import org.modelica.mdt.core.compiler.InvocationError;
@@ -30,12 +31,13 @@ public class CrossAnalyzer {
 		MyNode coreNode;
 
 		try { 
-			currentCompiler = CompilerProxy.getCompiler();
-			System.out.println("[Analyze Operation] Found the compiler");
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					try
 					{
+						currentCompiler = CompilerProxy.getCompiler();
+						System.out.println("[Analyze Operation] Found the compiler");
+
 						currentCompiler.getStandardLibrary();
 
 						System.out.println(filePath.toString());
@@ -43,11 +45,18 @@ public class CrossAnalyzer {
 
 					} catch (ConnectException e)
 					{
-						// TODO Auto-generated catch block
+						System.out.println("[ERROR]    Not possible to connect to compiler");
 						e.printStackTrace();
 					} catch (UnexpectedReplyException e)
 					{
-						// TODO Auto-generated catch block
+						System.out.println("[ERROR]    Unexpected reply from compiler");
+						e.printStackTrace();
+					} catch (NullPointerException e) {
+						System.out.println("[ERROR]    Loading something related to the compiler gave null");
+						e.printStackTrace();
+					} catch (CompilerInstantiationException e)
+					{
+						System.out.println("[ERROR]    Not possible to load standard library from compiler");
 						e.printStackTrace();
 					}
 				}
@@ -76,10 +85,11 @@ public class CrossAnalyzer {
 						coreNode = new MyNode(nid, className, SWT.COLOR_GREEN);
 					}
 					setToolTipInfo(coreNode, className, filePath.toString());
-					
+
 					coreNode.expandable = false;
 					CrossUtil.nodes.add(coreNode);
 				}
+
 
 				// TODO: Test if this is correct when a dependency is found between class A to class B before class B has been analyzed
 				//		 Where class A and class B both comes from the same start-file
@@ -95,6 +105,8 @@ public class CrossAnalyzer {
 
 	public static int analyzeClasses(int prevID, String className, boolean recursive) throws ConnectException, UnexpectedReplyException, InvocationError {
 		System.out.println("[Analyze Operation] Finding classes of " + className + " (cid/nid: " + cid + "/" + nid + ")");
+
+		System.out.println("Now the number of ungenerated connections are " + CrossUtil.connections.size());
 		
 		// Find the underlying classes of a package
 		if(currentCompiler.isPackage(className)) {
@@ -153,16 +165,18 @@ public class CrossAnalyzer {
 		String classComment = currentCompiler.getClassComment(className).getFirstResult().replace("\"", "");
 		classComment = classComment.trim();
 		node.setClassName(className);
+
 		if (className.contains(".")){
 			node.setClassName(className.substring(className.lastIndexOf(".")+1, className.length()));
 		}
-		node.setClassType(classType.substring(0, 1).toUpperCase() + classType.substring(1, classType.length()));
+		if (!classType.isEmpty()) 
+			node.setClassType(classType.substring(0, 1).toUpperCase() + classType.substring(1, classType.length()));
 		node.setClassDescription(classComment);
 		node.setClassPosition(className);
 		node.setClassPath(classPath);
-		
+
 	}
-	
+
 	private static void checkExist(String className, String trimRes, boolean recursive, int prevID) throws ConnectException, UnexpectedReplyException, InvocationError{
 		// TODO: This is only checked against equations, may also exist in the variables (?)
 
@@ -220,6 +234,11 @@ public class CrossAnalyzer {
 	}
 
 	public static void createBond(String className, boolean rec, String elem, int prev, int style, int color) throws ConnectException, UnexpectedReplyException, InvocationError {
+
+		// TODO: Add here a condition to check if something is a Keyword (then it shouldn't create a bond)
+		if (elem.equals("Real"))
+			return;
+
 		Path myPath = new Path(CrossAnalyzer.currentCompiler.getClassLocation(className).getPath());
 		ArrayList<Integer> lineNumbers = findLineNumber(myPath.toString(), elem);
 
@@ -257,8 +276,8 @@ public class CrossAnalyzer {
 					n = CrossUtil.nodes.get(i).getId();
 		}
 
-		// < -  Change these so that we use n instead of nid - >
-		System.out.println("[Analyze Operation] Checking if connection exist between " + CrossUtil.nodes.get(prev).getName() + "(" + prev + ") and " +  CrossUtil.nodes.get(n).getName() + "(" + n + ")");
+		System.out.print("[Analyze Operation] Checking if connection exist between " + CrossUtil.nodes.get(prev).getName() + "(" + prev + ")");
+		System.out.println(" and " +  CrossUtil.nodes.get(n).getName() + "(" + n + ")");
 		if (connectionsContains(CrossUtil.nodes.get(n).getName(), CrossUtil.nodes.get(prev).getName()) &&
 				!CrossUtil.nodes.get(prev).getName().equals(CrossUtil.nodes.get(n).getName())) {
 			// Connection exist in opposite direction
@@ -277,6 +296,9 @@ public class CrossAnalyzer {
 			connect.setBending();
 			CrossUtil.connections.add(connect);	
 			cid += 1;
+			System.out.println("Now the number of ungenerated connections are " + CrossUtil.connections.size());
+			System.out.println("And the size of generated connections are " + CrossUtil.graphConnections.size());
+			
 		}
 		else if (!connectionsContains(CrossUtil.nodes.get(prev).getName(), CrossUtil.nodes.get(n).getName()) &&
 				!CrossUtil.nodes.get(prev).getName().equals(CrossUtil.nodes.get(n).getName())) {
@@ -287,19 +309,6 @@ public class CrossAnalyzer {
 			CrossUtil.connections.add(connect);	
 			cid += 1;
 		}
-
-
-		// DEBUG: Do we need this and is it working?
-		/*
-		else {
-			for (int i = 0; i < CrossUtil.connections.size(); i++) {
-				if (CrossUtil.connections.get(i).getSource().getName().equals(CrossUtil.nodes.get(prev).getName()) &&
-						CrossUtil.connections.get(i).getDestination().getName().equals(CrossUtil.nodes.get(nid).getName())) 
-
-					CrossUtil.connections.get(i).addLines(elem, lineNumbers);
-			}
-		}
-		 */
 	}
 
 	public static boolean nodesContains(String comparingString) {
@@ -343,6 +352,7 @@ public class CrossAnalyzer {
 	}
 
 	public static void addToPackage(String packageName, String className) {
+
 		System.out.println("[Analyze Operation] Adding " + className + " to package " + packageName);
 		createPackage(packageName);
 
@@ -389,5 +399,39 @@ public class CrossAnalyzer {
 		}
 
 		return lineNumbers;
+	}
+
+	public static ArrayList<Integer> destructClasses(int sourceID, String className) {
+		ArrayList<Integer> destroyedConnections = new ArrayList<Integer>();
+
+		for(int i = 0; i < CrossUtil.connections.size(); i++) {
+			//System.out.println("Checking a link from " + CrossUtil.connections.get(i).getSource().getName() + " to " + CrossUtil.connections.get(i).getDestination().getName());
+			if(CrossUtil.connections.get(i).getSource().getName().equals(className)) {
+				System.out.println("[Analyze Operation] Destroying connection from " + CrossUtil.connections.get(i).getSource().getName() + " to " + CrossUtil.connections.get(i).getDestination().getName());
+				destroyedConnections.add(i);
+			}
+		}
+
+		for(int i = destroyedConnections.size()-1; i >= 0; i--) {
+			if (CrossUtil.connections.get(destroyedConnections.get(i)).getDestination().isExpandable())
+			{ 
+				// We can possibly also remove the node pointed at
+				CrossUtil.nodes.remove(CrossUtil.connections.get(destroyedConnections.get(i)).getDestination().getId());
+				
+				// Update all the old nodes with a id larger than the the destroyed one that they have to be reduced
+				for(int j = CrossUtil.connections.get(destroyedConnections.get(i)).getDestination().getId(); j < CrossUtil.nodes.size(); j++)
+					CrossUtil.nodes.get(j).setId(CrossUtil.nodes.get(j).getId()-1);
+				
+				nid -= 1;
+			} 
+
+			int resulting = destroyedConnections.get(i);
+			CrossUtil.connections.remove(resulting);
+			cid -= 1;
+
+		}
+		
+		//System.out.println("New size of <connections> after destruction are " + CrossUtil.connections.size());
+		return destroyedConnections;
 	}
 }

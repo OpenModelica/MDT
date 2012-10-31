@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyNode extends MyGraphObject{
-	private final int id;
+	private int id;
 	private final String name;
 	boolean expandable;
 	private List<MyNode> connections;
@@ -67,5 +67,9 @@ public class MyNode extends MyGraphObject{
 		toolTipList.add(this.classPosition);
 		toolTipList.add(this.classPath);
 		return toolTipList;
+	}
+	
+	public void setId(int newID){
+		this.id = newID;
 	}
 } 

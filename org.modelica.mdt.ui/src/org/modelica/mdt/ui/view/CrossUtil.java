@@ -1,6 +1,7 @@
 
 package org.modelica.mdt.ui.view;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -37,16 +38,13 @@ public class CrossUtil {
 	public static List<GraphNode> graphNodes;
 	public static List<GraphConnection> graphConnections;
 
-	private static int startInt;
-
 	// TODO: Create a graphContainer for each package, where each package has nodes connected to outside nodes (THIS IS POSSIBLE IN ZEST!)
 	// http://git.eclipse.org/c/gef/org.eclipse.zest.git/tree/org.eclipse.zest.examples/src/org/eclipse/zest/examples/swt/NestedGraphSnippet.java	
 	// (Internal sorting withing graphContainer is also possible)
 
-	public static void generateNodes(final Graph graph, final String fileName, final boolean expand, int startingInt) throws ConnectException, UnexpectedReplyException{
+	public static void generateNodes(final Graph graph, final String fileName) throws ConnectException, UnexpectedReplyException{
 		System.out.println("[Graph Generation] Choosing sorting method");
-		startInt = startingInt;
-
+		
 		// TODO: This should be possible to be set by user
 		int sorting = 1;
 
@@ -58,7 +56,7 @@ public class CrossUtil {
 				public void run() {
 					try
 					{
-						generateNodesOriginal(graph, fileName, expand);
+						generateNodesOriginal(graph, fileName);
 					} catch (ConnectException e)
 					{
 						// TODO Auto-generated catch block
@@ -88,41 +86,43 @@ public class CrossUtil {
 	// TODO: Some of these functions can be merged and use smaller help-functions 
 	//       instead while keeping the loop among all of them
 
-	private static void generateNodesOriginal(Graph graph, String fileName, boolean expand) throws ConnectException, UnexpectedReplyException{
+	private static void generateNodesOriginal(Graph graph, String fileName) throws ConnectException, UnexpectedReplyException{
 		System.out.println("[Graph Generation] Generating graph according to Original");
 
 		// Create visuals for the nodes
-		if (!expand) {
-			graphNodes = new ArrayList<GraphNode>();
-			graphConnections = new ArrayList<GraphConnection>();
-		}
-		
-		for(int index = startInt; index < nodes.size(); index++) {
+
+		graphNodes = new ArrayList<GraphNode>();
+		graphConnections = new ArrayList<GraphConnection>();
+
+		System.out.println("[Graph Generation] Nodes to be generated = " + nodes.size());
+
+		for(int index = 0; index < nodes.size(); index++) {
 			//System.out.println("Create node " + nodes.get(index).getName() + " with int " + index );
 			MyNode tempMyNode = nodes.get(index);
 			GraphNode tempGraphNode = new GraphNode(graph, SWT.NONE, tempMyNode.getName());
 			tempGraphNode.setBackgroundColor(graph.getDisplay().getSystemColor(nodes.get(index).getColor()));
+			tempGraphNode.setBorderColor(org.eclipse.draw2d.ColorConstants.black);
+			if (!tempMyNode.isExpandable())
+				tempGraphNode.setBorderWidth(3);
 			ArrayList<String> toolTipList = tempMyNode.getToolTipInfo();
 			tempGraphNode.setTooltip(new Label(
-					      "Type: " + toolTipList.get(0) + "\n" +
-					      "Name: " + toolTipList.get(1) + "\n" +
-					"Descripton: " + toolTipList.get(2) + "\n" +
-					"Position: "   + toolTipList.get(3) + "\n" +
-					"Path: "       + toolTipList.get(4) + "\n"
+					"Type: " + toolTipList.get(0) + "\n" +
+							"Name: " + toolTipList.get(1) + "\n" +
+							"Descripton: " + toolTipList.get(2) + "\n" +
+							"Position: "   + toolTipList.get(3) + "\n" +
+							"Path: "       + toolTipList.get(4) + "\n"
 					));
 			graphNodes.add(tempGraphNode);
 		}
-		
+
 		// Create visuals for the connections (can only be made after nodes are created)
-		if (expand)
-			startInt -= 1;
-		for(int i = startInt; i < connections.size(); i++) {
+
+		for(int i = 0; i < connections.size(); i++) {
 			int tempSource = connections.get(i).getSource().getId();
 			int tempDestination = connections.get(i).getDestination().getId();
 			int tempStyle = connections.get(i).getStyle();
-			//System.out.println("Created a GRAPH connector between " + tempSource + " and " + tempDestination);
 			GraphConnection tempGraphConnection = new GraphConnection(graph,  ZestStyles.CONNECTIONS_DIRECTED, graphNodes.get(tempSource), graphNodes.get(tempDestination));
-
+			tempGraphConnection.setLineColor(org.eclipse.draw2d.ColorConstants.black);
 			tempGraphConnection.setLineWidth(2);
 			if (tempStyle == SWT.LINE_DOT){
 				tempGraphConnection.setLineWidth(3);
@@ -137,6 +137,108 @@ public class CrossUtil {
 			graphConnections.add(tempGraphConnection);
 		}  
 		//syncWithUi(graph, expand);
+	}
+
+	static void generateExpanding(Graph graph) throws ConnectException, UnexpectedReplyException{
+		System.out.println("[Graph Generation] Generating graph from expanding node");
+		System.out.println("[Graph Generation] Nodes to be generated = " + (nodes.size()-graphNodes.size()));
+
+		for(int index = graphNodes.size(); index < nodes.size(); index++) {
+			//System.out.println("Create node " + nodes.get(index).getName() + " with int " + index );
+
+			MyNode tempMyNode = nodes.get(index);
+			GraphNode tempGraphNode = new GraphNode(graph, SWT.NONE, tempMyNode.getName());
+			tempGraphNode.setBackgroundColor(graph.getDisplay().getSystemColor(nodes.get(index).getColor()));
+			tempGraphNode.setBorderColor(org.eclipse.draw2d.ColorConstants.black);
+			if (!tempMyNode.isExpandable())
+				tempGraphNode.setBorderWidth(3);
+			ArrayList<String> toolTipList = tempMyNode.getToolTipInfo();
+			tempGraphNode.setTooltip(new Label(
+					"Type: " + toolTipList.get(0) + "\n" +
+							"Name: " + toolTipList.get(1) + "\n" +
+							"Descripton: " + toolTipList.get(2) + "\n" +
+							"Position: "   + toolTipList.get(3) + "\n" +
+							"Path: "       + toolTipList.get(4) + "\n"
+					));
+			graphNodes.add(tempGraphNode);
+		}
+
+
+		//System.out.println("Now the number of ungenerated connections are " + CrossUtil.connections.size());
+		//System.out.println("And the size of generated connections are " + CrossUtil.graphConnections.size());
+		//System.out.println("[Graph Generation] Connections to be generated = " + (connections.size()-graphConnections.size()));
+
+		for(int i = graphConnections.size(); i < connections.size(); i++) {
+			int tempSource = connections.get(i).getSource().getId();
+			int tempDestination = connections.get(i).getDestination().getId();
+			int tempStyle = connections.get(i).getStyle();
+			//System.out.println("Created a GRAPH connector between " + connections.get(i).getSource().getName() + " and " + connections.get(i).getDestination().getName());
+			GraphConnection tempGraphConnection = new GraphConnection(graph,  ZestStyles.CONNECTIONS_DIRECTED, graphNodes.get(tempSource), graphNodes.get(tempDestination));
+			graphNodes.get(tempSource).setBorderWidth(3);
+			tempGraphConnection.setLineColor(org.eclipse.draw2d.ColorConstants.black);
+			tempGraphConnection.setLineWidth(2);
+			if (tempStyle == SWT.LINE_DOT){
+				tempGraphConnection.setLineWidth(3);
+			}
+			tempGraphConnection.setLineStyle(tempStyle);
+
+
+			if (connections.get(i).bending)
+				tempGraphConnection.setCurveDepth(10);
+
+
+			graphConnections.add(tempGraphConnection);
+		}  
+
+		graph.setLayoutAlgorithm(new RadialLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
+		graph.setNodeStyle(ZestStyles.NODES_NO_ANIMATION);
+	}
+
+
+	public static void removeDependencies(Graph graph, ArrayList<Integer> destructList, int index) throws ConnectException, UnexpectedReplyException{
+		System.out.println("[Graph Generation] Generating shrinked graph");
+		
+		GraphNode pushedNode = (GraphNode) graph.getNodes().get(index);
+		pushedNode.setBorderWidth(1);
+		
+		for(int i = destructList.size()-1; i >= 0 ; i--) {
+
+			int destructIndex = destructList.get(i);
+			Object[] connectionObjects = graph.getConnections().toArray() ;
+			GraphConnection iterCon;
+			GraphNode iterNode;
+
+
+			for (int x = connectionObjects.length-1 ; x >= 0  ; x-- ) {
+				iterCon = ((GraphConnection) connectionObjects[x]);
+				if((iterCon.getSource() == graphConnections.get(destructIndex).getSource())
+						&&
+						(iterCon.getDestination() == graphConnections.get(destructIndex).getDestination())){
+
+					iterNode = iterCon.getDestination();
+					
+					if (iterNode.getSourceConnections().isEmpty()){
+						// Slow performance lookup of ID
+						for (int y = 0 ; y < graphNodes.size() ; y++) {
+							String test = graphNodes.get(y).getText();
+							if (test.equals(iterNode.getText())){
+								graphNodes.remove(y);
+								iterNode.dispose();
+								break;
+							}
+						}
+					}
+					
+					iterCon.dispose();
+					graphConnections.remove(destructIndex);
+					
+					break;
+				}
+			}
+		}  
+
+		//syncWithUi(graph, expand););
+		//System.out.println("NEW SIZE of generated connections are " + graphConnections.size());
 	}
 
 }
