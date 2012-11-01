@@ -63,26 +63,36 @@ public class GraphView extends ViewPart {
 
 	private ISelectionListener listener = new ISelectionListener() {
 		public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
-			objName = "";
-			try {
-				IStructuredSelection newSelection = (IStructuredSelection) selection; 
-				Object obj = newSelection.getFirstElement();
-				objName = obj.getClass().getName();
-			} 
-			catch (NullPointerException e) {}
-			catch (ClassCastException e) {}
+			final IWorkbenchPart final_sourcepart = sourcepart; 
+			final ISelection final_selection = selection;
+			Job job = new Job("Dependency Graph Loading") {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
 
-			if (sourcepart != GraphView.this &&
-					objName.equals("org.modelica.mdt.internal.core.ModelicaSourceFile")) {
-				System.out.println("[Change Selection] Found a Modelica-file!");
+					objName = "";
+					try {
+						IStructuredSelection newSelection = (IStructuredSelection) final_selection; 
+						Object obj = newSelection.getFirstElement();
+						objName = obj.getClass().getName();
+					} 
+					catch (NullPointerException e) {}
+					catch (ClassCastException e) {}
 
-				// TODO: This update can be triggered mutiple times
-				updateGraph();
-			}
-			else {
-				System.out.println("[Change Selection] Not a Modelia-file");
-				System.out.println(objName + "  " + sourcepart.getTitle());
-			}
+					if (final_sourcepart != GraphView.this &&
+							objName.equals("org.modelica.mdt.internal.core.ModelicaSourceFile")) {
+						System.out.println("[Change Selection] Found a Modelica-file!");
+
+						updateGraph(final_selection);
+					}
+					else {
+						System.out.println("[Change Selection] Not a Modelia-file");
+						System.out.println(objName + "  " + final_sourcepart.getTitle());
+					}
+
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule(); 
 		}
 	};
 
@@ -99,17 +109,15 @@ public class GraphView extends ViewPart {
 
 	}
 
-	public void updateGraph() {
+	public void updateGraph(ISelection... select) {
 		// TODO: Change this later on
 
 		System.out.println("[Graph Operation]  Check if update is possible");
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		ISelection selection = null;
-		try {
-			selection = window.getSelectionService().getSelection("org.modelica.mdt.ui.view.ModelicaProjectsView");
-		} catch (NullPointerException e) {
-			// Nothing was selected
-		}
+		for (ISelection s : select ) 
+			selection = s;
+		
 		if(selection!=null && !selection.isEmpty()) {
 			IStructuredSelection selectedFileSelection = (IStructuredSelection) selection;
 			Object obj = selectedFileSelection.getFirstElement();
@@ -135,7 +143,22 @@ public class GraphView extends ViewPart {
 					e.printStackTrace();
 				}
 				String fileName = selectedString.replace(".mo", "");
-				CrossAnalyzer.initAnalyze(fileName, selectedPath);
+				try
+				{
+					CrossAnalyzer.initAnalyze(fileName, selectedPath);
+				} catch (ConnectException e1)
+				{
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (UnexpectedReplyException e1)
+				{
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (InvocationError e1)
+				{
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				try
 				{
 					CrossAnalyzer.analyzeError();
@@ -171,26 +194,11 @@ public class GraphView extends ViewPart {
 	}
 
 	public void createPartControl(Composite parent) {
+		System.out.println("Creating a new view");
 		permaParent = parent;
 		graph = new Graph(permaParent, SWT.NONE);
 
-		Job job = new Job("My Job") {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				updateGraph();
-				getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
-
-
-				/*
-				 * graph.translateToAbsolute(graph.getBounds().getLocation())
-				 */
-
-				return Status.OK_STATUS;
-			}
-		};
-
-		job.schedule(); 
-
+		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
 
 		// TODO: Put this in a new function med throw exception
 		try{
@@ -207,7 +215,7 @@ public class GraphView extends ViewPart {
 										// Workaround for exception in Zest when removing a selected node
 										graph.setSelection(null);
 
-										
+
 										if (CrossUtil.nodes.get(i).isExpandable()) {
 											// Expand node's dependencies
 											try
@@ -219,7 +227,7 @@ public class GraphView extends ViewPart {
 												CrossAnalyzer.analyzeClasses(i, select, false);
 												CrossUtil.nodes.get(i).expandable = false;
 
-												
+
 												//clearGraph(graph);
 												CrossUtil.generateExpanding(graph, CrossUtil.nodes.get(i).getName());
 
@@ -237,13 +245,13 @@ public class GraphView extends ViewPart {
 											}
 										} else {
 											// Shrink node's dependencies
-											
+
 											System.out.println("[Graph Operation] Shrinking " + select);
-											
+
 											CrossUtil.nodes.get(i).expandable = true;
 
 											ArrayList<Integer> destructedConnections = CrossAnalyzer.destructClasses(i, select);
-											
+
 											try
 											{
 												CrossUtil.removeDependencies(graph, destructedConnections, i);

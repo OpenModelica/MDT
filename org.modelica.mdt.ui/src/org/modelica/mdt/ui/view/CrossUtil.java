@@ -44,34 +44,34 @@ public class CrossUtil {
 
 	public static void generateNodes(final Graph graph, final String fileName) throws ConnectException, UnexpectedReplyException{
 		System.out.println("[Graph Generation] Choosing sorting method");
-		
+
 		// TODO: This should be possible to be set by user
 		int sorting = 1;
 
 
 		switch (sorting) {
 		case 1:  // Sorting #1 "Original"
-
 			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					try
-					{
-						generateNodesOriginal(graph, fileName);
-					} catch (ConnectException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (UnexpectedReplyException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			});
-
+			      @Override
+			      public void run() {
+			try
+			{
+				generateNodesOriginal(graph, fileName);
+			} catch (ConnectException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnexpectedReplyException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			graph.setLayoutAlgorithm(new RadialLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
 			graph.setNodeStyle(ZestStyles.NODES_NO_ANIMATION);
 			//graph.applyLayout();
+			      }
+			});
 			break;
 		case 2:  // Sorting #2 "MathCore"
 			break;
@@ -152,7 +152,7 @@ public class CrossUtil {
 				}
 			}
 		}
-			
+
 		for(int index = graphNodes.size(); index < nodes.size(); index++) {
 			System.out.println("Create node " + nodes.get(index).getName() + " with int " + index );
 
@@ -201,18 +201,28 @@ public class CrossUtil {
 			graphConnections.add(tempGraphConnection);
 		}  
 
-		// TODO: This requires a new expanded layout-algorithm which only change the location of new entities
-		graph.setLayoutAlgorithm(new RadialLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
-		graph.setNodeStyle(ZestStyles.NODES_NO_ANIMATION);
+		System.out.println("5");
+		
+		final Graph UIgraph = graph;
+		
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				// TODO: This requires a new expanded layout-algorithm which only change the location of new entities
+				UIgraph.setLayoutAlgorithm(new RadialLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
+				UIgraph.setNodeStyle(ZestStyles.NODES_NO_ANIMATION);
+			}
+		});
+		
+		System.out.println("6");
 	}
 
 
 	public static void removeDependencies(Graph graph, ArrayList<Integer> destructList, int index) throws ConnectException, UnexpectedReplyException{
 		System.out.println("[Graph Generation] Generating shrinked graph");
-		
+
 		GraphNode pushedNode = (GraphNode) graph.getNodes().get(index);
 		pushedNode.setBorderWidth(1);
-		
+
 		for(int i = destructList.size()-1; i >= 0 ; i--) {
 
 			int destructIndex = destructList.get(i);
@@ -228,7 +238,7 @@ public class CrossUtil {
 						(iterCon.getDestination() == graphConnections.get(destructIndex).getDestination())){
 
 					iterNode = iterCon.getDestination();
-					
+
 					if (iterNode.getSourceConnections().isEmpty()){
 						// Slow performance lookup of ID
 						for (int y = 0 ; y < graphNodes.size() ; y++) {
@@ -240,10 +250,10 @@ public class CrossUtil {
 							}
 						}
 					}
-					
+
 					iterCon.dispose();
 					graphConnections.remove(destructIndex);
-					
+
 					break;
 				}
 			}

@@ -4,6 +4,7 @@ package org.modelica.mdt.ui.view;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,89 +26,65 @@ public class CrossAnalyzer {
 	static IModelicaCompiler currentCompiler;
 	static int nid = 0;
 	static int cid = 0;
-
-	public static void initAnalyze(String fileName, final IPath filePath) {
+	
+	public static void initAnalyze(String fileName, IPath filePath) throws ConnectException, UnexpectedReplyException, InvocationError {
 		String className;
 		MyNode coreNode;
+		
+		try
+		{
+			currentCompiler = CompilerProxy.getCompiler();
+			System.out.println("[Analyze Operation] Found the compiler");
 
-		try { 
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					try
-					{
-						currentCompiler = CompilerProxy.getCompiler();
-						System.out.println("[Analyze Operation] Found the compiler");
-
-						currentCompiler.getStandardLibrary();
-
-						System.out.println(filePath.toString());
-						currentCompiler.loadFile(filePath.toString());
-
-					} catch (ConnectException e)
-					{
-						System.out.println("[ERROR]    Not possible to connect to compiler");
-						e.printStackTrace();
-					} catch (UnexpectedReplyException e)
-					{
-						System.out.println("[ERROR]    Unexpected reply from compiler");
-						e.printStackTrace();
-					} catch (NullPointerException e) {
-						System.out.println("[ERROR]    Loading something related to the compiler gave null");
-						e.printStackTrace();
-					} catch (CompilerInstantiationException e)
-					{
-						System.out.println("[ERROR]    Not possible to load standard library from compiler");
-						e.printStackTrace();
-					}
-				}
-			});
-
-			List classList = currentCompiler.parseFile(filePath.toString());
-			int startID = 0;
-			nid = -1;
-			for (int j = 0; j < classList.size(); j++) {
-				className = classList.elementAt(j).toString();
-
-				// Standard: (Useful in thesis report - optimizing development phase) 
-				// recursive = true
-
-				// Optional: (Useful in thesis report or as an optional settings - first development phase)
-				// recursive = false
-
-
-				if (!nodesContains(className)) {
-					nid += 1;
-					System.out.println("[Analyze Operation] Creating node " + className + " with nid:" + nid);
-					if(currentCompiler.isPackage(className)) {
-						createPackage(className);
-						coreNode = new MyNode(nid, className, SWT.COLOR_GRAY);
-					} else {
-						coreNode = new MyNode(nid, className, SWT.COLOR_GREEN);
-					}
-					setToolTipInfo(coreNode, className, filePath.toString());
-
-					coreNode.expandable = false;
-					CrossUtil.nodes.add(coreNode);
-				}
-
-
-				// TODO: Test if this is correct when a dependency is found between class A to class B before class B has been analyzed
-				//		 Where class A and class B both comes from the same start-file
-				analyzeClasses(nid, className, false);
-				//nid += 1;
-			}
-
-
-		} catch (Exception e) {
-			currentCompiler = null;
+		} catch (CompilerInstantiationException e)
+		{
+			System.out.println("[Error] Compiler not found");
+			e.printStackTrace();
 		}
+		
+		currentCompiler.getStandardLibrary();
+		currentCompiler.loadFile(filePath.toString());
+		List classList = currentCompiler.parseFile(filePath.toString());
+		
+		nid = -1;
+		System.out.println(filePath.toString());
+
+		for (int j = 0; j < classList.size(); j++) {
+			className = classList.elementAt(j).toString();
+
+			// Standard: (Useful in thesis report - optimizing development phase) 
+			// recursive = true
+
+			// Optional: (Useful in thesis report or as an optional settings - first development phase)
+			// recursive = false
+
+			if (!nodesContains(className)) {
+				nid += 1;
+				System.out.println("[Analyze Operation] Creating node " + className + " with nid:" + nid);
+				if(currentCompiler.isPackage(className)) {
+					createPackage(className);
+					coreNode = new MyNode(nid, className, SWT.COLOR_GRAY);
+				} else {
+					coreNode = new MyNode(nid, className, SWT.COLOR_GREEN);
+				}
+				setToolTipInfo(coreNode, className, filePath.toString());
+
+				coreNode.expandable = false;
+				CrossUtil.nodes.add(coreNode);
+			}
+			// TODO: Test if this is correct when a dependency is found between class A to class B before class B has been analyzed
+			//		 Where class A and class B both comes from the same start-file
+			analyzeClasses(nid, className, false);
+			//nid += 1;
+		}
+
 	}
 
 	public static int analyzeClasses(int prevID, String className, boolean recursive) throws ConnectException, UnexpectedReplyException, InvocationError {
 		System.out.println("[Analyze Operation] Finding classes of " + className + " (cid/nid: " + cid + "/" + nid + ")");
 
 		//System.out.println("Now the number of ungenerated connections are " + CrossUtil.connections.size());
-		
+
 		// Find the underlying classes of a package
 		if(currentCompiler.isPackage(className)) {
 			createPackage(className);
@@ -236,7 +213,7 @@ public class CrossAnalyzer {
 			System.out.println("[Analyze Operation] " + elem + " is a Keyword and should not be generated or analyzed");
 			return;
 		}
-		
+
 
 		Path myPath = new Path(CrossAnalyzer.currentCompiler.getClassLocation(className).getPath());
 		ArrayList<Integer> lineNumbers = findLineNumber(myPath.toString(), elem);
@@ -297,7 +274,7 @@ public class CrossAnalyzer {
 			cid += 1;
 			System.out.println("Now the number of ungenerated connections are " + CrossUtil.connections.size());
 			System.out.println("And the size of generated connections are " + CrossUtil.graphConnections.size());
-			
+
 		}
 		else if (!connectionsContains(CrossUtil.nodes.get(prev).getName(), CrossUtil.nodes.get(n).getName()) &&
 				!CrossUtil.nodes.get(prev).getName().equals(CrossUtil.nodes.get(n).getName())) {
@@ -417,11 +394,11 @@ public class CrossAnalyzer {
 			{ 
 				// We can possibly also remove the node pointed at
 				CrossUtil.nodes.remove(CrossUtil.connections.get(destroyedConnections.get(i)).getDestination().getId());
-				
+
 				// Update all the old nodes with a id larger than the the destroyed one that they have to be reduced
 				for(int j = CrossUtil.connections.get(destroyedConnections.get(i)).getDestination().getId(); j < CrossUtil.nodes.size(); j++)
 					CrossUtil.nodes.get(j).setId(CrossUtil.nodes.get(j).getId()-1);
-				
+
 				nid -= 1;
 			} 
 
@@ -430,7 +407,7 @@ public class CrossAnalyzer {
 			cid -= 1;
 
 		}
-		
+
 		//System.out.println("New size of <connections> after destruction are " + CrossUtil.connections.size());
 		return destroyedConnections;
 	}
