@@ -30,22 +30,6 @@ public class CreateView extends AbstractHandler {
 			e.printStackTrace();
 		}
 
-
-		/*
-		Object firstElement = selection.getFirstElement();
-
-		if (firstElement instanceof IModelicaElement) {
-			MessageDialog.openInformation(shell, "Progress",
-					"Creating new window");
-
-			Platform.getExtensionRegistry().getConfigurationElementsFor("org.modelica.plugin.cross.graphview");
-
-
-		} else {
-			MessageDialog.openInformation(shell, "Progress",
-					((IModelicaClass) firstElement).getFullName());
-		}
-		 */
 		return null;
 	}
 

@@ -1611,7 +1611,7 @@ public class OMCProxy implements IModelicaCompiler
 			throw new UnexpectedReplyException("Unable to parse list: " 
 					+ e.getMessage());
 		}
-
+		
 		return list;
 	}
     

@@ -10,6 +10,7 @@ public class MyNode extends MyGraphObject{
 	boolean expandable;
 	private List<MyNode> connections;
 	private int color;
+	private boolean simulated;
 
 	public MyNode(int id, String name, int color) {
 		this.id = id;
@@ -17,6 +18,7 @@ public class MyNode extends MyGraphObject{
 		this.expandable = true;
 		this.connections = new ArrayList<MyNode>();
 		this.color = color;
+		this.simulated = true;
 	}
 
 	public int getId() {
@@ -71,5 +73,9 @@ public class MyNode extends MyGraphObject{
 	
 	public void setId(int newID){
 		this.id = newID;
+	}
+	
+	public boolean isSimulated(){
+		return this.simulated;
 	}
 } 

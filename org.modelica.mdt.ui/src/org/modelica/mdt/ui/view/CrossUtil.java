@@ -1,12 +1,9 @@
 
 package org.modelica.mdt.ui.view;
 
-import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.draw2d.Animation;
 import org.eclipse.draw2d.Label;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -14,18 +11,8 @@ import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.ZestStyles;
-import org.eclipse.zest.layouts.Filter;
-import org.eclipse.zest.layouts.InvalidLayoutConfiguration;
-import org.eclipse.zest.layouts.LayoutAlgorithm;
-import org.eclipse.zest.layouts.LayoutEntity;
-import org.eclipse.zest.layouts.LayoutRelationship;
 import org.eclipse.zest.layouts.LayoutStyles;
-import org.eclipse.zest.layouts.algorithms.CompositeLayoutAlgorithm;
-import org.eclipse.zest.layouts.algorithms.DirectedGraphLayoutAlgorithm;
-import org.eclipse.zest.layouts.algorithms.GridLayoutAlgorithm;
-import org.eclipse.zest.layouts.algorithms.HorizontalShift;
 import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
-import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 
@@ -34,11 +21,9 @@ public class CrossUtil {
 	public static List<MyConnection> connections = new ArrayList<MyConnection>();
 	public static List<MyNode> nodes = new ArrayList<MyNode>();
 
-	public static List<GraphPackage> packages = new ArrayList<GraphPackage>();
 	public static List<GraphNode> graphNodes;
 	public static List<GraphConnection> graphConnections;
 
-	// TODO: Create a graphContainer for each package, where each package has nodes connected to outside nodes (THIS IS POSSIBLE IN ZEST!)
 	// http://git.eclipse.org/c/gef/org.eclipse.zest.git/tree/org.eclipse.zest.examples/src/org/eclipse/zest/examples/swt/NestedGraphSnippet.java	
 	// (Internal sorting withing graphContainer is also possible)
 
@@ -48,36 +33,32 @@ public class CrossUtil {
 		// TODO: This should be possible to be set by user
 		int sorting = 1;
 
-
 		switch (sorting) {
 		case 1:  // Sorting #1 "Original"
 			Display.getDefault().asyncExec(new Runnable() {
-			      @Override
-			      public void run() {
-			try
-			{
-				generateNodesOriginal(graph, fileName);
-			} catch (ConnectException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnexpectedReplyException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			graph.setLayoutAlgorithm(new RadialLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
-			graph.setNodeStyle(ZestStyles.NODES_NO_ANIMATION);
-			//graph.applyLayout();
-			      }
+				@Override
+				public void run() {
+					try
+					{
+						generateNodesOriginal(graph, fileName);
+					} catch (ConnectException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (UnexpectedReplyException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					graph.setLayoutAlgorithm(new RadialLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
+					graph.setNodeStyle(ZestStyles.NODES_NO_ANIMATION);
+				}
 			});
 			break;
-		case 2:  // Sorting #2 "MathCore"
+		case 2:  // Sorting #2 "TreeMap"
 			break;
-		case 3:  // Sorting #3 "Error"
-			break;
-		case 4:  // Sorting #4 "Packages"
+		case 3:  // Sorting #3 "Packages"
 			break;
 		}
 	}	
@@ -90,7 +71,6 @@ public class CrossUtil {
 		System.out.println("[Graph Generation] Generating graph according to Original");
 
 		// Create visuals for the nodes
-
 		graphNodes = new ArrayList<GraphNode>();
 		graphConnections = new ArrayList<GraphConnection>();
 
@@ -136,7 +116,6 @@ public class CrossUtil {
 
 			graphConnections.add(tempGraphConnection);
 		}  
-		//syncWithUi(graph, expand);
 	}
 
 	static void generateExpanding(Graph graph, String... selectedNode) throws ConnectException, UnexpectedReplyException{
@@ -202,9 +181,9 @@ public class CrossUtil {
 		}  
 
 		System.out.println("5");
-		
+
 		final Graph UIgraph = graph;
-		
+
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				// TODO: This requires a new expanded layout-algorithm which only change the location of new entities
@@ -212,7 +191,7 @@ public class CrossUtil {
 				UIgraph.setNodeStyle(ZestStyles.NODES_NO_ANIMATION);
 			}
 		});
-		
+
 		System.out.println("6");
 	}
 
@@ -258,8 +237,6 @@ public class CrossUtil {
 				}
 			}
 		}  
-
-		//syncWithUi(graph, expand););
 		//System.out.println("NEW SIZE of generated connections are " + graphConnections.size());
 	}
 

@@ -23,27 +23,20 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Region;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphNode;
-import org.eclipse.zest.core.widgets.ZestStyles;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -97,27 +90,29 @@ public class GraphView extends ViewPart {
 	};
 
 	static void clearGraph(Graph g) {
-
-		Object[] objects = g.getConnections().toArray() ;
-		for ( int x = 0 ; x < objects.length ; x++ ) {
-			((GraphConnection) objects[x]).dispose() ;
-		}
-		objects = g.getNodes().toArray() ;
-		for ( int x = 0 ; x < objects.length ; x++ ) {
-			((GraphNode) objects[x]).dispose();
-		}
+		final Object[] cObjects = g.getConnections().toArray() ;
+		final Object[] gObjects = g.getNodes().toArray() ;
+		
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				for ( int x = 0 ; x < cObjects.length ; x++ ) {
+					((GraphConnection) cObjects[x]).dispose() ;
+				}
+				for ( int x = 0 ; x < gObjects.length ; x++ ) {
+					((GraphNode) gObjects[x]).dispose();
+				}
+			}
+		});
 
 	}
 
 	public void updateGraph(ISelection... select) {
-		// TODO: Change this later on
-
 		System.out.println("[Graph Operation]  Check if update is possible");
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		ISelection selection = null;
 		for (ISelection s : select ) 
 			selection = s;
-		
+
 		if(selection!=null && !selection.isEmpty()) {
 			IStructuredSelection selectedFileSelection = (IStructuredSelection) selection;
 			Object obj = selectedFileSelection.getFirstElement();
@@ -194,13 +189,13 @@ public class GraphView extends ViewPart {
 	}
 
 	public void createPartControl(Composite parent) {
-		System.out.println("Creating a new view");
+		System.out.println("[GraphView initial] Creating a new view");
 		permaParent = parent;
 		graph = new Graph(permaParent, SWT.NONE);
 
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
 
-		// TODO: Put this in a new function med throw exception
+		// TODO: Put this in a new function with throw exception
 		try{
 			graph.addMouseListener(
 					new MouseListener(){
@@ -264,7 +259,6 @@ public class GraphView extends ViewPart {
 												// TODO Auto-generated catch block
 												e1.printStackTrace();
 											}
-
 										}
 									} 
 								}
@@ -279,19 +273,69 @@ public class GraphView extends ViewPart {
 						@Override
 						public void mouseUp(MouseEvent e)
 						{
-
 							if (e.button == 3) { // right-click
 								System.out.println("------------ NEW OPERATION ----------");
+								// Put this in a separate function
 								if (!graph.getSelection().isEmpty()) {
-									final ArrayList<Integer> test = new ArrayList<Integer>();
+									final ArrayList<Integer> listItems = new ArrayList<Integer>();
 
 									// TODO: Sometimes we want to go a line even in a code
 									// i.e. inside a package or a class that contains other classes i.e. test1.BC (BC definied inside test1)
 									Object selectedObject = graph.getSelection().get(0);
 
 									if (selectedObject instanceof GraphNode) {
+										final List l = new List(graph, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
+										l.setBounds (e.x, e.y, 400, 100);
+										l.add("Open selected reference");
+										l.add("Analyze operations");
 
-										openSelectedReference(((GraphNode) selectedObject).getText(), 0);
+										l.addMouseTrackListener(new MouseTrackListener() { 
+											public void mouseHover(MouseEvent e) {
+												// TODO: Is this needed?
+												l.redraw();
+											}    
+											public void mouseExit(MouseEvent e) { 
+												l.dispose();
+											}    
+											public void mouseEnter(MouseEvent e) { 
+											} 
+										});
+
+										final String referencedClass = ((GraphNode) selectedObject).getText();
+										
+										l.addListener (SWT.DefaultSelection, new Listener () {
+											public void handleEvent (Event e) {
+												switch (l.getFocusIndex()) {
+												case 0 : openSelectedReference(referencedClass, 0);
+												case 1 : 
+													try
+													{
+														clearGraph(graph);
+														getSite().getWorkbenchWindow().getActivePage().showView("org.modelica.plugin.cross.DetailedGraphView");
+														DetailedGraphView.createDetailedGraph(referencedClass);
+													} catch (ConnectException e1)
+													{
+														// TODO Auto-generated catch block
+														e1.printStackTrace();
+													} catch (UnexpectedReplyException e1)
+													{
+														// TODO Auto-generated catch block
+														e1.printStackTrace();
+													} catch (InvocationError e1)
+													{
+														// TODO Auto-generated catch block
+														e1.printStackTrace();
+													} catch (PartInitException e2)
+													{
+														// TODO Auto-generated catch block
+														e2.printStackTrace();
+													}
+														 XMLMarker.readTextFile();
+														 XMLParser.readTextFile();
+												}
+
+											}
+										});
 
 									} else if (selectedObject instanceof GraphConnection) {							
 										final List l = new List(graph, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
@@ -313,7 +357,7 @@ public class GraphView extends ViewPart {
 													// TODO: DEBUG: This is not working with dependencies to packages
 
 													for (int index = 0; index < ia.length; index++){
-														test.add(CrossUtil.connections.get(i).lineRefs.get(key).get(index));
+														listItems.add(CrossUtil.connections.get(i).lineRefs.get(key).get(index));
 														l.add(key + "<line: " + CrossUtil.connections.get(i).lineRefs.get(key).get(index) + ">");
 													}
 												}
@@ -336,7 +380,7 @@ public class GraphView extends ViewPart {
 
 										l.addListener (SWT.DefaultSelection, new Listener () {
 											public void handleEvent (Event e) {
-												openSelectedReference(source, test.get(l.getFocusIndex()));									
+												openSelectedReference(source, listItems.get(l.getFocusIndex()));									
 											}
 										});
 									}	

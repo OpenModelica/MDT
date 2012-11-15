@@ -4,7 +4,6 @@ package org.modelica.mdt.ui.view;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,7 +11,6 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.core.List;
@@ -26,6 +24,7 @@ public class CrossAnalyzer {
 	static IModelicaCompiler currentCompiler;
 	static int nid = 0;
 	static int cid = 0;
+	private static String classPath;
 	
 	public static void initAnalyze(String fileName, IPath filePath) throws ConnectException, UnexpectedReplyException, InvocationError {
 		String className;
@@ -43,7 +42,8 @@ public class CrossAnalyzer {
 		}
 		
 		currentCompiler.getStandardLibrary();
-		currentCompiler.loadFile(filePath.toString());
+		classPath = filePath.toString();
+		currentCompiler.loadFile(classPath);
 		List classList = currentCompiler.parseFile(filePath.toString());
 		
 		nid = -1;
@@ -62,7 +62,6 @@ public class CrossAnalyzer {
 				nid += 1;
 				System.out.println("[Analyze Operation] Creating node " + className + " with nid:" + nid);
 				if(currentCompiler.isPackage(className)) {
-					createPackage(className);
 					coreNode = new MyNode(nid, className, SWT.COLOR_GRAY);
 				} else {
 					coreNode = new MyNode(nid, className, SWT.COLOR_GREEN);
@@ -72,26 +71,26 @@ public class CrossAnalyzer {
 				coreNode.expandable = false;
 				CrossUtil.nodes.add(coreNode);
 			}
+			
 			// TODO: Test if this is correct when a dependency is found between class A to class B before class B has been analyzed
 			//		 Where class A and class B both comes from the same start-file
+			
 			analyzeClasses(nid, className, false);
-			//nid += 1;
 		}
-
 	}
 
 	public static int analyzeClasses(int prevID, String className, boolean recursive) throws ConnectException, UnexpectedReplyException, InvocationError {
 		System.out.println("[Analyze Operation] Finding classes of " + className + " (cid/nid: " + cid + "/" + nid + ")");
 
+		currentCompiler.loadFile(classPath);
+		
 		//System.out.println("Now the number of ungenerated connections are " + CrossUtil.connections.size());
 
 		// Find the underlying classes of a package
 		if(currentCompiler.isPackage(className)) {
-			createPackage(className);
 			List classList = currentCompiler.getClassNames(className);
 			for (int j = 0; j < classList.size(); j++) {
 				String nam = classList.elementAt(j).toString();
-				addToPackage(className, nam);
 				createBond(className, recursive, className + "." + nam, prevID, SWT.LINE_DASH, SWT.COLOR_GRAY);
 			}
 		}
@@ -201,8 +200,6 @@ public class CrossAnalyzer {
 			String packageName = fullName.substring(0, fullName.lastIndexOf("."));
 			createBond(fullName, recursive, packageName, prevID, SWT.LINE_DASH, SWT.COLOR_GRAY);
 
-			//TODO: Add to package-array
-			addToPackage(packageName, fullName);
 		}
 	}
 
@@ -315,39 +312,6 @@ public class CrossAnalyzer {
 		//if (!errorString.equals("\"\"")) {
 		//	System.out.println("[Analyze Operation] Found some error from compilation " + errorString);
 		//}
-	}
-
-	public static GraphPackage createPackage(String packageName) {
-		System.out.println("[Analyze Operation] Creating package " + packageName);
-		GraphPackage createdPackage = null;
-		if (!containsPackage(packageName)){
-			createdPackage = new GraphPackage(packageName);
-			CrossUtil.packages.add(new GraphPackage(packageName));
-		}
-		return createdPackage;
-	}
-
-	public static void addToPackage(String packageName, String className) {
-
-		System.out.println("[Analyze Operation] Adding " + className + " to package " + packageName);
-		createPackage(packageName);
-
-		for (int i = 0; i < CrossUtil.packages.size(); i++)
-			if (CrossUtil.packages.get(i).getName().equals(packageName) && !CrossUtil.packages.get(i).containsClass(packageName)) {
-				// add class to the correct package
-				CrossUtil.packages.get(i).addClass(className);
-				return; // there can only be one package per class
-			}
-	}
-
-	public static boolean containsPackage(String packageName) {
-		String currentPackage = null;
-		for (int i = 0; i < CrossUtil.packages.size(); i++){
-			currentPackage = CrossUtil.packages.get(i).getName();
-			if (currentPackage.contains(packageName))
-				return true;
-		}
-		return false;
 	}
 
 	private static ArrayList<Integer> findLineNumber(String file, String text) throws ConnectException, UnexpectedReplyException {
