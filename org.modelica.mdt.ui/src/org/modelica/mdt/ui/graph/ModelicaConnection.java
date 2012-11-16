@@ -1,21 +1,30 @@
 
-package org.modelica.mdt.ui.view;
+package org.modelica.mdt.ui.graph;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-public class MyConnection {
+/**
+ * This class holds the information of a connection.
+ * It will be used as part of storage for when saving
+ * data of an analyze about a certain class. Each
+ * connection represents one or many dependencies between
+ * two classes.
+ *
+ * @author: Magnus Sjöstrand
+ */
+public class ModelicaConnection {
 	final String id; 
 	final String label;
-	final MyNode source;
-	final MyNode destination;
+	final ModelicaNode source;
+	final ModelicaNode destination;
 	final int style;
 	final Map<String, ArrayList<Integer>> lineRefs = new HashMap<String, ArrayList<Integer>>();
 	boolean bending = false;
 
-	public MyConnection(String id, String label, MyNode source, MyNode destination, int style, String connectionName, ArrayList<Integer> lines) {
+	public ModelicaConnection(String id, String label, ModelicaNode source, ModelicaNode destination, int style, String connectionName, ArrayList<Integer> lines) {
 		this.id = id;
 		this.label = label;
 		this.source = source;
@@ -43,10 +52,10 @@ public class MyConnection {
 		return label;
 	}
 
-	public MyNode getSource() {
+	public ModelicaNode getSource() {
 		return source;
 	}
-	public MyNode getDestination() {
+	public ModelicaNode getDestination() {
 		return destination;
 	}
 	public int getStyle() {

@@ -1,5 +1,5 @@
 
-package org.modelica.mdt.ui.view;
+package org.modelica.mdt.ui.graph;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -9,7 +9,16 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
@@ -28,62 +37,73 @@ public class DetailedGraphView extends ViewPart {
 	private static ArrayList<Graph> graphSteps;
 	private static int currentStep;
 	private static Stack<String> operationStack;
-	private static ArrayList<MyEquation> subEquations;
-
+	private static ArrayList<ModelicaEquation> subEquations;
+	
+	private Composite detailedParent;
+	private Composite equationPanel;
+	public static int numberOfEquations;
+	
 	@Override
 	public void createPartControl(Composite parent)
 	{
-		System.out.println("[DetailedGraphView initial] Creating a new view");
-		detailedGraph = new Graph(parent, SWT.NONE);
-	}
-
-	public static void createDetailedGraph(String className) throws ConnectException, UnexpectedReplyException, InvocationError{
-		System.out.println("[Detailed Graph View] Loading class into analyze for the detailed view");
-		IPath classPath = new Path(CrossAnalyzer.currentCompiler.getClassLocation(className).getPath());
-		CrossAnalyzer.currentCompiler.loadFile(classPath.toString());
-		ArrayList<Graph> graphSteps = new ArrayList<Graph>();
-		analyzeDetailedClass(className);
-		graphSteps.add(detailedGraph);
-		currentStep = 0;
-	}
-
-	public static Graph getDetailedGraph(int step) {
-		// TODO: Maybe we can keep all of them, but in order to avoid expensive regenerations 
-		// we can instead turn unused graphs invisible?
-		currentStep = step;
-		return(graphSteps.get(step));
-	}
-
-	private static void analyzeDetailedClass(String className) {
-		System.out.println("[Detailed Graph View] Analyzing the loaded file");
-
-		try
-		{
-			analyzeDetailedClassEquations(className);
-		} catch (ConnectException e)
-		{
-			// TODO Auto-generated catch blocks
-			e.printStackTrace();
-		} catch (UnexpectedReplyException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		analyzeDetailedClassVariables(className);
+		System.out.println("[Detailed Graph View] Creating the root view");
+		detailedParent = parent;
+		
+		// 2. create a panel to the left
+		// and a view to the right
+		//Display display = new Display ();
+	    //Shell shell = new Shell (display);
+	    detailedParent.setLayout(new FillLayout());
+	        
+	      // set the size of the scrolled content - method 1
+	    detailedParent.setLayout(new FillLayout());
+	        
+	      // set the size of the scrolled content - method 1
+	      final ScrolledComposite sc1 = new ScrolledComposite(detailedParent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+	      Composite equationPanel = new Composite(sc1, SWT.NONE);
+	      sc1.setContent(equationPanel);
+	      GridLayout layout = new GridLayout();
+	      layout.numColumns = 1;
+	      equationPanel.setLayout(layout);
+	      
+	      for (int i = 0; i > numberOfEquations; i++) {
+	    	  Button eqB = new Button (equationPanel, SWT.PUSH);
+	    	  eqB.setText("temp");
+	     }
+		 this.equationPanel.setSize(equationPanel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+         equationPanel.layout();
+	      
+	      // Replace add with a new type of a window that we can place views in 
+	      Button add = new Button (detailedParent, SWT.PUSH);
+	      add.setText("add children");
+	      
+	      /*
+	      final int[] index = new int[]{0};
+	      add.addListener(SWT.Selection, new Listener() {
+	          public void handleEvent(Event e) {
+	              index[0]++;
+	              Button button = new Button(equationPanel, SWT.PUSH);
+	              button.setText("button "+index[0]);
+	              // reset size of content so children can be seen - method 1
+	              equationPanel.setSize(equationPanel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	              equationPanel.layout();
+	          }
+	      });
+	      */
 	}
 
 	private static void analyzeDetailedClassEquations(String className) throws ConnectException, UnexpectedReplyException {
 		System.out.println("[Detailed Graph View] Analyzing the loaded file's equations");
-		// Repeat:
-
-		// 2. Read line
-		int numberOfEquations =  CrossAnalyzer.currentCompiler.getEquationItemsCount(className);
-		for (int i = 0; i < numberOfEquations; i++) {
-			ICompilerResult res = CrossAnalyzer.currentCompiler.getNthEquationItem(className, i+1);
+		
+		int n =  GraphAnalyzer.getModelicaCompiler().getEquationItemsCount(className);
+		for (int i = 0; i < n; i++) {
+			// create a new graph here
+			//graphSteps.add(detailedGraph);
+			
+			ICompilerResult res = GraphAnalyzer.getModelicaCompiler().getNthEquationItem(className, i+1);
 			String trimRes = res.getFirstResult();
 			System.out.println("Incoming equation: " + trimRes);
-			
+
 			// Remove all annotations from the code line
 			trimRes = trimRes.substring(1, trimRes.length()-2);
 			if (trimRes.contains("annotation")) {
@@ -93,7 +113,7 @@ public class DetailedGraphView extends ViewPart {
 			if (trimRes.contains("//")) {
 				trimRes.replace(trimRes.substring(trimRes.indexOf("//"), trimRes.length()), "");
 			}
-			
+
 			// Remove all loops from the code line
 			// TODO: Do we need this?
 			if (trimRes.contains("while") || trimRes.contains("for")){
@@ -102,7 +122,7 @@ public class DetailedGraphView extends ViewPart {
 
 			trimRes = trimRes.replaceAll(" ", "");
 			trimRes = "(" + trimRes + ")";
-		
+
 			equationAnalyze(trimRes, true);
 		}
 	}
@@ -110,33 +130,33 @@ public class DetailedGraphView extends ViewPart {
 	private static void equationAnalyze(String operationalLine, boolean root) {
 		//operationalLine = "(a.x(y)=c.x)"; // test-data
 		System.out.print("So far we got: " + operationalLine + " ==> ");
-		
+
 		Pattern p = Pattern.compile("(\\w+((\\.\\w+)?)*)|([<|>|=][=|>]|[+|-|*|/|(|)|,|=|^|<|>]|[:][=])");
 		Matcher m = p.matcher(operationalLine);
 		ArrayList<String> tokenArray = new ArrayList<String>();
-		
+
 		while (m.find()) {
 			String token = m.group();
-		    System.out.print("[" + token + "]");
-		    tokenArray.add(token);
+			System.out.print("[" + token + "]");
+			tokenArray.add(token);
 		}
 		System.out.print("\n");
-		
+
 		operationStack = new Stack<String>();
-		subEquations = new ArrayList<MyEquation>();
-		
+		subEquations = new ArrayList<ModelicaEquation>();
+
 		// TODO: Temporary quick-fix for = in equations
 		/*if (tokenArray.contains("=")){
 			ArrayList<String> leftSplit = new ArrayList<String>();
 			ArrayList<String> rightSplit = new ArrayList<String>();
 			deepEquationAnalyze(leftSplit);
 			deepEquationAnalyze(rightSplit);
-			
+
 		} else {
-		*/
-			deepEquationAnalyze(tokenArray);
+		 */
+		deepEquationAnalyze(tokenArray);
 		//}
-		
+
 		// Ordered layout according to tree-nodes
 		detailedGraph.setLayoutAlgorithm(new TreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
 		detailedGraph.setNodeStyle(ZestStyles.NODES_NO_ANIMATION);
@@ -145,13 +165,13 @@ public class DetailedGraphView extends ViewPart {
 	private static void deepEquationAnalyze(ArrayList<String> line){
 		int prevPrecedence = 0;
 		int currPrecedence = 0;
-		
+
 		for(int i = 0; i < line.size(); i++)
 		{
 			prevPrecedence = currPrecedence;
 			String c = line.get(i);
 			System.out.println(i + ": " + c);
-			
+
 			if (c.equals(")")) {
 				// evaluate to the top
 				for(int j = 0; j <= i; j+=1) {
@@ -161,20 +181,20 @@ public class DetailedGraphView extends ViewPart {
 						System.out.print(ss);
 					System.out.println();
 					String inner_c = line.get(i-j);
-					
+
 					if (inner_c.equals("(")) {
-							line.remove(i-j);
-							i--;
-							break;
+						line.remove(i-j);
+						i--;
+						break;
 					} else if (inner_c.equals(")")) {
 						continue;
 					}
-					
+
 					String resultOfSub = createSubTree(i-j);
 					if (resultOfSub.length() == 0)
 						break;
 					operationStack.push(resultOfSub);
-					
+
 					Pattern p = Pattern.compile("(\\w+((\\.\\w+)?)*)|([<|>|=][=|>]|[+|-|*|/|(|)|,|=|^|<|>])");
 					Matcher m = p.matcher(resultOfSub);
 					int inner_push_backwards = 0;
@@ -189,7 +209,7 @@ public class DetailedGraphView extends ViewPart {
 				if (prevPrecedence >= currPrecedence) {
 					// evaluate what we have
 					operationStack.push(createSubTree(i));
-					
+
 					continue;
 				}
 				operationStack.push(c);
@@ -220,7 +240,7 @@ public class DetailedGraphView extends ViewPart {
 				}
 				operationStack.push(c);
 			} else if (c.equals("(")) {
-					continue;
+				continue;
 			} else {
 				// variables, "," and integers
 				currPrecedence = 1;
@@ -228,12 +248,12 @@ public class DetailedGraphView extends ViewPart {
 			}
 		}
 	}
-	
+
 	private static String functionalAnalyze(String funCall) {
-		
+
 		return funCall;
 	}
-	
+
 	private static String createSubTree(int endIndex) {
 		String newEq = "";
 		String leftSide = "";
@@ -271,18 +291,18 @@ public class DetailedGraphView extends ViewPart {
 		System.out.println("We get from createSubTree " + newEq);
 
 		if (operatorNode != null) {
-			subEquations.add(new MyEquation(operatorNode, newEq));
+			subEquations.add(new ModelicaEquation(operatorNode, newEq));
 		} else if (leftNode != null) {
-			subEquations.add(new MyEquation(leftNode, newEq));
+			subEquations.add(new ModelicaEquation(leftNode, newEq));
 		} else if (rightNode != null) {
-			subEquations.add(new MyEquation(rightNode, newEq));
+			subEquations.add(new ModelicaEquation(rightNode, newEq));
 		}
 
 		return newEq;
 	}
 
 	private static GraphNode createEquationNode(String side) {
-		for (MyEquation mEq : subEquations) {
+		for (ModelicaEquation mEq : subEquations) {
 			if (mEq.equation == side) 
 				return(mEq.topNode);
 		}

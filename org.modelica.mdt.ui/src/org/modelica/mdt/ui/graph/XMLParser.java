@@ -1,6 +1,15 @@
 
-package org.modelica.mdt.ui.view;
+package org.modelica.mdt.ui.graph;
 
+/**
+ * After a file has been marked up with XML-tags, 
+ * this class will read it and parse through it 
+ * in order to absorb the core information
+ * about what operations has been performed to 
+ * the equations.
+ *
+ * @author: Magnus Sjöstrand
+ */
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;

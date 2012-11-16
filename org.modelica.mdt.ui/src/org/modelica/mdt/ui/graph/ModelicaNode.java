@@ -1,22 +1,30 @@
 
-package org.modelica.mdt.ui.view;
+package org.modelica.mdt.ui.graph;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyNode extends MyGraphObject{
+/**
+ * This class holds the information of a node.
+ * It will be used as part of storage for when saving
+ * data of an analyze about a certain class. Each node
+ * represents one class or nested class.
+ *
+ * @author: Magnus Sjöstrand
+ */
+public class ModelicaNode extends ModelicaNodeInfo{
 	private int id;
 	private final String name;
 	boolean expandable;
-	private List<MyNode> connections;
+	private List<ModelicaNode> connections;
 	private int color;
 	private boolean simulated;
 
-	public MyNode(int id, String name, int color) {
+	public ModelicaNode(int id, String name, int color) {
 		this.id = id;
 		this.name = name;
 		this.expandable = true;
-		this.connections = new ArrayList<MyNode>();
+		this.connections = new ArrayList<ModelicaNode>();
 		this.color = color;
 		this.simulated = true;
 	}
@@ -33,7 +41,7 @@ public class MyNode extends MyGraphObject{
 		return expandable;
 	}
 
-	public List<MyNode> getConnectedTo() {
+	public List<ModelicaNode> getConnectedTo() {
 		return connections;
 	}
 

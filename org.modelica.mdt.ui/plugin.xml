@@ -19,10 +19,14 @@
             icon="icons/obj16/mo_file.gif"
             id="org.modelica.mdt.ui.view.ModelicaConsoleView"
             name="OpenModelica Console"/>
-      <view class="org.modelica.mdt.ui.view.GraphView"
+      <view class="org.modelica.mdt.ui.graph.GraphView"
             icon="icons/obj16/mo_file.gif"
             id="org.modelica.mdt.ui.view.GraphView"
             name="Graph View"/>
+      <view class="org.modelica.mdt.ui.graph.DetailedGraphView"
+            icon="icons/obj16/mo_file.gif"
+            id="org.modelica.mdt.ui.view.DetailedGraphView"
+            name="Detailed Graph View"/>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">

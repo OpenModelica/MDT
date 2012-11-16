@@ -1,10 +1,14 @@
 
-package org.modelica.mdt.ui.view;
+package org.modelica.mdt.ui.graph;
 
-public class MyGraphObject
+/**
+ * This class structures the info of a general
+ * Modelica object.
+ *
+ * @author: Magnus Sjöstrand
+ */
+public class ModelicaNodeInfo
 {
-	// General Structure for providing information to tooltips
-	
 	// Type: model, package ... 
 	protected String classType = "";
 	

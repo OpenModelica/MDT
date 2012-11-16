@@ -1,6 +1,14 @@
 
-package org.modelica.mdt.ui.view;
+package org.modelica.mdt.ui.graph;
 
+/**
+ * After a file has been simulated using
+ * a result-flag to print out all optimizations
+ * performed, this class will start marking up
+ * each line of code with XML-tags.
+ *
+ * @author: Magnus Sjöstrand
+ */
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
