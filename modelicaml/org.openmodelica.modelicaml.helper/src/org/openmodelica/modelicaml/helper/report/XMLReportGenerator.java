@@ -70,6 +70,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -77,6 +78,7 @@ import org.eclipse.uml2.uml.Comment;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.datacollection.ElementsCollector;
 import org.openmodelica.modelicaml.common.helpers.VerificationServices;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
@@ -208,14 +210,18 @@ public class XMLReportGenerator {
 	
 	private boolean copySimulationFiles = false;
 	
+	private EObject rootElement;
 	
-	
-	public XMLReportGenerator(GeneratedModelsData gmd, int contentType) {
+	public XMLReportGenerator(GeneratedModelsData gmd, EObject rootElement, int contentType) {
+		
 		this.gmd = gmd;
+		this.rootElement = rootElement;
+		
 		if (gmd.getGenerator() != null) {
 			preparedModelInstantiations = gmd.getGenerator().getPreparedModelInstantiations();
 		}
 		this.contentType = contentType;
+		
 	}
 
 	
@@ -879,8 +885,10 @@ public class XMLReportGenerator {
 		String string = "";
 		int i = 0;
 		
-		HashSet<Element> allFoundRequirements = gmd.getAllFoundRequirements();
-		HashSet<Element> allUsedRequirements= gmd.getAllUsedRequirements();
+		HashSet<Element> allFoundRequirements = new HashSet<Element>();
+		allFoundRequirements.addAll(gmd.getAllFoundRequirements());
+		HashSet<Element> allUsedRequirements = new HashSet<Element>();
+		allUsedRequirements.addAll(gmd.getAllUsedRequirements());
 		
 		allFoundRequirements.removeAll(allUsedRequirements);
 		
@@ -1076,6 +1084,9 @@ public class XMLReportGenerator {
 					// correct path if needed
 					filePath = filePath.replaceAll("%20", " ");
 
+					// close progress monitor
+					progressDialog.close();
+					
 					return  storeFile(folderPath, xmlFileName);
 				}
 			}

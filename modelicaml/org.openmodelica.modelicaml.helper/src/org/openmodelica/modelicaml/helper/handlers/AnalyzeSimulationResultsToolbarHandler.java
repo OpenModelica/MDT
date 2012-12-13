@@ -49,6 +49,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
@@ -82,6 +83,7 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 	private boolean analyzeFiles = false;
 	private String resultsFileFolderPath; 
 		
+	private EObject rootElement;
 	
 	private String projectPath;
 	
@@ -106,13 +108,13 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 					if (getMode() == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
 						ModelicaMLServices.notify("ModelicaML Report Generation", "The report was opened in a separate window.", 0, 2);
 
-						SelectScenarioToReqRelationsToCreateDialog dialog = new SelectScenarioToReqRelationsToCreateDialog(ModelicaMLServices.getShell(), getGeneratedModelsData(), false);
+						SelectScenarioToReqRelationsToCreateDialog dialog = new SelectScenarioToReqRelationsToCreateDialog(ModelicaMLServices.getShell(), getGeneratedModelsData(), false, rootElement);
 						dialog.open();
 					}
 					else if (getMode() == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
 						ModelicaMLServices.notify("ModelicaML Report Generation", "The report was opened in a separate window.", 0, 2);
 
-						ScenarioBasedVerificationReportDialog dialog = new ScenarioBasedVerificationReportDialog(ModelicaMLServices.getShell(), getGeneratedModelsData(), false);
+						ScenarioBasedVerificationReportDialog dialog = new ScenarioBasedVerificationReportDialog(ModelicaMLServices.getShell(), getGeneratedModelsData(), false, rootElement);
 			     		dialog.open();
 					}
 				}
@@ -153,6 +155,8 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 				setResultsFileFolderPath(dialog.getResultFilesFolderPath());
 
 				generatedModelsData = dialog.getGeneratedModelsData();
+				
+				rootElement = dialog.getRootElement();
 				
 				proceed();
 			}

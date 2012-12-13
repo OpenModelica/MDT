@@ -136,6 +136,8 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 	private UmlModel umlModel;
 	private VerificationDataCollector verificationDataCollector;
 	
+	private EObject rootElement = null;
+	
 	
 //	// only for debugging
 //	public static void main(String[] args) {
@@ -144,12 +146,15 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 //	}
 	
 	
+
+
 	public AnalyseSimulationResultsOptionsDialog(Shell parentShell, Element generatedModelsPackage) {
 
 		super(parentShell);
 		setShellStyle(SWT.SHELL_TRIM | SWT.PRIMARY_MODAL | SWT.ON_TOP );
 		
-		this.generatedModelsPackage = generatedModelsPackage;
+		// NOTE: do not preset the package in order to force the collection of verification data
+//		this.generatedModelsPackage = generatedModelsPackage;
 
 		dialogMessage = message;
 		
@@ -527,7 +532,7 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 			
 			// get the UML model
 			umlModel = UmlUtils.getUmlModel();
-			EObject rootElement = null;
+			rootElement = null;
 			
 			try {
 				rootElement = umlModel.lookupRoot();
@@ -597,6 +602,7 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 							}
             				else {
             					// do nothing
+            					System.err.println("Verification data collector is empty!");
             				}
     					}
             			else {
@@ -881,5 +887,13 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 
 	public void setVerificationDataCollector(VerificationDataCollector verificationDataCollector) {
 		this.verificationDataCollector = verificationDataCollector;
+	}
+	
+	public EObject getRootElement() {
+		return rootElement;
+	}
+
+	public void setRootElement(EObject rootElement) {
+		this.rootElement = rootElement;
 	}
 }

@@ -142,8 +142,10 @@ public class Simulator {
 			
 			// quit in order to enforce a new instance the next time
 			omcc.quit();
+			
 			ModelicaMLServices.notify("Simulation Error", "Could not establish a connection to the OpenModelica compiler. Please try it again.", 2, 3);
 			System.err.println("Could not establish a connection to the OpenModelica compiler. Please try it again.");
+			
 			return;
 		}
 		

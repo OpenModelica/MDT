@@ -136,6 +136,7 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 	private Tree treePreSelectedNewPositiveRelations;
 	private Tree treeNotSimulated;
 	
+	private EObject rootElement;
 	
 
 	/**
@@ -145,13 +146,16 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 	 */
 	public SelectScenarioToReqRelationsToCreateDialog(Shell parentShell, 
 			GeneratedModelsData gmd,
-			boolean openedFromReportDialog) {
+			boolean openedFromReportDialog,
+			EObject rootElement) {
 		
 		super(parentShell);
 		setShellStyle(SWT.SHELL_TRIM);
 		this.setGmd(gmd);
 		this.setSimulationResultsFiles(gmd.getSimulationResultsFile());
 		this.setOpenedFromReportDialog(openedFromReportDialog);
+		
+		this.rootElement = rootElement;
 	}
 
 	public GeneratedModelsData getGmd() {
@@ -400,7 +404,7 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 		btnReadReport.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ScenarioBasedVerificationReportDialog dialog = new ScenarioBasedVerificationReportDialog(getShell(), gmd, true);
+				ScenarioBasedVerificationReportDialog dialog = new ScenarioBasedVerificationReportDialog(getShell(), gmd, true, rootElement);
 				dialog.open();
 			}
 		});
@@ -430,7 +434,7 @@ public class SelectScenarioToReqRelationsToCreateDialog extends TitleAreaDialog 
 //					String fileName = Constants.fileName_relationsDiscovery + "_" + System.currentTimeMillis() + ".xml";
 					
 					// create report
-					XMLReportGenerator reportGenerator = new XMLReportGenerator(gmd, XMLReportGenerator.XMLContent);
+					XMLReportGenerator reportGenerator = new XMLReportGenerator(gmd, rootElement, XMLReportGenerator.XMLContent);
 					String filePath = null;
 					try {
 						filePath = reportGenerator.createReport(projectName, folderName,false);

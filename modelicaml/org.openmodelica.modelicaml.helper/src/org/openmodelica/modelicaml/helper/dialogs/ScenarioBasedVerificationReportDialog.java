@@ -35,6 +35,7 @@
 package org.openmodelica.modelicaml.helper.dialogs;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +43,9 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -83,10 +87,13 @@ import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.helper.Activator;
+import org.openmodelica.modelicaml.helper.report.OntologyGenerator;
 import org.openmodelica.modelicaml.helper.report.XMLReportGenerator;
 import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
 import org.openmodelica.modelicaml.simulation.simresults.ReadMatlab4;
 import org.openmodelica.modelicaml.simulation.testexecution.actions.PlotResultsFileAction;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 
 public class ScenarioBasedVerificationReportDialog extends Dialog {
@@ -135,18 +142,24 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 
 	// variables that are on the quick plot
 	private HashSet<String> quickPlottedVariables = new HashSet<String>();
+	
+	private EObject rootElement;
 
 	
 	public ScenarioBasedVerificationReportDialog(Shell parentShell, 
 			GeneratedModelsData gmd, 
-			boolean openedFromNewRelationsDialog) {
+			boolean openedFromNewRelationsDialog,
+			EObject rootElement) {
 		
 		super(parentShell);
 		setShellStyle(SWT.SHELL_TRIM);
 		
 		this.setGmd(gmd);
+		
 		this.setSimulationResultsFiles(gmd.getSimulationResultsFile());
 		this.setOpenedFromNewRelationsDialog(openedFromNewRelationsDialog);
+		
+		this.rootElement = rootElement;
 	}
 
 	@Override
@@ -264,7 +277,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 			}
 		});
 //		buildTree(treeNotEvaluatedRequirements, false, false, true);
-		getNotImplementedRequirementItems(treeNotEvaluatedRequirements);
+		getNotImplementedRequirementItems(treeNotImplementedRequirements);
 		tbtmNotImplementedRequirements.setControl(treeNotImplementedRequirements);
 		
 		/*
@@ -314,7 +327,7 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 		btnNewRelations.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				SelectScenarioToReqRelationsToCreateDialog dialog = new SelectScenarioToReqRelationsToCreateDialog(new Shell(), gmd, true);
+				SelectScenarioToReqRelationsToCreateDialog dialog = new SelectScenarioToReqRelationsToCreateDialog(new Shell(), gmd, true, rootElement);
 				dialog.open();
 			}
 		});
@@ -529,8 +542,9 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 					String folderName = Constants.folderName_automaticScenarioBasedDesignVerificationDiscovery;
 					
 					// create report
-					XMLReportGenerator reportGenerator = new XMLReportGenerator(gmd, XMLReportGenerator.XMLContent);
+					XMLReportGenerator reportGenerator = new XMLReportGenerator(gmd, rootElement, XMLReportGenerator.XMLContent);
 					String filePath = null;
+					
 					try {
 						filePath = reportGenerator.createReport(projectName, folderName, false);
 					} catch (URISyntaxException e1) {
@@ -543,7 +557,41 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-
+					
+					
+					//********************************************************************
+					// TODO: find a better place for this invocation 
+					// create ontology report
+					String ontologyFilePath = null;
+					OntologyGenerator ontologyGenerator = new OntologyGenerator(gmd, rootElement);
+					try {
+						try {
+							// take the folder where the report.html is: 
+							Path path = new Path(filePath);
+//							String strToRemove = path.lastSegment();
+							IPath folderNameOfReportFile = path.removeLastSegments(1);
+							ontologyFilePath = ontologyGenerator.createReport(projectName, folderNameOfReportFile.toOSString() , false);
+							
+						} catch (OWLOntologyCreationException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (OWLOntologyStorageException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					} catch (URISyntaxException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (CoreException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					//********************************************************************
+					
+					
 					
 					if (filePath != null) {
 						String message = "The file was stored: \n"+filePath+"";
@@ -988,8 +1036,10 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 	private void getNotImplementedRequirementItems(Tree parent){
 		int counter = 0;
 		
-		HashSet<Element> allFoundRequirements = gmd.getAllFoundRequirements();
-		HashSet<Element> allUsedRequirements= gmd.getAllUsedRequirements();
+		HashSet<Element> allFoundRequirements = new HashSet<Element>();
+		allFoundRequirements.addAll(gmd.getAllFoundRequirements());
+		HashSet<Element> allUsedRequirements = new HashSet<Element>();
+		allUsedRequirements.addAll(gmd.getAllUsedRequirements());
 		
 		allFoundRequirements.removeAll(allUsedRequirements);
 		
