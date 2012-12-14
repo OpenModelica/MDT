@@ -562,33 +562,33 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 					//********************************************************************
 					// TODO: find a better place for this invocation 
 					// create ontology report
-					String ontologyFilePath = null;
-					OntologyGenerator ontologyGenerator = new OntologyGenerator(gmd, rootElement);
-					try {
-						try {
-							// take the folder where the report.html is: 
-							Path path = new Path(filePath);
-//							String strToRemove = path.lastSegment();
-							IPath folderNameOfReportFile = path.removeLastSegments(1);
-							ontologyFilePath = ontologyGenerator.createReport(projectName, folderNameOfReportFile.toOSString() , false);
-							
-						} catch (OWLOntologyCreationException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (OWLOntologyStorageException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					} catch (URISyntaxException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (CoreException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+//					String ontologyFilePath = null;
+//					OntologyGenerator ontologyGenerator = new OntologyGenerator(gmd, rootElement);
+//					try {
+//						try {
+//							// take the folder where the report.html is: 
+//							Path path = new Path(filePath);
+////							String strToRemove = path.lastSegment();
+//							IPath folderNameOfReportFile = path.removeLastSegments(1);
+//							ontologyFilePath = ontologyGenerator.createReport(projectName, folderNameOfReportFile.toOSString() , false);
+//							
+//						} catch (OWLOntologyCreationException e1) {
+//							// TODO Auto-generated catch block
+//							e1.printStackTrace();
+//						} catch (OWLOntologyStorageException e1) {
+//							// TODO Auto-generated catch block
+//							e1.printStackTrace();
+//						}
+//					} catch (URISyntaxException e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					} catch (IOException e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					} catch (CoreException e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					}
 					//********************************************************************
 					
 					
@@ -1077,9 +1077,15 @@ public class ScenarioBasedVerificationReportDialog extends Dialog {
 	private String getNotUsedScenarioItems(Tree parent){
 		String string = "";
 		int counter = 0;
+
+		// NOTE, this does not work because these are pointers so that removeAll manipulates the original set!
+//		HashSet<Element> allFoundScenarios = gmd.getAllFoundScenarios();
+//		HashSet<Element> allUsedScenarios = gmd.getAllScenarios();
 		
-		HashSet<Element> allFoundScenarios = gmd.getAllFoundScenarios();
-		HashSet<Element> allUsedScenarios = gmd.getAllScenarios();
+		HashSet<Element> allFoundScenarios = new HashSet<Element>(); 
+		allFoundScenarios.addAll(gmd.getAllFoundScenarios());
+		HashSet<Element> allUsedScenarios = new HashSet<Element>(); 
+		allUsedScenarios.addAll(gmd.getAllScenarios());
 		
 		allFoundScenarios.removeAll(allUsedScenarios);
 		

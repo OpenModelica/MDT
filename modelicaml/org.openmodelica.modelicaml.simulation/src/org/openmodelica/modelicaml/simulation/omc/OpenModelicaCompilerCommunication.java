@@ -56,10 +56,14 @@ public class OpenModelicaCompilerCommunication {
 	public OpenModelicaCompilerCommunication(){
 		super();
 		
-		this.omc = new OMCProxy();
+//		this.omc = new OMCProxy();
 		
 		// set the Activator proxy as reference in order to enable the shut down of OMC when Eclipse is closed 
-		Activator.setOmcProxy(omc);
+//		Activator.setOmcProxy(omc);
+
+		
+		// TODO: TEST IT!
+		this.omc = Activator.getOmcProxy();
 		
 		history = new ArrayList<String>();
 	}

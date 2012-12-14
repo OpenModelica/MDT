@@ -68,7 +68,9 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -85,6 +87,8 @@ import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 @SuppressWarnings("restriction")
 public class XMLReportGenerator {
@@ -323,9 +327,12 @@ public class XMLReportGenerator {
 	}
 	
 	private String getSimulatedModelItems(){
+
+		HashSet<Element> notSimulatedModels = new HashSet<Element>();
+		notSimulatedModels.addAll(gmd.getNotSimulatedModels());
+		HashSet<Element> allModels = new HashSet<Element>();
+		allModels.addAll(gmd.getGeneratedModels());
 		
-		HashSet<Element> notSimulatedModels = gmd.getNotSimulatedModels();
-		HashSet<Element> allModels = gmd.getGeneratedModels();
 		allModels.removeAll(notSimulatedModels);
 		
 		HashSet<Element> simulatedModels = allModels;
@@ -923,8 +930,10 @@ public class XMLReportGenerator {
 		String string = "";
 		int i = 0;
 		
-		HashSet<Element> allFoundScenarios = gmd.getAllFoundScenarios();
-		HashSet<Element> allUsedScenarios = gmd.getAllScenarios();
+		HashSet<Element> allFoundScenarios = new HashSet<Element>();
+		allFoundScenarios.addAll(gmd.getAllFoundScenarios());
+		HashSet<Element> allUsedScenarios = new HashSet<Element>();
+		allUsedScenarios.addAll(gmd.getAllScenarios());
 		
 		allFoundScenarios.removeAll(allUsedScenarios);
 		
@@ -1079,15 +1088,39 @@ public class XMLReportGenerator {
 				
 				if (folder.exists() || folderCreated) {
 					
-					filePath = folderPath + "/" + xmlFileName;
+//					filePath = folderPath + "/" + xmlFileName;
+//					// correct path if needed
+//					filePath = filePath.replaceAll("%20", " ");
 					
-					// correct path if needed
-					filePath = filePath.replaceAll("%20", " ");
-
+//					Path folderAbsolutePath = new Path(folderPath);
+//					Path xmlReportFileAbsolutePath = new Path(folderPath + "/" + xmlFileName);
+//					filePath = xmlReportFileAbsolutePath.toOSString();
+					
+					// create report files: XML, HTML 
+					filePath = storeFile(folderPath, xmlFileName);
+					
+					// create OWL report
+					monitor.setTaskName("Creating OWL report ...");
+					OntologyGenerator og = new OntologyGenerator(gmd, rootElement, progressDialog);
+					try {
+						// take the folder where the report.html is: 
+						Path path = new Path(filePath);
+						IPath ontologyFolderPath = path.removeLastSegments(1);
+						
+						// create owl file
+						String ontologyFilePath = og.createOntology(ontologyFolderPath.toOSString());
+						
+					} catch (OWLOntologyCreationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (OWLOntologyStorageException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					
 					// close progress monitor
 					progressDialog.close();
-					
-					return  storeFile(folderPath, xmlFileName);
 				}
 			}
 			
@@ -1095,6 +1128,9 @@ public class XMLReportGenerator {
 			progressDialog.close();
 
 		}
+		
+		// refresh the projects browser
+		ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 		
 		return filePath;
 	}
@@ -1174,16 +1210,11 @@ public class XMLReportGenerator {
 			
 			progressDialog.close();
 			
-			// refresh the projects browser
-			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
-			
 			return htmlPath;
 //				FileOutputStream fos = new FileOutputStream(filePath); 
 //				OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
 //				out.write(Constants.fileEncoding);
 //				out.close();
-			
-			
 		}
 		return null;
 	}

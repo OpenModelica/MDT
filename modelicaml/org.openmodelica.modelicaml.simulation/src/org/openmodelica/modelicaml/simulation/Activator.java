@@ -123,6 +123,8 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		getWorkbench().addWorkbenchListener(onExitListener);
+		
+		setOmcProxy(new OMCProxy());
 	}
 
 	/*

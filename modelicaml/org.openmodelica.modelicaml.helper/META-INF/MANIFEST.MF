@@ -35,4 +35,5 @@ Export-Package: org.openmodelica.modelicaml.helper.datacollection,
  org.openmodelica.modelicaml.helper.structures
 Bundle-ClassPath: .,
  swt-grouplayout.jar,
- libs/owlapi-bin.jar
+ libs/owlapi-bin.jar,
+ libs/HermiT.jar
