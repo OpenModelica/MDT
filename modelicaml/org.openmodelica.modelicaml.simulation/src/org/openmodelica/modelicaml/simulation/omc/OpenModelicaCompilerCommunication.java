@@ -181,6 +181,14 @@ public class OpenModelicaCompilerCommunication {
 	}
 	
 	/**
+	 * Clear everything.
+	 * @return Reply from OMC
+	 */
+	public String getVesion(){
+		return executeCommand("getVersion()");
+	}
+	
+	/**
 	 * Instantiates a model/class and returns a string containing the flat class definition.
 	 * Ex: instantiateModel(dcmotor)
 	 *

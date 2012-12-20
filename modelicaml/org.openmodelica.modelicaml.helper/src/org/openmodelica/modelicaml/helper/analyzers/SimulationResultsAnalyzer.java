@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.uml2.uml.Element;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
@@ -102,9 +103,13 @@ public class SimulationResultsAnalyzer {
 						if (vars.contains(statusDotPath)) {
 							
 							double[] values = reader.getValues(statusDotPath);
-
-							boolean notViolated = checkHadAtLeastOnceValue(values, "1");
-							boolean violated = checkHadAtLeastOnceValue(values, "2");
+							
+							String valueForViolated = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", "valueForViolated", "2", null);
+							String valueForNotViolated = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", "valueForNotViolated", "1", null);
+							String valueForNotEvaluated = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", "valueForNotEvaluated", "0", null);
+							
+							boolean violated = checkHadAtLeastOnceValue(values, valueForViolated);
+							boolean notViolated = checkHadAtLeastOnceValue(values, valueForNotViolated);
 							boolean evaluated = notViolated || violated;
 									
 							// if requirement was evaluated -> positive relation
@@ -126,6 +131,11 @@ public class SimulationResultsAnalyzer {
 									if (violated) {
 										// add to scenario to violated requirements map
 										gmd.addToMapList(gmd.getScenarioToViolatedRequirements(), scenario.getComponentType(), requirement.getComponentType());
+									}
+									else if (notViolated) {
+										// add to scenario to NOT violated requirements map
+										gmd.addToMapList(gmd.getScenarioToNotViolatedRequirements(), scenario.getComponentType(), requirement.getComponentType());
+										
 									}
 
 									// add to scenario to evaluated requirements map

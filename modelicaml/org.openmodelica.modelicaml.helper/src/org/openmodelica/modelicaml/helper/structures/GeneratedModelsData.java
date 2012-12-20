@@ -105,8 +105,10 @@ public class GeneratedModelsData {
 	
 	// maps with scenarios and their requirements
 	private HashMap<Element, HashSet<Element>> scenarioToEvaluatedRequirements = new HashMap<Element, HashSet<Element>>();
-	private HashMap<Element, HashSet<Element>> scenarioToViolatedRequirements = new HashMap<Element, HashSet<Element>>();
 	private HashMap<Element, HashSet<Element>> scenarioToNotEvaluatedRequirements = new HashMap<Element, HashSet<Element>>();
+
+	private HashMap<Element, HashSet<Element>> scenarioToViolatedRequirements = new HashMap<Element, HashSet<Element>>();
+	private HashMap<Element, HashSet<Element>> scenarioToNotViolatedRequirements = new HashMap<Element, HashSet<Element>>();
 
 	
 	private HashMap<Element, HashSet<Element>> scenarioWithNewPositiveRelationsToRequirements = new HashMap<Element, HashSet<Element>>();
@@ -469,25 +471,29 @@ public class GeneratedModelsData {
 		
 		HashSet<Element> allScenarios = getAllScenarios();
 		HashSet<Element> notEvaluatedRequirements = new HashSet<Element>();
-		HashSet<Element> evaluatedRequirements = new HashSet<Element>();
+//		HashSet<Element> evaluatedRequirements = new HashSet<Element>();
 		
 		for (Element scenario : allScenarios) {
 			
 			// get scenarios evaluated and not evaluated requirements
-			HashSet<Element> evaluatedRequirementsForScenario = getScenarioToEvaluatedRequirements().get(scenario);
+//			HashSet<Element> evaluatedRequirementsForScenario = getScenarioToEvaluatedRequirements().get(scenario);
 			HashSet<Element> notEvaluatedRequirementsForScenario = getScenarioToNotEvaluatedRequirements().get(scenario);
 			
 			if (notEvaluatedRequirementsForScenario != null) {
 				// add all that were not evaluated in this scenario
 				notEvaluatedRequirements.addAll(notEvaluatedRequirementsForScenario);
 			}
-			if (evaluatedRequirementsForScenario != null) {
-				evaluatedRequirements.addAll(evaluatedRequirementsForScenario);
-			}
+//			if (evaluatedRequirementsForScenario != null) {
+//				evaluatedRequirements.addAll(evaluatedRequirementsForScenario);
+//			}
 		}
 		
 		// remove all that were evaluated
-		notEvaluatedRequirements.removeAll(evaluatedRequirements);
+		/*
+		 * NOTE, do not do this because then requirements that are evaluated in some models 
+		 * will be removed even though they were not evaluated in some models
+		 */
+//		notEvaluatedRequirements.removeAll(evaluatedRequirements);
 		
 		return notEvaluatedRequirements;
 	}
@@ -529,24 +535,45 @@ public class GeneratedModelsData {
 		return requirements;
 	}
 	
+	/*
+	 * Note, this is an incorrect implementation because if requirements are violated
+	 * in some models they will not be listed as not violated even though they
+	 * were not violated in some models.
+	 */
+//	public HashSet<Element> getRequirementsNotViolatedInScenarios(){
+//		HashSet<Element> allScenarios = getAllScenarios();
+//		
+//		HashSet<Element> requirements = new HashSet<Element>();
+//		
+//		for (Element scenario : allScenarios) {
+//		
+//			HashSet<Element> evaluatedRequirements = getScenarioToEvaluatedRequirements().get(scenario);
+//			HashSet<Element> violatedRequirements = getScenarioToViolatedRequirements().get(scenario);
+//			
+//			if (evaluatedRequirements != null) {
+//				
+//				// remove all violated requirements to get all that were evaluated and not violated
+//				if (violatedRequirements != null) {
+//					evaluatedRequirements.removeAll(violatedRequirements);
+//				}
+//				
+//				requirements.addAll(evaluatedRequirements);
+//			}
+//		}
+//		return requirements;
+//	}
+	
 	public HashSet<Element> getRequirementsNotViolatedInScenarios(){
+
 		HashSet<Element> allScenarios = getAllScenarios();
-		
 		HashSet<Element> requirements = new HashSet<Element>();
 		
 		for (Element scenario : allScenarios) {
 		
-			HashSet<Element> evaluatedRequirements = getScenarioToEvaluatedRequirements().get(scenario);
-			HashSet<Element> violatedRequirements = getScenarioToViolatedRequirements().get(scenario);
+			HashSet<Element> notViolatedRequirements = getScenarioToNotViolatedRequirements().get(scenario);
 			
-			if (evaluatedRequirements != null) {
-				
-				// remove all violated requirements to get all that were evaluated and not violated
-				if (violatedRequirements != null) {
-					evaluatedRequirements.removeAll(violatedRequirements);
-				}
-				
-				requirements.addAll(evaluatedRequirements);
+			if (notViolatedRequirements != null) {
+				requirements.addAll(notViolatedRequirements);
 			}
 		}
 		return requirements;
@@ -726,6 +753,15 @@ public class GeneratedModelsData {
 	public HashMap<Element, HashSet<Element>> getScenarioToViolatedRequirements() {
 		return scenarioToViolatedRequirements;
 	}
+	
+	public HashMap<Element, HashSet<Element>> getScenarioToNotViolatedRequirements() {
+		return scenarioToNotViolatedRequirements;
+	}
+
+//	public void setScenarioToNotViolatedRequirements(
+//			HashMap<Element, HashSet<Element>> scenarioToNotViolatedRequirements) {
+//		this.scenarioToNotViolatedRequirements = scenarioToNotViolatedRequirements;
+//	}
 
 	public HashMap<Element, HashSet<Element>> getScenarioToEvaluatedRequirements() {
 		return scenarioToEvaluatedRequirements;

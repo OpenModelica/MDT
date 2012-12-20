@@ -79,6 +79,12 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(Constants.propertyName_solver, "dassl");
 		store.setDefault(Constants.propertyName_outputFormat, "mat");
 		
+		store.setDefault("valueForViolated", "2");
+		store.setDefault("valueForNotViolated", "1");
+		store.setDefault("valueForNotEvaluated", "0");
+		
+		store.setDefault("alwaysCopySimulationResultFilesIntoVerificationSessionReport", false);
+		store.setDefault("generateOWLReportFiles", false);
 		
 		store.setDefault("generateVerdict", false);
 		

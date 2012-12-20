@@ -1053,8 +1053,15 @@ public class XMLReportGenerator {
 		
 		if (contentType == XMLContent) {
 			
+			Boolean alwaysCopySimulationResultFilesIntoVerificationSessionReport = Platform.getPreferencesService().getBoolean("org.openmodelica.modelicaml.preferences", "alwaysCopySimulationResultFilesIntoVerificationSessionReport", false, null);
+
 			// ask for copying sim files 
-			copySimulationFiles = MessageDialog.openQuestion(new Shell(), "Copy Simulation Files?", "Should all simulation files be copies to the report folder?");
+			if (alwaysCopySimulationResultFilesIntoVerificationSessionReport) {
+				copySimulationFiles = alwaysCopySimulationResultFilesIntoVerificationSessionReport;
+			}
+			else {
+				copySimulationFiles = MessageDialog.openQuestion(new Shell(), "Copy Simulation Files?", "Should all simulation files be copies to the report folder?");
+			}
 			
 			progressDialog = new ProgressMonitorDialog(new Shell());
 			monitor = progressDialog.getProgressMonitor();
@@ -1099,25 +1106,28 @@ public class XMLReportGenerator {
 					// create report files: XML, HTML 
 					filePath = storeFile(folderPath, xmlFileName);
 					
-					// create OWL report
-					monitor.setTaskName("Creating OWL report ...");
-					OntologyGenerator og = new OntologyGenerator(gmd, rootElement, progressDialog);
-					try {
-						// take the folder where the report.html is: 
-						Path path = new Path(filePath);
-						IPath ontologyFolderPath = path.removeLastSegments(1);
-						
-						// create owl file
-						String ontologyFilePath = og.createOntology(ontologyFolderPath.toOSString());
-						
-					} catch (OWLOntologyCreationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (OWLOntologyStorageException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					Boolean generateOWLReportFiles = Platform.getPreferencesService().getBoolean("org.openmodelica.modelicaml.preferences", "generateOWLReportFiles", false, null);
+
+					if (generateOWLReportFiles) {
+						// create OWL report
+						monitor.setTaskName("Creating OWL report ...");
+						OntologyGenerator og = new OntologyGenerator(gmd, rootElement, progressDialog);
+						try {
+							// take the folder where the report.html is: 
+							Path path = new Path(filePath);
+							IPath ontologyFolderPath = path.removeLastSegments(1);
+							
+							// create owl file
+							String ontologyFilePath = og.createOntology(ontologyFolderPath.toOSString());
+							
+						} catch (OWLOntologyCreationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (OWLOntologyStorageException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
-					
 					
 					// close progress monitor
 					progressDialog.close();

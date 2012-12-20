@@ -130,6 +130,9 @@ public class Simulator {
 		// create compiler communication
 		OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
 		
+		// get the compiler version 
+		omcc.getVesion();
+
 		//clear compiler
 		String reply = omcc.clear();
 		

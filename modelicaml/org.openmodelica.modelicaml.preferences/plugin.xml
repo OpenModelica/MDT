@@ -28,6 +28,12 @@
       </page>
       <page
             category="org.openmodelica.modelicaml.preferences.mainpage"
+            class="org.openmodelica.modelicaml.preferences.impl.ModelicaMLDesignVerificationPage"
+            id="org.openmodelica.modelicaml.preferences.designVerification"
+            name="Design Verification Settings">
+      </page>
+      <page
+            category="org.openmodelica.modelicaml.preferences.mainpage"
             class="org.openmodelica.modelicaml.preferences.impl.ModelicaMLModelicaModelsSynchronization"
             id="org.openmodelica.modelicaml.preferences.ModelicaMLModelicaModelsSynchronization"
             name="Modelica Model Synchronization Settings">
