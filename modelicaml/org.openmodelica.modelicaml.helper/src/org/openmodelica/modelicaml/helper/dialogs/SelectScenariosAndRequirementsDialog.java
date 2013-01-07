@@ -491,7 +491,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 	
 	private boolean isPreselectedScenariosTab(TabFolder tabFolder){
 		TabItem tab = tabFolder.getSelection()[0];
-		if (tab.getText().equals(TAB_TITLE_Preselected_Scenarios)) {
+		if (tab.getText().startsWith(TAB_TITLE_Preselected_Scenarios)) {
 			return true;
 		}
 		return false;
@@ -499,7 +499,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 
 	private boolean isDiscardedScenariosTab(TabFolder tabFolder){
 		TabItem tab = tabFolder.getSelection()[0];
-		if (tab.getText().equals(TAB_TITLE_Discarded_Scenarios)) {
+		if (tab.getText().startsWith(TAB_TITLE_Discarded_Scenarios)) {
 			return true;
 		}
 		return false;
@@ -508,7 +508,7 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 	
 	private boolean isRequirementsTab(TabFolder tabFolder){
 		TabItem tab = tabFolder.getSelection()[0];
-		if (tab.getText().equals(TAB_TITLE_Requirements)) {
+		if (tab.getText().startsWith(TAB_TITLE_Requirements)) {
 			return true;
 		}
 		return false;

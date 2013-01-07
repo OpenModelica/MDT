@@ -117,7 +117,7 @@ public class FindReferencesPopupHandler extends AbstractHandler{
 						});
 					} catch (InvocationTargetException e) {
 						e.printStackTrace();
-						MessageDialog.openError(ModelicaMLServices.getShell(), "ModelicaML Reference Search Error", "Could not invoce the data collection for the references search. ");
+						MessageDialog.openError(ModelicaMLServices.getShell(), "ModelicaML Reference Search Error", "Could not invoke the data collection for the references search. ");
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 						MessageDialog.openInformation(ModelicaMLServices.getShell(), "ModelicaML Collection", "Data collection was interrupted.");		}

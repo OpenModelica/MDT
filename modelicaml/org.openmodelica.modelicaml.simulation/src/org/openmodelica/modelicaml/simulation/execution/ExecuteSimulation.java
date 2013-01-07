@@ -60,14 +60,24 @@ public class ExecuteSimulation {
 		OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
 		String omcReturnString = "";
 		
-		// use this command in order to get the OpenModelica temp folder
+		//Clear Workspace
+		omcc.clear();
+		
+		// get the omc temp directory
+		omcTempDirectoryPath = omcc.getTempDirectoryPath();
+
+		
+		// Get the OpenModelica temp folder
+		if (omcTempWorkingFolder == null ) {
+			omcTempWorkingFolder = omcTempDirectoryPath;
+		}
+		
 		while(omcTempWorkingFolder.contains("\\")){
 			omcTempWorkingFolder = omcTempWorkingFolder.replace('\\', '/');
 		}
 		
-		//Clear Workspace
-		omcc.clear();
 		
+		// load MSL
 		if (loadMSL) {
 			omcc.loadModel("Modelica");
 		}
@@ -100,6 +110,7 @@ public class ExecuteSimulation {
 		if (omcTempDirectoryPath == null) {
 			OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
 			omcTempDirectoryPath = omcc.getTempDirectoryPath();
+//			omcTempDirectoryPath = omcc.getTempFolderPath();
 		}
 		return omcTempDirectoryPath;
 	}

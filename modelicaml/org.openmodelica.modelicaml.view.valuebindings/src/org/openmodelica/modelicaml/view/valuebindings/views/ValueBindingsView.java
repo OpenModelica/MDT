@@ -230,7 +230,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				});
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
-				MessageDialog.openError(ModelicaMLServices.getShell(), "Collecting Binding Data Error", "Could not invoce bindings reload.");
+				MessageDialog.openError(ModelicaMLServices.getShell(), "Collecting Binding Data Error", "Could not invoke bindings reload. Please click on the diagram editor to activate the ModelicaML editor and try again. ");
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				MessageDialog.openInformation(ModelicaMLServices.getShell(), "Collecting Binding Data Canceled", "Bindings reload was canceled");
@@ -696,7 +696,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					});
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
-					MessageDialog.openError(ModelicaMLServices.getShell(), "Bindings View Reload Error", "Could not invoce bindings reload.");
+					MessageDialog.openError(ModelicaMLServices.getShell(), "Bindings View Reload Error", "Could not invoke bindings reload.");
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 					MessageDialog.openInformation(ModelicaMLServices.getShell(), "Bindings View Reload Canceled", "Bindings reload was canceled");
@@ -784,7 +784,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 //						} catch (InvocationTargetException e) {
 //							e.printStackTrace();
 //							MessageDialog.openError(new Shell(), "Value Bindings Operations Validation", 
-//									"It was not possible to invoce the Value Bindings Operations Validation.");
+//									"It was not possible to invoke the Value Bindings Operations Validation.");
 //						} catch (InterruptedException e) {
 //							e.printStackTrace();
 //							MessageDialog.openError(new Shell(), "Value Bindings Operations Validation Process Abort", 
@@ -871,7 +871,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					});
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
-					MessageDialog.openError(ModelicaMLServices.getShell(), "Collecting Binding Data Error", "Could not invoce bindings reload.");
+					MessageDialog.openError(ModelicaMLServices.getShell(), "Collecting Binding Data Error", "Could not invoke bindings reload.");
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 					MessageDialog.openInformation(ModelicaMLServices.getShell(), "Collecting Binding Data Canceled", "Bindings reload was canceled");

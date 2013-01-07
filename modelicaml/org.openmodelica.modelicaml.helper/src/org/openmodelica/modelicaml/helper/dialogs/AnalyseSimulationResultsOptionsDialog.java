@@ -155,7 +155,15 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 		
 		// NOTE: do not preset the package in order to force the collection of verification data
 //		this.generatedModelsPackage = generatedModelsPackage;
-
+		
+		/*
+		 * If the package was preselected 
+		 * re-collect all verification models and verification 
+		 * related data (e.g. all requirements, all scenarios, etc. )
+		 */
+		setGeneratedModelsPackage((Element) generatedModelsPackage);
+		collect();
+		
 		dialogMessage = message;
 		
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(selectionListener);

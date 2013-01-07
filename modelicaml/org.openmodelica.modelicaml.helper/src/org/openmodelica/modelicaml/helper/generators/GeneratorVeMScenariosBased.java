@@ -296,7 +296,7 @@ public class GeneratorVeMScenariosBased {
 					});
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
-					MessageDialog.openError(ModelicaMLServices.getShell(), "Generator Invocation Error", "Could not invoce the generator. Please try it again.");
+					MessageDialog.openError(ModelicaMLServices.getShell(), "Generator Invocation Error", "Could not invoke the generator. Please try it again.");
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 					MessageDialog.openInformation(ModelicaMLServices.getShell(), "Generator Interruption", "The generation of models was interrupted.");
@@ -564,7 +564,7 @@ public class GeneratorVeMScenariosBased {
 				
 				
 				/*
-				 * TODO: For AUTOMATIV SCENARIO-BASED VERIFICATION MODE the user 
+				 * TODO: For AUTOMATIC SCENARIO-BASED VERIFICATION MODE the user 
 				 * can decide not to see the combination but run the models generation immediately based on 
 				 * generator suggestion. This may save time to wait until the combinations are created in 
 				 * order to be able to start the models generation. This will be interesting only for 
@@ -619,7 +619,7 @@ public class GeneratorVeMScenariosBased {
 						}
 					});
 				} catch (InvocationTargetException e) {
-					MessageDialog.openError(ModelicaMLServices.getShell(), "Generator Invocation Error", "Could not invoce the generator. Please try it again.");
+					MessageDialog.openError(ModelicaMLServices.getShell(), "Generator Invocation Error", "Could not invoke the generator. Please try it again.");
 				} catch (InterruptedException e) {
 					MessageDialog.openInformation(ModelicaMLServices.getShell(), "Generator Interruption", "The generation of models was interrupted.");
 				}
@@ -754,6 +754,10 @@ public class GeneratorVeMScenariosBased {
 							tsmc.removeNotUsedRequirements(new HashSet<Element>());
 						}
 						
+						
+						//************************************************************************************
+						HashSet<Element> additionalModels = new HashSet<Element>();
+						
 						//************************************************************************************
 						// add system model property
 						Element systemModel = tsmc.getSystemModel();
@@ -771,14 +775,35 @@ public class GeneratorVeMScenariosBased {
 							addToLog(msg);
 						}
 
+						
 						/*
-						 * Add additional models that are required by the system model.
-						 * Hereby, prune all that are not used, i.e. those that don't have at least
-						 * one provider used in the combination.
+						 * NOTE: Additional models should only be instantiated once in order to keep 
+						 * VeMs concise. The code below was removed because it may lead to multiple 
+						 * instantiations of the same addition model. For example, if an additional model 
+						 * is linked to 2 requirements using "RequiredFor" dependency then it will be instantiated
+						 * 2 times, each for one requirement it is linked to. 
+						 * 
+						 * This is a design decision that is still subject to discussions...
+						 * 
+						 * The current implementation is collecting the addition models in a HashSet 
+						 * (i.e. no duplicates) and creates all at the end of the process.  
 						 */
 						
-						createAdditionalModels(simulationModel, tsmc.getAdditionalSystemModelModels(true), 
-								Constants.systemModelPropertyNamePrefix + Constants.additionalModelPrefix);
+//						/*
+//						 * Add additional models that are required by the system model.
+//						 * Hereby, prune all that are not used, i.e. those that don't have at least
+//						 * one provider used in the combination.
+//						 */
+//						
+//						createAdditionalModels(simulationModel, tsmc.getAdditionalSystemModelModels(true), 
+//								Constants.systemModelPropertyNamePrefix + Constants.additionalModelPrefix);
+						
+						
+						/*
+						 * Collect addition models. This set contains no duplicates. 
+						 * Any additional model is instantiated only once in order to make the VeM concise.
+						 */
+						additionalModels.addAll(tsmc.getAdditionalSystemModelModels(true));
 						
 						
 						//************************************************************************************
@@ -796,13 +821,19 @@ public class GeneratorVeMScenariosBased {
 							addToLog(msg);
 						}
 						
+//						/*
+//						 * Add additional models that are required by the scenario.
+//						 * Hereby, prune all that are not used, i.e. those that don't have at least
+//						 * one provider used in the combination.
+//						 */
+//						createAdditionalModels(simulationModel, tsmc.getAdditionalScenarioModels(true), 
+//								Constants.verificationScenarioPropertyNamePrefix + Constants.additionalModelPrefix);
+						
 						/*
-						 * Add additional models that are required by the scenario.
-						 * Hereby, prune all that are not used, i.e. those that don't have at least
-						 * one provider used in the combination.
+						 * Collect addition models. This set contains no duplicates. 
+						 * Any additional model is instantiated only once in order to make the VeM concise.
 						 */
-						createAdditionalModels(simulationModel, tsmc.getAdditionalScenarioModels(true), 
-								Constants.verificationScenarioPropertyNamePrefix + Constants.additionalModelPrefix);
+						additionalModels.addAll(tsmc.getAdditionalScenarioModels(true));
 						
 						//************************************************************************************
 						// add requirements
@@ -849,19 +880,35 @@ public class GeneratorVeMScenariosBased {
 									}
 								}
 								
+//								/*
+//								 * Add additional models that are required by the requirement model.
+//								 * Hereby, prune all that are not used, i.e. those that don't have at least
+//								 * one provider used in the combination.
+//								 */
+//								createAdditionalModels(simulationModel, 
+//										tsmc.getAdditionalRequirementModels(requirement, true), 
+//										Constants.reqirementPropertyNamePrefix
+//											+ ModelicaMLServices.getRequirementID((NamedElement) requirement) 
+//											+ "_" + Constants.additionalModelPrefix
+//										);
+								
 								/*
-								 * Add additional models that are required by the requirement model.
-								 * Hereby, prune all that are not used, i.e. those that don't have at least
-								 * one provider used in the combination.
+								 * Collect addition models. This set contains no duplicates. 
+								 * Any additional model is instantiated only once in order to make the VeM concise.
 								 */
-								createAdditionalModels(simulationModel, 
-										tsmc.getAdditionalRequirementModels(requirement, true), 
-										Constants.reqirementPropertyNamePrefix
-											+ ModelicaMLServices.getRequirementID((NamedElement) requirement) 
-											+ "_" + Constants.additionalModelPrefix
-										);
+								additionalModels.addAll(tsmc.getAdditionalRequirementModels(requirement, true));
+								
 							}
 						}
+						
+						
+						/*
+						 * Add additional models that are required by the system model, scenario or requirements.
+						 * Note, all models that are not used, i.e. those that don't have at least
+						 * one provider used in the combination, are already pruned.
+						 */
+						createAdditionalModels(simulationModel, additionalModels, Constants.additionalModelPrefix);
+						
 						
 						// add to log
 						addToLog("\n" + tsmc.getLog());
@@ -893,7 +940,7 @@ public class GeneratorVeMScenariosBased {
 						
 						//Alternative 2: Faster  ********************************************************************************************
 						/*
-						 * THIS APPROACH IS FASTER because we reuse existing instantiation graphs instead of instantiating each new VeM.
+						 * THIS APPROACH IS FASTER because we are reusing existing instantiation graphs instead of instantiating each new VeM.
 						 * We need to create a COPY of the existing instantiation map because the trees must be manipulated for a give VeM, 
 						 * After the trees have been reused and manipulated once in terms of their firstLevelComponent, doth-path and their bindings, 
 						 * they become incorrect for further iterations! 
@@ -1001,6 +1048,8 @@ public class GeneratorVeMScenariosBased {
 							}
 						}
 						
+						
+						// bind components
 						vbc.updateAllBindings(
 								(Package)bindingsPackage, 
 								null, 
@@ -1052,7 +1101,7 @@ public class GeneratorVeMScenariosBased {
 				
 				// create property
 				Property p_additionalModel = owningClass.createOwnedAttribute(
-						namePrefix + i + "_" + StringUtls.replaceSpecChar(((NamedElement)additionalModel).getName().toLowerCase()), 
+						namePrefix + i + "_" + StringUtls.replaceSpecChar(((NamedElement)additionalModel).getName()), 
 						(Type)additionalModel);
 				
 				// apply stereotype

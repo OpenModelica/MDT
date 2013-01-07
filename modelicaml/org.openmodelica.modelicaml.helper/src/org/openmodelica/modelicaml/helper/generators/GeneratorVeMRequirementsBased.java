@@ -157,7 +157,7 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
-					MessageDialog.openError(ModelicaMLServices.getShell(), "Simulation Models Generation Process Error", "It was not possible to invoce the generation of simulation models operation.");
+					MessageDialog.openError(ModelicaMLServices.getShell(), "Simulation Models Generation Process Error", "It was not possible to invoke the generation of simulation models operation.");
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 					MessageDialog.openError(ModelicaMLServices.getShell(), "Simulation Models Generation Process Abort", "The generation of simulation models was canceled.");
@@ -286,6 +286,9 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 		simulationModel.applyStereotype(s_test);
 
 		//************************************************************************************
+		HashSet<Element> additionalModels = new HashSet<Element>();
+		
+		//************************************************************************************
 		// add system model property
 		Property p_systemModel = simulationModel.createOwnedAttribute(
 				Constants.systemModelPropertyNamePrefix 
@@ -301,14 +304,37 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 			addToLog(msg);
 		}
 
+		
+		
 		/*
-		 * Add additional models that are required by the system model.
-		 * Hereby, prune all that are not used, i.e. those that don't have at least
-		 * one provider used in the combination.
+		 * NOTE: Additional models should only be instantiated once in order to keep 
+		 * VeMs concise. The code below was removed because it may lead to multiple 
+		 * instantiations of the same addition model. For example, if an additional model 
+		 * is linked to 2 requirements using "RequiredFor" dependency then it will be instantiated
+		 * 2 times, each for one requirement it is linked to. 
+		 * 
+		 * This is a design decision that is still subject to discussions...
+		 * 
+		 * The current implementation is collecting the addition models in a HashSet 
+		 * (i.e. no duplicates) and creates all at the end of the process.  
 		 */
 		
-		createAdditionalModels(simulationModel, rsmc.getAdditionalSystemModelModels(true), 
-				Constants.systemModelPropertyNamePrefix + Constants.additionalModelPrefix);
+		
+		
+//		/*
+//		 * Add additional models that are required by the system model.
+//		 * Hereby, prune all that are not used, i.e. those that don't have at least
+//		 * one provider used in the combination.
+//		 */
+//		
+//		createAdditionalModels(simulationModel, rsmc.getAdditionalSystemModelModels(true), 
+//				Constants.systemModelPropertyNamePrefix + Constants.additionalModelPrefix);
+		
+		/*
+		 * Collect addition models. This set contains no duplicates. 
+		 * Any additional model is instantiated only once in order to make the VeM concise.
+		 */
+		additionalModels.addAll(rsmc.getAdditionalSystemModelModels(true));
 		
 		//************************************************************************************
 		
@@ -354,19 +380,33 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 					}
 				}
 				
+//				/*
+//				 * Add additional models that are required by the requirement model.
+//				 * Hereby, prune all that are not used, i.e. those that don't have at least
+//				 * one provider used in the combination.
+//				 */
+//				createAdditionalModels(simulationModel, 
+//						rsmc.getAdditionalRequirementModels(requirement, true), 
+//						Constants.reqirementPropertyNamePrefix
+//							+ ModelicaMLServices.getRequirementID((NamedElement) requirement) 
+//							+ "_" + Constants.additionalModelPrefix
+//						);
+				
+				
 				/*
-				 * Add additional models that are required by the requirement model.
-				 * Hereby, prune all that are not used, i.e. those that don't have at least
-				 * one provider used in the combination.
+				 * Collect addition models. This set contains no duplicates. 
+				 * Any additional model is instantiated only once in order to make the VeM concise.
 				 */
-				createAdditionalModels(simulationModel, 
-						rsmc.getAdditionalRequirementModels(requirement, true), 
-						Constants.reqirementPropertyNamePrefix
-							+ ModelicaMLServices.getRequirementID((NamedElement) requirement) 
-							+ "_" + Constants.additionalModelPrefix
-						);
+				additionalModels.addAll(rsmc.getAdditionalRequirementModels(requirement, true));
 			}
 		}
+		
+		/*
+		 * Add additional models that are required by the system model, scenario or requirements.
+		 * Note, all models that are not used, i.e. those that don't have at least
+		 * one provider used in the combination, are already pruned.
+		 */
+		createAdditionalModels(simulationModel, additionalModels, Constants.additionalModelPrefix);
 		
 		// add to log
 		addToLog("\n" + rsmc.getLog());

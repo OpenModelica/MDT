@@ -232,7 +232,7 @@ public class TreeBuilder {
 				});
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
-				MessageDialog.openError(ModelicaMLServices.getShell(), "Invocation Error", "Could not invoce the generator to create combinations.");
+				MessageDialog.openError(ModelicaMLServices.getShell(), "Invocation Error", "Could not invoke the generator to create combinations.");
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				MessageDialog.openInformation(ModelicaMLServices.getShell(), "Interruption", "Create of combinations was interrupted.");

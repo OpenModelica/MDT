@@ -212,7 +212,7 @@ public class SimulationOMCAction extends AbstractHandler {
 		
 		/*
 		 * Note, do not preset this option because it may happen 
-		 * then code-gen folder was deleted by the user
+		 * that, in the mean-time, the code-gen folder was deleted, e.g., by the user
 		 */
 //		if (!areFilesFromCGFolderToBeLoaded) {
 //			dialog.setGenerateModelicaCodeChecked(false);

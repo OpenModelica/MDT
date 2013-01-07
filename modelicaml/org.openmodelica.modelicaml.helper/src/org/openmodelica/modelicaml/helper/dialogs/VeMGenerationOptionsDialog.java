@@ -775,7 +775,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 //					
 //				} catch (InvocationTargetException e) {
 //					e.printStackTrace();
-//					MessageDialog.openError(getShell(), "Simulation Models Generation Process Error", "It was not possible to invoce the generation of simulation models operation.");
+//					MessageDialog.openError(getShell(), "Simulation Models Generation Process Error", "It was not possible to invoke the generation of simulation models operation.");
 //				} catch (InterruptedException e) {
 //					e.printStackTrace();
 //					MessageDialog.openError(getShell(), "Simulation Models Generation Process Abort", "The generation of simulation models was canceled.");

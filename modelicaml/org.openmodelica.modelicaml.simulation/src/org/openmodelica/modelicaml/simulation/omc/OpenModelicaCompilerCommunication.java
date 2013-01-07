@@ -47,7 +47,9 @@ public class OpenModelicaCompilerCommunication {
 	private OMCProxy omc;
 	
 	/** The history. */
-	private ArrayList<String> history;
+//	private ArrayList<String> history;
+	
+	private String tempFolderPath; 
 	
 	
 	/**
@@ -64,8 +66,9 @@ public class OpenModelicaCompilerCommunication {
 		
 		// TODO: TEST IT!
 		this.omc = Activator.getOmcProxy();
+		this.setTempFolderPath(getTempDirectoryPath());
 		
-		history = new ArrayList<String>();
+//		history = new ArrayList<String>();
 	}
 	
 	/*
@@ -124,7 +127,7 @@ public class OpenModelicaCompilerCommunication {
 		String replyString = "Error: No reply from OMC ...";
 
 		if (command != null && command.length() > 0) {
-			history.add(command);
+//			history.add(command);
 			try {
 				reply = omc.sendExpression(command, true);
 				replyString = reply.getFirstResult();
@@ -398,11 +401,19 @@ public class OpenModelicaCompilerCommunication {
 	 *
 	 * @return the command history
 	 */
-	public ArrayList<String> getCommandHistory() {
-		ArrayList<String> tempHistory = new ArrayList<String>();
-		Collections.copy(tempHistory, history);
+//	public ArrayList<String> getCommandHistory() {
+//		ArrayList<String> tempHistory = new ArrayList<String>();
+//		Collections.copy(tempHistory, history);
+//
+//		return tempHistory;
+//	}
 
-		return tempHistory;
+	public String getTempFolderPath() {
+		return tempFolderPath;
+	}
+
+	public void setTempFolderPath(String tempFolderPath) {
+		this.tempFolderPath = tempFolderPath;
 	}
 
 //	/**

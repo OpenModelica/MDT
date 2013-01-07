@@ -92,7 +92,7 @@ public class FindInvalidRelationsToolbarHandler extends AbstractHandler{
 							}
 						});
 					} catch (InvocationTargetException e) {
-						MessageDialog.openError(ModelicaMLServices.getShell(), "ModelicaML Relations Data Collection Error", "Could not invoce the data collection for ModelicaML Relations view. ");
+						MessageDialog.openError(ModelicaMLServices.getShell(), "ModelicaML Relations Data Collection Error", "Could not invoke the data collection for ModelicaML Relations view. ");
 					} catch (InterruptedException e) {
 						MessageDialog.openInformation(ModelicaMLServices.getShell(), "ModelicaML Relations Data Collection", "Data collection was interrupted.");		}
 

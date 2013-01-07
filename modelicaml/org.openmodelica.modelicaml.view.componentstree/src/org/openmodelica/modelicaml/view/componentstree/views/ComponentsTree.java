@@ -2369,7 +2369,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				});
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
-				MessageDialog.openError(ModelicaMLServices.getShell(), "Class Instantiation Error", "Could not invoce the class instantiation operation.");
+				MessageDialog.openError(ModelicaMLServices.getShell(), "Class Instantiation Error", "Could not invoke the class instantiation operation.");
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				MessageDialog.openInformation(ModelicaMLServices.getShell(), "Class Instantiation Canceled", "Class instantiation operation was canceled.");
@@ -2426,7 +2426,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 //						});
 //					} catch (InvocationTargetException e) {
 //						e.printStackTrace();
-//						MessageDialog.openError(ModelicaMLServices.getShell(), "Class Instantiation Error", "Could not invoce the class instantiation operation.");
+//						MessageDialog.openError(ModelicaMLServices.getShell(), "Class Instantiation Error", "Could not invoke the class instantiation operation.");
 //					} catch (InterruptedException e) {
 //						e.printStackTrace();
 //						MessageDialog.openInformation(ModelicaMLServices.getShell(), "Class Instantiation Canceled", "Class instantiation operation was canceled.");
