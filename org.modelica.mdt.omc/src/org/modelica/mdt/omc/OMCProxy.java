@@ -830,7 +830,7 @@ public class OMCProxy implements IModelicaCompiler {
 			throws ConnectException, UnexpectedReplyException, InvocationError {
 		ICompilerResult res = sendExpression("getCrefInfo(" + className + ")", true);
 
-		String retval = res.getFirstResult();
+		String retval = res.getFirstResult().trim();
 
 		if (isError(retval)) {
 			throw new InvocationError("Fetching file position of " + className, "getCrefInfo(" + className + ")");
@@ -845,7 +845,6 @@ public class OMCProxy implements IModelicaCompiler {
 		 * for example:
 		 * {/foo/Modelica/package.mo,writable,1,1,1029,13}
 		 */
-		retval = retval.trim();
 
 		List tokens = null;
 		try {
@@ -939,7 +938,7 @@ public class OMCProxy implements IModelicaCompiler {
 				 * equals 'Error' or 'error'
 				 */
 				if (retval.substring(i + 1, i + 5).equals("rror")) {
-					throw new InvocationError("fetching contents of " + className, "getElementsInfo("+ className +")");
+					throw new InvocationError("fetching contents of " + className, "getElementsInfo(" + className +")");
 				}
 				else {
 					/* OMC returned something weird, panic mode ! */
@@ -948,7 +947,7 @@ public class OMCProxy implements IModelicaCompiler {
 			}
 		}
 		/* we have no idea what OMC returned */
-		throw new UnexpectedReplyException("getElementsInfo(" + className +")" +	"replies:'" + retval + "'");
+		throw new UnexpectedReplyException("getElementsInfo(" + className + ")" +	"replies:'" + retval + "'");
 	}
 
 	public IClassInfo getClassInfo(String className)
@@ -1170,7 +1169,7 @@ public class OMCProxy implements IModelicaCompiler {
 			StreamReaderThread outThread = null;
 			StreamReaderThread errThread = null;
 			/* TODO! FIXME! add corba session to the preferences! */
-			String command[] = { omcBinary.getAbsolutePath(), "+c="+corbaSession, "+d=interactiveCorba"};
+			String command[] = { omcBinary.getAbsolutePath(), "+c=" + corbaSession, "+d=interactiveCorba"};
 			String extraCmds[] = PreferenceManager.getOMCCommandLineParametersArray();
 			ArrayList<String> both = new ArrayList<String>(command.length + extraCmds.length);
 			Collections.addAll(both, command);
@@ -1214,11 +1213,11 @@ public class OMCProxy implements IModelicaCompiler {
 					}
 					env = lst.toArray(new String[lst.size()]);
 				}
-				proc=Runtime.getRuntime().exec(cmd, env, workingDirectory);
+				proc = Runtime.getRuntime().exec(cmd, env, workingDirectory);
 				//create thread for reading inputStream (process' stdout)
-				outThread= new StreamReaderThread(proc.getInputStream(),System.out);
+				outThread = new StreamReaderThread(proc.getInputStream(), System.out);
 				//create thread for reading errorStream (process' stderr)
-				errThread= new StreamReaderThread(proc.getErrorStream(),System.err);
+				errThread = new StreamReaderThread(proc.getErrorStream(), System.err);
 				//start both threads
 				outThread.start();
 				errThread.start();
@@ -1226,12 +1225,12 @@ public class OMCProxy implements IModelicaCompiler {
 			catch (IOException e) {
 				logOMCStatus("Failed to run command: " + fullCMD, true);
 				ErrorManager.logError(e);
-				couldNotStartOMC = true; hasInitialized = false;
+				couldNotStartOMC = true;
+				hasInitialized = false;
 				return;
 			}
 			logOMCStatus("Command run successfully.", true);
 			logOMCStatus("Waiting for OMC CORBA object reference to appear on disk.", true);
-
 
 			/*
 			 * Wait until the object exists on disk, but if it takes longer than
