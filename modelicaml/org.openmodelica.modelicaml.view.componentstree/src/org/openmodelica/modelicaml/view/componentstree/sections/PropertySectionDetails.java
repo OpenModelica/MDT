@@ -70,7 +70,10 @@ import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ModificationManager;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
+import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
+import org.eclipse.swt.events.MouseTrackAdapter;
+import org.eclipse.swt.events.MouseEvent;
 
 public class PropertySectionDetails extends AbstractPropertySection {
 	private Label lblPath;
@@ -88,6 +91,9 @@ public class PropertySectionDetails extends AbstractPropertySection {
 	private Link linkOverriden;
 	
 	private TreeObject item = null;
+	private StyledText infoText;
+	private Label lblErrWarningIcon;
+	private StyledText validationInfo;
 
 	
 	@Override
@@ -99,6 +105,9 @@ public class PropertySectionDetails extends AbstractPropertySection {
         this.item = (TreeObject) input;
 	}
 
+	/**
+	 * @wbp.parser.entryPoint
+	 */
 	@Override
 	public void createControls(Composite parent, TabbedPropertySheetPage aTabbedPropertySheetPage) {
 
@@ -109,11 +118,21 @@ public class PropertySectionDetails extends AbstractPropertySection {
 		composite.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		
+		validationInfo = new StyledText(composite, SWT.BORDER | SWT.WRAP);
+		validationInfo.setDoubleClickEnabled(false);
+		validationInfo.setRightMargin(5);
+		validationInfo.setBottomMargin(5);
+		validationInfo.setTouchEnabled(true);
+		validationInfo.setTopMargin(5);
+		validationInfo.setLeftMargin(5);
+		validationInfo.setBackground(SWTResourceManager.getColor(SWT.COLOR_INFO_BACKGROUND));
+		validationInfo.setBounds(73, 13, 506, 63);
+		
 		
 		
 		lblPath = new Label(composite, SWT.NONE);
 		lblPath.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		lblPath.setBounds(10, 13, 67, 13);
+		lblPath.setBounds(10, 13, 35, 13);
 		lblPath.setText("Path:");
 		
 		textPath = new Text(composite, SWT.BORDER);
@@ -122,22 +141,22 @@ public class PropertySectionDetails extends AbstractPropertySection {
 		
 		lblType = new Label(composite, SWT.NONE);
 		lblType.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		lblType.setBounds(10, 40, 67, 13);
+		lblType.setBounds(10, 40, 67, 19);
 		lblType.setText("Type:");
 		
 		linkType = new Link(composite, SWT.NONE);
 		linkType.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		linkType.setBounds(83, 40, 496, 13);
+		linkType.setBounds(83, 40, 496, 19);
 		linkType.setText("<a>Type name </a> is redeclared, former type was <a>Type name </a>");
 		
 		lblCausality = new Label(composite, SWT.NONE);
 		lblCausality.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		lblCausality.setBounds(10, 59, 67, 13);
+		lblCausality.setBounds(10, 59, 67, 15);
 		lblCausality.setText("Causality:");
 		
 		lblCausalityText = new Label(composite, SWT.NONE);
 		lblCausalityText.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		lblCausalityText.setBounds(83, 59, 582, 13);
+		lblCausalityText.setBounds(83, 59, 582, 19);
 		lblCausalityText.setText("input");
 		
 		lblDeclaration = new Label(composite, SWT.NONE);
@@ -156,9 +175,28 @@ public class PropertySectionDetails extends AbstractPropertySection {
 		
 		linkOverriden = new Link(composite, SWT.NONE);
 		linkOverriden.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		linkOverriden.setBounds(83, 142, 582, 13);
+		linkOverriden.setBounds(83, 142, 582, 19);
 		linkOverriden.setText("Overriden by class extension modification in <a>sadflkj asdf sdf </a>");
+		
+//		infoText = new StyledText(composite, SWT.BORDER | SWT.FULL_SELECTION | SWT.READ_ONLY | SWT.WRAP);
+//		infoText.setEditable(false);
+//		infoText.setBounds(83, 223, 582, 56);
+		
+		lblErrWarningIcon = new Label(composite, SWT.NONE);
+		lblErrWarningIcon.addMouseTrackListener(new MouseTrackAdapter() {
+			@Override
+			public void mouseEnter(MouseEvent e) {
+				validationInfo.setVisible(true);			
+			}
+			@Override
+			public void mouseExit(MouseEvent e) {
+				validationInfo.setVisible(false);			
+			}
 
+		});
+		lblErrWarningIcon.setBackground(SWTResourceManager.getColor(SWT.COLOR_LIST_BACKGROUND));
+		lblErrWarningIcon.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.profile", "resources/icons/icons16/errorwarning_tab.gif"));
+		lblErrWarningIcon.setBounds(53, 13, 24, 15);
 	}
 
 	@Override
@@ -171,6 +209,7 @@ public class PropertySectionDetails extends AbstractPropertySection {
 		boolean causalityVisibility = this.item.isInput() || this.item.isOutput();
 		boolean declarationVisibility = this.item.getUmlElement() instanceof Property && ( this.item.getDeclaration() != null || this.item.getFinalModificationRightHand() != null);
 		boolean modificationVisibility = this.item.getUmlElement() instanceof Property && this.item.getFinalModificationRightHand() != null;
+		boolean infoVisibility = this.item.getValidationInfo() != null;
 		
 		// set visibility
 		lblPath.setVisible(pathVisibility);
@@ -187,6 +226,9 @@ public class PropertySectionDetails extends AbstractPropertySection {
 		
 		linkOverriden.setVisible(modificationVisibility);
 		textModification.setVisible(modificationVisibility);
+		
+		lblErrWarningIcon.setVisible(infoVisibility);
+		validationInfo.setVisible(false); // hide validation info. it will be shown when hovering over the icon. 
 		
 		
 		// set text.
@@ -224,6 +266,10 @@ public class PropertySectionDetails extends AbstractPropertySection {
 		    	  locate(object); // locate in Papyrus
 		      }
 		    });
+		
+		
+//		lblErrWarningIcon.setToolTipText(getValidationInfoText());
+		validationInfo.setText(getValidationInfoText());
 	}
 	
 
@@ -327,6 +373,15 @@ public class PropertySectionDetails extends AbstractPropertySection {
 	}
 
 	
+	private String getValidationInfoText(){
+		String validationInfo = "";
+		if (item.getValidationInfo() != null) {
+			validationInfo  = item.getValidationInfo();
+		}
+		return validationInfo;
+	}
+	
+	
 	private String getTypeText(){
 		if (item.getUmlElement() instanceof Property) {
 			Type type = ((Property)item.getUmlElement()).getType();
@@ -368,38 +423,4 @@ public class PropertySectionDetails extends AbstractPropertySection {
 		
 		return "";
 	}
-
-	
-//	private String getCommentsString(){
-//	      // Comments
-//	      String commentString = "";
-//	      EList<Comment> comments = item.getComments();
-//	      if (comments.size() > 0 ) {
-//	      	//commentString = commentString + "Comments of '" + treeObject.getProperty().getName()+"':\n"; 
-//	      	for (Comment comment : comments) {
-//	  			commentString = commentString + comment.getBody() + " ";
-//	  		}
-//	      }
-//	      
-//			if (!commentString.equals("")) {
-//				commentString = commentString + "\n\n";
-//			}
-//			
-//			if (item.getProperty() != null ) {
-//				if (item.getProperty().getType() != null) {
-//					 EList<Comment> commentsOfComponentType = item.getProperty().getType().getOwnedComments();
-//					 if (commentsOfComponentType.size() > 0 ) {
-//						 commentString = commentString + "Comments from '" + ((Classifier)item.getProperty().getType()).getName()+"' (component type):\n"; 
-//						 for (Comment comment : commentsOfComponentType) {
-//							commentString = commentString + comment.getBody() + " ";
-//						}
-//					}
-//				}
-//			}
-//			if (!commentString.equals("")) {
-//		        return commentString;
-//			}
-//			return "";
-//		}
-	
 }

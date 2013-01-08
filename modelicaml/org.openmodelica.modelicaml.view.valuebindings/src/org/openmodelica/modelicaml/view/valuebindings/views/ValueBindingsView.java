@@ -742,8 +742,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				searchDialog.open();
 			}
 		};
-		actionFind.setText("Clear");
-		actionFind.setToolTipText("Clear");
+		actionFind.setText("Find");
+		actionFind.setToolTipText("Find");
 		actionFind.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/find.png"));
 		
 		

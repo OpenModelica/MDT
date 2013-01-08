@@ -57,6 +57,7 @@ public class ExecuteSimulation {
 	private static String omcTempDirectoryPath;
 	
 	public static String executeAllModels(IProgressMonitor monitor, File sessionFolder, String omcTempWorkingFolder, TestSession testSessionObj, boolean loadMSL){
+		
 		OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
 		String omcReturnString = "";
 		
@@ -106,14 +107,14 @@ public class ExecuteSimulation {
 	}
 	
 	
-	public static String getTempDirectoryPath(){
-		if (omcTempDirectoryPath == null) {
-			OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
-			omcTempDirectoryPath = omcc.getTempDirectoryPath();
-//			omcTempDirectoryPath = omcc.getTempFolderPath();
-		}
-		return omcTempDirectoryPath;
-	}
+//	public static String getTempDirectoryPath(){
+//		if (omcTempDirectoryPath == null) {
+//			OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
+//			omcTempDirectoryPath = omcc.getTempDirectoryPath();
+////			omcTempDirectoryPath = omcc.getTempFolderPath();
+//		}
+//		return omcTempDirectoryPath;
+//	}
 
 	
 	private static String load(IProgressMonitor monitor, File sessionFolder, OpenModelicaCompilerCommunication omcc, TestSession testSessionObj, String omcReturnString) {

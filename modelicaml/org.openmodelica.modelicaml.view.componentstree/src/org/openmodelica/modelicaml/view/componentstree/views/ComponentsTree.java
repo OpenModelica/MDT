@@ -36,12 +36,19 @@ package org.openmodelica.modelicaml.view.componentstree.views;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -74,6 +81,8 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.papyrus.infra.core.resource.uml.ExtendedUmlModel;
+import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
 import org.eclipse.papyrus.infra.core.utils.BusinessModelResolver;
 import org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView;
 import org.eclipse.papyrus.views.modelexplorer.ModelExplorerView;
@@ -99,9 +108,11 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.uml2.uml.Behavior;
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.Port;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Region;
@@ -269,6 +280,11 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	public final static int DEFAULT_EXPAND_LEVEL = 2;
 
 	private ClassInstantiation ast;
+	
+	private String markerType = Constants.MARKERTYPE_COMPONENT_MODIFICATION;
+
+	
+	
 	
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -689,8 +705,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				searchDialog.open();
 			}
 		};
-		actionFind.setText("Clear");
-		actionFind.setToolTipText("Clear");
+		actionFind.setText("Find");
+		actionFind.setToolTipText("Find");
 		actionFind.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/find.png"));
 		
 		
@@ -2362,6 +2378,10 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						ComponentModificationValidator validator = new ComponentModificationValidator(root);
 						validator.validate();
 						
+						// Set error or warning decorations
+						monitor.subTask("Decorating components items ...");
+						setValidationInfo();
+						
 						viewer.refresh();
 						
 						monitor.done();
@@ -2381,67 +2401,6 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			actionReload.setEnabled(false);
 			actionCollapseAll.setEnabled(false);
 		}
-		
-		
-//		if (sel instanceof IStructuredSelection) {
-//			EObject selectedElement = null;
-//        
-//			if (getCurrentSelections() != null && getCurrentSelections().size() > 0 ) {
-//				selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
-//			}
-//			
-//			if (selectedElement instanceof Class ) {
-//				selectedClass = (Class) selectedElement;
-//				
-//				if (selectedClass != null && !(selectedClass instanceof Behavior) && isValid(selectedClass)) {
-//					actionSimulate.setEnabled(true);
-//					actionValidate.setEnabled(true);
-//					actionReload.setEnabled(true);
-//					actionCollapseAll.setEnabled(true);
-//					
-//					ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
-//					progressDialog.getProgressMonitor().setTaskName("Instantiating " + ModelicaMLServices.getName(selectedClass));
-//					
-//					try {
-//						progressDialog.run(false, true, new IRunnableWithProgress() {
-//							
-//							@Override
-//							public void run(IProgressMonitor monitor) throws InvocationTargetException,
-//									InterruptedException {
-//
-//								monitor.subTask("Creating class components tree ...");
-//								// instantiate the selected class
-//								createClassTree(selectedClass); // build the entire tree
-//								
-//								//validate component modifications
-//								monitor.subTask("Validating component modifications ...");
-//
-//								ComponentModificationValidator validator = new ComponentModificationValidator(root);
-//								validator.validate();
-//								
-//								viewer.refresh();
-//								
-//								monitor.done();
-//							}
-//						});
-//					} catch (InvocationTargetException e) {
-//						e.printStackTrace();
-//						MessageDialog.openError(ModelicaMLServices.getShell(), "Class Instantiation Error", "Could not invoke the class instantiation operation.");
-//					} catch (InterruptedException e) {
-//						e.printStackTrace();
-//						MessageDialog.openInformation(ModelicaMLServices.getShell(), "Class Instantiation Canceled", "Class instantiation operation was canceled.");
-//					}
-//				}
-//				else {
-//					actionSimulate.setEnabled(false);
-//					actionValidate.setEnabled(false);
-//					actionReload.setEnabled(false);
-//					actionCollapseAll.setEnabled(false);
-//				}
-//			}
-
-//			createTree(selectedClass); // build the entire tree
-//		}
 	}
 	
 	private boolean isValid(Class aClass){
@@ -2458,6 +2417,235 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		
 		return false;
 	}
+	
+	
+	
+	
+	/*
+	 * Validation
+	 */
+	
+	public void setValidationInfo(){
+		
+		if (getAst() != null) {
+		
+			for (TreeObject treeObject : getAst().getAllTreeObjects()) {
+				
+				String validationInfoText = "";
+				
+				// Indicators
+				boolean isError = false, isWarning=false, isInfo=false;
+				
+				// UML element of the tree object
+				Element umlElement = treeObject.getUmlElement();
+				
+				/*
+				 * ERROR 
+				 * TODO: distinguish between error and warning markers 
+				 */
+				if (hasMarkers(treeObject)) {
+					treeObject.setHasErrors(true);
+					isError = true;
+					validationInfoText += "There are error markers for this component.\n";
+//					treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nThere are error markers for this component.");
+				}
+				
+				/*
+				 * ERROR 
+				 * If property has no type defined. 
+				 */
+				if (treeObject.getUmlElement() instanceof Property && treeObject.getComponentType() == null) {
+					// TODO: this is a workaround. How to deal with stateSelect?
+					if (!treeObject.getName().equals("stateSelect") ) {
+						treeObject.setHasErrors(true);
+						isError = true;
+						validationInfoText += "This component has not type.\n";
+//						treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nThis component has not type.");
+					}
+				}
+				
+				/*
+				 * WARNING
+				 * If the component is an input (and it is not a sub-component of a port) 
+				 * and has no declaration and no binding exists for it 
+				 * in its first level component modification
+				 */
+				if (	treeObject.isInput() && treeObject.getDeclaration() == null 
+						&& treeObject.getFinalModificationRightHand() == null
+						&& !oneOfParentsIsPort(treeObject)) {
+					
+					// check if the item is a port with causality=input
+					if (umlElement instanceof Property  && !(umlElement instanceof Port) ) { 
+
+						// if it is a primitive type -> indicate an error
+						if ( ((Property)umlElement).getType() instanceof PrimitiveType) {
+							treeObject.setHasWarnings(true);
+							isWarning = true;
+							validationInfoText += "Component is an input. It is missing a binding.\n";
+//							treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nComponent is an input. It is missing a binding.");
+						}
+					}
+				}
+				
+				/*
+				 * WARNING
+				 * If one of the parents is input (except for parents that are ports) then all its 
+				 * sub-components that are of primitive type should have binding equations.
+				 */
+				if ( oneOfParentsIsInput(treeObject) && !oneOfParentsIsPort(treeObject)) {
+					if (umlElement != null ) {
+						
+						if ( 	((Property)umlElement).getType() instanceof PrimitiveType 
+								&& (treeObject.getDeclaration() == null 
+								&& treeObject.getFinalModificationRightHand() == null)) {
+							
+							treeObject.setHasWarnings(true);
+							isWarning = true;
+							validationInfoText += "One of component parents is an input. This component should have a binding.\n";
+//							treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nOne of component parents is an input. This component should have a binding.");
+						}
+					}
+				}
+				
+				
+				/*
+				 * ERROR
+				 * If it is a required client and there is no binding equation (modification) for it.
+				 * 
+				 * TODO: If the actual client is a sub-component of the item then an analysis of the subcomponents is required. 
+				 * This is not implemented yet.  
+				 */
+				if (treeObject.isLeaf() && treeObject.isValueClient_required() && treeObject.getFinalModificationRightHand() == null) {
+					treeObject.setHasErrors(true);
+					isError = true;
+					validationInfoText += "This is a mandatory client. However, it has no binding.\n";
+//					treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nThis is a mandatory client. However, it has no binding.");
+				}
+				/*
+				 * WARNING
+				 * If it is a client which has no binding then indicate a warning
+				 */
+				else if (treeObject.isLeaf() && treeObject.isValueClient() && treeObject.getFinalModificationRightHand() == null) {
+					treeObject.setHasWarnings(true);
+					isWarning = true;
+					validationInfoText += "This is a client which has no binding.\n";
+//					treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nThis is a client which has no binding.");
+				} 
+				
+				/*
+				 * Set the validation text if any
+				 */
+				if (!validationInfoText.trim().equals("")) {
+					treeObject.setValidationInfo(validationInfoText);
+				}
+				
+				
+				/*
+				 * Propagate the decoration to parents. 
+				 */
+				propagateDecoration(treeObject, isError, isWarning, isInfo);
+			}
+		}
+	}
+	
+	
+	/*
+	 * Utilities
+	 */
+	
+	private void propagateDecoration(TreeObject treeObject, boolean isError, boolean isWarning, boolean isInfo){
+		 ArrayList<TreeObject> parents = getAllParents(treeObject, new ArrayList<TreeObject>());
+//		 ArrayList<TreeObject> reversedParents = getReversed(parents);
+		 
+		 /*
+		  * Starting with the parent of the component we propagate the indication to all parents 
+		  */
+		 for (TreeObject parent : parents) {
+			
+			 /*
+			  * Propagation priority: error (highest), warning, info.
+			  */
+			 
+			/*
+			 * If error was already propagated -> stop here. 
+			 * There is no need indicate warning or info for a parent that has invalid children
+			 */
+			if (isError) {
+				if (parent.hasErrors()) {  
+					return;
+				}
+				// if no error was yet propagated -> set parent indicator and stop here.
+				else if(!parent.hasErrors()) {
+					parent.setHasErrors(isError);
+				}
+			}
+			if (isWarning) {
+				if (parent.hasWarnings()) {  
+					return;
+				}
+				// if no warning was yet propagated -> set parent indicator and stop here.
+				else if(!parent.hasWarnings()) {
+					parent.setHasWarnings(isWarning);
+				}
+			}
+			if (isInfo) {
+				if (parent.hasInfo()) {  
+					return;
+				}
+				// if no info was yet propagated -> set parent indicator and stop here.
+				else if(!parent.hasInfo()) {
+					parent.setHasInfo(isInfo);
+				}
+			}
+		}
+	}
+	
+	
+	
+	private boolean oneOfParentsIsInput(TreeObject treeObject){
+		 ArrayList<TreeObject> parents = getAllParents(treeObject, new ArrayList<TreeObject>());
+		 for (TreeObject parent : parents) {
+			if (parent.isInput()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean oneOfParentsIsPort(TreeObject treeObject){
+		 ArrayList<TreeObject> parents = getAllParents(treeObject, new ArrayList<TreeObject>());
+		 for (TreeObject parent : parents) {
+			if (isPort(parent)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private ArrayList<TreeObject> getAllParents(TreeObject item, ArrayList<TreeObject> listOfSegments){
+		TreeObject parent = item.getParent();
+		if (parent != null && !parent.isRoot()) { // the root node represents the instantiated class. It should not appear in the path.  
+			listOfSegments.add(parent);
+			listOfSegments.addAll( getAllParents(parent, new ArrayList<TreeObject>()) );
+		}
+		return listOfSegments;
+	}
+	
+	private boolean isPort(TreeObject treeObject) {
+		Element type = treeObject.getComponentType();
+		if (type != null && type instanceof Classifier && type.getAppliedStereotype(Constants.stereotypeQName_Connector) != null) {
+			return true;
+		}
+		return false;
+	}
+	
+	public ArrayList<TreeObject> getReversed(ArrayList<TreeObject> original) {
+		ArrayList<TreeObject> copy = new ArrayList<TreeObject>(original);
+		Collections.reverse(copy);
+		return copy;
+	}
+
+	
 	
 	@SuppressWarnings("unchecked")
 	private List<Object> getCurrentSelections() {
@@ -2502,6 +2690,10 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	}
 	
 	
+	
+	
+	
+	
 	public ClassInstantiation getAst() {
 		return ast;
 	}
@@ -2514,6 +2706,15 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		EditorServices.locateInComponentsTreeView(dotPath);
 	}
 
+	
+	
+	
+	
+	/*
+	 * Markers
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.ide.IGotoMarker#gotoMarker(org.eclipse.core.resources.IMarker)
+	 */
 	@Override
 	public void gotoMarker(IMarker marker) {
 		String uriAttribute = marker.getAttribute(EValidator.URI_ATTRIBUTE, null);
@@ -2526,4 +2727,38 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			}
 		}
 	}
+	
+	
+	public boolean hasMarkers(TreeObject item){
+		
+		Element umlElement = item.getFirstLevelComponent();
+		
+		if (umlElement instanceof NamedElement) {
+			// markers
+			ExtendedUmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
+			if (umlModel != null) {
+				String projectName = umlModel.getResource().getURI().segment(1);
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				IWorkspaceRoot root = workspace.getRoot();
+				IProject iProject = root.getProject(projectName);
+				
+				IMarker[] markers = null;
+				try {
+					if (iProject != null) {
+						markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
+						for (IMarker marker : markers) {
+							Object sourceId = marker.getAttribute(IMarker.SOURCE_ID);
+								if (item.getDotPath().equals(sourceId)) {
+									return true;				
+							}
+						}
+					}
+				} catch (CoreException e) {
+					//e.printStackTrace();
+				}
+			}
+		}
+		return false;
+	}
+	
 }

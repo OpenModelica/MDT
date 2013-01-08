@@ -421,8 +421,8 @@ public class RelationsView extends ViewPart {
 				searchDialog.open();
 			}
 		};
-		actionFind.setText("Clear");
-		actionFind.setToolTipText("Clear");
+		actionFind.setText("Find");
+		actionFind.setToolTipText("Find");
 		actionFind.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/find.png"));
 		
 	}

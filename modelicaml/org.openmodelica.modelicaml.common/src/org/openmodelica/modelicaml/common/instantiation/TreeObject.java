@@ -68,8 +68,6 @@ public class TreeObject implements IAdaptable {
 	/** The name. */
 	private String name;
 	
-
-
 	/** The parent. */
 	private TreeParent parent;
 	
@@ -115,7 +113,6 @@ public class TreeObject implements IAdaptable {
 	/** The final modification description. */
 //	private String finalModificationDescription = null;
 	
-	// TODO: implement getter and setter
 	/** The element. */
 	private NamedElement element = null;
 	
@@ -140,6 +137,14 @@ public class TreeObject implements IAdaptable {
 	private boolean isValueClient = false;
 	private boolean isValueClient_required = false;
 	private boolean isValueProvider = false;
+	
+	private Boolean hasErrors = false;
+	private Boolean hasWarnings = false;
+	private Boolean hasInfo = false;
+	
+	private String validationInfo = null;
+
+	
 
 	public TreeObject(	String name, 
 						Property property, 
@@ -783,6 +788,46 @@ public class TreeObject implements IAdaptable {
 		return this.getDotPath().hashCode() + umlElementHashCode + selectedClassHashCode;
 		
 //		return this.getDotPath().hashCode();
+	}
+
+
+	public Boolean hasErrors() {
+		return hasErrors;
+	}
+
+
+	public void setHasErrors(Boolean hasErrors) {
+		this.hasErrors = hasErrors;
+	}
+
+
+	public Boolean hasWarnings() {
+		return hasWarnings;
+	}
+
+
+	public void setHasWarnings(Boolean hasWarnings) {
+		this.hasWarnings = hasWarnings;
+	}
+
+
+	public Boolean hasInfo() {
+		return hasInfo;
+	}
+
+
+	public void setHasInfo(Boolean hasInfo) {
+		this.hasInfo = hasInfo;
+	}
+
+
+	public String getValidationInfo() {
+		return validationInfo;
+	}
+
+
+	public void setValidationInfo(String validationInfo) {
+		this.validationInfo = validationInfo;
 	}
 	
 }

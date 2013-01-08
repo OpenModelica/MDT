@@ -64,6 +64,7 @@ import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.simulation.evaluation.ParseJavaScript;
 import org.openmodelica.modelicaml.simulation.execution.ExecuteSimulation;
+import org.openmodelica.modelicaml.simulation.omc.OpenModelicaCompilerCommunication;
 import org.openmodelica.modelicaml.simulation.xml.TestSession;
 import org.openmodelica.modelicaml.simulation.xml.TestSession.TestModel;
 import org.openmodelica.modelicaml.simulation.xml.TestSessionXML_Reader;
@@ -101,6 +102,10 @@ public class ExecuteTestsAction implements
 		
 		if (this.xmlFilePath != null && folderAbsolutePath != null) {
 			
+			// wake up OMC
+			final OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
+			omcc.getVesion();
+			
 			final String pathToSession = getFolderAbsolutePath();
 			
 			//START of the execution as a job.
@@ -118,8 +123,7 @@ public class ExecuteTestsAction implements
 //							String omcTempWorkingFolder = (System.getenv().get("OPENMODELICAHOME") + "/tmp").replaceAll("\\\\", "/"); 
 //							String omcTempWorkingFolder = (System.getenv().get("OPENMODELICAHOME") + "tmp").replaceAll("\\\\", "/");
 //							OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
-//							String omcTempWorkingFolder = omcc.getTempDirectoryPath();
-							String omcTempWorkingFolder = ExecuteSimulation.getTempDirectoryPath();
+							String omcTempWorkingFolder = omcc.getTempDirectoryPath();
 							
 							File sessionFolder = new File(pathToSession);
 							

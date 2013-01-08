@@ -98,9 +98,19 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 	/** The Constant requirementInstanceStereotypeQName. */
 	private static final String requirementInstanceStereotypeQName = Constants.stereotypeQName_RequirementInstance;
 	
-//	private final ImageDescriptor warningImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/warning_ovr.gif");
-//	private final ImageDescriptor errorImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/error_ovr.gif");
+	private final ImageDescriptor warningImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/warning_ovr.gif");
 	private final ImageDescriptor errorImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/error_ovr.gif");
+	private final ImageDescriptor infoImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/info_ovr.gif");
+	
+	private final ImageDescriptor okStateImageDescriptor = ResourceManager.getImageDescriptor(Activator.class, "/icons/success_ovr.gif");
+	private final ImageDescriptor questionStateImageDescriptor = ResourceManager.getImageDescriptor(Activator.class, "/icons/question_ov.gif");
+
+	
+	private final static String requiredClientIndicator = "(mand. client)";
+	private final static String clientIndicator = "(client)";
+	private final static String providerIndicator = "(provider)";
+
+	private String markerType = Constants.MARKERTYPE_COMPONENT_MODIFICATION;
 
 	
 	public String getText(Object obj) {
@@ -128,19 +138,10 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 			// remove all line delimiters
 			declarationString = declarationString.replaceAll("\\r|\\n", "");
 			
-//			System.out.println("treeObject.getFinalModificationRightHand(): " + treeObject.getFinalModificationRightHand());
-//			System.out.println("treeObject.getDeclaration(): " + treeObject.getDeclaration());
-//			System.out.println("declarationString : " + declarationString );
-			
-			// limit the display length
-//			if (declarationString.length() > 30) {
-//				declarationString = declarationString.substring(0, 30) + " ...";
-//			}
-			
 			String arraySizeString = "";
 			if (treeObject.getProperty() != null ) {
+
 				Stereotype appliedStereotype = treeObject.getProperty().getAppliedStereotype(componentStereotypeQName);
-//				Stereotype stereotype = (Stereotype)appliedStereotype.getGeneral("InstanceOfAClass");
 
 				if (appliedStereotype == null) { appliedStereotype = treeObject.getProperty().getAppliedStereotype(portStereotypeQName); }
 				if (appliedStereotype == null) { appliedStereotype = treeObject.getProperty().getAppliedStereotype(calculatedPropertyStereotypeQName); }
@@ -158,61 +159,41 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 			
 			// #######################################################################################
 			// set image
-			
-			// TODO use the icons from stereotypes.
-//			Property p = treeObject.getProperty();
-//			EList<Stereotype> pStereotypesList = p.getAppliedStereotypes();
-//			Stereotype s = pStereotypesList.get(0);
-//			EList<Image> iconsList = s.getIcons();
-//			Image image = iconsList.get(0);
-//			cell.setImage(image); // cannot be casted rt
-			
 			if (treeObject.isLeaf() ) {
 				if (treeObject.getProperty() instanceof Port) {
-//					cell.setImage(createImage("port.gif")); 	
 					cell.setImage(decorateImage( treeObject , "/icons/port.gif" ));
 				}
 				else {
-//					cell.setImage(createImage("variable.png"));
 					cell.setImage(decorateImage( treeObject , "/icons/variable.png" ));
 
 				}
 			}
 			else if (treeObject.isRoot()) {
-//				cell.setImage(createImage("Class.gif")); 
 				cell.setImage(decorateImage( treeObject , "/icons/Class.gif" ));
 			}
 			else {
 				if (treeObject.getProperty() instanceof Port) {
-//					cell.setImage(createImage("port.gif")); 	
 					cell.setImage(decorateImage( treeObject , "/icons/port.gif" ));
 				}
 				else if (treeObject.getUmlElement() != null) {
 					if (treeObject.getUmlElement() instanceof Signal) {
-//						cell.setImage(createImage("Signal.gif"));
 						cell.setImage(decorateImage( treeObject , "/icons/Signal.gif" ));
 					}
 					else if (treeObject.getUmlElement() instanceof StateMachine) {
-//						cell.setImage(createImage("StateMachine.gif"));
 						cell.setImage(decorateImage( treeObject , "/icons/StateMachine.gif" ));
 					}
 					else if (treeObject.getUmlElement() instanceof Region) {
-//						cell.setImage(createImage("Region.gif"));
 						cell.setImage(decorateImage( treeObject , "/icons/Region.gif" ));
 					}
 					else if (treeObject.getUmlElement() instanceof State) {
-//						cell.setImage(createImage("State.gif"));
 						cell.setImage(decorateImage( treeObject , "/icons/State.gif" ));
 					}
 					else if (treeObject.getUmlElement() instanceof Property) {
-//						cell.setImage(createImage("Property.gif"));
 						cell.setImage(decorateImage( treeObject , "/icons/Property.gif" ));
 					}
 				}
 				else {
-					// TODO: icons for ModelicaML Component, RequirementInstance, Calculated Property etc.
-					//cell.setImage(createImage("component.png"));
-//					cell.setImage(createImage("Property.gif"));
+					// ModelicaML Component, RequirementInstance, Calculated Property etc.
 					cell.setImage(decorateImage( treeObject , "/icons/Property.gif" ));
 				}
 			}
@@ -236,7 +217,7 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 				}
 				
 				String tNameString = "";
-				// add Value Client or Provider indicator
+				// add client or provider indicator
 				tNameString = getValueClientOrProviderIndicatorString(treeObject) + treeObject.toString();
 				
 				StyledString styledString = new StyledString(tNameString + arraySizeString);
@@ -250,7 +231,6 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 				};
 				
 				if (treeObject.isInherited()) {
-//					System.err.println(treeObject.getName() + " is inherited");
 					styledString.setStyle(0, (treeObject.toString() + arraySizeString).length(), styler);
 				}
 				
@@ -279,14 +259,14 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 			else if (treeObject.isInput() || treeObject.isOutput()) {
 				String tNameString = "";
 				
-				// add Value Client or Provider indicator
+				// add client or provider indicator
 				tNameString = tNameString + getValueClientOrProviderIndicatorString(treeObject);
 				
 				if (treeObject.isInput()) {
 					tNameString = tNameString + "input ";
 					
 					if (declarationString.trim().equals("") && !oneOfParentsIsPort(treeObject)) {
-						declarationString = " = ???";
+						declarationString = " = ?";
 					}
 				}
 				else if (treeObject.isOutput()) {
@@ -351,7 +331,7 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 			else {
 				String tNameString = "";
 				
-				// add Value Client or Provider indicator
+				// add client or provider indicator
 				tNameString = tNameString + getValueClientOrProviderIndicatorString(treeObject);
 				
 				if (treeObject.getProperty().getType() != null) {
@@ -381,10 +361,6 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 		return string;
 	}
 	
-	private final static String requiredClientIndicator = "(mand. client)";
-	private final static String clientIndicator = "(client)";
-	private final static String providerIndicator = "(provider)";
-	
 	/**
 	 * Checks for array size.
 	 *
@@ -408,101 +384,112 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 	}
 	
 	
-	public boolean hasErrors(TreeParent treeParent) {
-		if (hasMarkers(treeParent)) {
-			return true;
-		}
-		HashSet<TreeObject> list = new HashSet<TreeObject>();
-		list.addAll(findNextInvalidItem(treeParent, false));
-		if (list.size() > 0 ) {
-//			for (TreeObject treeObject : list) {
-//				System.err.println(treeObject.getName());
-//			}
-			return true;
-		}
-		return false;
-	}
 	
 	
-	private HashSet<TreeObject> findNextInvalidItem(TreeParent treeParent, boolean parentIsInput){
-		HashSet<TreeObject> list = new HashSet<TreeObject>();
-		boolean parentIsAnInput = false;
-		
-		if (hasMarkers(treeParent)) {
-			list.add(treeParent);
-			
-			// stop searching here
-			return list;
-		}
-		
-		// if property has no type -> indicate error
-//		if (treeParent.getUmlElement() instanceof Property && treeParent.getComponentType() == null) {
-		// TODO: this is a workaround. How to deal with stateSelect 
-		if (!treeParent.getName().equals("stateSelect") && treeParent.getUmlElement() instanceof Property && treeParent.getComponentType() == null) {
-			list.add(treeParent);
-			
-			// stop searching here
-			return list;
-		}
-		
-		Element umlElement = treeParent.getUmlElement();
-		
-		// if one of the parents is input
-		if ( parentIsInput ) {
-			if (umlElement != null ) {
-				// if it is a primitive type -> indicate an error
-				if ( ((Property)umlElement).getType() instanceof PrimitiveType 
-						&& (treeParent.getDeclaration() == null && treeParent.getFinalModificationRightHand() == null)) {
-					list.add(treeParent);
-				}
-			}
-		}
-		
-		// if property is input and has no declaration and no binding equation exists for it in its first level component modification
-		if (treeParent.isInput() && treeParent.getDeclaration() == null && treeParent.getFinalModificationRightHand() == null
-				&& !oneOfParentsIsPort(treeParent)) {
-			
-			if (umlElement != null ) {
-				
-				// check if the item is a component of a port that has causality input ...
-				if (umlElement instanceof Property  && !(umlElement instanceof Port) ) { 
-
-					// if it is a primitive type -> indicate an error
-					if ( ((Property)umlElement).getType() instanceof PrimitiveType) {
-						list.add(treeParent);
-						
-						// stop here
-						return list;
-					}
-					// not of primitive type -> remember that this parent was an input in order to check its children
-					else {
-
-//						System.err.println(treeParent.getDotPath() + " parentIsInput: " + parentIsInput);
-						parentIsAnInput = true;
-					}
-				}
-			}
-//			// stop here
+	
+	
+	
+	/*
+	 * Validation
+	 */
+//	public boolean hasErrors(TreeParent treeParent) {
+//		if (hasMarkers(treeParent)) {
+//			return true;
+//		}
+//		HashSet<TreeObject> list = new HashSet<TreeObject>();
+//		list.addAll(findNextInvalidItem(treeParent, false));
+//		if (list.size() > 0 ) {
+////			for (TreeObject treeObject : list) {
+////				System.err.println(treeObject.getName());
+////			}
+//			return true;
+//		}
+//		return false;
+//	}
+	
+	
+	
+	
+	
+//	private HashSet<TreeObject> findNextInvalidItem(TreeParent treeParent, boolean parentIsInput){
+//		HashSet<TreeObject> list = new HashSet<TreeObject>();
+//		boolean parentIsAnInput = false;
+//		
+//		if (hasMarkers(treeParent)) {
+//			list.add(treeParent);
+//			
+//			// stop searching here
 //			return list;
-		}
-		
-		// if it is a required client and there is no binding equation (modification) for it -> error
-		/*
-		 * TODO: If the actual client is a sub-component of the item then an analysis of the subcomponents is required...  
-		 */
-		if (treeParent.isLeaf() && treeParent.isValueClient_required() && treeParent.getFinalModificationRightHand() == null) {
-			list.add(treeParent);
-		}
-
-		// go on with search ...
-		TreeObject[] children = treeParent.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof TreeParent) {
-				list.addAll(findNextInvalidItem( (TreeParent)children[i] , parentIsAnInput));
-			}
-		}
-		return list;
-	}
+//		}
+//		
+//		// if property has no type -> indicate error
+////		if (treeParent.getUmlElement() instanceof Property && treeParent.getComponentType() == null) {
+//		// TODO: this is a workaround. How to deal with stateSelect 
+//		if (!treeParent.getName().equals("stateSelect") && treeParent.getUmlElement() instanceof Property && treeParent.getComponentType() == null) {
+//			list.add(treeParent);
+//			
+//			// stop searching here
+//			return list;
+//		}
+//		
+//		Element umlElement = treeParent.getUmlElement();
+//		
+//		// if one of the parents is input
+//		if ( parentIsInput ) {
+//			if (umlElement != null ) {
+//				// if it is a primitive type -> indicate an error
+//				if ( ((Property)umlElement).getType() instanceof PrimitiveType 
+//						&& (treeParent.getDeclaration() == null && treeParent.getFinalModificationRightHand() == null)) {
+//					list.add(treeParent);
+//				}
+//			}
+//		}
+//		
+//		// if property is input and has no declaration and no binding equation exists for it in its first level component modification
+//		if (treeParent.isInput() && treeParent.getDeclaration() == null && treeParent.getFinalModificationRightHand() == null
+//				&& !oneOfParentsIsPort(treeParent)) {
+//			
+//			if (umlElement != null ) {
+//				
+//				// check if the item is a component of a port that has causality input ...
+//				if (umlElement instanceof Property  && !(umlElement instanceof Port) ) { 
+//
+//					// if it is a primitive type -> indicate an error
+//					if ( ((Property)umlElement).getType() instanceof PrimitiveType) {
+//						list.add(treeParent);
+//						
+//						// stop here
+//						return list;
+//					}
+//					// not of primitive type -> remember that this parent was an input in order to check its children
+//					else {
+//
+////						System.err.println(treeParent.getDotPath() + " parentIsInput: " + parentIsInput);
+//						parentIsAnInput = true;
+//					}
+//				}
+//			}
+////			// stop here
+////			return list;
+//		}
+//		
+//		// if it is a required client and there is no binding equation (modification) for it -> error
+//		/*
+//		 * TODO: If the actual client is a sub-component of the item then an analysis of the subcomponents is required...  
+//		 */
+//		if (treeParent.isLeaf() && treeParent.isValueClient_required() && treeParent.getFinalModificationRightHand() == null) {
+//			list.add(treeParent);
+//		}
+//
+//		// go on with search ...
+//		TreeObject[] children = treeParent.getChildren();
+//		for (int i = 0; i < children.length; i++) {
+//			if (children[i] instanceof TreeParent) {
+//				list.addAll(findNextInvalidItem( (TreeParent)children[i] , parentIsAnInput));
+//			}
+//		}
+//		return list;
+//	}
 	
 
 	private boolean oneOfParentsIsPort(TreeObject treeObject){
@@ -533,49 +520,76 @@ public class ViewLabelProvider extends StyledCellLabelProvider {
 	}
 	
 	
+	
+	
+	
+	
+	
+	/*
+	 * Decoration
+	 */
 	public Image decorateImage(Object element, String imagePath) {
 		if (element instanceof TreeObject) {
-			if (hasErrors((TreeParent)element)) {
-				return new DecorationOverlayIcon(SWTResourceManager.getImage(Activator.class, imagePath), errorImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();				
+			TreeObject treeObject = (TreeObject) element;
+			
+			/*
+			 * Priority of decoration: error, warning, info.
+			 */
+			if (treeObject.hasErrors()) {
+				return new DecorationOverlayIcon(SWTResourceManager.getImage(Activator.class, imagePath), errorImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();
 			}
+			if (treeObject.hasWarnings()) {
+				return new DecorationOverlayIcon(SWTResourceManager.getImage(Activator.class, imagePath), warningImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();
+			}
+			if (treeObject.hasInfo()) {
+				return new DecorationOverlayIcon(SWTResourceManager.getImage(Activator.class, imagePath), infoImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();
+			}
+			
+//			if (hasErrors((TreeParent)element)) {
+//				return new DecorationOverlayIcon(SWTResourceManager.getImage(Activator.class, imagePath), errorImageDescriptor, IDecoration.BOTTOM_RIGHT).createImage();				
+//			}
 		}
 		return SWTResourceManager.getImage(Activator.class, imagePath);
 	}
 	
 	
-	private String markerType = Constants.MARKERTYPE_COMPONENT_MODIFICATION;
 	
-	public boolean hasMarkers(TreeObject item){
-		
-		Element umlElement = item.getFirstLevelComponent();
-		
-		if (umlElement instanceof NamedElement) {
-			// markers
-			ExtendedUmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
-			if (umlModel != null) {
-				String projectName = umlModel.getResource().getURI().segment(1);
-				IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				IWorkspaceRoot root = workspace.getRoot();
-				IProject iProject = root.getProject(projectName);
-				
-				IMarker[] markers = null;
-				try {
-					if (iProject != null) {
-						markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
-						for (IMarker marker : markers) {
-							Object sourceId = marker.getAttribute(IMarker.SOURCE_ID);
-								if (item.getDotPath().equals(sourceId)) {
-									return true;				
-							}
-						}
-					}
-				} catch (CoreException e) {
-					//e.printStackTrace();
-				}
-			}
-		}
-		return false;
-	}
+	/*
+	 * Markers
+	 */
+	
+	
+//	public boolean hasMarkers(TreeObject item){
+//		
+//		Element umlElement = item.getFirstLevelComponent();
+//		
+//		if (umlElement instanceof NamedElement) {
+//			// markers
+//			ExtendedUmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
+//			if (umlModel != null) {
+//				String projectName = umlModel.getResource().getURI().segment(1);
+//				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+//				IWorkspaceRoot root = workspace.getRoot();
+//				IProject iProject = root.getProject(projectName);
+//				
+//				IMarker[] markers = null;
+//				try {
+//					if (iProject != null) {
+//						markers = iProject.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
+//						for (IMarker marker : markers) {
+//							Object sourceId = marker.getAttribute(IMarker.SOURCE_ID);
+//								if (item.getDotPath().equals(sourceId)) {
+//									return true;				
+//							}
+//						}
+//					}
+//				} catch (CoreException e) {
+//					//e.printStackTrace();
+//				}
+//			}
+//		}
+//		return false;
+//	}
 	
 	
 	

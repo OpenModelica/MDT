@@ -91,6 +91,7 @@ import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.simulation.dialogs.DialogSimulationSettings;
 import org.openmodelica.modelicaml.simulation.execution.ExecuteSimulation;
+import org.openmodelica.modelicaml.simulation.omc.OpenModelicaCompilerCommunication;
 import org.openmodelica.modelicaml.simulation.testexecution.actions.PlotResultsAction;
 import org.openmodelica.modelicaml.simulation.xml.TestSession;
 import org.openmodelica.modelicaml.simulation.xml.TestSession.TestModel;
@@ -222,6 +223,10 @@ public class SimulationOMCAction extends AbstractHandler {
 		
 		if (dialog.getReturnCode() == IDialogConstants.OK_ID) { // OK button clicked
 	    	
+			// wake up OMC
+			final OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
+			omcc.getVesion();
+			
 	    	final boolean isGenerateModelicaCodeChecked = dialog.isGenerateModelicaCodeChecked();
 	    	final boolean isCopyFilesChecked = dialog.isCopyFilesChecked();
 	    	final boolean isLoadModelicaLibChecked = dialog.isLoadModelicaLibChecked();
@@ -258,7 +263,8 @@ public class SimulationOMCAction extends AbstractHandler {
 						runchain(monitor);
 					}
 					
-					String omcTempDirectory = ExecuteSimulation.getTempDirectoryPath();
+//					String omcTempDirectory = ExecuteSimulation.getTempDirectoryPath();
+					String omcTempDirectory = omcc.getTempDirectoryPath();
 					String modelQName = StringUtls.replaceSpecCharExceptThis(umlElement.getQualifiedName(), "::").replaceAll("::", ".");
 					
 					/*

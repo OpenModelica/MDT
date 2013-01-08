@@ -135,6 +135,9 @@ public class PropertySection_Details extends AbstractPropertySection {
 			}
 		};
 		
+    /**
+     * @wbp.parser.entryPoint
+     */
     public void createControls(Composite parent, TabbedPropertySheetPage aTabbedPropertySheetPage) {
         super.createControls(parent, aTabbedPropertySheetPage);
         
@@ -149,7 +152,7 @@ public class PropertySection_Details extends AbstractPropertySection {
 		lblName.setText("Name:");
 		
 		textName = new Text(composite, SWT.BORDER);
-		textName.setBounds(65, 10, 579, 19);
+		textName.setBounds(85, 10, 559, 19);
 //		textName.addModifyListener(new ModifyListener() {
 //			@Override
 //			public void modifyText(ModifyEvent e) {
@@ -161,27 +164,27 @@ public class PropertySection_Details extends AbstractPropertySection {
 		
 		lblType = new Label(composite, SWT.NONE);
 		lblType.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		lblType.setBounds(10, 62, 49, 13);
+		lblType.setBounds(10, 62, 49, 19);
 		lblType.setText("Type:");
 		
 		textType = new Link(composite, SWT.NONE);
 		textType.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		textType.setBounds(65, 62, 579, 13);
+		textType.setBounds(85, 62, 559, 19);
 		textType.setText("<a>New Link</a>");
 		
 		lblOwner = new Label(composite, SWT.NONE);
 		lblOwner.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		lblOwner.setBounds(10, 43, 49, 13);
+		lblOwner.setBounds(10, 43, 49, 19);
 		lblOwner.setText("Owner:");
 		
 		textOwner = new Link(composite, SWT.NONE);
 		textOwner.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		textOwner.setBounds(65, 43, 579, 13);
+		textOwner.setBounds(85, 43, 559, 19);
 		textOwner.setText("<a>New Link</a>");
 		
 		lblIsRequired = new Label(composite, SWT.NONE);
 		lblIsRequired.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		lblIsRequired.setBounds(10, 82, 49, 13);
+		lblIsRequired.setBounds(10, 82, 66, 19);
 		lblIsRequired.setText("mandatory:");
 		String toolTipText_isRequired = "If the client is mandatory then " +
 										"\nthere must be a binding equation " +
@@ -190,7 +193,7 @@ public class PropertySection_Details extends AbstractPropertySection {
 		
 		btIsRequired = new Button(composite, SWT.CHECK);
 		btIsRequired.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		btIsRequired.setBounds(65, 82, 579, 13);
+		btIsRequired.setBounds(85, 82, 559, 13);
 		btIsRequired.setToolTipText(toolTipText_isRequired);
 		
     }
