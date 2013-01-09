@@ -836,7 +836,6 @@ public class OMCProxy implements IModelicaCompiler {
 			throw new InvocationError("Fetching file position of " + className, "getCrefInfo(" + className + ")");
 		}
 
-
 		/*
 		 * The getCrefInfo reply has the following format:
 		 *
@@ -888,8 +887,8 @@ public class OMCProxy implements IModelicaCompiler {
 	 */
 	public boolean isPackage(String className) throws ConnectException {
 		ICompilerResult res = sendExpression("isPackage(" + className + ")", true);
-
 		String retval = res.getFirstResult();
+
 		return retval.contains("true");
 	}
 
@@ -952,7 +951,7 @@ public class OMCProxy implements IModelicaCompiler {
 
 	public IClassInfo getClassInfo(String className)
 			throws ConnectException, UnexpectedReplyException {
-		ICompilerResult res = sendExpression("getClassInformation(" + className +")", true);
+		ICompilerResult res = sendExpression("getClassInformation(" + className + ")", true);
 		String retval = res.getFirstResult();
 
 		ClassInfo ci = null;
