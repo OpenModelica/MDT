@@ -669,7 +669,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * @throws InitializationException
 	 */
 	public List getClassNames(String className) throws ConnectException, UnexpectedReplyException {
-		ICompilerResult retval = sendExpression("getClassNames("+className+")", true);
+		ICompilerResult retval = sendExpression("getClassNames(" + className + ")", true);
 
 		List list = null;
 		try {
