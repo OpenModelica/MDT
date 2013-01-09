@@ -947,7 +947,7 @@ public class OMCProxy implements IModelicaCompiler {
 			}
 		}
 		/* we have no idea what OMC returned */
-		throw new UnexpectedReplyException("getElementsInfo(" + className + ")" +	"replies:'" + retval + "'");
+		throw new UnexpectedReplyException("getElementsInfo(" + className + ")" + "replies:'" + retval + "'");
 	}
 
 	public IClassInfo getClassInfo(String className)
