@@ -70,7 +70,7 @@ public class SimulationResultsAnalyzer {
 
 	private void setMonitorTaskName(String taskName){
 		if (monitor != null) {
-			monitor.setTaskName("Analyzing results ...");
+			monitor.setTaskName(taskName);
 		}
 	}
 	

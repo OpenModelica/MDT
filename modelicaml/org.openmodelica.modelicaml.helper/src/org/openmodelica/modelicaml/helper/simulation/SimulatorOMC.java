@@ -63,7 +63,7 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
 import org.openmodelica.modelicaml.simulation.omc.OpenModelicaCompilerCommunication;
 
-public class Simulator {
+public class SimulatorOMC {
 
 	private String projectPath;
 	private String simulationResultsFolderPath;
@@ -80,7 +80,7 @@ public class Simulator {
 
 	private boolean recordOnlyRequirementStatusAndClients;
 	
-	public Simulator(GeneratedModelsData gmd, String projectPath, boolean recordOnlyRequirementStatusAndClients) {
+	public SimulatorOMC(GeneratedModelsData gmd, String projectPath, boolean recordOnlyRequirementStatusAndClients) {
 		this.gmd = gmd;
 		this.projectPath = projectPath;
 		this.setRecordOnlyRequirementStatusAndClients(recordOnlyRequirementStatusAndClients);
@@ -196,7 +196,7 @@ public class Simulator {
 			
 			// determine the qualified name of the model
 			String modelQName = getModelQName((NamedElement)genModel);
-			String filePath = simulationResultsFolderPath + "/" + ModelicaMLServices.getSimulationResultsFileName((NamedElement) genModel);
+			String filePath = simulationResultsFolderPath + "/" + ModelicaMLServices.getOMCSimulationResultsFileName((NamedElement) genModel);
 
 			/*
 			 * First delete old files from the tmp directory.
@@ -234,7 +234,7 @@ public class Simulator {
 			
 			// determine the qualified name of the model
 			String modelQName = getModelQName((NamedElement)genModel);
-			String filePath = simulationResultsFolderPath + "/" + ModelicaMLServices.getSimulationResultsFileName((NamedElement) genModel);
+			String filePath = simulationResultsFolderPath + "/" + ModelicaMLServices.getOMCSimulationResultsFileName((NamedElement) genModel);
 			String message = "";
 			
 			// simulate

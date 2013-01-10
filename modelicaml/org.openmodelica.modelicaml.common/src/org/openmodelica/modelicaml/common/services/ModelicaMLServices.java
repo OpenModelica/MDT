@@ -861,7 +861,7 @@ public class ModelicaMLServices {
 				else {
 					//TODO: here the models are in different root Models which are at the same hierarchy?
 					// which to take? 
-					System.err.println("PROBLEM detecting common root model: Root models are at the same hierarchy levels.");
+					System.err.println("PROBLEM detecting common root model. The root models are at the same hierarchy levels.");
 				}
 			}
 		}
@@ -911,17 +911,64 @@ public class ModelicaMLServices {
 	}
 	
 	
-	public static String getSimulationResultsFileName(NamedElement model){
+	
+	/*
+	 * Simulation files handling
+	 */
+	
+	public static String getOMCSimulationResultsFileName(NamedElement model){
 		return getModelQName((NamedElement) model) + "_res.mat";
 	}
 	
-	public static String getSimulationResultsFileName(String modelName){
+	public static String getOMCSimulationResultsFileName(String modelName){
 		return StringUtls.replaceSpecCharExceptThis( modelName, "::").replaceAll("::", ".") + "_res.mat";
 	}
 	
 	public static String getModelQName(NamedElement model) {
 		return StringUtls.replaceSpecCharExceptThis( model.getQualifiedName(), "::").replaceAll("::", ".");
 	}
+	
+	public static HashMap<Element,File> findSimulationFiles(HashSet<Element> generatedModels, String fileExtension, String folderAbsolutePath){
+		HashMap<Element,File> foundFiles = new HashMap<Element,File>();
+		HashSet<Element> ambiguousCases = new HashSet<Element>();
+		if (folderAbsolutePath == null || fileExtension == null) { return null; }
+		
+		File folder = new File(folderAbsolutePath);
+		
+		if (folder.exists() && folder.isDirectory()) {
+			for (Element element : generatedModels) {
+				if (element instanceof NamedElement) {
+					NamedElement model = (NamedElement) element;
+					
+					for (File file : folder.listFiles()) {
+						String fileName = file.getName();
+						String modelName = StringUtls.replaceSpecChar(model.getName());
+						if (fileName.contains(fileExtension) && fileName.contains(modelName)) {
+							
+							/*
+							 * We collect conflict case when for one model multiple files matches.  
+							 */
+							if (foundFiles.get(element) != null) {
+								ambiguousCases.add(element);
+							}
+							foundFiles.put(element, file);
+						}
+					}
+				}
+			}
+		}
+		
+		/*
+		 * Remove all ambiguous cases. User should select the files manually.
+		 */
+		for (Element element : ambiguousCases) {
+			foundFiles.remove(element);
+		}
+		
+		return foundFiles;
+	}
+	
+	
 	
 	
 	public static Shell getShell(){

@@ -143,7 +143,7 @@ public class GeneratorVeMRequirementsBased extends Observable implements IRunnab
 			allRequirements.addAll(collector.getAllRequirements());
 			
 			/* For each of the selected system models create a package containing classes that 
-			 * instantiate all possible combinations of test scenarios and requirements that 
+			 * instantiate all possible combinations of scenarios and requirements that 
 			 * can be tested using the given test scenario.
 			 */
 			for (Element sourceModel : sourceModels) {

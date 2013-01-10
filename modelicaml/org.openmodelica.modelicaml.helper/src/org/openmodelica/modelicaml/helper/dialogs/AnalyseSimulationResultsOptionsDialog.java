@@ -35,6 +35,7 @@
 package org.openmodelica.modelicaml.helper.dialogs;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -74,6 +75,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -82,11 +84,14 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.FileSelectionDialog;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
+import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
+import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.helper.datacollection.VerificationDataCollector;
@@ -122,6 +127,8 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 	 */
 	private boolean recordOnlyRequirements = false;
 	private String resultFilesFolderPath;
+	// map of generated models to their simulation results file.
+	private HashMap<Element, String> simulationResultFileAbsolutePaths = new HashMap<Element, String>();
 	
 	// scenario based models generator
 	private GeneratorVeMScenariosBased smg;
@@ -355,22 +362,26 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 			public void widgetSelected(SelectionEvent e) {
 				
 				DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
+				
 				// set filter
-				String defaultPath = getProjectPath();
-				// by default use project path
+//				String defaultPath = getProjectPath();
+				String defaultPath = getGeneratedCodeFolderAbsolutePath();
 				if (defaultPath != null) {
 					dialog.setFilterPath(defaultPath);
 				}
-				// if use selected the folder once -> use this as default
+				
+				// if user selected the folder once -> use this as default
 				if (getResultFilesFolderPath() != null) {
 					dialog.setFilterPath(getResultFilesFolderPath());
 				}
 
 				String result = dialog.open();
 				
-				setResultFilesFolderPath(result);
-				if (result != null) {
+				if (result != null) { // if dialog was not canceled
+
+					setResultFilesFolderPath(result);
 					
+					// TODO: find a better way for getting the OS specific path  
 					String path = URIUtil.toURI(result,true).getRawPath();
 					if (path.startsWith("/")) {
 						path = path.trim().substring(1, path.length());
@@ -391,19 +402,23 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 		
 		folderPath = new StyledText(grpFilesSelection, SWT.BORDER);
 		folderPath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		if (getResultFilesFolderPath() == null) {
+		if (getResultFilesFolderPath() == null && getGeneratedCodeFolderAbsolutePath() == null) {
 			folderPath.setText(" ... not selected yet.");
 			folderPath.setForeground(new Color(null, 255, 0, 0));
 		}
-		else {
+		else if (getResultFilesFolderPath() != null) {
 			folderPath.setText(getResultFilesFolderPath());	
+			folderPath.setForeground(new Color(null, 0, 0, 0));
+		}
+		else if (getGeneratedCodeFolderAbsolutePath() != null) {
+			folderPath.setText(getGeneratedCodeFolderAbsolutePath());	
 			folderPath.setForeground(new Color(null, 0, 0, 0));
 		}
 		folderPath.setEditable(false);
 		
 		Label lblSimulationResultFiles = new Label(grpFilesSelection, SWT.NONE);
 		lblSimulationResultFiles.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
-		lblSimulationResultFiles.setText("Required simulation result files:");
+		lblSimulationResultFiles.setText("Simulation result files for models:");
 		
 		// disable depending on the simulation option 
 		grpFilesSelection.setEnabled(!isSimulate());
@@ -414,8 +429,42 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 			public void mouseDoubleClick(MouseEvent e) {
 				TreeItem[] selectedItems = resultsFilesTree.getSelection();
 				for (TreeItem treeItem : selectedItems) {
-					DialogMessage dialog = new DialogMessage(getShell(), "File Path Information", "File path:", treeItem.getText(), false);
-					dialog.open();
+					
+					Element element = (Element) treeItem.getData();
+					
+					// Let the user select the file for each model 
+					FileDialog fileDialog = new FileDialog(getShell());
+					fileDialog.getParent().setFocus();
+					fileDialog.setFilterPath(getResultFilesFolderPath());
+					
+					// extension filter
+					// TODO: get the default extension from preferences
+					String[] extensionFilder = {"*.mat", "*.*"};
+					fileDialog.setFilterExtensions(extensionFilder);
+					
+					fileDialog.setFileName(getGeneratedModelsData().getSimulationResultsFile().get(element));
+					fileDialog.setText("Select the simulation results file for '" + ModelicaMLServices.getName(element)+"'");
+					
+					String selectedFilePath = fileDialog.open();
+					
+					if (selectedFilePath != null) {
+					
+						simulationResultFileAbsolutePaths.put(element, selectedFilePath);
+
+						// mark as ok
+						treeItem.setForeground(new Color(null, 107, 142, 35));
+						
+						/*
+						 * Update the file path in the generated models data
+						 */
+						generatedModelsData.setSimulationResultsFile(simulationResultFileAbsolutePaths);
+						
+						// ok button
+						setOKButtonEnablement();
+					}
+					
+//					DialogMessage dialog = new DialogMessage(getShell(), "File Path Information", "File path:", treeItem.getText(), false);
+//					dialog.open();
 				}
 			}
 		});
@@ -458,36 +507,149 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 		return null;
 	}
 	
+	private String getGeneratedCodeFolderAbsolutePath(){
+		// get UML model data
+		UmlModel umlModel = UmlUtils.getUmlModel();
+//		String umlModelFileURI = umlModel.getResourceURI().toString();
+
+		if (umlModel != null) {
+			// get project data
+			String projectName = umlModel.getResource().getURI().segment(1);
+			
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRoot root = workspace.getRoot();
+			IProject iProject = root.getProject(projectName);
+			
+			// TODO find a better way to get the absolute path
+			String projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
+			String genCodeFolderAbsolutePath = projectPath + "/" + Constants.folderName_code_gen;
+			
+			// root package name
+			try {
+				EObject rootEObject = umlModel.lookupRoot();
+				if (rootEObject instanceof NamedElement) {
+					String rootPackageName = ((NamedElement) rootEObject).getName();
+					if (rootPackageName != null) {
+						return genCodeFolderAbsolutePath + "/" + StringUtls.replaceSpecChar(rootPackageName);
+					}
+					else {
+						/*
+						 * if there is no root element name defined then return the project path
+						 */
+						return projectPath;
+					}
+				}
+			} catch (NotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				
+				/*
+				 * if there is no root element then return the project path
+				 */
+				if (projectPath != null) {
+					return projectPath;
+				}
+			}
+			
+			if (projectPath != null) {
+				return projectPath;
+			}
+		}
+		return null;
+	}
+	
+	
 	private void updateSimulationResultFileTreeItems(){
 		
 		resultsFilesTree.removeAll();
 		
 		HashSet<String> filesNotFound = new HashSet<String>();
-		
 		HashSet<String> filesFound = new HashSet<String>();
 		
 		if (getGeneratedModelsData() != null) {
+			
 			HashSet<Element> generatedModels = getGeneratedModelsData().getGeneratedModels();
-			for (Element VeM : generatedModels) {
-				String fileName = ModelicaMLServices.getSimulationResultsFileName((NamedElement) VeM);
-				
-				TreeItem item = new TreeItem(resultsFilesTree, SWT.NONE);
-				item.setText(fileName);
-				item.setForeground(new Color(null, 255, 0, 0));
-				
-				if (getResultFilesFolderPath() != null) {
-					File file = new File(getResultFilesFolderPath() + "/" + fileName);
-					// if the files does not exists -> mark it as red
-					if (file.exists()) {
-						// green 107-142-35
-						item.setForeground(new Color(null, 107, 142, 35));
-						filesFound.add(fileName);
-					}
-					else {
-						filesNotFound.add(fileName);
+			
+			// Reset the simulation files list from previous selections
+			simulationResultFileAbsolutePaths = new HashMap<Element, String>();
+			
+			/*
+			 * In the selected folder, find files that match (i.e. contains()) 
+			 * the model name and have the specified file extension (e.g. ".mat") 
+			 */
+			
+			String simFilesFolderAbsolutePath = getResultFilesFolderPath();
+			if (simFilesFolderAbsolutePath == null) {
+				simFilesFolderAbsolutePath = getGeneratedCodeFolderAbsolutePath();
+			}
+			
+			HashMap<Element, File> simulationResultFiles = ModelicaMLServices.findSimulationFiles(generatedModels, ".mat", simFilesFolderAbsolutePath); // TODO: Add simulation files extension to ModelicaML preferences
+			if (simulationResultFiles != null) {
+				for (Element element : simulationResultFiles.keySet()) {
+					File file = simulationResultFiles.get(element);
+					if (file != null) {
+						simulationResultFileAbsolutePaths.put(element, file.getAbsolutePath());
 					}
 				}
 			}
+			
+			// Visualize
+			for (Element VeM : ModelicaMLServices.getSortedByName(generatedModels)) {
+				
+				String modelName = ModelicaMLServices.getName(VeM);
+				
+				TreeItem item = new TreeItem(resultsFilesTree, SWT.NONE);
+				item.setData(VeM); // the model
+				item.setText(modelName); // model name
+				item.setForeground(new Color(null, 255, 0, 0)); // red color
+				
+				if ( (getResultFilesFolderPath() != null || getGeneratedCodeFolderAbsolutePath() != null) 
+						&& simulationResultFiles.keySet().size() > 0) {
+					
+					// if the file exists -> mark it green
+					if (simulationResultFiles.get(VeM) != null) {
+						// green 107-142-35
+						item.setForeground(new Color(null, 107, 142, 35));
+						filesFound.add(modelName);
+					}
+					else {
+						// if the file does not exist -> mark it red
+						item.setForeground(new Color(null, 255, 0, 0)); // red color
+						filesNotFound.add(modelName);
+					}
+				}
+			}
+			
+			/*
+			 * Propagate the files paths to the generated models data
+			 * in order to transfer it to further steps
+			 *  
+			 */
+			generatedModelsData.setSimulationResultsFile(simulationResultFileAbsolutePaths);
+			
+			/*
+			 * OLD way ... obsolete after testing the code above
+			 */
+//			for (Element VeM : generatedModels) {
+//				String fileName = ModelicaMLServices.getOMCSimulationResultsFileName((NamedElement) VeM);
+//				
+//				TreeItem item = new TreeItem(resultsFilesTree, SWT.NONE);
+//				item.setText(fileName);
+//				item.setForeground(new Color(null, 255, 0, 0));
+//				
+//				if (getResultFilesFolderPath() != null) {
+//					File file = new File(getResultFilesFolderPath() + "/" + fileName);
+//					// if the files does not exists -> mark it as red
+//					if (file.exists()) {
+//						// green 107-142-35
+//						item.setForeground(new Color(null, 107, 142, 35));
+//						filesFound.add(fileName);
+//					}
+//					else {
+//						filesNotFound.add(fileName);
+//					}
+//				}
+//			}
 		}
 		
 		setFilesFound(filesFound);
@@ -503,7 +665,6 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 			dialog.open();
 		}
 	}
-	
 	
 	@Override
 	protected void configureShell(Shell newShell) {
@@ -587,7 +748,8 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
             			if (selectedElement instanceof Package) {
 
             				/*
-            				 * If a new package was selected -> collect all verification models and verification related data (e.g. all requirements, all scenarios, etc. )
+            				 * If a new package was selected 
+            				 * 	-> collect all verification models and verification related data (e.g. all requirements, all scenarios, etc. )
             				 */
             				setGeneratedModelsPackage((Element) selectedElement);
             				collect();
@@ -690,7 +852,8 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 
 	private boolean isValidSelection(){
 		if (generatedModelsPackage != null 
-				&& (isSimulate() || (!isSimulate() && getResultFilesFolderPath() != null && filesFound != null && filesFound.size() > 0))
+//				&& (isSimulate() || (!isSimulate() && getResultFilesFolderPath() != null && filesFound != null && filesFound.size() > 0))
+				&& (isSimulate() || (!isSimulate() && getGeneratedModelsData().getSimulationResultsFile().keySet().size() > 0))
 				
 				) {
 			return true;
@@ -904,4 +1067,14 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 	public void setRootElement(EObject rootElement) {
 		this.rootElement = rootElement;
 	}
+
+	public HashMap<Element, String> getSimulationResultFileAbsolutePaths() {
+		return simulationResultFileAbsolutePaths;
+	}
+
+	public void setSimulationResultFileAbsolutePaths(
+			HashMap<Element, String> simulationResultFileAbsolutePaths) {
+		this.simulationResultFileAbsolutePaths = simulationResultFileAbsolutePaths;
+	}
+
 }

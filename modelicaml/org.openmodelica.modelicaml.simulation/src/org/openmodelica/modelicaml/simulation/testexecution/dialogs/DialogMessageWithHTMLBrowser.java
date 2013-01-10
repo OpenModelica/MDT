@@ -142,7 +142,7 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 				 * The report contains the model name as parameter. 
 				 * We need to translated them to corresponding result file name 
 				 */
-				decodedLocation  = ModelicaMLServices.getSimulationResultsFileName(decodedLocation);
+				decodedLocation  = ModelicaMLServices.getOMCSimulationResultsFileName(decodedLocation);
 				
 				event.doit = false;	// don't change the page
 				String sessionFolderAbsolutePath = geSimulationFilesFolderPath();

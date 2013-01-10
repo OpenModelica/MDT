@@ -57,7 +57,6 @@ import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.uml2.uml.Element;
-import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
@@ -66,16 +65,11 @@ import org.openmodelica.modelicaml.helper.analyzers.SimulationResultsAnalyzer;
 import org.openmodelica.modelicaml.helper.dialogs.AnalyseSimulationResultsOptionsDialog;
 import org.openmodelica.modelicaml.helper.dialogs.ScenarioBasedVerificationReportDialog;
 import org.openmodelica.modelicaml.helper.dialogs.SelectScenarioToReqRelationsToCreateDialog;
-import org.openmodelica.modelicaml.helper.simulation.Simulator;
+import org.openmodelica.modelicaml.helper.simulation.SimulatorOMC;
 import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
 
 public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 
-//	private HashSet<Element> notSimulatedModels = new HashSet<Element>();
-
-	// map of models and the corresponding simulation result paths (absolute)
-//	private HashMap<Element,String> simulationResultsFiles = new HashMap<Element,String>();
-	
 	protected GeneratedModelsData generatedModelsData;
 	
 	private boolean onlyRecordRequirementStatusAndClients = false;
@@ -86,6 +80,9 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 	private EObject rootElement;
 	
 	private String projectPath;
+	
+	// map of generated models to their simulation results file.
+	private HashMap<Element, String> simulationResultFileAbsolutePaths = new HashMap<Element, String>();
 	
 	// mode indicates which report dialog should be opened. by default this is the automatic scenario-based verification report dialog.
 	private int mode = Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION;
@@ -104,7 +101,8 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 		// Use this to open a Shell in the UI thread
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				if (getGeneratedModelsData() != null && getGeneratedModelsData().getSimulatedModels().size() > 0) {
+//				if (getGeneratedModelsData() != null && getGeneratedModelsData().getSimulatedModels().size() > 0) {
+				if (getGeneratedModelsData() != null) {
 					if (getMode() == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
 						ModelicaMLServices.notify("ModelicaML Report Generation", "The report was opened in a separate window.", 0, 2);
 
@@ -119,7 +117,7 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 					}
 				}
 				else {
-					DialogMessage dialog = new DialogMessage(ModelicaMLServices.getShell(), "Simulation Errors", null, "No models were simulated. The report is empty."
+					DialogMessage dialog = new DialogMessage(ModelicaMLServices.getShell(), "Simulation Errors", null, "Could not analyze simulation results. The report is empty."
 							+ "\n\nSimulation Log:\n" + getGeneratedModelsData().getLog(), true);
 					dialog.open();
 				}
@@ -171,7 +169,7 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 	private void proceed(){
 		
 		/*
-		 * simulate models with OMC
+		 * simulate models with OMC and analyze files
 		 */
 		if ( isSimulate() ) {
 			
@@ -188,7 +186,7 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 			            if (event.getResult().isOK()) {
 			            	
 			            	// generate code, simulated
-							final Simulator simulator = new Simulator(getGeneratedModelsData(), getProjectPath(), isOnlyRecordRequirementStatusAndClients());
+							final SimulatorOMC simulator = new SimulatorOMC(getGeneratedModelsData(), getProjectPath(), isOnlyRecordRequirementStatusAndClients());
 							
 							ModelicaMLServices.notify("ModelicaML Simulation", "Simulation is running in background. \nIt does not block the editor. \nYou can continue working ...", 0, 1);
 							simulator.generateCodeAndSimulate();
@@ -239,16 +237,15 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 		/*
 		 * Analyze files
 		 */
-		else if (isAnalyzeFiles() && getResultsFileFolderPath() != null && generatedModelsData != null) {
+//		else if (isAnalyzeFiles() && getResultsFileFolderPath() != null && generatedModelsData != null) {
+		else if (isAnalyzeFiles() && getGeneratedModelsData().getSimulationResultsFile().keySet().size() > 0) {
 			
-			HashMap<Element, String> simulationResultFiles = new HashMap<Element, String>();
-
-			for (Element VeM : generatedModelsData.getGeneratedModels()) {
-				String resultFilePath = resultsFileFolderPath + "/" + ModelicaMLServices.getSimulationResultsFileName((NamedElement) VeM);
-				simulationResultFiles.put(VeM, resultFilePath);
-			}
-//			simulationResultsFiles = simulationResultFiles;
-			generatedModelsData.setSimulationResultsFile(simulationResultFiles);
+//			HashMap<Element, String> simulationResultFiles = new HashMap<Element, String>();
+//			for (Element VeM : generatedModelsData.getGeneratedModels()) {
+//				String resultFilePath = resultsFileFolderPath + "/" + ModelicaMLServices.getOMCSimulationResultsFileName((NamedElement) VeM);
+//				simulationResultFiles.put(VeM, resultFilePath);
+//			}
+//			generatedModelsData.setSimulationResultsFile(simulationResultFiles);
 			
 			analysisJob = new Job("Analysing results ...") {
 				
@@ -273,17 +270,6 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 	}
 	
 	
-//	public HashMap<Element, String> getSimulationResultsFiles() {
-//		return simulationResultsFiles;
-//	}
-//
-//
-//	public void setSimulationResultsFiles(
-//			HashMap<Element, String> simulationResultsFiles) {
-//		this.simulationResultsFiles = simulationResultsFiles;
-//	}
-
-
 	private boolean setUpProjectData(){
 		
 		// get UML model data
@@ -375,6 +361,17 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 
 	public void setMode(int mode) {
 		this.mode = mode;
+	}
+
+
+	public HashMap<Element, String> getSimulationResultFileAbsolutePaths() {
+		return simulationResultFileAbsolutePaths;
+	}
+
+
+	public void setSimulationResultFileAbsolutePaths(
+			HashMap<Element, String> simulationResultFileAbsolutePaths) {
+		this.simulationResultFileAbsolutePaths = simulationResultFileAbsolutePaths;
 	}
 	
 }
