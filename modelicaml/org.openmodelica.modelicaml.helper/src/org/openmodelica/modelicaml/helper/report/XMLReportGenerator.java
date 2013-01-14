@@ -636,7 +636,8 @@ public class XMLReportGenerator {
 								">";
 				
 				// add requirement text
-				string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeHtml(ModelicaMLServices.getRequirementText(type)) + "</"+XMLTagName_requirementText+">"; 
+//				string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeHtml(ModelicaMLServices.getRequirementText(type)) + "</"+XMLTagName_requirementText+">"; 
+				string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeXml(ModelicaMLServices.getRequirementText(type)) + "</"+XMLTagName_requirementText+">";
 
 				// Add clients (isMandatory, binding, plot link)
 				string += getClientItems(ci, VeM, requirement);
@@ -679,7 +680,8 @@ public class XMLReportGenerator {
 			String binding = client.getFinalModificationRightHand();
 			
 			if (binding != null) {
-				string += "<"+XMLTagName_binding+">" + StringEscapeUtils.escapeHtml(binding) + "</"+XMLTagName_binding+">";
+//				string += "<"+XMLTagName_binding+">" + StringEscapeUtils.escapeHtml(binding) + "</"+XMLTagName_binding+">";
+				string += "<"+XMLTagName_binding+">" + StringEscapeUtils.escapeXml(binding) + "</"+XMLTagName_binding+">";
 			}
 			
 			string += "</"+XMLTagName_client+">";
@@ -825,7 +827,8 @@ public class XMLReportGenerator {
 					string += getAllRequirementComments(evaluatedRequirement);
 		
 			// add requirement text
-			string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeHtml(ModelicaMLServices.getRequirementText(evaluatedRequirement)) + "</"+XMLTagName_requirementText+">"; 
+//			string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeHtml(ModelicaMLServices.getRequirementText(evaluatedRequirement)) + "</"+XMLTagName_requirementText+">"; 
+			string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeXml(ModelicaMLServices.getRequirementText(evaluatedRequirement)) + "</"+XMLTagName_requirementText+">";
 
 			// loop over all VeM and see if this requirement is in the 
 			string += getVeMForRequirement(evaluatedRequirement, onlyViolatedRequirements, onlyNotViolatedRequirements, onlyNotEvaluatedRequirements);
@@ -873,7 +876,8 @@ public class XMLReportGenerator {
 					string += getAllRequirementComments(notEvaluatedRequirement);
 		
 			// add requirement text
-			string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeHtml(ModelicaMLServices.getRequirementText(notEvaluatedRequirement)) + "</"+XMLTagName_requirementText+">"; 
+//			string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeHtml(ModelicaMLServices.getRequirementText(notEvaluatedRequirement)) + "</"+XMLTagName_requirementText+">"; 
+			string += "<"+XMLTagName_requirementText+">" + StringEscapeUtils.escapeXml(ModelicaMLServices.getRequirementText(notEvaluatedRequirement)) + "</"+XMLTagName_requirementText+">";
 
 			// loop over all VeM and see if this requirement is in the 
 			string += getVeMForRequirement(notEvaluatedRequirement, showOnlyViolated, showOnlyNotViolated, showOnlyNotEvaluated);
@@ -1010,7 +1014,8 @@ public class XMLReportGenerator {
 			for (Comment comment : element.getOwnedComments()) {
 				//counter
 //				i++;
-				string += "<"+XMLTagName_comment+">" + StringEscapeUtils.escapeHtml(comment.getBody()) + "</"+XMLTagName_comment+">";
+//				string += "<"+XMLTagName_comment+">" + StringEscapeUtils.escapeHtml(comment.getBody()) + "</"+XMLTagName_comment+">";
+				string += "<"+XMLTagName_comment+">" + StringEscapeUtils.escapeXml(comment.getBody()) + "</"+XMLTagName_comment+">";
 			}
 		}
 //		string += "<"+XMLTagName_count+">" + i + "</"+XMLTagName_count+">";
@@ -1034,7 +1039,8 @@ public class XMLReportGenerator {
 					
 					//counter
 //					i++;
-					string += "<"+XMLTagName_comment+">" + StringEscapeUtils.escapeHtml(comment.getBody()) + "</"+XMLTagName_comment+">";
+//					string += "<"+XMLTagName_comment+">" + StringEscapeUtils.escapeHtml(comment.getBody()) + "</"+XMLTagName_comment+">";
+					string += "<"+XMLTagName_comment+">" + StringEscapeUtils.escapeXml(comment.getBody()) + "</"+XMLTagName_comment+">";
 				}
 			}
 		}

@@ -148,7 +148,7 @@
 					<div class="description"><xsl:value-of select="report/notUsedScenarios/description"/></div>
 					<div class="metric green">Metric: <xsl:value-of select="report/notUsedScenarios/count"/> </div>
 					<hr/>					
-					<div class="box"><xsl:apply-templates select="report/notUsedcenarios/scenario"/></div>
+					<div class="box"><xsl:apply-templates select="report/notUsedScenarios/scenario"/></div>
 				</div>
 				
 				<div id="newPositiveRelations" class="view" >	
@@ -197,7 +197,7 @@
 	
 	<!-- "report/violatedRequirements/requirement" template
       ************************************************************-->
-	<xsl:template match="report/violatedRequirements/requirement | report/notViolatedRequirements/requirement | report/notEvaluatedRequirements/requirement | report/notImplementedRequirements/requirement">
+	<xsl:template match="report/violatedRequirements/requirement | report/notViolatedRequirements/requirement | report/notEvaluatedRequirements/requirement">
 
 		<table border="0" cellpadding="0" cellspacing="0">
 			<tr>
@@ -285,6 +285,92 @@
 		
 	</xsl:template>
 	
+	
+	
+	<!-- "report/notImplementedRequirements/requirement" template
+      ************************************************************-->
+	<xsl:template match="report/notImplementedRequirements/requirement">
+
+		<table border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td>
+					<img src="reportData/expand.gif" class="expandIcon" alt="+" >
+						<xsl:attribute name="onclick">
+							<xsl:text>clip('</xsl:text>
+							<xsl:value-of select="@uid"/>
+							<xsl:text>')</xsl:text>
+						</xsl:attribute>
+						<xsl:attribute name="id">
+							<xsl:text>img_</xsl:text>
+							<xsl:value-of select="@uid"/>
+							<xsl:text></xsl:text>
+						</xsl:attribute>
+				    </img>
+				</td>
+				<td>
+					<h3 style="padding:0px;">
+						<a href ="#" >
+					       <xsl:attribute name="onclick">
+					       <xsl:text>clip('</xsl:text>
+					       <xsl:value-of select="@uid"/>
+					       <xsl:text>')</xsl:text>
+					       </xsl:attribute>
+					       <xsl:value-of select="@id"/>: <xsl:value-of select="@name"/>
+						</a>
+					</h3>
+				</td>
+				<td> &#032;</td>
+					<td>
+						<xsl:if test="@locateLink!=''">
+							<a>
+								<xsl:attribute name="href">
+									<xsl:value-of select="@locateLink"/>
+								</xsl:attribute>
+								<img src="reportData/finder_descriptor_obj.gif" class="locateIcon" border="0" title="locate" alt="locate"  />
+							</a>
+						</xsl:if>
+					</td>
+					<td> &#032;</td>
+					<td>
+						<xsl:if test="@plotLink!=''">
+							<a>
+								<xsl:attribute name="href">
+									<xsl:value-of select="@plotLink"/>
+								</xsl:attribute>
+								<img src="reportData/plot.png" class="plotIcon" border="0" title="plot" alt="plot"  />
+							</a>
+						</xsl:if>
+					</td>
+			</tr>
+		</table>
+		
+		
+		<div class="expandable">
+			 <xsl:attribute name="id">
+			 <xsl:text>div_</xsl:text>
+			 <xsl:value-of select="@uid"/>
+			 </xsl:attribute>
+
+			<span class="qualifiedName">
+				<xsl:value-of select="@qualifiedName"/> 
+<!-- 				<a href ="#"> -->
+<!-- 					<xsl:attribute name="href"> -->
+<!-- 						<xsl:value-of select="@locateLink"/> -->
+<!-- 					</xsl:attribute> -->
+<!-- 					<xsl:value-of select="@qualifiedName"/>  -->
+<!-- 				</a> -->
+			</span>
+			
+			<xsl:apply-templates select="text"/>
+			
+			<xsl:if test="comments!=''">
+				<div style="margin-top:10px;"><span class="bold">Comments: </span><xsl:apply-templates select="comments"/></div>
+			</xsl:if>
+			
+			<hr />
+		</div>
+		
+	</xsl:template>
 	
 
 
@@ -704,6 +790,7 @@
 		<table border="0" cellpadding="0" cellspacing="0">
 			<tr>
 				<td>
+					<!--
 					<img src="reportData/expand.gif" class="expandIcon" alt="+" >
 						<xsl:attribute name="onclick">
 							<xsl:text>clip('</xsl:text>
@@ -716,6 +803,7 @@
 							<xsl:text></xsl:text>
 						</xsl:attribute>
 				    </img>
+				    -->
 				</td>
 				<td>
 					<h3 style="padding:0px;">
@@ -785,6 +873,7 @@
 			<table border="0" cellpadding="0" cellspacing="0">
 			<tr>
 				<td>
+					<!--
 					<img src="reportData/expand.gif" class="expandIcon" alt="+" >
 						<xsl:attribute name="onclick">
 							<xsl:text>clip('</xsl:text>
@@ -797,6 +886,7 @@
 							<xsl:text></xsl:text>
 						</xsl:attribute>
 				    </img>
+				    -->
 				</td>
 				<td>
 					<h3 style="padding:0px;">
@@ -869,6 +959,7 @@
 		<table border="0" cellpadding="0" cellspacing="0">
 			<tr>
 				<td>
+					<!-- 
 					<img src="reportData/expand.gif" class="expandIcon" alt="+" >
 						<xsl:attribute name="onclick">
 							<xsl:text>clip('</xsl:text>
@@ -881,6 +972,7 @@
 							<xsl:text></xsl:text>
 						</xsl:attribute>
 				    </img>
+				     -->
 				</td>
 				<td>
 					<h4 style="padding:0px;">
