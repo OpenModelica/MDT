@@ -46,6 +46,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -583,7 +584,13 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 				simFilesFolderAbsolutePath = getGeneratedCodeFolderAbsolutePath();
 			}
 			
-			HashMap<Element, File> simulationResultFiles = ModelicaMLServices.findSimulationFiles(generatedModels, ".mat", simFilesFolderAbsolutePath); // TODO: Add simulation files extension to ModelicaML preferences
+			// Get default simulation file extension from preferences
+			String simFileExtension = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_outputFormat, "mat", null);
+			if (simFileExtension == null) {
+				simFileExtension = "mat";
+			}
+			
+			HashMap<Element, File> simulationResultFiles = ModelicaMLServices.findSimulationFiles(generatedModels, "."+simFileExtension, simFilesFolderAbsolutePath); // TODO: Add simulation files extension to ModelicaML preferences
 			if (simulationResultFiles != null) {
 				for (Element element : simulationResultFiles.keySet()) {
 					File file = simulationResultFiles.get(element);
