@@ -929,6 +929,7 @@ public class ModelicaMLServices {
 	}
 	
 	public static HashMap<Element,File> findSimulationFiles(HashSet<Element> generatedModels, String fileExtension, String folderAbsolutePath){
+		
 		HashMap<Element,File> foundFiles = new HashMap<Element,File>();
 		HashSet<Element> ambiguousCases = new HashSet<Element>();
 		if (folderAbsolutePath == null || fileExtension == null) { return null; }
@@ -965,6 +966,50 @@ public class ModelicaMLServices {
 			foundFiles.remove(element);
 		}
 		
+		// if no files were found return null
+		if (foundFiles.size() == 0) { return null;}
+		
+		// return the files found
+		return foundFiles;
+	}
+	
+	public static HashMap<String,File> findSimulationFile(String qName, String fileExtension, String folderAbsolutePath){
+		
+		HashMap<String, File> foundFiles = new HashMap<String,File>();
+		HashSet<String> ambiguousCases = new HashSet<String>();
+		
+		if (folderAbsolutePath == null || fileExtension == null) { return null; }
+		
+		File folder = new File(folderAbsolutePath);
+		
+		if (folder.exists() && folder.isDirectory()) {
+			for (File file : folder.listFiles()) {
+				String fileName = file.getName();
+				String modelName = StringUtls.replaceSpecChar(qName);
+				if (fileName.contains(fileExtension) && fileName.contains(modelName)) {
+					
+					/*
+					 * We collect conflict case when for one model multiple files matches.  
+					 */
+					if (foundFiles.get(qName) != null) {
+						ambiguousCases.add(qName);
+					}
+					foundFiles.put(qName, file);
+				}
+			}
+		}
+		
+		/*
+		 * Remove all ambiguous cases. User should select the files manually.
+		 */
+		for (String name: ambiguousCases) {
+			foundFiles.remove(name);
+		}
+		
+		// if no files were found return null
+		if (foundFiles.size() == 0) { return null;}
+		
+		// return the files found
 		return foundFiles;
 	}
 	

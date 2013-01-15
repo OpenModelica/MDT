@@ -35,7 +35,6 @@
 package org.openmodelica.modelicaml.helper.dialogs;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -85,7 +84,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.FileSelectionDialog;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
@@ -439,8 +437,12 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 					fileDialog.setFilterPath(getResultFilesFolderPath());
 					
 					// extension filter
-					// TODO: get the default extension from preferences
-					String[] extensionFilder = {"*.mat", "*.*"};
+					// Get default simulation file extension from preferences
+					String simFileExtension = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_outputFormat, "mat", null);
+					if (simFileExtension == null) {
+						simFileExtension = "mat";
+					}
+					String[] extensionFilder = {"*." + simFileExtension, "*.*"};
 					fileDialog.setFilterExtensions(extensionFilder);
 					
 					fileDialog.setFileName(getGeneratedModelsData().getSimulationResultsFile().get(element));
@@ -485,28 +487,28 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 	
 	
 	
-	private String getProjectPath(){
-		// get UML model data
-		UmlModel umlModel = UmlUtils.getUmlModel();
-//		String umlModelFileURI = umlModel.getResourceURI().toString();
-
-		if (umlModel != null) {
-			// get project data
-			String projectName = umlModel.getResource().getURI().segment(1);
-			
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IWorkspaceRoot root = workspace.getRoot();
-			IProject iProject = root.getProject(projectName);
-			
-			// TODO find a better way to get the absolute path
-			String projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
-			
-			if (projectPath != null) {
-				return projectPath;
-			}
-		}
-		return null;
-	}
+//	private String getProjectPath(){
+//		// get UML model data
+//		UmlModel umlModel = UmlUtils.getUmlModel();
+////		String umlModelFileURI = umlModel.getResourceURI().toString();
+//
+//		if (umlModel != null) {
+//			// get project data
+//			String projectName = umlModel.getResource().getURI().segment(1);
+//			
+//			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+//			IWorkspaceRoot root = workspace.getRoot();
+//			IProject iProject = root.getProject(projectName);
+//			
+//			// TODO find a better way to get the absolute path
+//			String projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
+//			
+//			if (projectPath != null) {
+//				return projectPath;
+//			}
+//		}
+//		return null;
+//	}
 	
 	private String getGeneratedCodeFolderAbsolutePath(){
 		// get UML model data
@@ -723,18 +725,6 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 			else {
 				MessageDialog.openError(getParentShell(), title + " Error", "Could not access the ModelicaML model. Please open it in editor.");
 			}
-			
-//				dialog.run(false, true, new IRunnableWithProgress() {
-//					@Override
-//					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-//						try {
-//							verificationDataCollector = new VerificationDataCollector(umlModel.lookupRoot());
-//						} catch (NotFoundException e) {
-//							e.printStackTrace();
-//							MessageDialog.openError(getParentShell(), title + " Error", "Could not access the ModelicaML model. Please open it in editor.");
-//						}
-//					}
-//				});
 			dialog.close();
 		}
 	}

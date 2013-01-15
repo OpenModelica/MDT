@@ -136,7 +136,7 @@ public class DialogPlot extends Dialog {
     			}
     			{
 //    				Tree = new VariableTreeComposite(sashForm1, SWT.NONE, simulationResultsAsString.keySet(), getSimulationModelName(this.resultsFilePath));
-    				Tree = new VariableTreeComposite(sashForm1, SWT.NONE, reader.getNames(), getSimulationModelName(this.resultsFilePath));
+    				Tree = new VariableTreeComposite(sashForm1, SWT.NONE, reader.getNames(), getTreeRootName(this.resultsFilePath));
     				
     				((VariableTreeComposite)Tree).setChart((PlotComposite)Plot);
     				
@@ -224,18 +224,23 @@ public class DialogPlot extends Dialog {
 	
 	
 	
-	private String getSimulationModelName(String filePath){
+	private String getTreeRootName(String filePath){
 		String name = filePath;
 		if (filePath != null && filePath.length() != 0) {
-			String[] splitted = filePath.split("/");
-			name = splitted[splitted.length - 1];
-
-			name = name.replaceFirst(".mat", "");
-
-			String[] dotSplitted = name.split("\\.");
-			if (dotSplitted.length > 0) {
-				name = dotSplitted[dotSplitted.length - 1];	
+			File file = new File(filePath);
+			if (file != null) {
+//				name = file.getName().replaceFirst(".mat", "");
+				name = file.getName();
 			}
+//			String[] splitted = filePath.split("/");
+//			name = splitted[splitted.length - 1];
+//
+//			name = name.replaceFirst(".mat", "");
+//
+//			String[] dotSplitted = name.split("\\.");
+//			if (dotSplitted.length > 0) {
+//				name = dotSplitted[dotSplitted.length - 1];	
+//			}
 		}
 		return name;
 	}

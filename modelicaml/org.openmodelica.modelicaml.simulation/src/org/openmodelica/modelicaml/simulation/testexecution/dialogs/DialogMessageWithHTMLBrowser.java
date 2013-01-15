@@ -34,15 +34,18 @@
  */
 package org.openmodelica.modelicaml.simulation.testexecution.dialogs;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -59,6 +62,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
@@ -67,6 +71,7 @@ import org.eclipse.uml2.uml.Element;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.EditorServices;
+import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.simulation.testexecution.actions.PlotResultsAction;
 
 public class DialogMessageWithHTMLBrowser extends Dialog {
@@ -110,13 +115,11 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 			if (decodedLocation != null && decodedLocation.trim().startsWith("locate")) {
 				event.doit = false;	// don't change the page
 				
-				//String[] splitted = decodedLocation.replaceFirst("locate:", "").split("#");
 				String[] splitted = decodedLocation.replaceFirst("locate:", "").split(Constants.linkDelimiter);
 				
 				String elementQName = splitted[0];
 				if (elementQName != null) {
 					for (Element  element : findElement(elementQName)) {
-//						PapyrusServices.locateWithReselection(element);
 						EditorServices.locateInModelExplorer(element, true);
 					}
 				}
@@ -130,32 +133,47 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 			}
 			else if (decodedLocation != null &&  decodedLocation.trim().startsWith("plot")) {
 				
-//				String[] splitted = decodedLocation.split("\\?");
-//				decodedLocation = decodedLocation.replaceFirst("plot:", "").trim();
 				String[] splitted = decodedLocation.replaceFirst("plot:", "").split(Constants.linkDelimiter);
-				decodedLocation = splitted[0];
-				String variablePath = null;
+				decodedLocation = splitted[0]; // qualified name of the model
+
+								String variablePath = null;
 				if (splitted.length > 1) {
-					variablePath = splitted[1];
+					variablePath = splitted[1]; // variable within the model
 				}
+				
 				/*
 				 * The report contains the model name as parameter. 
-				 * We need to translated them to corresponding result file name 
+				 * We need to translate them to corresponding result file name 
 				 */
-				decodedLocation  = ModelicaMLServices.getOMCSimulationResultsFileName(decodedLocation);
 				
 				event.doit = false;	// don't change the page
+				
 				String sessionFolderAbsolutePath = geSimulationFilesFolderPath();
 				if (sessionFolderAbsolutePath != null) {
-					// Dialog for the plotting of variables
-					PlotResultsAction plotAction = new PlotResultsAction();
-					plotAction.setFilePath(sessionFolderAbsolutePath + "/" + decodedLocation);
-					if (variablePath != null) {
-						HashSet<String> preselectedVariables = new HashSet<String>();
-						preselectedVariables.add(variablePath);
-						plotAction.setPreSelectedVariablesToPlot(preselectedVariables);
+					
+					String[] segmentsOfQName = decodedLocation.split("::");
+					String modelQName = null;
+					if (segmentsOfQName.length > 0 ) {
+						modelQName = segmentsOfQName[segmentsOfQName.length - 1];
 					}
-					plotAction.run(null);
+					
+					String filePath = findFile(modelQName, sessionFolderAbsolutePath);
+					
+					if (filePath != null) {
+						// Dialog for the plotting of variables
+						PlotResultsAction plotAction = new PlotResultsAction();
+						plotAction.setFilePath(filePath);
+						
+						if (variablePath != null) {
+							HashSet<String> preselectedVariables = new HashSet<String>();
+							preselectedVariables.add(variablePath);
+							plotAction.setPreSelectedVariablesToPlot(preselectedVariables);
+						}
+						plotAction.run(null);
+					}
+					else {
+						MessageDialog.openError(getShell(),"File does not exist" , "Could not find the simulation results file for '"+modelQName+"' ");
+					}
 				}
 				else { // TODO: report 
 //					MessageDialog.openError(new Shell(), "Error", "Could not find the results file for " + decodedLocation);
@@ -164,6 +182,53 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
 	    }
 	};
 	
+	
+	private String findFile(String qName, String sessionFolderAbsolutePath){
+		
+		if (qName == null || sessionFolderAbsolutePath == null) { return null; }
+		
+		String filePath = null;
+		
+		// Get default simulation file extension from preferences
+		String simFileExtension = Platform.getPreferencesService().getString("org.openmodelica.modelicaml.preferences", Constants.propertyName_outputFormat, "mat", null);
+		if (simFileExtension == null) {
+			simFileExtension = "mat";
+		}
+		
+		HashMap<String, File> simulationResultFiles = ModelicaMLServices.findSimulationFile(qName, "."+simFileExtension, sessionFolderAbsolutePath);
+		
+		if (simulationResultFiles != null && simulationResultFiles.size() > 0) { 
+			File file = simulationResultFiles.get(qName);
+			if (file != null) {
+				filePath = file.getAbsolutePath();
+			}
+		}
+		else {
+			/*
+			 * If no file was found ask user to select one
+			 */
+			// Let the user select the file for each model 
+			FileDialog fileDialog = new FileDialog(getShell());
+			fileDialog.getParent().setFocus();
+			fileDialog.setFilterPath(sessionFolderAbsolutePath);
+			
+			// extension filter
+			// Get the default extension from preferences
+			String[] extensionFilder = {"*." + simFileExtension, "*.*"};
+			fileDialog.setFilterExtensions(extensionFilder);
+			
+			fileDialog.setFileName(StringUtls.replaceSpecChar(qName));
+			fileDialog.setText("Select the simulation results file for '" + qName+"'");
+			
+			String selectedFilePath = fileDialog.open();
+			
+			if (selectedFilePath != null) {
+				filePath = selectedFilePath;
+			}
+		}
+		
+		return filePath;
+	}
 	
 	private String geSimulationFilesFolderPath(){
 		IFileSystem fileSystem = EFS.getLocalFileSystem();
@@ -203,14 +268,13 @@ public class DialogMessageWithHTMLBrowser extends Dialog {
         final Composite composite = (Composite) super.createDialogArea(parent);
 
         try {
-	    composite.setLayout(new FillLayout(SWT.HORIZONTAL));
+	    
+        composite.setLayout(new FillLayout(SWT.HORIZONTAL));
 	    browser = new Browser(composite, SWT.NONE);
 	    browser.setUrl(location);
-//	    browser.setLayout(new GridLayout());
-//	    browser.setSize(composite.getSize().x, composite.getSize().y);
 	    browser.setSize(composite.getShell().getClientArea().width, composite.getShell().getClientArea().height);
 	    browser.addLocationListener(locationListener);
-		
+
 	    composite.addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event e) {
 				browser.setSize(composite.getSize().x, composite.getSize().y);
