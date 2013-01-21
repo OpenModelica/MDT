@@ -1517,8 +1517,19 @@ public class OMCProxy implements IModelicaCompiler {
 				String rootClass = element.toString();
 				if (DEBUG) System.out.println(preamble + "Root class found: '" + rootClass + "'");
 				if (loadedClasses.contains(rootClass)) {
-					System.err.println("Duplicate class name '" + rootClass + "' found!");
-					return true;
+					// The string seems to end in a newline and it's also enclosed in quotation
+					// marks which we must account for when comparing with fullName below.
+					String loadedSourceFile = getSourceFile(rootClass).getFirstResult().trim();
+					if (!loadedSourceFile.equals("\"" + fullName + "\"")) {
+						System.err.println("'" + loadedSourceFile + "' does not equal '" + fullName + "'");
+						System.out.println(getSourceFile(rootClass).getFirstResult());
+						System.err.println("Duplicate class name '" + rootClass + "' found!");
+						return true;
+					}
+					else {
+						// Do nothing, we're just reloading the same file.
+						// Maybe break here?
+					}
 				}
 			}
 			else if (listElement instanceof List) {
