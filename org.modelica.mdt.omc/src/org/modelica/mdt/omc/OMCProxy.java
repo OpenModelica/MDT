@@ -62,6 +62,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -71,6 +72,11 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.modelica.mdt.core.Element;
 import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IllegalRestrictionException;
@@ -161,6 +167,8 @@ public class OMCProxy implements IModelicaCompiler {
 
 	private OMCThread fOMCThread = null;
 	private boolean fOMCThreadHasBeenScheduled = false;
+	
+	private boolean DEBUG = true;
 
 	//private ILock fOMCLock = null;
 
@@ -756,13 +764,14 @@ public class OMCProxy implements IModelicaCompiler {
 	 * @throws InitializationException
 	 */
 	public ParseResults loadSourceFile(IFile file) throws ConnectException, UnexpectedReplyException {
+		final IPath absoluteWorkspacePath = file.getFullPath();
 		synchronized (getLazyLoadList()) {
 			// activate lazy load
-			if (getLazyLoadList().containsKey(file.getFullPath())) {
+			if (getLazyLoadList().containsKey(absoluteWorkspacePath)) {
 				if (file.exists()) {
 					long lastModification = file.getModificationStamp();
 					if (lastModification != IFile.NULL_STAMP) {
-						LazyLoadResult llr = (LazyLoadResult)getLazyLoadList().get(file.getFullPath());
+						LazyLoadResult llr = (LazyLoadResult)getLazyLoadList().get(absoluteWorkspacePath);
 						if (llr.lastModification >= lastModification) {
 							return llr.results;
 						}
@@ -771,8 +780,24 @@ public class OMCProxy implements IModelicaCompiler {
 			}
 		}
 
-		ParseResults res = new ParseResults();
 		String fullName = file.getLocation().toString();
+
+		if (containsDuplicateClasses(file, fullName)) {
+			final IWorkbench workbench = PlatformUI.getWorkbench();
+			workbench.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					Shell shell = workbench.getActiveWorkbenchWindow().getShell();
+					String message = "Warning, the file '" + absoluteWorkspacePath +
+							"' cannot be loaded because it contains a class that has the same name " +
+							" as an already loaded class.";
+					MessageDialog.openWarning(shell, "Warning - cannot load file", message);
+				}
+			});
+			return null;
+		}
+
+		ParseResults res = new ParseResults();
+
 		ICompilerResult ret = sendExpression("loadFileInteractiveQualified(\"" + fullName + "\")", true);
 
 		String retval = ret.getFirstResult();
@@ -1473,5 +1498,49 @@ public class OMCProxy implements IModelicaCompiler {
 	public ICompilerResult getClassComment(String className) throws ConnectException, UnexpectedReplyException {
 		ICompilerResult res = sendExpression("getClassComment(" + className + ")", true);
 		return res;
+	}
+
+	private boolean containsDuplicateClasses(IFile file, String fullName) throws ConnectException, UnexpectedReplyException {
+		String fileName = file.getName();
+		Set<String> loadedClasses = new LinkedHashSet<String>();
+		getLoadedClasses(loadedClasses, null);
+
+		List fileRootClasses = parseFile(fullName);
+
+		int numFileRootClasses = fileRootClasses.size();
+
+		for (int i = 0; i < numFileRootClasses; i++) {
+			String preamble = '(' + fileName + ") ListElement " + i + 1 + " of " + numFileRootClasses + ": ";
+			ListElement listElement = fileRootClasses.elementAt(i);
+			if (listElement instanceof Element) {
+				Element element = (Element)listElement;
+				String rootClass = element.toString();
+				if (DEBUG) System.out.println(preamble + "Root class found: '" + rootClass + "'");
+				if (loadedClasses.contains(rootClass)) {
+					System.err.println("Duplicate class name '" + rootClass + "' found!");
+					return true;
+				}
+			}
+			else if (listElement instanceof List) {
+				System.err.println(preamble + "Weird, nested list found!");
+			} 
+		}
+
+		return false;
+	}
+
+	private void getLoadedClasses(Set<String> loadedClasses, String className) throws ConnectException, UnexpectedReplyException {
+		// If className is null, we have only just initiated the search for user-defined classes.
+		if (className == null) {
+			List rootClasses = getClassNames("");
+			for (int i = 0; i < rootClasses.size(); i++) {
+				Element element = (Element)rootClasses.elementAt(i);
+				String rootClassName = element.toString();
+				loadedClasses.add(rootClassName);
+				if (DEBUG) System.out.println("Found loaded class '" + rootClassName + "'.");
+			}
+		}
+
+		// TODO: Continue to recurse down.. (?)
 	}
 }
