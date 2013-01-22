@@ -613,7 +613,7 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 				item.setForeground(new Color(null, 255, 0, 0)); // red color
 				
 				if ( (getResultFilesFolderPath() != null || getGeneratedCodeFolderAbsolutePath() != null) 
-						&& simulationResultFiles.keySet().size() > 0) {
+						&& simulationResultFiles != null && simulationResultFiles.keySet().size() > 0) {
 					
 					// if the file exists -> mark it green
 					if (simulationResultFiles.get(VeM) != null) {
