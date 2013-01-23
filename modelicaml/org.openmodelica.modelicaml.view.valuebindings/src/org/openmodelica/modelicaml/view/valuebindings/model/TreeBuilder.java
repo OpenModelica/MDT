@@ -395,7 +395,9 @@ public class TreeBuilder {
 			EList<Dependency> mediatorDependencies = ((Property)valueMediator).getClientDependencies();
 			for (Dependency dependency : mediatorDependencies) {
 				if (dependency.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor) != null) {
-					clientList.addAll(dependency.getTargets());
+					if (dependency.getTargets() != null && dependency.getTargets().size() > 0) {
+						clientList.addAll(dependency.getTargets());
+					}
 				}
 			}
 		}
@@ -411,7 +413,9 @@ public class TreeBuilder {
 				if ( s_providesValueFor != null) {
 					Object o = dependency.getValue(s_providesValueFor, Constants.propertyName_isRequired);
 					if (o instanceof Boolean && ((Boolean)o) == true) {
-						requiredClientList.addAll(dependency.getTargets());	
+						if (dependency.getTargets() != null && dependency.getTargets().size() > 0) {
+							requiredClientList.addAll(dependency.getTargets());	
+						}
 					}
 				}
 			}
@@ -425,7 +429,9 @@ public class TreeBuilder {
 			EList<Dependency> mediatorDependencies = ((Property)valueMediator).getClientDependencies();
 			for (Dependency dependency : mediatorDependencies) {
 				if (dependency.getAppliedStereotype(Constants.stereotypeQName_ObtainsValueFrom) != null) {
-					providersList.addAll(dependency.getTargets());
+					if (dependency.getTargets() != null && dependency.getTargets().size() > 0) {
+						providersList.addAll(dependency.getTargets());
+					}
 				}
 			}
 		}

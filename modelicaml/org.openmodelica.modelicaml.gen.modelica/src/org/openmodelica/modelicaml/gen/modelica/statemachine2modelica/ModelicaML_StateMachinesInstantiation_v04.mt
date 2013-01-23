@@ -16,17 +16,17 @@ import org.openmodelica.modelicaml.gen.modelica.statemachine2modelica.ModelicaML
 <%script type="uml.NamedElement" name="ModelicaClassType" post="trim()"%>
 record
 <%script type="uml.NamedElement" name="LibClassProperties"%>
-	// lib properties <%args(0)%>
-	Boolean active; // indicates if the state is active.
-	Real timeAtActivation; // time when the state is entered.
-	Real stime; // stime means "state time". It is is a local timer. It starts when the state is entered and is equal to zero if the state is not active.
-	Boolean selfTransitionActivated;
+	// lib properties <%args(0)%><%-- START: UPDATED 23.01.2013 --%>
+	Boolean active(start=false, fixed=true); // indicates if the state is active.  
+	Real timeAtActivation(start=0); // time when the state is entered.
+	Real stime(start=0, fixed=true); // stime means "state time". It is a local timer. It starts when the state is entered and is equal to zero if the state is not active. 
+	Boolean selfTransitionActivated(start=false, fixed=true);<%-- END: UPDATED 23.01.2013 --%>
 
 <%script type="uml.StateMachine" name="StateMachinesModelicaClass"%>
 <%ModelicaClassType%> <%context.name.replaceSpecChar()%>_StateMachine_<%name.replaceSpecChar()%>
 annotation(<%g_annotation%>);
 	<%LibClassProperties("STATE MACHINE").trim()%>
-	Boolean startBehaviour;
+	<%-- START: UPDATED 23.01.2013 --%>Boolean startBehaviour(start=false, fixed=true); <%-- END: UPDATED 23.01.2013 --%>
 	// REGIONS instantiation
 <%for (ownedElement.filter("Region")){%>
 	<%stateMachine.name.replaceSpecChar()%>_<%name.replaceSpecChar()%> <%name.replaceSpecChar()%>;

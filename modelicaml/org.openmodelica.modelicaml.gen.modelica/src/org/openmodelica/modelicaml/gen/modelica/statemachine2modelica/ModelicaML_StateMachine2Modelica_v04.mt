@@ -21,24 +21,39 @@ import org.openmodelica.modelicaml.gen.modelica.statemachine2modelica.ModelicaML
 <%-- set statemachine active if it is not a substatemachine --%>
 <%if (submachineState == null){%> 
 /*** start behaviour code of state machine "<%name.replaceSpecChar()%>" ***/
-algorithm
-
+algorithm <%-- START: UPDATED 23.01.2013 --%>
+	<%if (getStereotypeValue(getProperty("s_AdditionalIncludes"), getProperty("s_p_additionalActionCode")) != null){%>
+	/* Additional code */
+	<%getStereotypeValue(getProperty("s_AdditionalIncludes"), getProperty("s_p_additionalActionCode"))%><%}%>
+	
 	<%signalEventsStatements%>
 	<%singalPropertiesStatements%>
 	<%relativeTimeEventsStatements%>
-
 	/* initial state machine "<%name.replaceSpecChar()%>" activation */
 	<%name.replaceSpecChar()%>.startBehaviour:=true; 
+<%-- Not correct according the Modelica spec. Improved version see below.	
 	when <%name.replaceSpecChar()%>.startBehaviour then
 	<%name.replaceSpecChar()%>.active:=true; 
 		<%for (ownedElement.filter("Region").sortRegions().filter("Region")){%>
 		<%setInitalActive(owner.filter("StateMachine").name.replaceSpecChar()+"."+name.replaceSpecChar())%>
 		<%}%>			
-	end when;	
+	end when;
+--%>
+	/* activate all initial states during initialization phase */
+	when initial() then
+		if <%name.replaceSpecChar()%>.startBehaviour then 
+			<%name.replaceSpecChar()%>.active:=true; 
+			<%for (ownedElement.filter("Region").sortRegions().filter("Region")){%>
+			<%setInitalActive(owner.filter("StateMachine").name.replaceSpecChar()+"."+name.replaceSpecChar())%>
+		<%}%>
+		end if;			
+	end when;
+	/* aux. variable for calculating the timer of the state machine '<%name.replaceSpecChar()%>' */
 	<%setTimeAtActivationToTime(name.replaceSpecChar())%>
-	<%setStime(name.replaceSpecChar())%>
-<%--	<%setTimeAtActivationToNull(name.replaceSpecChar())%>	
---%>	<%for (ownedElement.filter("Region").sortRegions().filter("Region")){%>
+	/* timer for the state machine '<%name.replaceSpecChar()%>' */
+	<%setStime(name.replaceSpecChar())%><%-- END: UPDATED 23.01.2013 --%>
+<%--	<%setTimeAtActivationToNull(name.replaceSpecChar())%>	--%>
+	<%for (ownedElement.filter("Region").sortRegions().filter("Region")){%>
 <%regionBehaviorCode(owner.filter("StateMachine").name.replaceSpecChar(),self(),self().filter("Region").stateMachine)%>
 	<%}%>
 	/*start terminate code for state machine "<%name.replaceSpecChar()%>"*/
@@ -58,15 +73,13 @@ algorithm
 <%}%>
 
 <%script type="uml.NamedElement" name="setTimeAtActivationToTime" post="trim()"%>
-<%--args(0) is the complete element dot name
---%>
+<%--args(0) is the complete element dot name --%>
 	when {<%args(0)%>.active, <%args(0)%>.selfTransitionActivated} then
 		<%args(0)%>.timeAtActivation := time;
 		<%args(0)%>.selfTransitionActivated := false;
-	end when;
+end when;
 <%script type="uml.NamedElement" name="setTimeAtActivationToNull"%>
-<%--args(0) is the complete element dot name
---%>
+<%--args(0) is the complete element dot name--%>
 
 <%--directly after the transition that activates the target state --%>
 <%--if not active for source state --%>
@@ -76,12 +89,12 @@ algorithm
 
 <%script type="uml.NamedElement" name="setStime"%>
 <%--if active for target state --%>
-	if <%args(0)%>.active then 
-		<%args(0)%>.stime := time - <%args(0)%>.timeAtActivation;
-	end if;
-	if not <%args(0)%>.active then
-		<%args(0)%>.stime := 0;
-	end if;
+if <%args(0)%>.active then 
+	<%args(0)%>.stime := time - <%args(0)%>.timeAtActivation;
+end if;
+if not <%args(0)%>.active then
+	<%args(0)%>.stime := 0;
+end if;
 
 <%script type="uml.Region" name="regionBehaviorCode" post="trim()"%>
 <%--args(2) == StateMachine--%>

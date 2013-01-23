@@ -25,7 +25,7 @@ import org.openmodelica.modelicaml.gen.modelica.uml2modelica.core._0_ main_uml2m
 <%script type="uml.Region" name="regionDebugVariables" post="trim()"%>
 <%if (getProperty("c_debugMode")){%>
 /* M@ debug variables */
-Integer numberOfActiveStates;
+Integer numberOfActiveStates(start=0, fixed=true);
 
 <%}%>
 
