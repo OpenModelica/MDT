@@ -6,7 +6,7 @@ import org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlService
 %>
 
 <%-- Helper ############################## --%>
-<%script type="uml.Transition" name="suppressExitActions" post="trim()"%>
+<%script type="uml.Transition" name="suppressExitActions" post="trim()"%><%-- NOT IMPLEMENTED YET--%>
 <%if (getStereotypeValue(getProperty("s_StateTransitionSpecification"), getProperty("s_p_suppressExitActions"))){%>suppressExitActions<%}else{%><%}%>
 
 <%script type="uml.Transition" name="suppressEntryActions" post="trim()"%>
@@ -18,4 +18,4 @@ import org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlService
 <%if (getStereotypeValue(getProperty("s_StateSpecification"), getProperty("s_p_freezeExpression")) != null){%> and (not (<%getStereotypeValue(getProperty("s_StateSpecification"), getProperty("s_p_freezeExpression"))%>)) <%}else{%><%}%>
 
 <%script type="uml.StateMachine" name="freezeExpression" post="trim()"%>
-<%if (getStereotypeValue(getProperty("s_StateSpecification"), getProperty("s_p_freezeExpression")) != null){%> and (not (<%getStereotypeValue(getProperty("s_StateSpecification"), getProperty("s_p_freezeExpression"))%>)) <%}else{%><%}%>
+<%if (getStereotypeValue(getProperty("s_modelicaStateMachine"), getProperty("s_p_freezeExpression")) != null){%> and (not (<%getStereotypeValue(getProperty("s_modelicaStateMachine"), getProperty("s_p_freezeExpression"))%>)) <%}else{%><%}%>

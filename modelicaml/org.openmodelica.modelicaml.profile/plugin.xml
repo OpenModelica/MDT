@@ -3197,7 +3197,7 @@
       <profile
             description="ModelicaML - A UML Profile for Modelica"
             iconpath="resources/icons/icons16/modelicaml_logo_16x16_v02.png"
-            name="ModelicaML (1.3.1)"
+            name="ModelicaML (1.3.2)"
             path="pathmap://PALETTE_PROFILE/ModelicaML.profile.uml"
             provider="OpenModelica Project">
       </profile>

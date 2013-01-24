@@ -22,9 +22,9 @@ import org.openmodelica.modelicaml.gen.modelica.statemachine2modelica.ModelicaML
 <%if (submachineState == null){%> 
 /*** start behaviour code of state machine "<%name.replaceSpecChar()%>" ***/
 algorithm <%-- START: UPDATED 23.01.2013 --%>
-	<%if (getStereotypeValue(getProperty("s_AdditionalIncludes"), getProperty("s_p_additionalActionCode")) != null){%>
+	<%if (getStereotypeValue(getProperty("s_modelicaStateMachine"), getProperty("s_p_additionalCode")) != null){%>
 	/* Additional code */
-	<%getStereotypeValue(getProperty("s_AdditionalIncludes"), getProperty("s_p_additionalActionCode"))%><%}%>
+	<%getStereotypeValue(getProperty("s_modelicaStateMachine"), getProperty("s_p_additionalCode"))%><%}%>
 	
 	<%signalEventsStatements%>
 	<%singalPropertiesStatements%>

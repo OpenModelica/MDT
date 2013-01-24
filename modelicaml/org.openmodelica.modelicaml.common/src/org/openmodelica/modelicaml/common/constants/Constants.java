@@ -53,12 +53,15 @@ public class Constants {
 	public static final String stereotypeQName_Algorithm 					= "ModelicaML::ModelicaBehaviorConstructs::Algorithm(Code)";
 	public static final String stereotypeQName_ConditionalAlgorithm 		= "ModelicaML::ModelicaBehaviorConstructs::ConditionalAlgorithm(Diagram)";
 	
-	public static final String stereotypeQName_Equations				= "ModelicaML::ModelicaBehaviorConstructs::Equations(Code)";
-	public static final String stereotypeQName_ConditionalEquations		= "ModelicaML::ModelicaBehaviorConstructs::ConditionalEquations(Diagram)";
+	public static final String stereotypeQName_Equations					= "ModelicaML::ModelicaBehaviorConstructs::Equations(Code)";
+	public static final String stereotypeQName_ConditionalEquations			= "ModelicaML::ModelicaBehaviorConstructs::ConditionalEquations(Diagram)";
 	
-	public static final String propertyName_initial					= "initial";
+	public static final String propertyName_initial							= "initial";
 	
 	public static final String stereotypeQName_ModelicaMLStateMachine 		= "ModelicaML::ModelicaBehaviorConstructs::ModelicaMLStateMachine";
+	public static final String propertyName_additionalCode 					= "additionalCode";
+	public static final String propertyName_samplingExpression 				= "samplingExpression";
+	public static final String propertyName_freezeExpression 				= "freezeExpression";
 
 	
 	public static final String stereotypeQName_Annotation 			= "ModelicaML::ModelicaAnnotationConstructs::Annotation";

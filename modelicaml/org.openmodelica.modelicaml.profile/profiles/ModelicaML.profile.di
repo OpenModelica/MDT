@@ -32,6 +32,12 @@
     <availablePage>
       <emfPageIdentifier href="ModelicaML.profile.notation#_tms_4OCQEeGn-bDI4pMcpA"/>
     </availablePage>
+    <availablePage>
+      <emfPageIdentifier href="ModelicaML.profile.notation#_P7XEUGYGEeKa6IhMvygGQA"/>
+    </availablePage>
+    <availablePage>
+      <emfPageIdentifier href="ModelicaML.profile.notation#_EiqJ4GYKEeKa6IhMvygGQA"/>
+    </availablePage>
   </pageList>
   <sashModel currentSelection="//@sashModel/@windows.0/@children.0">
     <windows>
@@ -40,19 +46,7 @@
           <emfPageIdentifier href="ModelicaML.profile.notation#__YCQAOjpEeCDZad2kIJ0mw"/>
         </children>
         <children>
-          <emfPageIdentifier href="ModelicaML.profile.notation#_6qsuYGFfEeG6JbLdsYaDDQ"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="ModelicaML.profile.notation#_doV4kHyIEeCz14mjmAfPTw"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="ModelicaML.profile.notation#_2rfM8HyIEeCz14mjmAfPTw"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="ModelicaML.profile.notation#_tms_4OCQEeGn-bDI4pMcpA"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="ModelicaML.profile.notation#_Sq6n8Kx7EeC2GJQ4iCzxPg"/>
+          <emfPageIdentifier href="ModelicaML.profile.notation#_P7XEUGYGEeKa6IhMvygGQA"/>
         </children>
       </children>
     </windows>

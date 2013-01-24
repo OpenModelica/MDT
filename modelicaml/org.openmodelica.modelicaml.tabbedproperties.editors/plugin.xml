@@ -117,6 +117,27 @@
                indented="true"
                label="Assert Condition">
          </propertyTab>
+         <propertyTab
+               afterTab="org.openmodelica.modelicaml.properties.main"
+               category="org.eclipse.papyrus"
+               id="org.openmodelica.modelicaml.tabbedproperties.statemachine.additionalcode.tab"
+               indented="true"
+               label="Initialization">
+         </propertyTab>
+         <propertyTab
+               afterTab="org.openmodelica.modelicaml.properties.main"
+               category="org.eclipse.papyrus"
+               id="org.openmodelica.modelicaml.tabbedproperties.statemachine.samplingexpression.tab"
+               indented="true"
+               label="Sampling">
+         </propertyTab>
+         <propertyTab
+               afterTab="org.openmodelica.modelicaml.properties.main"
+               category="org.eclipse.papyrus"
+               id="org.openmodelica.modelicaml.tabbedproperties.statemachine.freezeexpression.tab"
+               indented="true"
+               label="State Freeze">
+         </propertyTab>
       </propertyTabs>
    </extension>
    <extension
@@ -324,6 +345,47 @@
                filter="org.openmodelica.modelicaml.tabbedproperties.editors.filters.AssertCodePropertySectionEditorFilter"
                id="org.openmodelica.modelicaml.tabbedproperties.assert.code.tab.section"
                tab="org.openmodelica.modelicaml.tabbedproperties.assert.code.tab">
+            <input
+                  type="org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem">
+            </input>
+            <input
+                  type="org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart">
+            </input>
+         </propertySection>
+         <propertySection
+               class="org.openmodelica.modelicaml.tabbedproperties.editors.sections.StateMachineAddCodeSection"
+               enablesFor="1"
+               filter="org.openmodelica.modelicaml.tabbedproperties.editors.filters.StateMachineSectionFilter"
+               id="org.openmodelica.modelicaml.tabbedproperties.statemachine.additionalcode.tab.section"
+               tab="org.openmodelica.modelicaml.tabbedproperties.statemachine.additionalcode.tab">
+            <input
+                  type="org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem">
+            </input>
+            <input
+                  type="org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart">
+            </input>
+         </propertySection>
+         <propertySection
+               afterSection="org.openmodelica.modelicaml.tabbedproperties.statemachine.additionalcode.tab.section"
+               class="org.openmodelica.modelicaml.tabbedproperties.editors.sections.StateMachineSamplingExpressionSection"
+               enablesFor="1"
+               filter="org.openmodelica.modelicaml.tabbedproperties.editors.filters.StateMachineSectionFilter"
+               id="org.openmodelica.modelicaml.tabbedproperties.statemachine.samplingexpression.tab.section"
+               tab="org.openmodelica.modelicaml.tabbedproperties.statemachine.samplingexpression.tab">
+            <input
+                  type="org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem">
+            </input>
+            <input
+                  type="org.eclipse.papyrus.diagram.common.editparts.IUMLEditPart">
+            </input>
+         </propertySection>
+         <propertySection
+               afterSection="org.openmodelica.modelicaml.tabbedproperties.statemachine.samplingexpression.tab.section"
+               class="org.openmodelica.modelicaml.tabbedproperties.editors.sections.StateMachineFreezeExpressionSection"
+               enablesFor="1"
+               filter="org.openmodelica.modelicaml.tabbedproperties.editors.filters.StateMachineSectionFilter"
+               id="org.openmodelica.modelicaml.tabbedproperties.statemachine.freezeexpression.tab.section"
+               tab="org.openmodelica.modelicaml.tabbedproperties.statemachine.freezeexpression.tab">
             <input
                   type="org.eclipse.gmt.modisco.infra.browser.uicore.internal.model.ModelElementItem">
             </input>
