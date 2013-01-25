@@ -124,6 +124,8 @@ public class Activator extends AbstractUIPlugin {
 		plugin = this;
 		getWorkbench().addWorkbenchListener(onExitListener);
 		
+		
+		// create a new OMC proxy to be used for any plugin that wants to simulate with OMC
 		setOmcProxy(new OMCProxy());
 	}
 

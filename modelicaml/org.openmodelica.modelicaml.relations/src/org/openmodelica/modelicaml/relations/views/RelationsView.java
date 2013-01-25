@@ -138,6 +138,8 @@ public class RelationsView extends ViewPart {
 		};
 
 		private Action actionFind;
+
+		private Action actionShowRelationsFromLibs;
 	
 
 	class ViewContentProvider implements IStructuredContentProvider, 
@@ -243,13 +245,14 @@ public class RelationsView extends ViewPart {
 
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
-//		fillLocalPullDown(bars.getMenuManager());
+		fillLocalPullDown(bars.getMenuManager());
 		fillLocalToolBar(bars.getToolBarManager());
 	}
 
-//	private void fillLocalPullDown(IMenuManager manager) {
+	private void fillLocalPullDown(IMenuManager manager) {
 //		manager.add(new Separator());
-//	}
+		manager.add(actionShowRelationsFromLibs);
+	}
 
 	@SuppressWarnings("unchecked")
 	private void fillContextMenu(IMenuManager manager) {
@@ -296,7 +299,7 @@ public class RelationsView extends ViewPart {
 				Object[] expandedElements = viewer.getExpandedElements();
 				TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
 				
-				treeBuilder.initialize();
+				treeBuilder.initialize(actionShowRelationsFromLibs.isChecked());
 				treeBuilder.showTree(invisibleRoot);
 				viewer.refresh();
 				
@@ -425,6 +428,15 @@ public class RelationsView extends ViewPart {
 		actionFind.setToolTipText("Find");
 		actionFind.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/find.png"));
 		
+		
+		actionShowRelationsFromLibs = new Action("actionShowRelationsFromLibs", 2) {
+			public void run() {
+				actionReload.run();
+			}
+		};
+		actionShowRelationsFromLibs.setText("Show also relations from libraries");
+		actionShowRelationsFromLibs.setChecked(false);
+		actionShowRelationsFromLibs.setToolTipText("Show also relations from libraries");
 	}
 
 	private void hookDoubleClickAction() {

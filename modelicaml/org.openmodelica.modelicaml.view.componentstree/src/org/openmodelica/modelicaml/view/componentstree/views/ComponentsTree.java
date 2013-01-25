@@ -717,6 +717,11 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				
 				// validate the component modifications
 				actionValidateComponentModifications.run();
+				
+				// decorate tree 
+				if (getAst() != null) {
+					setValidationInfo(getAst().getAllTreeObjects());
+				}
 			}
 		};
 		actionReload.setText("(Re)load and validate");
@@ -1064,30 +1069,13 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionShowStateMachines = new Action("actionShowStateMachines", 2) {
 			public void run() {
 				if (actionShowStateMachines.isChecked()) {
-//					TreePath[] path = viewer.getExpandedTreePaths();
-//					ViewerFilter[] filters = viewer.getFilters();
-//					List<ViewerFilter> newFilters = new ArrayList<ViewerFilter>();
-//					for (int i = 0; i < filters.length; i++) {
-//						ViewerFilter viewerFilter = filters[i];
-//						newFilters.add(viewerFilter);
-//					}
-//					newFilters.add(hideStateMachnineElementFilter);
-//					ViewerFilter[] newF = (ViewerFilter[]) newFilters.toArray();
-//					viewer.setFilters(newF);
 					viewer.removeFilter(hideStateMachnineElementFilter);
 					viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
-//					viewer.setExpandedTreePaths(path);
 				}
 				else {
-//					TreePath[] path = viewer.getExpandedTreePaths();
 					viewer.addFilter(hideStateMachnineElementFilter);
 					viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
-//					viewer.setExpandedTreePaths(path);
 				}
-//				showSelection(par, sel);
-				//if (actionShowStateMachines.isChecked() || !actionShowStateMachines.isChecked()) {
-					//showMessage("actionShowStateMachines executed");
-				//}
 			}
 		};
 		actionShowStateMachines.setText("Show StateMachines");
@@ -2092,17 +2080,67 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	
 	
 	private void updateItem(Object item) {
-		if (item != null) {
+		if (item instanceof TreeObject) {
+			
+			// Call the decoration procedure for the item and all parents
+			HashSet<TreeObject> treeObjects = new HashSet<TreeObject>();
+			treeObjects.add((TreeObject) item); // add the updated item
+			treeObjects.addAll(getAllParentsInversed((TreeObject) item, new ArrayList<TreeObject>())); // add its parents
+			
+			setValidationInfo(treeObjects);
+			updateParentsValidationStatus(getAllParentsInversed((TreeObject) item, new ArrayList<TreeObject>()));
+			
 			viewer.update(item, null);
-			if (item instanceof TreeObject) {
-				updateAllParents((TreeObject)item );
-			}
-			// does not work. see https://bugs.eclipse.org/bugs/show_bug.cgi?id=113675 
+			updateAllParents((TreeObject)item);
+		}
+		// does not work. see https://bugs.eclipse.org/bugs/show_bug.cgi?id=113675 
 //			TreePath[] expanded = viewer.getExpandedTreePaths();
 //			viewer.refresh();
 //			viewer.setExpandedTreePaths(expanded);
+	}
+	
+	private void updateParentsValidationStatus(ArrayList<TreeObject> parents) {
+		/*
+		 * Note the list of parents is reversed. 
+		 * This means that we can update the status by simply iterating
+		 * over the list starting with the immediate parent and going to the top parent. 
+		 */
+		for (TreeObject treeObject : parents) {
+			
+			if (treeObject instanceof TreeParent) {
+			
+				TreeParent treeParent = (TreeParent) treeObject;
+				TreeObject[] children = treeParent.getChildren();
+				boolean childrenHaveErrors = false;
+				boolean childrenHaveWarnings = false;
+				boolean childrenHaveInfo = false;
+				
+				for (TreeObject child : children) {
+					if (!childrenHaveErrors) {
+						if (child.hasErrors()) {
+							childrenHaveErrors = true;
+						}
+					}
+					if (!childrenHaveWarnings) {
+						if (child.hasWarnings()) {
+							childrenHaveWarnings= true;
+						}
+					}
+					if (!childrenHaveInfo) {
+						if (child.hasInfo()) {
+							childrenHaveInfo = true;
+						}
+					}
+				}
+				
+				// set the new status for the parent
+				treeParent.setHasErrors(childrenHaveErrors);
+				treeParent.setHasWarnings(childrenHaveWarnings);
+				treeParent.setHasInfo(childrenHaveInfo);
+			}
 		}
 	}
+	
 	
 	private void updateAllParents(TreeObject item){
 		if (item.getParent() != null && !item.isRoot()) {
@@ -2380,7 +2418,9 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 						
 						// Set error or warning decorations
 						monitor.subTask("Decorating components items ...");
-						setValidationInfo();
+						if (getAst() != null) {
+							setValidationInfo(getAst().getAllTreeObjects());
+						}
 						
 						viewer.refresh();
 						
@@ -2425,126 +2465,135 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	 * Validation
 	 */
 	
-	public void setValidationInfo(){
-		
-		if (getAst() != null) {
-		
-			for (TreeObject treeObject : getAst().getAllTreeObjects()) {
-				
-				String validationInfoText = "";
-				
-				// Indicators
-				boolean isError = false, isWarning=false, isInfo=false;
-				
-				// UML element of the tree object
-				Element umlElement = treeObject.getUmlElement();
-				
-				/*
-				 * ERROR 
-				 * TODO: distinguish between error and warning markers 
-				 */
-				if (hasMarkers(treeObject)) {
-					treeObject.setHasErrors(true);
-					isError = true;
-					validationInfoText += "There are error markers for this component.\n";
-//					treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nThere are error markers for this component.");
-				}
-				
-				/*
-				 * ERROR 
-				 * If property has no type defined. 
-				 */
-				if (treeObject.getUmlElement() instanceof Property && treeObject.getComponentType() == null) {
-					// TODO: this is a workaround. How to deal with stateSelect?
-					if (!treeObject.getName().equals("stateSelect") ) {
-						treeObject.setHasErrors(true);
-						isError = true;
-						validationInfoText += "This component has not type.\n";
-//						treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nThis component has not type.");
-					}
-				}
-				
-				/*
-				 * WARNING
-				 * If the component is an input (and it is not a sub-component of a port) 
-				 * and has no declaration and no binding exists for it 
-				 * in its first level component modification
-				 */
-				if (	treeObject.isInput() && treeObject.getDeclaration() == null 
-						&& treeObject.getFinalModificationRightHand() == null
-						&& !oneOfParentsIsPort(treeObject)) {
-					
-					// check if the item is a port with causality=input
-					if (umlElement instanceof Property  && !(umlElement instanceof Port) ) { 
+	public void setValidationInfo(HashSet<TreeObject> treeObjects){
 
-						// if it is a primitive type -> indicate an error
-						if ( ((Property)umlElement).getType() instanceof PrimitiveType) {
-							treeObject.setHasWarnings(true);
-							isWarning = true;
-							validationInfoText += "Component is an input. It is missing a binding.\n";
-//							treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nComponent is an input. It is missing a binding.");
-						}
-					}
-				}
-				
-				/*
-				 * WARNING
-				 * If one of the parents is input (except for parents that are ports) then all its 
-				 * sub-components that are of primitive type should have binding equations.
-				 */
-				if ( oneOfParentsIsInput(treeObject) && !oneOfParentsIsPort(treeObject)) {
-					if (umlElement != null ) {
-						
-						if ( 	((Property)umlElement).getType() instanceof PrimitiveType 
-								&& (treeObject.getDeclaration() == null 
-								&& treeObject.getFinalModificationRightHand() == null)) {
-							
-							treeObject.setHasWarnings(true);
-							isWarning = true;
-							validationInfoText += "One of component parents is an input. This component should have a binding.\n";
-//							treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nOne of component parents is an input. This component should have a binding.");
-						}
-					}
-				}
-				
-				
-				/*
-				 * ERROR
-				 * If it is a required client and there is no binding equation (modification) for it.
-				 * 
-				 * TODO: If the actual client is a sub-component of the item then an analysis of the subcomponents is required. 
-				 * This is not implemented yet.  
-				 */
-				if (treeObject.isLeaf() && treeObject.isValueClient_required() && treeObject.getFinalModificationRightHand() == null) {
+		for (TreeObject treeObject : treeObjects) {
+			
+			/*
+			 * Clear the last validation info for all leaves.
+			 * The parents status will be propagated.
+			 */
+			if (treeObject.isLeaf()) {
+				treeObject.setHasErrors(false);
+				treeObject.setHasWarnings(false);
+				treeObject.setHasInfo(false);
+				treeObject.setValidationInfo(null);
+			}
+			
+			String validationInfoText = "";
+			
+			// Indicators for the current item validation
+			boolean isError = false, isWarning=false, isInfo=false;
+			
+			// UML element of the tree object
+			Element umlElement = treeObject.getUmlElement();
+			
+			/*
+			 * ERROR 
+			 * TODO: In markers distinguish between error and warning markers 
+			 */
+			if (hasMarkers(treeObject)) {
+				treeObject.setHasErrors(true);
+				isError = true;
+				validationInfoText += "There are error markers for this component.\n";
+//					treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nThere are error markers for this component.");
+			}
+			
+			/*
+			 * ERROR 
+			 * If property has no type defined. 
+			 */
+			if (treeObject.getUmlElement() instanceof Property && treeObject.getComponentType() == null) {
+				// TODO: this is a workaround. How to deal with stateSelect?
+				if (!treeObject.getName().equals("stateSelect") ) {
 					treeObject.setHasErrors(true);
 					isError = true;
-					validationInfoText += "This is a mandatory client. However, it has no binding.\n";
-//					treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nThis is a mandatory client. However, it has no binding.");
+					validationInfoText += "This component has not type.\n";
+//						treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nThis component has not type.");
 				}
-				/*
-				 * WARNING
-				 * If it is a client which has no binding then indicate a warning
-				 */
-				else if (treeObject.isLeaf() && treeObject.isValueClient() && treeObject.getFinalModificationRightHand() == null) {
-					treeObject.setHasWarnings(true);
-					isWarning = true;
-					validationInfoText += "This is a client which has no binding.\n";
-//					treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nThis is a client which has no binding.");
-				} 
-				
-				/*
-				 * Set the validation text if any
-				 */
-				if (!validationInfoText.trim().equals("")) {
-					treeObject.setValidationInfo(validationInfoText);
-				}
-				
-				
-				/*
-				 * Propagate the decoration to parents. 
-				 */
-				propagateDecoration(treeObject, isError, isWarning, isInfo);
 			}
+			
+			/*
+			 * WARNING
+			 * If the component is an input (and it is not a sub-component of a port) 
+			 * and has no declaration and no binding exists for it 
+			 * in its first level component modification
+			 */
+			if (	treeObject.isInput() && treeObject.getDeclaration() == null 
+					&& treeObject.getFinalModificationRightHand() == null
+					&& !oneOfParentsIsPort(treeObject)) {
+				
+				// check if the item is a port with causality=input
+				if (umlElement instanceof Property  && !(umlElement instanceof Port) ) { 
+
+					// if it is a primitive type -> indicate an error
+					if ( ((Property)umlElement).getType() instanceof PrimitiveType) {
+						treeObject.setHasWarnings(true);
+						isWarning = true;
+						validationInfoText += "Component is an input. It is missing a binding.\n";
+//							treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nComponent is an input. It is missing a binding.");
+					}
+				}
+			}
+			
+			/*
+			 * WARNING
+			 * If one of the parents is input (except for parents that are ports) then all its 
+			 * sub-components that are of primitive type should have binding equations.
+			 */
+			if ( oneOfParentsIsInput(treeObject) && !oneOfParentsIsPort(treeObject)) {
+				if (umlElement != null ) {
+					
+					if ( 	((Property)umlElement).getType() instanceof PrimitiveType 
+							&& (treeObject.getDeclaration() == null 
+							&& treeObject.getFinalModificationRightHand() == null)) {
+						
+						treeObject.setHasWarnings(true);
+						isWarning = true;
+						validationInfoText += "One of component parents is an input. This component should have a binding.\n";
+//							treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nOne of component parents is an input. This component should have a binding.");
+					}
+				}
+			}
+			
+			
+			/*
+			 * ERROR
+			 * If it is a required client and there is no binding equation (modification) for it.
+			 * 
+			 * TODO: If the actual client is a sub-component of the item then an analysis of the subcomponents is required. 
+			 * This is not implemented yet.  
+			 */
+			
+			if (treeObject.isLeaf() && treeObject.isValueClient_required() && treeObject.getFinalModificationRightHand() == null) {
+				treeObject.setHasErrors(true);
+				isError = true;
+				validationInfoText += "This is a mandatory client. However, it has no binding.\n";
+//					treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nThis is a mandatory client. However, it has no binding.");
+			}
+			/*
+			 * WARNING
+			 * If it is a client which has no binding then indicate a warning
+			 */
+			else if (treeObject.isLeaf() && treeObject.isValueClient() && treeObject.getFinalModificationRightHand() == null) {
+				treeObject.setHasWarnings(true);
+				isWarning = true;
+				validationInfoText += "This is a client which has no binding.\n";
+//					treeObject.setValidationInfo(treeObject.getValidationInfo() + "\nThis is a client which has no binding.");
+			} 
+			
+			/*
+			 * Set the validation text if any
+			 */
+			if (!validationInfoText.trim().equals("")) {
+				treeObject.setValidationInfo(validationInfoText);
+			}
+			
+			
+			/*
+			 * Propagate the decoration to parents. 
+			 */
+			propagateDecorationToParents(treeObject, isError, isWarning, isInfo);
 		}
 	}
 	
@@ -2553,9 +2602,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	 * Utilities
 	 */
 	
-	private void propagateDecoration(TreeObject treeObject, boolean isError, boolean isWarning, boolean isInfo){
-		 ArrayList<TreeObject> parents = getAllParents(treeObject, new ArrayList<TreeObject>());
-//		 ArrayList<TreeObject> reversedParents = getReversed(parents);
+	private void propagateDecorationToParents(TreeObject treeObject, boolean isError, boolean isWarning, boolean isInfo){
+		 ArrayList<TreeObject> parents = getAllParentsInversed(treeObject, new ArrayList<TreeObject>());
 		 
 		 /*
 		  * Starting with the parent of the component we propagate the indication to all parents 
@@ -2603,7 +2651,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	
 	
 	private boolean oneOfParentsIsInput(TreeObject treeObject){
-		 ArrayList<TreeObject> parents = getAllParents(treeObject, new ArrayList<TreeObject>());
+		 ArrayList<TreeObject> parents = getAllParentsInversed(treeObject, new ArrayList<TreeObject>());
 		 for (TreeObject parent : parents) {
 			if (parent.isInput()) {
 				return true;
@@ -2613,7 +2661,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	}
 	
 	private boolean oneOfParentsIsPort(TreeObject treeObject){
-		 ArrayList<TreeObject> parents = getAllParents(treeObject, new ArrayList<TreeObject>());
+		 ArrayList<TreeObject> parents = getAllParentsInversed(treeObject, new ArrayList<TreeObject>());
 		 for (TreeObject parent : parents) {
 			if (isPort(parent)) {
 				return true;
@@ -2622,11 +2670,11 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		return false;
 	}
 	
-	private ArrayList<TreeObject> getAllParents(TreeObject item, ArrayList<TreeObject> listOfSegments){
+	private ArrayList<TreeObject> getAllParentsInversed(TreeObject item, ArrayList<TreeObject> listOfSegments){
 		TreeObject parent = item.getParent();
 		if (parent != null && !parent.isRoot()) { // the root node represents the instantiated class. It should not appear in the path.  
 			listOfSegments.add(parent);
-			listOfSegments.addAll( getAllParents(parent, new ArrayList<TreeObject>()) );
+			listOfSegments.addAll( getAllParentsInversed(parent, new ArrayList<TreeObject>()) );
 		}
 		return listOfSegments;
 	}
@@ -2706,8 +2754,6 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		EditorServices.locateInComponentsTreeView(dotPath);
 	}
 
-	
-	
 	
 	
 	/*

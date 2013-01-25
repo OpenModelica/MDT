@@ -51,8 +51,7 @@ public class RelationsCollector extends ElementsCollector {
 	private HashSet<Element> redeclareDependencies = new HashSet<Element>();
 	private HashSet<Element> constrainedByDependencies = new HashSet<Element>();
 	private HashSet<Element> partialDerivativeOfFunctionDependencies = new HashSet<Element>();
-	
-	
+
 	private HashSet<Element> inheritanceRelations = new HashSet<Element>();
 	
 	@Override

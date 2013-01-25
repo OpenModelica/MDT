@@ -78,28 +78,33 @@ public class SimulatorOMC {
 	private String log = "";
 	private Job simulationJob;
 
+	private OpenModelicaCompilerCommunication omcc; 
+	
 	private boolean recordOnlyRequirementStatusAndClients;
 	
 	public SimulatorOMC(GeneratedModelsData gmd, String projectPath, boolean recordOnlyRequirementStatusAndClients) {
 		this.gmd = gmd;
 		this.projectPath = projectPath;
 		this.setRecordOnlyRequirementStatusAndClients(recordOnlyRequirementStatusAndClients);
+		
+		// create compiler communication
+		this.omcc = new OpenModelicaCompilerCommunication();
 	}
 	
 	
-	public void generateCodeAndSimulate(){
+	public void simulate(){
 		
 		simulationJob = new Job("Simulating") {
 			
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				
-				if (monitor.isCanceled() || projectPath == null){
+				if (monitor.isCanceled() || projectPath == null || omcc == null){
 					return Status.CANCEL_STATUS;
 				}
 				
 				// simulate models
-				simulateModels(monitor);
+				simulateModels(monitor, omcc);
 				
 				return Status.OK_STATUS;
 			}
@@ -122,14 +127,11 @@ public class SimulatorOMC {
 
 
 
-	private void simulateModels(IProgressMonitor monitor){
+	private void simulateModels(IProgressMonitor monitor, OpenModelicaCompilerCommunication omcc){
 		
 		clearLists();
 		setLog("");
 
-		// create compiler communication
-		OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
-		
 		// get the compiler version 
 		omcc.getVesion();
 

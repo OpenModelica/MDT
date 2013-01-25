@@ -113,7 +113,7 @@ public class TreeBuilder {
 	private TreeParent treeRoot;
 	
 	
-	public void initialize(){
+	public void initialize(boolean collectRelationsFromLibs){
 		
 		// get the uml model that is open in Papyrus.
 		umlModel = UmlUtils.getUmlModel();
@@ -140,7 +140,7 @@ public class TreeBuilder {
 		
 		if (getRootPackage() != null) {
 			
-			collectData();
+			collectData(collectRelationsFromLibs);
 			
 			// create a tree root in order to show the UML::Model name
 			treeRoot = new TreeParent("Relations found in " + ModelicaMLServices.getName(rootPackage));
@@ -263,7 +263,7 @@ public class TreeBuilder {
 	}
 	
 	
-	private void collectData(){
+	private void collectData(final boolean collectRelationsFromLibs){
 		
 		// clear all lists from previous iterations
 		clearAll();
@@ -280,6 +280,8 @@ public class TreeBuilder {
 					monitor.beginTask("Collecting ModelicaML Relations Data ...", 100);
 					
 					collector = new RelationsCollector();
+					// set the flag to collect relations also from libs or not
+					collector.setCollectElementsFromLibraries(collectRelationsFromLibs);
 					collector.collectElementsFromModel(getRootPackage());
 				}
 			});

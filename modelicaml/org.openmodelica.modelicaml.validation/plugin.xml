@@ -521,6 +521,19 @@
                   C46 {0}
                </message>
             </constraint>
+            <constraint
+                  class="org.openmodelica.modelicaml.validation.rules.classes.C47_DependeciesMustHaveSourcesAndTargets"
+                  id="org.openmodelica.modelicaml.validation.C47"
+                  isEnabledByDefault="true"
+                  lang="Java"
+                  mode="Batch"
+                  name="C47_DependeciesMustHaveSourcesAndTargets"
+                  severity="ERROR"
+                  statusCode="1">
+               <message>
+                  C47 {0}
+               </message>
+            </constraint>
          </constraints>
          <constraints
                categories="org.openmodelica.modelicaml.validation.live">

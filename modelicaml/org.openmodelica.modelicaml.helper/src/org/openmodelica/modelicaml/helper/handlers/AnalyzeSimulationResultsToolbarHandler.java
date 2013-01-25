@@ -172,7 +172,13 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 		 * simulate models with OMC and analyze files
 		 */
 		if ( isSimulate() ) {
-			
+
+			/*
+			 * Note, the simulator should be created outside a job. 
+			 * Otherwise the CORBA connection may take too long ad the job will not wait for it to be established.
+			 */
+			final SimulatorOMC simulator = new SimulatorOMC(getGeneratedModelsData(), getProjectPath(), isOnlyRecordRequirementStatusAndClients());
+
 			// generate code
 			GenerateModelicaCodeFromEntireModelicaMLModelAction cgAction = new GenerateModelicaCodeFromEntireModelicaMLModelAction();
 			try {
@@ -185,11 +191,8 @@ public class AnalyzeSimulationResultsToolbarHandler extends AbstractHandler{
 					public void done(IJobChangeEvent event) {
 			            if (event.getResult().isOK()) {
 			            	
-			            	// generate code, simulated
-							final SimulatorOMC simulator = new SimulatorOMC(getGeneratedModelsData(), getProjectPath(), isOnlyRecordRequirementStatusAndClients());
-							
 							ModelicaMLServices.notify("ModelicaML Simulation", "Simulation is running in background. \nIt does not block the editor. \nYou can continue working ...", 0, 1);
-							simulator.generateCodeAndSimulate();
+							simulator.simulate();
 							
 							simulator.getSimulationJob().addJobChangeListener(new JobChangeAdapter() {
 								public void done(IJobChangeEvent event) {

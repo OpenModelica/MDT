@@ -86,8 +86,8 @@ import org.openmodelica.modelicaml.common.helpers.VerificationServices;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
-import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.EditorServices;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.simulation.dialogs.DialogSimulationSettings;
 import org.openmodelica.modelicaml.simulation.execution.ExecuteSimulation;
@@ -290,7 +290,7 @@ public class SimulationOMCAction extends AbstractHandler {
 					 * Simulate
 					 */
 					monitor.subTask("Simulating '" + modelQName + "'");
-					omcLog = ExecuteSimulation.executeAllModels(monitor, new java.io.File(projectPath), omcTempDirectory, testSession, isLoadModelicaLibChecked);
+					omcLog = ExecuteSimulation.executeAllModels(monitor, omcc, new java.io.File(projectPath), omcTempDirectory, testSession, isLoadModelicaLibChecked);
 					
 					// Check if the simulation results are available
 					simulationFailedList = new ArrayList<String>();

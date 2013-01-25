@@ -172,7 +172,7 @@ public class ExecuteTestsAction implements
 							omcLog = "";
 							monitor.subTask("Executing models ...");
 							boolean loadMSL = true; // by default load the Modelica Standard Library for the case if there are models that use it.
-							String omcMessage =	ExecuteSimulation.executeAllModels(monitor, sessionFolder, omcTempWorkingFolder, testSessionObj, loadMSL);
+							String omcMessage =	ExecuteSimulation.executeAllModels(monitor, omcc, sessionFolder, omcTempWorkingFolder, testSessionObj, loadMSL);
 							omcLog = omcMessage;
 									
 //							if(!omcMessage.isEmpty()){

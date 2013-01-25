@@ -34,6 +34,7 @@
  */
 package org.openmodelica.modelicaml.relations.dialogs;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,11 +42,16 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
@@ -69,34 +75,133 @@ import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Generalization;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.datacollection.RelationsCollector;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.relations.model.TreeObject;
+import org.eclipse.swt.widgets.Label;
 
 public class SelectInvalidRelationsToDeleteDialog extends Dialog {
+	
 	private Tree tree;
+	
 	private HashSet<Element> invalidRelations;
+	
 	private Button btnDeleteAll;
+	
 	private HashSet<TreeItem> allTreeItems = new HashSet<TreeItem>();
 	private final ImageDescriptor errorImageDescriptor = ResourceManager.getPluginImageDescriptor("org.openmodelica.modelicaml.common", "icons/overlay/error_ovr.gif");
-
-
-	public SelectInvalidRelationsToDeleteDialog(Shell parentShell, HashSet<Element> invalidRelations) {
+	private Button btnSearchInLibraries;
+	
+	private boolean showRelationsFromLibs = false;
+	private RelationsCollector collector;
+	private EObject root;
+	
+	
+	public SelectInvalidRelationsToDeleteDialog(Shell parentShell, EObject root) {
 		
 		super(parentShell);
 		setShellStyle(SWT.SHELL_TRIM);
-		this.invalidRelations = invalidRelations;
+		
+		this.root = root;
+		collectInvalidRelations(root);
 
 	}
 
+	private void collectInvalidRelations(final EObject root){
+		
+		ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(ModelicaMLServices.getShell());
+		
+		try {
+			progressMonitor.run(false, true, new IRunnableWithProgress() {
+				
+				@Override
+				public void run(IProgressMonitor monitor) throws InvocationTargetException,
+						InterruptedException {
+
+					monitor.beginTask("Collecting Relations Data ...", 100);
+					
+					// collect data
+					collector = new RelationsCollector();
+					collector.setCollectElementsFromLibraries(showRelationsFromLibs);
+					collector.collectElementsFromModel(root);
+				}
+			});
+		} catch (InvocationTargetException e) {
+			MessageDialog.openError(ModelicaMLServices.getShell(), "ModelicaML Relations Data Collection Error", "Could not invoke the data collection for ModelicaML Relations view. ");
+		} catch (InterruptedException e) {
+			MessageDialog.openInformation(ModelicaMLServices.getShell(), "ModelicaML Relations Data Collection", "Data collection was interrupted.");		}
+
+	
+		if (collector != null) {
+			HashSet<Element> invalidRelations = analyze(collector);
+			if (invalidRelations.size() > 0) {
+				this.invalidRelations = invalidRelations;
+			}
+		}
+	}
+	
+	
+	private HashSet<Element> analyze(RelationsCollector collector){
+		
+		HashSet<Element> invalidRelations = new HashSet<Element>();
+		for (Element relation : collector.getElements()) {
+			Element source = getSource(relation);
+			Element target = getTarget(relation);
+			
+			if (source == null || target == null) {
+				invalidRelations.add(relation);
+			}
+		}
+		
+		return invalidRelations;
+		
+	}
+	
+	
+	private Element getSource(Element relation){
+		if (relation instanceof Dependency) {
+			if (((Dependency)relation).getClients().size() > 0 ) {
+				// NOTE: we always take the first because we do not use Dependency Sets in ModelicaML
+				return ((Dependency)relation).getClients().get(0);
+			}
+		}
+		else if (relation instanceof Generalization) {
+			if (((Generalization)relation).getSources().size() > 0 ) {
+				return ((Generalization)relation).getSources().get(0);
+			}
+		}
+		return null;
+	}
+	
+	private Element getTarget(Element relation){
+		if (relation instanceof Dependency) {
+			if (((Dependency)relation).getTargets().size() > 0 ) {
+				// NOTE: we take the first
+				return ((Dependency)relation).getTargets().get(0);
+			}
+		}
+		else if (relation instanceof Generalization) {
+			if (((Generalization)relation).getTargets().size() > 0 ) {
+				// NOTE: we take the first
+				return ((Generalization)relation).getTargets().get(0);
+			}
+		}
+		return null;
+	}
+	
+	
+	
 	
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.relations","icons/find.png"));
-		newShell.setText("Invalid Relations Search (" + invalidRelations.size() + " found)");			
+		if (invalidRelations != null) {
+			newShell.setText("Invalid Relations Search (" + invalidRelations.size() + " found)");			
+		}
 	}
 	
 	@Override
@@ -134,7 +239,9 @@ public class SelectInvalidRelationsToDeleteDialog extends Dialog {
 		
 		Composite composite = new Composite(grpFoundItems, SWT.NONE);
 		composite.setLayout(new GridLayout(5, false));
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		GridData gd_composite = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_composite.heightHint = 58;
+		composite.setLayoutData(gd_composite);
 		
 		Button btnSelectAll = new Button(composite, SWT.NONE);
 		btnSelectAll.addSelectionListener(new SelectionAdapter() {
@@ -231,6 +338,31 @@ public class SelectInvalidRelationsToDeleteDialog extends Dialog {
 		});
 		btnDeleteAll.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/etool16/delete.gif"));
 		btnDeleteAll.setText("Delete selected");
+		
+		btnSearchInLibraries = new Button(composite, SWT.CHECK);
+		btnSearchInLibraries.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				showRelationsFromLibs = btnSearchInLibraries.getSelection();
+				
+				// update the tree
+				tree.removeAll();
+				
+				// collect the relations again and show in tree
+				collectInvalidRelations(root);
+				createTree(tree);
+			}
+		});
+		btnSearchInLibraries.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
+		btnSearchInLibraries.setText("Search also in libraries");
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
 
 		return area;
 	}
@@ -243,11 +375,13 @@ public class SelectInvalidRelationsToDeleteDialog extends Dialog {
 	
 	public void createTree(Tree tree){
 		
+		// clear the tree items list
 		allTreeItems.clear();
 		
 		List<Element> relations = ModelicaMLServices.getSortedByName(invalidRelations); 
 //		List<Element> relations = ModelicaMLServices.getSortedByEClassName(invalidRelations); // is far too slow! 
 		if (relations != null) {
+			
 			for (Element relation : relations) {
 				
 				TreeItem treeItem = new TreeItem(tree, SWT.CHECK);
@@ -349,6 +483,10 @@ public class SelectInvalidRelationsToDeleteDialog extends Dialog {
 	@Override
 	protected Point getInitialSize() {
 		return new Point(494, 413);
+	}
+	
+	public HashSet<Element> getInvalidRelations() {
+		return invalidRelations;
 	}
 }
 

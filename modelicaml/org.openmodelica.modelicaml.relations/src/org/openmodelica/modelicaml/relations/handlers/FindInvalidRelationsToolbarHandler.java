@@ -34,39 +34,24 @@
  */
 package org.openmodelica.modelicaml.relations.handlers;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
-
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.papyrus.infra.core.resource.NotFoundException;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
-import org.eclipse.uml2.uml.Dependency;
 import org.eclipse.uml2.uml.Element;
-import org.eclipse.uml2.uml.Generalization;
-import org.openmodelica.modelicaml.common.datacollection.RelationsCollector;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.relations.dialogs.SelectInvalidRelationsToDeleteDialog;
 
 
 public class FindInvalidRelationsToolbarHandler extends AbstractHandler{
 	
-	private RelationsCollector collector;	
-	 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		// reset 
-		collector = null;
-		
 		// get UML model data
 		UmlModel umlModel = UmlUtils.getUmlModel();
 
@@ -74,37 +59,14 @@ public class FindInvalidRelationsToolbarHandler extends AbstractHandler{
 			try {
 				final EObject root = umlModel.lookupRoot();
 				if (root instanceof Element) {
-					
-					ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(ModelicaMLServices.getShell());
-					
-					try {
-						progressMonitor.run(false, true, new IRunnableWithProgress() {
-							
-							@Override
-							public void run(IProgressMonitor monitor) throws InvocationTargetException,
-									InterruptedException {
 
-								monitor.beginTask("Collecting ModelicaML Relations Data ...", 100);
-								
-								// collect data
-								collector = new RelationsCollector();
-								collector.collectElementsFromModel(root);
-							}
-						});
-					} catch (InvocationTargetException e) {
-						MessageDialog.openError(ModelicaMLServices.getShell(), "ModelicaML Relations Data Collection Error", "Could not invoke the data collection for ModelicaML Relations view. ");
-					} catch (InterruptedException e) {
-						MessageDialog.openInformation(ModelicaMLServices.getShell(), "ModelicaML Relations Data Collection", "Data collection was interrupted.");		}
-
-				
-					if (collector != null) {
-						HashSet<Element> invalidRelations = analyze(collector);
-						if (invalidRelations.size() > 0) {
-							
-							// open dialog
-							SelectInvalidRelationsToDeleteDialog dialog = new SelectInvalidRelationsToDeleteDialog(ModelicaMLServices.getShell(), invalidRelations);
-							dialog.open();
-						}
+					// open dialog
+					SelectInvalidRelationsToDeleteDialog dialog = new SelectInvalidRelationsToDeleteDialog(ModelicaMLServices.getShell(), root);
+					if (dialog.getInvalidRelations() != null && dialog.getInvalidRelations().size() > 0) {
+						dialog.open();
+					}
+					else {
+						MessageDialog.openInformation(ModelicaMLServices.getShell(), "Invalid Relations Search", "No invallid relations were found.");
 					}
 				}
 			} catch (NotFoundException e) {
@@ -117,64 +79,4 @@ public class FindInvalidRelationsToolbarHandler extends AbstractHandler{
 		
 		return null;
 	}
-
-	
-	private HashSet<Element> analyze(RelationsCollector collector){
-		
-		HashSet<Element> invalidRelations = new HashSet<Element>();
-		for (Element relation : collector.getElements()) {
-			Element source = getSource(relation);
-			Element target = getTarget(relation);
-			
-			if (source == null || target == null) {
-				invalidRelations.add(relation);
-			}
-		}
-		
-		return invalidRelations;
-		
-	}
-	
-	
-	private Element getSource(Element relation){
-		if (relation instanceof Dependency) {
-			if (((Dependency)relation).getClients().size() > 0 ) {
-				// NOTE: we always take the first because we do not use Dependency Sets in ModelicaML
-				return ((Dependency)relation).getClients().get(0);
-			}
-		}
-		else if (relation instanceof Generalization) {
-			if (((Generalization)relation).getSources().size() > 0 ) {
-				return ((Generalization)relation).getSources().get(0);
-			}
-		}
-		return null;
-	}
-	
-	private Element getTarget(Element relation){
-		if (relation instanceof Dependency) {
-			if (((Dependency)relation).getTargets().size() > 0 ) {
-				// NOTE: we take the first
-				return ((Dependency)relation).getTargets().get(0);
-			}
-		}
-		else if (relation instanceof Generalization) {
-			if (((Generalization)relation).getTargets().size() > 0 ) {
-				// NOTE: we take the first
-				return ((Generalization)relation).getTargets().get(0);
-			}
-		}
-		return null;
-	}
-	
-//	@Override
-//	public boolean isEnabled() {
-//		return true;
-//	}
-//	
-//	@Override
-//	public boolean isHandled() {
-//		return true;
-//	}
-	
 }

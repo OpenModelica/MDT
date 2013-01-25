@@ -56,9 +56,9 @@ public class ExecuteSimulation {
 	
 	private static String omcTempDirectoryPath;
 	
-	public static String executeAllModels(IProgressMonitor monitor, File sessionFolder, String omcTempWorkingFolder, TestSession testSessionObj, boolean loadMSL){
+	public static String executeAllModels(IProgressMonitor monitor, OpenModelicaCompilerCommunication omcc, File sessionFolder, String omcTempWorkingFolder, TestSession testSessionObj, boolean loadMSL){
 		
-		OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
+//		OpenModelicaCompilerCommunication omcc = new OpenModelicaCompilerCommunication();
 		String omcReturnString = "";
 		
 		//Clear Workspace
