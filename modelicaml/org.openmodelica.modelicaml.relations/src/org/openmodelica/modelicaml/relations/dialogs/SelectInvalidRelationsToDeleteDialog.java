@@ -121,7 +121,7 @@ public class SelectInvalidRelationsToDeleteDialog extends Dialog {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,
 						InterruptedException {
 
-					monitor.beginTask("Collecting Relations Data ...", 100);
+					monitor.beginTask("Collecting relations...", 100);
 					
 					// collect data
 					collector = new RelationsCollector();
@@ -130,9 +130,9 @@ public class SelectInvalidRelationsToDeleteDialog extends Dialog {
 				}
 			});
 		} catch (InvocationTargetException e) {
-			MessageDialog.openError(ModelicaMLServices.getShell(), "ModelicaML Relations Data Collection Error", "Could not invoke the data collection for ModelicaML Relations view. ");
+			MessageDialog.openError(ModelicaMLServices.getShell(), "ModelicaML Relations Collection Error", "Could not invoke the data collection for ModelicaML relations view. ");
 		} catch (InterruptedException e) {
-			MessageDialog.openInformation(ModelicaMLServices.getShell(), "ModelicaML Relations Data Collection", "Data collection was interrupted.");		}
+			MessageDialog.openInformation(ModelicaMLServices.getShell(), "ModelicaML Relations Collection", "Data collection was interrupted.");		}
 
 	
 		if (collector != null) {
@@ -318,16 +318,16 @@ public class SelectInvalidRelationsToDeleteDialog extends Dialog {
 				String message = "";
 				for (Element deletedRelation : deletedRelations) {
 					if (deletedRelation instanceof Generalization) {
-						message += "  - Extends relation: " + deletedRelation.toString();
+						message += "  - Extends relation: " + deletedRelation.toString() + "\n";
 					}
 					else if (deletedRelation instanceof Dependency) {
 //						message += "Dependency: " + ModelicaMLServices.getQualifiedName(deletedRelation) + " in (" + ModelicaMLServices.getQualifiedName(deletedRelation.getOwner()) + ")";
-						message += "  - Dependency: '" + ModelicaMLServices.getQualifiedName(deletedRelation) + "'";
+						message += "  - Dependency: " + ModelicaMLServices.getQualifiedName(deletedRelation)+ "\n";
 
 					}
 					else {
 //						message += "Element: " + ModelicaMLServices.getQualifiedName(deletedRelation)+ " in (" + ModelicaMLServices.getQualifiedName(deletedRelation.getOwner()) + ")";
-						message += "  - Element: '" + ModelicaMLServices.getQualifiedName(deletedRelation) + "'";
+						message += "  - Element: " + ModelicaMLServices.getQualifiedName(deletedRelation) + "\n";
 					}
 				}
 				

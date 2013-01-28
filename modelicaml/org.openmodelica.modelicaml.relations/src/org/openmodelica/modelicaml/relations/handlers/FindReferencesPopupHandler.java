@@ -43,6 +43,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -91,6 +92,8 @@ public class FindReferencesPopupHandler extends AbstractHandler{
 		UmlModel umlModel = UmlUtils.getUmlModel();
 
 		if (umlModel != null && selectedElement != null) {
+			final boolean searchInLibs = MessageDialog.openQuestion(ModelicaMLServices.getShell(), "Find references", "Search also in included libraries?");
+			
 			try {
 				final EObject root = umlModel.lookupRoot();
 				if (root instanceof Element) {
@@ -101,14 +104,14 @@ public class FindReferencesPopupHandler extends AbstractHandler{
 						progressMonitor.run(false, true, new IRunnableWithProgress() {
 							
 							@Override
-							public void run(IProgressMonitor monitor) throws InvocationTargetException,
-									InterruptedException {
-
+							public void run(IProgressMonitor monitor) throws InvocationTargetException,InterruptedException {
+								
 								monitor.beginTask("Searching for "+ModelicaMLServices.getName(selectedElement)+" ...", 100);
 								
 								// collect data
 								collector = new ReferenceElementsCollector(monitor);
 								collector.setElemenToSearchFor(selectedElement);
+								collector.setCollectElementsFromLibraries(searchInLibs);
 								
 								collector.collectElementsFromModel(root);
 								
@@ -120,7 +123,8 @@ public class FindReferencesPopupHandler extends AbstractHandler{
 						MessageDialog.openError(ModelicaMLServices.getShell(), "ModelicaML Reference Search Error", "Could not invoke the data collection for the references search. ");
 					} catch (InterruptedException e) {
 						e.printStackTrace();
-						MessageDialog.openInformation(ModelicaMLServices.getShell(), "ModelicaML Collection", "Data collection was interrupted.");		}
+						MessageDialog.openInformation(ModelicaMLServices.getShell(), "ModelicaML Collection", "Data collection was interrupted.");		
+					}
 
 				
 					if (collector != null) {

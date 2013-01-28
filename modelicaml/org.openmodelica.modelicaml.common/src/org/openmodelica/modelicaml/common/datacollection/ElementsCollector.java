@@ -37,6 +37,7 @@ package org.openmodelica.modelicaml.common.datacollection;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Namespace;
@@ -59,6 +60,8 @@ public class ElementsCollector {
 	// indicates of elements from imported libraries should also be collected or not
 	private boolean collectElementsFromLibraries = true;
 	
+	protected IProgressMonitor monitor;
+	
 	// TODO: like for libraries, same could be done for imported packages.
 	
 	public void collectElementsFromModel(EObject umlRootElement){
@@ -75,8 +78,17 @@ public class ElementsCollector {
 		collectElements((Element) umlRootElement, false);
 	}
 	
+	public void collectElementsFromModel(EObject umlRootElement, IProgressMonitor monitor){
+		this.monitor = monitor;
+		collectElementsFromModel(umlRootElement);
+	}
+	
 	
 	protected void collectElements(Element rootElement, boolean isImported){
+		
+		if (monitor != null && monitor.isCanceled()) { // stop if the operation was canceled by the user.
+			return;
+		}
 		
 		// check if the element is from a library
 		if (rootElement.getAppliedStereotype(Constants.stereotypeQName_InstalledLibrary) != null) { // if we are about to iterate within the lib.
@@ -113,6 +125,11 @@ public class ElementsCollector {
 			Iterator<EObject> i = rootElement.eAllContents(); // only elements that are in the name-space of this element
 			
 			while (i.hasNext()) {
+				
+				if (monitor != null && monitor.isCanceled()) { // stop if the operation was canceled by the user.
+					return;
+				}
+				
 				EObject object = i.next();
 				if (object instanceof Element) {
 					

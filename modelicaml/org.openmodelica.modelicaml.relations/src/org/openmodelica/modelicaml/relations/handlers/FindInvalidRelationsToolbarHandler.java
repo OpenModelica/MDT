@@ -62,12 +62,14 @@ public class FindInvalidRelationsToolbarHandler extends AbstractHandler{
 
 					// open dialog
 					SelectInvalidRelationsToDeleteDialog dialog = new SelectInvalidRelationsToDeleteDialog(ModelicaMLServices.getShell(), root);
-					if (dialog.getInvalidRelations() != null && dialog.getInvalidRelations().size() > 0) {
-						dialog.open();
-					}
-					else {
-						MessageDialog.openInformation(ModelicaMLServices.getShell(), "Invalid Relations Search", "No invallid relations were found.");
-					}
+					dialog.open();
+					
+//					if (dialog.getInvalidRelations() != null && dialog.getInvalidRelations().size() > 0) {
+//						dialog.open();
+//					}
+//					else {
+//						MessageDialog.openInformation(ModelicaMLServices.getShell(), "Invalid Relations Search", "No invalid relations were found.");
+//					}
 				}
 			} catch (NotFoundException e) {
 				MessageDialog.openError(ModelicaMLServices.getShell(), "ModelicaML Model Access", "Could not access the ModelicaML model. Please open it in editor.");

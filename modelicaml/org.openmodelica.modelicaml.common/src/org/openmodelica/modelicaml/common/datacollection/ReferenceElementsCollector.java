@@ -52,7 +52,6 @@ import org.openmodelica.modelicaml.common.services.StringUtls;
 public class ReferenceElementsCollector extends ElementsCollector {
 
 	private Element elemenToSearchFor;
-	private IProgressMonitor monitor;
 	
 	public ReferenceElementsCollector(IProgressMonitor monitor){
 		this.monitor = monitor;
@@ -62,7 +61,9 @@ public class ReferenceElementsCollector extends ElementsCollector {
 	@Override
 	protected void collectElements(Element rootElement, boolean isImported) {
 		monitor.subTask("Searching in " + ModelicaMLServices.getQualifiedName(rootElement));
-		super.collectElements(rootElement, isImported);
+		if (!monitor.isCanceled()) {
+			super.collectElements(rootElement, isImported);
+		}
 	}
 	
 	@Override
