@@ -181,9 +181,8 @@ public class SimulatorOMC {
 		filesToLoad.addAll(ModelicaMLServices.getFilesToLoad(projectPath + "/" + Constants.folderName_code_gen));
 		for (String string : filesToLoad) {
 			reply = omcc.loadFile(string);
-			String message = "Loading models: " + filesToLoad.toString() + " \n reply: " + reply;
-			
-			System.err.println(message);
+			String message = "Loading models: " + string + " \n reply: " + reply;
+			System.out.println(message);
 			addToLog(message);
 		}
 		

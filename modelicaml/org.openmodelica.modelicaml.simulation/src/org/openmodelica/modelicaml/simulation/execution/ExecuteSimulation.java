@@ -130,6 +130,10 @@ public class ExecuteSimulation {
 			// load all files 
 			for (String string : filesToLoad) {
 				String reply = omcc.loadFile(string);
+				String message = "Loading models: " + string + " \n reply: " + reply;
+				System.out.println(message);
+//				System.err.println(message);
+//				addToLog(message);
 			}
 		}
 

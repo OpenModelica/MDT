@@ -3313,10 +3313,12 @@
    <extension
          point="org.eclipse.papyrus.uml.diagram.wizards.templates">
       <template
-            file="templateModels/backup/model.uml"
+            di_file="templateModels/model.di"
+            file="templateModels/model.uml"
             id="org.openmodelica.modelicaml.profile.basicTemplate"
             language="modelicaml"
-            name="ModelicaML template incl. Requirements, Desing and Simulation Packages">
+            name="ModelicaML template incl. Requirements, Desing and Simulation Packages"
+            notation_file="templateModels/model.notation">
       </template>
    </extension>
 
