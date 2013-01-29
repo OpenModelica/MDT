@@ -62,6 +62,9 @@ public class ReadMatlab4 implements IResultsReader {
 	private int nvar;
 	private long var_offset;
 	private String path;
+	
+	private boolean showInternalVars = false;
+	private final String internalVarNameIndicator = "$";
 
 	public ReadMatlab4(String path) throws Exception {
 
@@ -465,13 +468,21 @@ public class ReadMatlab4 implements IResultsReader {
 	public int getSize(){
 		return allInfo.length;
 	}
+	
 	public ArrayList<String> getNames(){
 		ArrayList<String>ret=new ArrayList<String>();
 		for (int i=0;i<allInfo.length;i++){
-			ret.add(allInfo[i].name);
+			if (allInfo[i].name.startsWith(internalVarNameIndicator) && !isShowInternalVars()) {
+				// skip
+//				System.err.println(allInfo[i].name);
+			}
+			else {
+				ret.add(allInfo[i].name);
+			}
 		}
 		return ret;
 	}
+	
 	private int find_var(String varName) {
 		ModelicaMatVariable key = new ModelicaMatVariable();
 		key.name = varName;
@@ -735,6 +746,14 @@ public class ReadMatlab4 implements IResultsReader {
 		if(times== null)
 			times=read_vals(1);
 		return times;
+	}
+
+	public boolean isShowInternalVars() {
+		return showInternalVars;
+	}
+
+	public void setShowInternalVars(boolean showInternalVars) {
+		this.showInternalVars = showInternalVars;
 	}
 	
 }
