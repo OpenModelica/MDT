@@ -2063,14 +2063,8 @@ public class ModelicaMLElementsCreator {
 		 * Delete all proxies or their owned elements 
 		 * that are not contained in the loaded Modelica models. 
 		 */
-		
-		HashSet<String> modelicaModelQNames = new HashSet<String>();
-		List<TreeObject> treeItems = treeBuilder.getTreeItems(); 
-		for (TreeObject treeObject : treeItems) {
-			modelicaModelQNames.add(treeObject.getQName());
-		}
-		
-		HashSet<Element> proxies = treeBuilder.getProxies();
+
+		HashSet<Element> proxies = treeBuilder.getProxiesNotExistingInLoadedCode();
 		HashSet<Element> invalidProxies = new HashSet<Element>();
 		HashSet<Element> invalidExtendsRelations = new HashSet<Element>();
 		
@@ -2088,15 +2082,7 @@ public class ModelicaMLElementsCreator {
 						&& !(element.getModel().getAppliedStereotype(Constants.stereotypeQName_InstalledLibrary) != null)
 						) {
 					
-					/*
-					 * Find class proxies or their properties that do not exist in the loaded Modelica models.
-					 */
-					String qName = StringUtls.replaceSpecCharExceptThis(((NamedElement)element).getQualifiedName(), "::").replaceAll("::", ".");
-					if ( !modelicaModelQNames.contains(qName) ) {
-						deletedProxyQNames.add(((NamedElement)element).getQualifiedName());
-						addToLog("Deleting " + ((NamedElement)element).getQualifiedName());
-						invalidProxies.add(element);
-					}
+					invalidProxies.add(element);
 					
 					/*
 					 * Find class extends relations (inheritance) that do not have targets.
@@ -2122,6 +2108,9 @@ public class ModelicaMLElementsCreator {
 		// Delete elements
 		deleteElements(invalidProxies);
 		deleteElements(invalidExtendsRelations);
+		
+		// reset the invalid proxies
+		treeBuilder.setProxiesNotExistingInLoadedCode(new HashSet<Element>());
 	}
 
 	public void deleteElements(final HashSet<Element> elements){

@@ -62,6 +62,7 @@ import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.helper.structures.GeneratedModelsData;
 import org.openmodelica.modelicaml.simulation.omc.OpenModelicaCompilerCommunication;
+import org.openmodelica.modelicaml.simulation.simresults.ReadMatlab4;
 
 public class SimulatorOMC {
 
@@ -254,18 +255,46 @@ public class SimulatorOMC {
 			IFileInfo newMatFileInfo = newMatFile.fetchInfo();
 			
 			if (newMatFileInfo.exists()) {
-				//Indicate that OMC generated the files, i.e. the simulation was ok
-				simulatedModels.add(genModel);
-				simulationSuccededList.add(modelQName);
-				simulationResultsFile.put(genModel, filePath);
+				/*
+				 * TODO: Reading files in order to determine if the models were simulated correctly 
+				 * is too slow. Find a more efficient way to do it.  
+				 */
+				try {
+					ReadMatlab4 reader = new ReadMatlab4(filePath);
+					
+					// if we could read the file then there are results
+					// Indicate that OMC generated the simulation file, i.e. the simulation was ok
+					simulatedModels.add(genModel);
+					simulationSuccededList.add(modelQName);
+					simulationResultsFile.put(genModel, filePath);
+					
+					addToLog("'"+modelQName+"' was simulated.\n\n");
+					
+					// close the file again
+					reader.releaseFile();
+					
+				} catch (Exception e) {
+					
+					// if could not read the file then there are no results!
+					// Indicate that OMC did NOT generat the simulation file, i.e. the simulation was NOT ok
+					notSimulatedModels.add(genModel);
+					simulationFailedList.add(modelQName);
+					
+					addToLog("'"+modelQName+"' was NOT simulated.\n\n");
+				} 
 				
-				addToLog("'"+modelQName+"' was simulated.\n\n");
+//				//Indicate that OMC generated the files, i.e. the simulation was ok
+//				simulatedModels.add(genModel);
+//				simulationSuccededList.add(modelQName);
+//				simulationResultsFile.put(genModel, filePath);
+//				
+//				addToLog("'"+modelQName+"' was simulated.\n\n");
 			}
 			else {
-				notSimulatedModels.add(genModel);
-				simulationFailedList.add(modelQName);
-				
-				addToLog("'"+modelQName+"' was NOT simulated.\n\n");
+//				notSimulatedModels.add(genModel);
+//				simulationFailedList.add(modelQName);
+//				
+//				addToLog("'"+modelQName+"' was NOT simulated.\n\n");
 			}	
 			
 			monitor.worked(counter);

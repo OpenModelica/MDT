@@ -487,28 +487,28 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 	
 	
 	
-//	private String getProjectPath(){
-//		// get UML model data
-//		UmlModel umlModel = UmlUtils.getUmlModel();
-////		String umlModelFileURI = umlModel.getResourceURI().toString();
-//
-//		if (umlModel != null) {
-//			// get project data
-//			String projectName = umlModel.getResource().getURI().segment(1);
-//			
-//			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-//			IWorkspaceRoot root = workspace.getRoot();
-//			IProject iProject = root.getProject(projectName);
-//			
-//			// TODO find a better way to get the absolute path
-//			String projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
-//			
-//			if (projectPath != null) {
-//				return projectPath;
-//			}
-//		}
-//		return null;
-//	}
+	private String getProjectPath(){
+		// get UML model data
+		UmlModel umlModel = UmlUtils.getUmlModel();
+//		String umlModelFileURI = umlModel.getResourceURI().toString();
+
+		if (umlModel != null) {
+			// get project data
+			String projectName = umlModel.getResource().getURI().segment(1);
+			
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRoot root = workspace.getRoot();
+			IProject iProject = root.getProject(projectName);
+			
+			// TODO find a better way to get the absolute path
+			String projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
+			
+			if (projectPath != null) {
+				return projectPath;
+			}
+		}
+		return null;
+	}
 	
 	private String getGeneratedCodeFolderAbsolutePath(){
 		// get UML model data
@@ -664,14 +664,16 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 		setFilesFound(filesFound);
 		setOKButtonEnablement();
 		
-		if (filesNotFound.size() > 0) {
-			
-			String dialogMessage = "The following files could not be found:\n";
-			for (String string : filesNotFound) {
-				dialogMessage += "    - " + string + "\n";
+		if (!isSimulate()) { // if the simulation should be skipped
+			if (filesNotFound.size() > 0) {
+				
+				String dialogMessage = "The following files could not be found:\n";
+				for (String string : filesNotFound) {
+					dialogMessage += "    - " + string + "\n";
+				}
+				DialogMessage dialog = new DialogMessage(getShell(), "Files Selection Error", "", dialogMessage, true);
+				dialog.open();
 			}
-			DialogMessage dialog = new DialogMessage(getShell(), "Files Selection Error", "", dialogMessage, true);
-			dialog.open();
 		}
 	}
 	

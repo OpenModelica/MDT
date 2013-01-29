@@ -83,6 +83,9 @@ public class TreeBuilder {
 	
 	private HashSet<Element> proxies = new HashSet<Element>();
 	
+	// proxies that do not exist in the loaded code
+	private HashSet<Element> proxiesNotExistingInLoadedCode = new HashSet<Element>();
+	
 	private HashSet<String> proxyQNames = new HashSet<String>();
 	private HashMap<String,Element> proxyQNameToElement = new HashMap<String, Element>();
 
@@ -1084,6 +1087,9 @@ public class TreeBuilder {
 						if (!modelicaModelQNames.contains(qName)) {
 							Utilities.createMarker(element, ((NamedElement)element).getQualifiedName(), "error", "Proxy '"+((NamedElement)element).getQualifiedName()
 									+"' does not exist in the loaded Modelica models.");
+							
+							// add to proxies that should be deleted
+							proxiesNotExistingInLoadedCode.add(element);
 						}
 						
 						// check if a property has type defined
@@ -1454,6 +1460,15 @@ public class TreeBuilder {
 		}
 		
 		return string; 	
+	}
+
+	public HashSet<Element> getProxiesNotExistingInLoadedCode() {
+		return proxiesNotExistingInLoadedCode;
+	}
+
+	public void setProxiesNotExistingInLoadedCode(
+			HashSet<Element> proxiesNotExistingInLoadedCode) {
+		this.proxiesNotExistingInLoadedCode = proxiesNotExistingInLoadedCode;
 	}
 
 //	public void setErrorLog(String errorLog) {
