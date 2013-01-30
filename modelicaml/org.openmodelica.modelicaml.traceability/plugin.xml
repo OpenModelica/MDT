@@ -5,18 +5,12 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="Bindings Traceability"
+            name="Traceability"
             icon="icons/links_view.gif"
             category="org.openmodelica.modelicaml.category"
             class="org.openmodelica.modelicaml.traceability.views.TraceabilityView"
             id="org.openmodelica.modelicaml.traceability.views.TraceabilityView">
       </view>
-   </extension>
-   <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contexts.xml">
-      </contexts>
    </extension>
 
 </plugin>

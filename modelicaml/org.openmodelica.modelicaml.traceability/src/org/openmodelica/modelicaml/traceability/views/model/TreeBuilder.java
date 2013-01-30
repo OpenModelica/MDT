@@ -143,6 +143,14 @@ public class TreeBuilder {
 	public HashSet<Element> getRequirementsWithUnsatisfiedClients() {
 		return requirementsWithUnsatisfiedClients;
 	}
+	
+	/* Components with clients NOT satisfied by the selected combination of system model, scenario and all required additional models.
+	 */
+	private HashSet<Element> componentWithUnsatisfiedClients = new HashSet<Element>();
+	
+	public HashSet<Element> getComponentWithUnsatisfiedClients() {
+		return componentWithUnsatisfiedClients;
+	}
 
 
 
@@ -155,7 +163,7 @@ public class TreeBuilder {
 		
 		this.selectedElement = selectedElement;
 
-		// get the uml model that is open in Papyrus.
+		// get the UML model that is open in Papyrus.
 		umlModel = UmlUtils.getUmlModel();
 		
 		if (umlModel != null ) {
@@ -214,14 +222,14 @@ public class TreeBuilder {
 						monitor.worked(1);
 						
 						monitor.subTask("Creating requirements view ...");
-						// build tree for req. view
+						// build tree for requirements view
 						createRequirementsList(reqTreeRoot);
 						monitor.worked(2);
 						
 						scenTreeRoot = new TreeParent(selectedElement.getName()+ " - Possible Scenarios");
 						scenTreeRoot.setUmlElement(selectedElement);
 						
-						// build tree for scen. view
+						// build tree for scenarios view
 						monitor.subTask("Creating scenarios view ...");
 						createScenariosList(scenTreeRoot);
 						monitor.worked(3);
@@ -277,7 +285,7 @@ public class TreeBuilder {
 				// NOTE: there is no need to recollect mediators
 				preparedModelInstantiations.put(scenarioToBeUsed, ModelicaMLServices.getModelInstantiation(scenarioToBeUsed, preparedModelInstantiations, getVsc().getAllMediators(), false));
 
-				// get requirements
+				// get requirements, only those to which scenarios have relations
 				HashSet<Element> reqList = vsc.getScenarioToReq().get(scenarioToBeUsed);
 				HashSet<Element> requirementsToBeUsed = new HashSet<Element>();
 				
@@ -316,6 +324,11 @@ public class TreeBuilder {
 				// add to selected or discarded scenarios
 				if (!tsmc.isDiscarded()) {
 					scenariosValid.add(scenarioToBeUsed);
+					
+					//if NOT all mandatory clients of the scenario are satisfied by the system model, requirements or additional models. 
+					if (tsmc.getModelClients(scenarioToBeUsed) != null && tsmc.getUnsatisfiedMandatoryClients(scenarioToBeUsed) != null) {
+						componentWithUnsatisfiedClients.add(scenarioToBeUsed);
+					}
 				}
 				else {
 					scenariosDiscarded.add(scenarioToBeUsed);
@@ -359,38 +372,44 @@ public class TreeBuilder {
 			NamedElement scenario = ((NamedElement)element);
 			
 			ScenarioItem scenarioItem = new ScenarioItem( scenario.getName() );
-			scenarioItem .setUmlElement(scenario);
-			scenarioItem .setValid(true);
+			scenarioItem.setUmlElement(scenario);
+			scenarioItem.setValid(true);
 			treeItems.add(scenarioItem);
 			
 			parent.addChild(scenarioItem);
 			
-			// add requirements
+			// TODO: add unsatisfied clients for the scenario
+//			for (Element element : componentWithUnsatisfiedClients) {
+//			}
+			
+			// Add requirements
 			addRequirements(scenarioItem);
 
-			// TODO: add models that are needed for this scenario in addition
+			// Add models that are needed for this scenario in addition
+			addAdditionalModels(scenarioItem);
 		}
 		
 		for (Element element : scenariosDiscarded) {
 			NamedElement scenario = ((NamedElement)element);
 			
 			ScenarioItem scenarioItem = new ScenarioItem( scenario.getName() );
-			scenarioItem .setUmlElement(scenario);
-			scenarioItem .setValid(false);
+			scenarioItem.setUmlElement(scenario);
+			scenarioItem.setValid(false);
 			treeItems.add(scenarioItem);
 			
 			parent.addChild(scenarioItem);
 			
-			
-			// add requirements
+			// Add requirements
 			addRequirements(scenarioItem);
 
-			// TODO: add models that are needed for this scenario in addition?
+			// Add models that are needed for this scenario in addition?
+			addAdditionalModels(scenarioItem);
 		}
 	}
 	
 	
 	private void addRequirements(ScenarioItem scenarioItem){
+		
 		// add requirements
 		VeMScenarioReqCombinationsCreator combination = scenarioToVerificationModelCombination.get(scenarioItem.getUmlElement());
 		HashSet<Element> requirements = combination.getRequirements();
@@ -406,7 +425,7 @@ public class TreeBuilder {
 					requirementItem.setValid(false);
 
 					// add unsatisfied clients
-					HashMap<org.openmodelica.modelicaml.common.instantiation.TreeObject,HashSet<Element>> unsatisfiedClients = getUnsatisfiedClients(requirement);
+					HashMap<org.openmodelica.modelicaml.common.instantiation.TreeObject,HashSet<Element>> unsatisfiedClients = getUnsatisfiedRequirementClients(requirement);
 					if (unsatisfiedClients != null) {
 						for (org.openmodelica.modelicaml.common.instantiation.TreeObject client : unsatisfiedClients.keySet()) {
 							ClientItem clientItem = new ClientItem(client.getDotPath() + " = ?");
@@ -415,10 +434,8 @@ public class TreeBuilder {
 							treeItems.add(clientItem);
 							
 							requirementItem.addChild(clientItem);
-							
 						}
 					}
-					
 				}
 				else {
 					requirementItem.setValid(true);
@@ -428,6 +445,31 @@ public class TreeBuilder {
 		}
 	}
 	
+	
+	private void addAdditionalModels(TreeParent treeParent) {
+		Element element = treeParent.getUmlElement();
+		if (element != null ) {
+			HashSet<Element> addModels = vsc.getModelToItsAdditionalModels().get(element);
+			if (addModels != null && addModels.size() > 0) {
+				for (Element addModel : addModels) {
+					
+					AddModelItem addModelItem = new AddModelItem("add. model: " + ModelicaMLServices.getName(addModel));
+					addModelItem.setUmlElement(addModel);
+					
+					/*
+					 * TODO: the additional model should be checked for bindings validity.
+					 * For that one need to determine the right models to be instantiated and then 
+					 * see if for all clients of this additional model bindings can be derived.
+					 * This is not implemented yet. 
+					 */
+					addModelItem.setValid(true);
+					treeItems.add(addModelItem);
+					
+					treeParent.addChild(addModelItem);
+				}
+			}
+		}
+	}
 	
 	
 	private void createRequirementsList(TreeParent parent){
@@ -457,7 +499,8 @@ public class TreeBuilder {
 				}
 			}
 			
-			// TODO: add models that are needed for this requirement in addition
+			// Add models that are needed for this requirement in addition
+			addAdditionalModels(reqItem);
 		}
 		
 		for (Element element : requirementsWithUnsatisfiedClients) {
@@ -471,7 +514,7 @@ public class TreeBuilder {
 			parent.addChild(reqItem);
 			
 			// Add unsatisfied clients
-			HashMap<org.openmodelica.modelicaml.common.instantiation.TreeObject,HashSet<Element>> unsatisfiedClients = getUnsatisfiedClients(req);
+			HashMap<org.openmodelica.modelicaml.common.instantiation.TreeObject,HashSet<Element>> unsatisfiedClients = getUnsatisfiedRequirementClients(req);
 			if (unsatisfiedClients != null) {
 				for (org.openmodelica.modelicaml.common.instantiation.TreeObject client : unsatisfiedClients.keySet()) {
 					ClientItem clientItem = new ClientItem(client.getDotPath() + " = ?");
@@ -495,7 +538,8 @@ public class TreeBuilder {
 				}
 			}
 			
-			// TODO: add models that are needed for this requirement in addition
+			// Add models that are needed for this requirement in addition
+			addAdditionalModels(reqItem);
 		}
 		
 		/*
@@ -518,6 +562,13 @@ public class TreeBuilder {
 			List<Element> modelsToBeInstantiated = new ArrayList<Element>();
 			modelsToBeInstantiated.add(req);
 			
+			// add additional models that are needed by the requirements
+			HashSet<Element> addModels = vsc.getModelToItsAdditionalModels().get(req);
+			if (addModels != null && addModels.size() > 0) {
+				modelsToBeInstantiated.addAll(addModels);
+			}
+			
+			// compose the model virtually
 			ModelComposer modelComposer = new ModelComposer(this.selectedElement, modelsToBeInstantiated, (Package) valueMediatorsPackage, targetPackage, preparedModelInstantiations, vsc);
 			org.openmodelica.modelicaml.common.instantiation.TreeParent reqInstantiationItem = modelComposer.getModelToItsInstantiation().get(req).getTreeRoot();
 			
@@ -551,11 +602,13 @@ public class TreeBuilder {
 			}
 			
 			parent.addChild(reqItem);
+			
+			// Add additional models
+			addAdditionalModels(reqItem);
 		}
 	}
 	
-	
-	private HashMap<org.openmodelica.modelicaml.common.instantiation.TreeObject, HashSet<Element>> getUnsatisfiedClients(Element req){
+	private HashMap<org.openmodelica.modelicaml.common.instantiation.TreeObject, HashSet<Element>> getUnsatisfiedRequirementClients(Element req){
 		HashMap<org.openmodelica.modelicaml.common.instantiation.TreeObject, HashSet<Element>> unsatisfiedClientsToScenarios = new HashMap<org.openmodelica.modelicaml.common.instantiation.TreeObject, HashSet<Element>>();
 		
 		// get the scenarios that are related to the requirements 
@@ -585,14 +638,14 @@ public class TreeBuilder {
 	
 	public void showTree(TreeParent treeRoot, int mode){
 		
-		// remove the last tree
+		// Remove the last tree
 		TreeObject[] children = treeRoot.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			TreeObject treeObject = children[i];
 			treeRoot.removeChild(treeObject);
 		}
 		
-		// display trees
+		// Display trees
 		if (reqTreeRoot != null && scenTreeRoot != null) {
 			if (mode == MODE_REQUIREMENTS_VIEW) {
 				treeRoot.addChild(reqTreeRoot);
@@ -630,7 +683,7 @@ public class TreeBuilder {
 
 		List<TreeObject> foundTreeItems = new ArrayList<TreeObject>();
 		
-		// to avoid concurrent modifications
+		// To avoid concurrent modifications
 		ArrayList<TreeObject> items = new ArrayList<TreeObject>();
 		items.addAll(getTreeItems());
 		
@@ -645,7 +698,7 @@ public class TreeBuilder {
 						foundTreeItems.add(treeItem);
 					}
 					/*
-					 * The code below only works ig the equal and hashCode are overridden ...
+					 * The code below only works if the equal and hashCode are overridden ...
 					 */
 //					if ( ((TreeObject)object).equals(treeItem)) {
 //						foundTreeItems.add(treeItem);

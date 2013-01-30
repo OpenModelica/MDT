@@ -57,6 +57,7 @@ import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.traceability.Activator;
+import org.openmodelica.modelicaml.traceability.views.model.AddModelItem;
 import org.openmodelica.modelicaml.traceability.views.model.ClientItem;
 import org.openmodelica.modelicaml.traceability.views.model.RequirementItem;
 import org.openmodelica.modelicaml.traceability.views.model.ScenarioItem;
@@ -294,6 +295,25 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 							
 						}
 					}
+					else if (element instanceof AddModelItem) {
+
+						// if this is a not analyzed requirement
+						if (((AddModelItem)element).isUnknown()) {
+							overlayIcon = new DecorationOverlayIcon(imageToBeUsed, questionStateImageDescriptor, IDecoration.BOTTOM_RIGHT);
+							return overlayIcon.createImage();
+						}
+						// not a valid requirement because it has unsatisfied clients
+						else if (!((AddModelItem)element).isValid()) {
+							overlayIcon = new DecorationOverlayIcon(imageToBeUsed, errorImageDescriptor, IDecoration.BOTTOM_RIGHT);
+							return overlayIcon.createImage();
+						}
+//						else{
+//							overlayIcon = new DecorationOverlayIcon(imageToBeUsed, okStateImageDescriptor, IDecoration.BOTTOM_RIGHT);
+//							return overlayIcon.createImage();
+//							
+//						}
+					}
+					
 					else if (hasErrosInItsChildren((TreeParent) element)) {
 						overlayIcon = new DecorationOverlayIcon(imageToBeUsed, errorImageDescriptor, IDecoration.BOTTOM_RIGHT);
 						return overlayIcon.createImage();
@@ -351,6 +371,9 @@ public class ViewLabelProviderStyledCell extends StyledCellLabelProvider {
 			return true;
 		}
 		if (treeParent instanceof ScenarioItem && !((ScenarioItem)treeParent).isValid()) {
+			return true;
+		}
+		if (treeParent instanceof AddModelItem && !((AddModelItem)treeParent).isValid()) {
 			return true;
 		}
 		return false;
