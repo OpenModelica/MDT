@@ -59,8 +59,9 @@ public class XMLMarker
 
 	private static void marker(BufferedReader bf) throws IOException {
 		// Read a line of text
-		System.out.println("[XML-Marker] Read a line of text");
-		String currentLine = bf.readLine(); // Ignores SimCode-line at the top
+		String currentLine = "";
+		for(int i = 0; i < 6; i++)
+			currentLine = bf.readLine(); // Ignores trash and SimCode-line at the top
 		currentLine = bf.readLine();
 		FileOutputStream f = openNewTextFile();
 

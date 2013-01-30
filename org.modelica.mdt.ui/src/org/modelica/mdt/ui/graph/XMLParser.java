@@ -98,18 +98,51 @@ public class XMLParser
 
 	private static void iterateEquations(String tag) throws IOException {
 		// removes unnecessary tags and text before sending it forward
+		System.out.println("---Opearation: " + tag + " ----");
 		
 		currentLine = bufReader.readLine();
 		if (currentLine.endsWith(":"))
 			currentLine = bufReader.readLine(); // removes a line with just the name of the operation
 		else if(tag.equals("dummy") || tag.equals("simple"))
 			currentLine = currentLine.substring(currentLine.indexOf(":")+2, currentLine.length());
+
+		if (tag.equals("simple")) {
+			String firstOp = currentLine;
+			ModelicaDetailedAnalyzer.handleSimpleOperation(firstOp);
+		} else if (tag.equals("solve")) {
+			String firstOp = currentLine;
+			currentLine = bufReader.readLine();
+			String secondOp = currentLine;
+			currentLine = bufReader.readLine();
+			String thirdOp = currentLine;
+			ModelicaDetailedAnalyzer.handleSolveOperation(firstOp, secondOp, thirdOp);
+		} else if (tag.equals("derive")) {
+			String firstOp = currentLine;
+			currentLine = bufReader.readLine();
+			String secondOp = currentLine;
+			currentLine = bufReader.readLine();
+			String thirdOp = currentLine;
+			ModelicaDetailedAnalyzer.handleDeriveOperation(firstOp, secondOp, thirdOp);
+		} else if (tag.equals("simplify")) {
+			String firstOp = currentLine;
+			currentLine = bufReader.readLine();
+			String secondOp = currentLine;
+			currentLine = bufReader.readLine();
+			String thirdOp = currentLine;
+			ModelicaDetailedAnalyzer.handlePreSimplifyOperation(firstOp, secondOp, thirdOp);
+		} else if (tag.equals("subst")) {
+			String firstOp = currentLine;
+			currentLine = bufReader.readLine();
+			String secondOp = currentLine;
+			currentLine = bufReader.readLine();
+			String thirdOp = currentLine;
+			ModelicaDetailedAnalyzer.handleSubstOperation(firstOp, secondOp, thirdOp);
+		}
 		
-		//System.out.println("\n_____ New equation-block _____");
+		// This will remove all the things we dont need, if there is any
 		while(!currentLine.contains("</"+tag+">")) {
-			//System.out.println(currentLine); // TODO: This is what we want to send forward
-			// TODO: Put this in a list? 
 			currentLine = bufReader.readLine();
 		}
+		System.out.println();
 	}
 }

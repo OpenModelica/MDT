@@ -19,14 +19,18 @@
             icon="icons/obj16/mo_file.gif"
             id="org.modelica.mdt.ui.view.ModelicaConsoleView"
             name="OpenModelica Console"/>
-      <view class="org.modelica.mdt.ui.graph.GraphView"
+      <view
+            category="org.modelica.mdt.ModelicaCategory"
+            class="org.modelica.mdt.ui.graph.ModelicaGraphView"
             icon="icons/obj16/mo_file.gif"
-            id="org.modelica.mdt.ui.view.GraphView"
-            name="Graph View"/>
-      <view class="org.modelica.mdt.ui.graph.DetailedGraphView"
+            id="org.modelica.mdt.ui.graph.ModelicaGraphView"
+            name="Modelica Graph View"/>
+      <view
+            category="org.modelica.mdt.ModelicaCategory"
+            class="org.modelica.mdt.ui.graph.ModelicaDetailedGraphView"
             icon="icons/obj16/mo_file.gif"
-            id="org.modelica.mdt.ui.view.DetailedGraphView"
-            name="Detailed Graph View"/>
+            id="org.modelica.mdt.ui.graph.ModelicaDetailedGraphView"
+            name="Modelica Detailed Graph View"/>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -160,7 +164,7 @@
          <!--<state class="org.eclipse.ui.handlers.RegistryToggleState:false" id="org.eclipse.ui.commands.toggleState"></state>-->
    </command>
    <command
-         defaultHandler="org.modelica.mdt.ui.actions.CreateView"
+         defaultHandler="org.modelica.mdt.ui.actions.ModelicaCreateView"
          id="org.modelica.mdt.ui.actions.CreateView"
          name="Create View">
    </command>
@@ -379,13 +383,5 @@
            </command>
         </toolbar>
      </menuContribution>
-     <menuContribution
-            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
-         <command
-               commandId="org.modelica.mdt.ui.actions.createview"
-               label="Cross-Reference Graph"
-               style="push">
-         </command>
-      </menuContribution>
   </extension>
 </plugin>
