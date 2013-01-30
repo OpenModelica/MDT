@@ -23,6 +23,11 @@ It should contain the following dependencies:
 
 The current version has not been tested under OS X and isn't recommended until there is a stable OS X-version of MDT.
 
+* EXTRA
+
+The thesis report and upcoming user guide will also feature another view called Optimization browser, which is also a extension of MDT. This includes a view with both visual and textual tracing of the current state of a model, and what the outcome of each transformation is on a mathematical expression.
+
+
 * FURTHER INFORMATION
 
 A user guide will be added in the furture.
