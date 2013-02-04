@@ -28,9 +28,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.zest.core.widgets.Graph;
@@ -72,8 +70,8 @@ public class GraphView extends ViewPart {
 		System.out.println("[GraphView initial] Creating a new Graph View");
 		permaParent = parent;
 		graph = new Graph(permaParent, SWT.NONE);
-		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
-		listenerAdder();
+		//getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
+		//listenerAdder();
 	}
 
 	/**
@@ -354,37 +352,28 @@ public class GraphView extends ViewPart {
 	 * it will start a new thread and update the graph
 	 * in case it was a modelica file.
 	 */
-	private ISelectionListener listener = new ISelectionListener() {
-		public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
-			final IWorkbenchPart final_sourcepart = sourcepart; 
-			final ISelection final_selection = selection;
-			Job job = new Job("Dependency Graph Loading") {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
+	public void checkSelection(final ISelection final_selection) {
+		Job job = new Job("Dependency Graph Loading") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
 
-					objName = "";
-					try {
-						IStructuredSelection newSelection = (IStructuredSelection) final_selection; 
-						Object obj = newSelection.getFirstElement();
-						objName = obj.getClass().getName();
-					} catch (ClassCastException e) {}
-					catch (NullPointerException e) {}
+				objName = "";
+				try {
+					IStructuredSelection newSelection = (IStructuredSelection) final_selection; 
+					Object obj = newSelection.getFirstElement();
+					objName = obj.getClass().getName();
+				} catch (ClassCastException e) {}
+				catch (NullPointerException e) {}
 
-					if (final_sourcepart != GraphView.this &&
-							objName.equals("org.modelica.mdt.internal.core.ModelicaSourceFile")) {
-						System.out.println("[Change Selection] Found a Modelica-file!");
-						updateGraph(final_selection);
-					}
-					else {
-						System.out.println("[Change Selection] Not a Modelia-file");
-						System.out.println(objName + " : " + final_sourcepart.getTitle());
-					}
-					return Status.OK_STATUS;
+				if (objName.equals("org.modelica.mdt.internal.core.ModelicaSourceFile")) {
+					System.out.println("[Change Selection] Found a Modelica-file!");
+					updateGraph(final_selection);
 				}
-			};
-			job.schedule(); 
-		}
-	};
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule(); 
+	}
 	/**
 	 * This will remove all visual graph objects from the graph
 	 * and will perform this asynchronous with Eclips UI thread.
@@ -526,7 +515,7 @@ public class GraphView extends ViewPart {
 	}
 
 	public void dispose() {
-		getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(listener);
+		//getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(listener);
 		super.dispose();
 	}	
 }

@@ -60,6 +60,8 @@ public class GraphAnalyzer {
 			throws ConnectException, UnexpectedReplyException, InvocationError {
 		String className;
 		ModelicaNode coreNode;
+		System.out.println("Does this get written?");
+		
 		try
 		{
 			// initiate compiler
@@ -72,6 +74,8 @@ public class GraphAnalyzer {
 			e.printStackTrace();
 		}
 
+		// TODO: dont load Modelica library more than one time
+		
 		// load modelica library
 		currentCompiler.getStandardLibrary();
 		classPath = filePath.toString();
@@ -273,7 +277,7 @@ public class GraphAnalyzer {
 
 			// TODO: Should we make a list of all things that doesn't exist to avoid looking up same things over?
 			System.out.println("[Analyze Operation] Does " + tempRes + " exist? " + currentCompiler.existClass(tempRes));
-
+			
 			// Create a connection from this found function dependency
 			if (tempRes.length() != 0 && currentCompiler.existClass(tempRes))
 				createBond(className, tempRes, recursive, prevID, SWT.LINE_DOT, SWT.COLOR_GREEN);
