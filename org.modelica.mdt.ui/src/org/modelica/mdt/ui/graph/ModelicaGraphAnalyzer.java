@@ -27,17 +27,21 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  *
  * @author: Magnus Sjöstrand
  */
-public class GraphAnalyzer {
+public class ModelicaGraphAnalyzer {
 
 	// Keeps track of the loaded compiler
 	private static IModelicaCompiler currentCompiler;
 
 	// Keeps track of the class path
-	private static String classPath;
+	public static String classPath;
 
 	// Index over nodes and connections
 	private static int nid = 0;
 	private static int cid = 0;
+	public static double elapsedTimeLines = 0.0;
+	public static double elapsedTimeNodes = 0.0;
+	public static double elapsedTimeConnections = 0.0;
+	public static double elapsedTimeFamiliar = 0.0;
 
 	/**
 	 * This will start the analyze process by initiating the compiler
@@ -60,7 +64,8 @@ public class GraphAnalyzer {
 			throws ConnectException, UnexpectedReplyException, InvocationError {
 		String className;
 		ModelicaNode coreNode;
-		System.out.println("Does this get written?");
+		long t3 = System.currentTimeMillis();
+		
 		
 		try
 		{
@@ -74,20 +79,37 @@ public class GraphAnalyzer {
 			e.printStackTrace();
 		}
 
-		// TODO: dont load Modelica library more than one time
+		long tA = System.currentTimeMillis();
+		double elapsedTimeSeconds = (tA - t3)/1000.0;
+	    System.out.println("The first part of initialization of analyze took " + elapsedTimeSeconds + " s");
 		
-		// load modelica library
-		currentCompiler.getStandardLibrary();
+		// Load Modelica library only one time
+		if (!ModelicaGraphView.loadedModelica){
+				currentCompiler.getStandardLibrary();
+				ModelicaGraphView.loadedModelica = true;
+		}
 		classPath = filePath.toString();
+		long tB = System.currentTimeMillis();
+		elapsedTimeSeconds = (tB - tA)/1000.0;
+	    System.out.println("The second part of initialization of analyze took " + elapsedTimeSeconds + " s");
+		
 		// load modelica file
 		currentCompiler.loadFile(classPath);
 
+		long tC = System.currentTimeMillis();
+		elapsedTimeSeconds = (tC - tB)/1000.0;
+	    System.out.println("The third part of initialization of analyze took " + elapsedTimeSeconds + " s");
+		
 		// lists local classes of the file
 		List classList = currentCompiler.parseFile(classPath);
 
+		long tD = System.currentTimeMillis();
+		elapsedTimeSeconds = (tD - tC)/1000.0;
+	    System.out.println("The fourth part of initialization of analyze took " + elapsedTimeSeconds + " s");
+				
 		nid = -1;
-		System.out.println(classPath);
-
+		//System.out.println(classPath);
+		
 		for (int j = 0; j < classList.size(); j++) {
 			className = classList.elementAt(j).toString();
 
@@ -100,6 +122,7 @@ public class GraphAnalyzer {
 			// Creates root node
 			if (!nodesContains(className)) {
 				nid += 1;
+				System.out.println(nid);
 				if(currentCompiler.isPackage(className)) {
 					coreNode = new ModelicaNode(nid, className, SWT.COLOR_GRAY);
 				} else {
@@ -108,8 +131,16 @@ public class GraphAnalyzer {
 				setToolTipInfo(coreNode, className, classPath);
 
 				coreNode.expandable = false;
-				GraphGenerator.nodes.add(coreNode);
+				ModelicaGraphGenerator.nodes.add(coreNode);
 			}
+			
+			long t4 = System.currentTimeMillis();
+			elapsedTimeSeconds = (t4 - tD)/1000.0;
+		    System.out.println("The fifth part took " + elapsedTimeSeconds + " s");
+			
+		    elapsedTimeSeconds = (t4 - t3)/1000.0;
+		    System.out.println("The initialization of analyze took " + elapsedTimeSeconds + " s");
+			
 			// TODO: Test if this is correct when a dependency is found between class A to class B before class B has been analyzed
 			//		 Where class A and class B both comes from the same start-file
 
@@ -141,6 +172,7 @@ public class GraphAnalyzer {
 		currentCompiler.loadFile(classPath);
 
 		// Find the underlying classes of a package
+		
 		if(currentCompiler.isPackage(className)) {
 			List classList = currentCompiler.getClassNames(className);
 			for (int j = 0; j < classList.size(); j++) {
@@ -277,7 +309,7 @@ public class GraphAnalyzer {
 
 			// TODO: Should we make a list of all things that doesn't exist to avoid looking up same things over?
 			System.out.println("[Analyze Operation] Does " + tempRes + " exist? " + currentCompiler.existClass(tempRes));
-			
+
 			// Create a connection from this found function dependency
 			if (tempRes.length() != 0 && currentCompiler.existClass(tempRes))
 				createBond(className, tempRes, recursive, prevID, SWT.LINE_DOT, SWT.COLOR_GREEN);
@@ -339,17 +371,23 @@ public class GraphAnalyzer {
 			System.out.println("[Analyze Operation] " + targetName + " is a Keyword and should not be generated or analyzed");
 			return;
 		}
-
-		String myPath = (new Path(GraphAnalyzer.currentCompiler.getClassLocation(sourceName).getPath()).toString());
+		
+		System.out.println(sourceName);
+		String myPath = (new Path(ModelicaGraphAnalyzer.currentCompiler.getClassLocation(sourceName).getPath()).toString());
+		System.out.println("this is working: " + myPath);
+		
+		long t1 = System.currentTimeMillis();
 		ArrayList<Integer> lineNumbers = findLineNumber(myPath, targetName);
-		boolean familiar = true;
+		long t2 = System.currentTimeMillis();
+		elapsedTimeLines += (t2 - t1)/1000.0;
+	    boolean familiar = true;
 
 		// recursive
 		if (recursive) {
 			if (!nodesContains(targetName)) {
 				nid += 1;
 				ModelicaNode node = new ModelicaNode(nid, targetName, color);
-				GraphGenerator.nodes.add(node);
+				ModelicaGraphGenerator.nodes.add(node);
 				familiar = false;
 				setToolTipInfo(node, targetName, myPath);
 			}
@@ -357,35 +395,58 @@ public class GraphAnalyzer {
 
 			// non-recursive
 		} else if (!nodesContains(targetName)) {
+			long t3 = System.currentTimeMillis();
+			
 			nid += 1;
 			ModelicaNode node = new ModelicaNode(nid, targetName, color);
-			GraphGenerator.nodes.add(node);
+			ModelicaGraphGenerator.nodes.add(node);
 			familiar = false;
 			setToolTipInfo(node, targetName, myPath);
+			long t4 = System.currentTimeMillis();
+			elapsedTimeNodes = (t4 - t3)/1000.0;
 		}
 
+		int n = 0;
 		// Fix for handling analyze of multiple trees of classes
-		int n = nid;
-		ModelicaNode currentNode = GraphGenerator.nodes.get(n);
-		ModelicaNode prevNode = GraphGenerator.nodes.get(prev);
+		if(!nodesContains(targetName)) 
+			n = nid;
+		else {
+			int j;
+			for(j = 0; j < ModelicaGraphGenerator.nodes.size(); j++)
+			   if (ModelicaGraphGenerator.nodes.get(j).getName().equals(targetName))
+					   n = j;
+		}
+		System.out.println("n: " + n + " and prev: " + prev);
+		
+		ModelicaNode currentNode = ModelicaGraphGenerator.nodes.get(n);
+		ModelicaNode prevNode = ModelicaGraphGenerator.nodes.get(prev);
 
 		if (familiar) {
+			long t3 = System.currentTimeMillis();
+			
 			ModelicaNode instantNode = null;
-			for (int i = 0; i < GraphGenerator.nodes.size(); i++)
-				instantNode = GraphGenerator.nodes.get(i);
+			for (int i = 0; i < ModelicaGraphGenerator.nodes.size(); i++)
+				instantNode = ModelicaGraphGenerator.nodes.get(i);
 			if (instantNode.getName().endsWith(targetName))
 				n = instantNode.getId();
+
+			long t4 = System.currentTimeMillis();
+			elapsedTimeFamiliar = (t4 - t3)/1000.0;
 		}
 
+		System.out.println("Does a connection exist between " + prevNode.getName() + " and " + currentNode.getName() + "? " + !connectionsContains(prevNode.getName(), currentNode.getName()));
+		
 		// Connection exist in opposite direction
 		if (connectionsContains(currentNode.getName(), prevNode.getName()) &&
 				!prevNode.getName().equals(currentNode.getName())) {
+			long t3 = System.currentTimeMillis();
+			
 			// Bend what is already there
 			// TODO: This has to be regenerated somehow as well in order to be visualized
 
 			ModelicaConnection instantConnection = null;
-			for (int i = 0; i < GraphGenerator.connections.size(); i++) {
-				instantConnection = GraphGenerator.connections.get(i);
+			for (int i = 0; i < ModelicaGraphGenerator.connections.size(); i++) {
+				instantConnection = ModelicaGraphGenerator.connections.get(i);
 				if (instantConnection.getSource().getName().equals(currentNode.getName()) &&
 						instantConnection.getDestination().getName().equals(prevNode.getName())) 
 					instantConnection.setBending();
@@ -395,16 +456,24 @@ public class GraphAnalyzer {
 			ModelicaConnection connect = new ModelicaConnection(
 					Integer.toString(cid), "test", prevNode, currentNode, style, targetName, lineNumbers);
 			connect.setBending();
-			GraphGenerator.connections.add(connect);	
+			ModelicaGraphGenerator.connections.add(connect);	
 			cid += 1;
+			
+			long t4 = System.currentTimeMillis();
+			elapsedTimeConnections = (t4 - t3)/1000.0;
 		}
 		// Connection doesn't exist in neither direction
 		else if (!connectionsContains(prevNode.getName(), currentNode.getName()) &&
 				!prevNode.getName().equals(currentNode.getName())) {
+			long t3 = System.currentTimeMillis();
+			
 			ModelicaConnection connect = new ModelicaConnection(
 					Integer.toString(cid), "test", prevNode, currentNode, style, targetName, lineNumbers);
-			GraphGenerator.connections.add(connect);	
+			ModelicaGraphGenerator.connections.add(connect);	
 			cid += 1;
+
+			long t4 = System.currentTimeMillis();
+			elapsedTimeConnections = (t4 - t3)/1000.0;
 		}
 	}
 
@@ -417,8 +486,8 @@ public class GraphAnalyzer {
 	 * @return true if it was found, otherwise false
 	 */
 	public static boolean nodesContains(String comparingString) {
-		for (int i = 0; i < GraphGenerator.nodes.size(); i++) {
-			ModelicaNode currentNode = GraphGenerator.nodes.get(i);
+		for (int i = 0; i < ModelicaGraphGenerator.nodes.size(); i++) {
+			ModelicaNode currentNode = ModelicaGraphGenerator.nodes.get(i);
 			if (currentNode.getName().equals(comparingString)) {
 				return true;
 			}
@@ -437,8 +506,8 @@ public class GraphAnalyzer {
 	 * @return true if it was found, otherwise false
 	 */
 	public static boolean connectionsContains(String comparingSource, String comparingDestination) {
-		for (int i = 0; i < GraphGenerator.connections.size(); i++) {
-			ModelicaConnection currentConnection = GraphGenerator.connections.get(i);
+		for (int i = 0; i < ModelicaGraphGenerator.connections.size(); i++) {
+			ModelicaConnection currentConnection = ModelicaGraphGenerator.connections.get(i);
 			if (currentConnection.getSource().getName().equals(comparingSource) &&
 					currentConnection.getDestination().getName().equals(comparingDestination)) 
 				return true;
@@ -497,26 +566,26 @@ public class GraphAnalyzer {
 	 */
 	public static ArrayList<Integer> destructClasses(int sourceID, String className) {
 		ArrayList<Integer> destroyedConnections = new ArrayList<Integer>();
-		for(int i = 0; i < GraphGenerator.connections.size(); i++) {
-			if(GraphGenerator.connections.get(i).getSource().getName().equals(className)) {
-				System.out.println("[Analyze Operation] Destroying connection from " + GraphGenerator.connections.get(i).getSource().getName() + " to " + GraphGenerator.connections.get(i).getDestination().getName());
+		for(int i = 0; i < ModelicaGraphGenerator.connections.size(); i++) {
+			if(ModelicaGraphGenerator.connections.get(i).getSource().getName().equals(className)) {
+				System.out.println("[Analyze Operation] Destroying connection from " + ModelicaGraphGenerator.connections.get(i).getSource().getName() + " to " + ModelicaGraphGenerator.connections.get(i).getDestination().getName());
 				destroyedConnections.add(i);
 			}
 		}
 
 		for(int i = destroyedConnections.size()-1; i >= 0; i--) {
-			if (GraphGenerator.connections.get(destroyedConnections.get(i)).getDestination().isExpandable())
+			if (ModelicaGraphGenerator.connections.get(destroyedConnections.get(i)).getDestination().isExpandable())
 			{ 
 				// We can possibly also remove the node pointed at
-				GraphGenerator.nodes.remove(GraphGenerator.connections.get(destroyedConnections.get(i)).getDestination().getId());
+				ModelicaGraphGenerator.nodes.remove(ModelicaGraphGenerator.connections.get(destroyedConnections.get(i)).getDestination().getId());
 
 				// Update all the old nodes with a id larger than the the destroyed one that they have to be reduced
-				for(int j = GraphGenerator.connections.get(destroyedConnections.get(i)).getDestination().getId(); j < GraphGenerator.nodes.size(); j++)
-					GraphGenerator.nodes.get(j).setId(GraphGenerator.nodes.get(j).getId()-1);
+				for(int j = ModelicaGraphGenerator.connections.get(destroyedConnections.get(i)).getDestination().getId(); j < ModelicaGraphGenerator.nodes.size(); j++)
+					ModelicaGraphGenerator.nodes.get(j).setId(ModelicaGraphGenerator.nodes.get(j).getId()-1);
 				nid -= 1;
 			} 
 			int resulting = destroyedConnections.get(i);
-			GraphGenerator.connections.remove(resulting);
+			ModelicaGraphGenerator.connections.remove(resulting);
 			cid -= 1;
 		}
 		return destroyedConnections;

@@ -95,12 +95,12 @@ public class DetailedGraphView extends ViewPart {
 	private static void analyzeDetailedClassEquations(String className) throws ConnectException, UnexpectedReplyException {
 		System.out.println("[Detailed Graph View] Analyzing the loaded file's equations");
 		
-		int n =  GraphAnalyzer.getModelicaCompiler().getEquationItemsCount(className);
+		int n =  ModelicaGraphAnalyzer.getModelicaCompiler().getEquationItemsCount(className);
 		for (int i = 0; i < n; i++) {
 			// create a new graph here
 			//graphSteps.add(detailedGraph);
 			
-			ICompilerResult res = GraphAnalyzer.getModelicaCompiler().getNthEquationItem(className, i+1);
+			ICompilerResult res = ModelicaGraphAnalyzer.getModelicaCompiler().getNthEquationItem(className, i+1);
 			String trimRes = res.getFirstResult();
 			System.out.println("Incoming equation: " + trimRes);
 
@@ -247,11 +247,6 @@ public class DetailedGraphView extends ViewPart {
 				operationStack.push(c);
 			}
 		}
-	}
-
-	private static String functionalAnalyze(String funCall) {
-
-		return funCall;
 	}
 
 	private static String createSubTree(int endIndex) {

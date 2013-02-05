@@ -11,6 +11,7 @@ import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.ZestStyles;
+import org.eclipse.zest.core.widgets.internal.GraphLabel;
 import org.eclipse.zest.layouts.LayoutStyles;
 import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -24,7 +25,7 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  *
  * @author: Magnus Sjöstrand
  */
-public class GraphGenerator {
+public class ModelicaGraphGenerator {
 
 	/* The stored connections and nodes from the analyze */
 	public static List<ModelicaConnection> connections = new ArrayList<ModelicaConnection>();
@@ -61,6 +62,9 @@ public class GraphGenerator {
 				public void run() {
 					try
 					{
+						//GraphLabel test = new GraphLabel(true);
+						//test.setText("Hello");
+						
 						generateNodesOriginal(graph, fileName);
 					} catch (ConnectException e)
 					{
@@ -201,11 +205,11 @@ public class GraphGenerator {
 	private static void generateModelicaNodes(Graph graph, int startInt) {
 		for(int index = startInt; index < nodes.size(); index++) {
 			ModelicaNode tempMyNode = nodes.get(index);
-			System.out.println("Create node " + tempMyNode.getName() + " with int " + index );
+			//System.out.println("Create node " + tempMyNode.getName() + " with int " + index );
 			GraphNode tempGraphNode = createModelicaNode(graph, tempMyNode, index);
 			tempGraphNode.setBorderColor(org.eclipse.draw2d.ColorConstants.black);
 
-			System.out.println("Is this node expandable? " + tempMyNode.isExpandable());
+			//System.out.println("Is this node expandable? " + tempMyNode.isExpandable());
 			if (!tempMyNode.isExpandable())
 				tempGraphNode.setBorderWidth(3);
 			createInfoTip(tempMyNode, tempGraphNode);

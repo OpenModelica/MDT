@@ -7,14 +7,14 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.modelica.mdt.ui.graph.GraphView;
+import org.modelica.mdt.ui.graph.ModelicaGraphView;
 
 public class GraphHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException
 	{
-		System.out.println("Now we want to open up the view");
+		System.out.println("Is something new happening?");
 		
 		ISelection sel = HandlerUtil.getActiveMenuSelection(event);
 		
