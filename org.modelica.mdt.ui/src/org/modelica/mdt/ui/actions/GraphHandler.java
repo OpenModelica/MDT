@@ -11,7 +11,6 @@ import org.modelica.mdt.ui.graph.ModelicaGraphView;
 
 public class GraphHandler extends AbstractHandler {
 
-	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException
 	{
 		System.out.println("Is something new happening?");

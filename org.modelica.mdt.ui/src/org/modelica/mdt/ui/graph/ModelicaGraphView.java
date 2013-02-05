@@ -240,13 +240,9 @@ public class ModelicaGraphView extends ViewPart {
 							IWorkbenchPage activePage = getSite().getWorkbenchWindow().getActivePage();
 							if (activePage != null) {
 
-								// TODO: (BUG) This requires a Detailed Graph View to be already open, 
-								// creating it with this function doesn't work
-
-								// From a view you get the site which allow to get the service
 								IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
 								try {
-									handlerService.executeCommand("org.modelica.mdt.ui.actions.CreateView", null);
+									handlerService.executeCommand("org.modelica.mdt.ui.actions.commanddetailedgraphopener", null);
 								} catch (Exception ex) {
 									throw new RuntimeException("CreateView not found");
 								}

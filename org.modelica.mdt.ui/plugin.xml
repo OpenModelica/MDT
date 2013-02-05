@@ -398,4 +398,12 @@
 			name="Generate">
         </command>
   </extension>
+   <extension
+        point="org.eclipse.ui.commands">
+       <command 
+        	defaultHandler="org.modelica.mdt.ui.actions.DetailedGraphHandler"
+			id="org.modelica.mdt.ui.actions.commanddetailedgraphopener"
+			name="Generate Details">
+        </command>
+  </extension>
 </plugin>
