@@ -41,6 +41,7 @@
 
 package org.modelica.mdt.core.compiler;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.util.Collection;
 
@@ -297,4 +298,20 @@ public interface IModelicaCompiler
 	 */
 	public ICompilerResult getClassComment(String className)
 			throws ConnectException, UnexpectedReplyException;
+
+	/**
+	 * With the help of voodoo magic determines the path to the
+	 * omc binary that user (probably) wants to use and the working
+	 * directory of where that binary (most likely) should be started in
+	 *
+	 * This will returns for example 'c:\openmodelica132\omc.exe'
+	 * or '/usr/local/share/openmodelica/omc' depending on
+	 * such factors as: OS type, environment variables settings,
+	 * plugin user preferences, where the first matching
+	 * binary found and the weather outside.
+	 *
+	 * @return full path to the omc binary and the working folder
+	 * @throws ConnectException if the path could not be determined
+	 */
+	public File[] getOmcBinaryPaths() throws ConnectException;
 }

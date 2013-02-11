@@ -283,7 +283,8 @@ public class OMCProxy implements IModelicaCompiler {
 	 * @return full path to the omc binary and the working folder
 	 * @throws ConnectException if the path could not be determined
 	 */
-	private	File[] getOmcBinaryPaths() throws ConnectException {
+	@Override 
+	public File[] getOmcBinaryPaths() throws ConnectException {
 		String binaryName = "omc";
 
 		if (os == osType.WINDOWS) {

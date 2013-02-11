@@ -1,5 +1,6 @@
 package org.modelica.mdt.core;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.util.Collection;
 
@@ -147,6 +148,11 @@ class NoCompiler implements IModelicaCompiler
 	
 	public ICompilerResult getClassComment(String className) throws ConnectException, UnexpectedReplyException 
 	{	
+		return null;
+	}
+	
+	@Override
+	public File[] getOmcBinaryPaths() throws ConnectException {
 		return null;
 	}
 }
