@@ -129,6 +129,7 @@ import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
+import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
 import org.openmodelica.modelicaml.gen.modelica.cg.helpers.OMCClassValidator;
 import org.openmodelica.modelicaml.helper.generators.CreatorValueBinding;
@@ -138,6 +139,7 @@ import org.openmodelica.modelicaml.helper.handlers.InstantiateTestScenarioHandle
 import org.openmodelica.modelicaml.simulation.handlers.SimulationOMCAction2;
 import org.openmodelica.modelicaml.view.componentstree.Activator;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.DialogComponentModification;
+import org.openmodelica.modelicaml.view.componentstree.dialogs.ElementSelectionDialog;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.SearchDialog;
 import org.openmodelica.modelicaml.view.componentstree.dialogs.UpdateBindingsConfirmationDialog;
 import org.openmodelica.modelicaml.view.componentstree.display.NameSorter;
@@ -245,6 +247,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 
 	private Action actionReload;
 
+	public Action actionReloadAndValidate;
+
 	private IAction actionExpandArrays;
 
 	private IAction actionUpdateBindings;
@@ -283,7 +287,12 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	
 	private String markerType = Constants.MARKERTYPE_COMPONENT_MODIFICATION;
 
-	
+	/*
+	 * dialog used to select an element from the model browser
+	 */
+	private ElementSelectionDialog elementSelectionDialog;
+
+	private Action actionElementSelectedByDialog;
 	
 	
 	/**
@@ -616,9 +625,11 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	 *            the manager
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(actionFind);
-		manager.add(new Separator());
 		manager.add(actionReload);
+		manager.add(new Separator());
+		manager.add(actionFind);
+//		manager.add(new Separator());
+//		manager.add(actionReloadAndValidate);
 		manager.add(new Separator());
 		manager.add(actionValidate);
 		manager.add(actionSimulate);
@@ -709,10 +720,59 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionFind.setToolTipText("Find");
 		actionFind.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/find.png"));
 		
-		
-		
 		actionReload = new Action("actionReload") {
 			public void run() {
+				
+				
+				elementSelectionDialog = new ElementSelectionDialog(
+						//PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), // don't use this because it will block the window underneath 
+						new Shell(),
+						SWTResourceManager.getImage(ElementSelectionDialog.class,"/icons/selectItem.gif"), 
+						"Element Selection", 
+						"Select the model to be instantiated", 
+						selectedClass,
+						actionElementSelectedByDialog
+						);
+				
+				elementSelectionDialog.open();
+			}
+		};
+		actionReload.setText("(Reload");
+		actionReload.setToolTipText("Reload");
+		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/refresh.gif"));
+		actionReload.setEnabled(true);
+
+		
+		actionElementSelectedByDialog = new Action("actionElementSelectedByDialog") {
+			public void run() {
+				
+				// get the selected element from the dialog and set the view selected class 
+				if (elementSelectionDialog != null) {
+					EObject selectedElement = elementSelectionDialog.getSelectedElement();
+					if (selectedElement instanceof Class) {
+						selectedClass = (Class) selectedElement;
+
+						// close the dialog
+						elementSelectionDialog.dispose();
+						
+						// re-create the tree
+						reCreateTree();
+					}
+				}
+			}
+		};
+		actionElementSelectedByDialog.setText("(Reload");
+		actionElementSelectedByDialog.setToolTipText("Reload");
+		actionElementSelectedByDialog.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/refresh.gif"));
+		actionElementSelectedByDialog.setEnabled(true);
+
+		
+
+		
+		
+		actionReloadAndValidate = new Action("actionReloadAndValidate") {
+			public void run() {
+
 				showSelection(par, sel);
 				
 				// validate the component modifications
@@ -724,10 +784,10 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				}
 			}
 		};
-		actionReload.setText("(Re)load and validate");
-		actionReload.setToolTipText("(Re)load and validate");
-		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/refresh.gif"));
-		actionReload.setEnabled(false);
+		actionReloadAndValidate.setText("(Re)load and validate");
+		actionReloadAndValidate.setToolTipText("(Re)load and validate");
+		actionReloadAndValidate.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/refresh.gif"));
+		actionReloadAndValidate.setEnabled(false);
 		
 		actionValidateComponentModifications = new Action("actionValidateComponentModifications") { //obviously a check box style
 			public void run() {
@@ -2225,8 +2285,8 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		sel = selection;
 		par = sourcepart;
 		
-		Object[] expandedElements = viewer.getExpandedElements();
-		TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
+//		Object[] expandedElements = viewer.getExpandedElements();
+//		TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
 		
 		// build new tree
 		if (sel instanceof IStructuredSelection) {
@@ -2239,9 +2299,28 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 				if (selectedElement instanceof Class ) {
 					selectedClass = (Class) selectedElement;
 
-					createTree();
+//					createTree();
 				}
 			}
+		}
+		
+		// set new input from the selection.
+//		viewer.setInput(getViewSite());
+//
+//		viewer.setExpandedElements(expandedElements);
+//		viewer.setExpandedTreePaths(expandedTreePaths);
+		
+		reCreateTree();
+	}
+	
+	
+	public void reCreateTree() {
+
+		Object[] expandedElements = viewer.getExpandedElements();
+		TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
+		
+		if (selectedClass instanceof Class) {
+			createTree();
 		}
 		
 		// set new input from the selection.
@@ -2250,6 +2329,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		viewer.setExpandedElements(expandedElements);
 		viewer.setExpandedTreePaths(expandedTreePaths);
 	}
+
 
 	/*
 	 * public void setFocus() { pagebook.setFocus(); }
@@ -2393,7 +2473,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 			// set actions
 			actionSimulate.setEnabled(true);
 			actionValidate.setEnabled(true);
-			actionReload.setEnabled(true);
+			actionReloadAndValidate.setEnabled(true);
 			actionCollapseAll.setEnabled(true);
 			
 			ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
@@ -2438,7 +2518,7 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		else {
 			actionSimulate.setEnabled(false);
 			actionValidate.setEnabled(false);
-			actionReload.setEnabled(false);
+			actionReloadAndValidate.setEnabled(false);
 			actionCollapseAll.setEnabled(false);
 		}
 	}

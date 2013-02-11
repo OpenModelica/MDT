@@ -480,6 +480,10 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
 
+		manager.add(actionReloadView);
+		manager.add(actionClear);
+		manager.add(new Separator());
+
 		manager.add(actionCollapseAll);
 
 		manager.add(actionLinkWithEditor);
@@ -490,9 +494,8 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 		manager.add(actionRefreshAndValidate);
 		manager.add(new Separator());
 		
-		manager.add(actionClear);
-		manager.add(actionReloadView);
-		manager.add(new Separator());
+//		manager.add(actionReloadView);
+//		manager.add(new Separator());
 		
 //		manager.add(new Separator());
 //		drillDownAdapter.addNavigationActions(manager);

@@ -455,18 +455,24 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
-		
-		manager.add(actionFind);
-		manager.add(new Separator());
-		manager.add(actionClear);
-		manager.add(new Separator());
+
 		manager.add(actionReload);
 		manager.add(new Separator());
+
+		manager.add(actionFind);
+		manager.add(new Separator());
+
+		manager.add(actionClear);
+		manager.add(new Separator());
+
 		manager.add(actionCollapseAll);
+		manager.add(new Separator());
+
 		manager.add(actionLinkWithEditor);
 //		manager.add(new Separator());
 //		manager.add(actionValidate);
 		manager.add(new Separator());
+
 		manager.add(actionInstantiatedClassMode);
 		manager.add(new Separator());
 		

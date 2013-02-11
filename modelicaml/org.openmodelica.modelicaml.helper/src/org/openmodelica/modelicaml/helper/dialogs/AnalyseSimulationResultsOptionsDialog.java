@@ -527,6 +527,15 @@ public class AnalyseSimulationResultsOptionsDialog extends Dialog {
 			String projectPath = iProject.getLocationURI().toString().replaceFirst("file:\\/", "");
 			String genCodeFolderAbsolutePath = projectPath + "/" + Constants.folderName_code_gen;
 			
+			/*
+			 * Check if the folder exist (maybe it was deleted or not yet created), 
+			 * return project path otherwise.
+			 */
+			File cgFolder = new File(genCodeFolderAbsolutePath);
+			if (!cgFolder.exists() && projectPath != null) {
+				return projectPath;
+			}
+			
 			// root package name
 			try {
 				EObject rootEObject = umlModel.lookupRoot();

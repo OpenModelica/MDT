@@ -280,13 +280,16 @@ public class RelationsView extends ViewPart {
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(actionFind);
-		manager.add(new Separator());
 		manager.add(actionReload);
 		manager.add(new Separator());
+
+		manager.add(actionFind);
+		manager.add(new Separator());
+
 		manager.add(actionCollapseAll);
 		manager.add(actionLinkWithEditor);
 		manager.add(new Separator());
+		
 		drillDownAdapter.addNavigationActions(manager);
 	}
 

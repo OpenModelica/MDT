@@ -226,15 +226,25 @@ public class VariableTreeComposite extends org.eclipse.swt.widgets.Composite imp
 								if (event.detail == SWT.CHECK) {
 
 									TreeItem item = (TreeItem) event.item;
+									
+									/*
+									 * Only plot leaf variables 
+									 * in order to avoid that the entire tree is plotted. 
+									 */
+									if (item.getItems() == null || item.getItems().length == 0) {
 
-									boolean checked = item.getChecked();
-
-									checkItems(item, checked);
-
-									checkPath(item.getParentItem(), checked, false);
-
+										boolean checked = item.getChecked();
+										checkItems(item, checked);
+										checkPath(item.getParentItem(), checked, false);
+									}
+									else {
+										/*
+										 * Feedback to user: Instead of opening a dialog 
+										 * mark it grey in order to indicate that it was not plotted.
+										 */
+										item.setGrayed(true);
+									}
 								}
-
 							}
 					    });
 					}
