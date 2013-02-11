@@ -70,6 +70,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -510,6 +511,7 @@ public class OMCProxy implements IModelicaCompiler {
 	// communication with OMC
 	// old synchronization aka 'private synchronized String sendExpression(String command)'
 	// doesn't work when there is possibility of multiple instances of OMCProxy objects
+	@Override
 	public ICompilerResult sendExpression(String command, boolean showInConsole) throws ConnectException {
 		String error = null;
 		String[] retval = { "" };
@@ -599,6 +601,7 @@ public class OMCProxy implements IModelicaCompiler {
 		}
 	}
 
+	@Override
 	public void setConsoleOutputStream(OutputStream outputStream) {
 		consoleOutput = outputStream;
 	}
@@ -677,6 +680,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * @throws UnexpectedReplyException
 	 * @throws InitializationException
 	 */
+	@Override
 	public List getClassNames(String className) throws ConnectException, UnexpectedReplyException {
 		ICompilerResult retval = sendExpression("getClassNames(" + className + ")", true);
 
@@ -701,6 +705,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * @throws ConnectException
 	 * @throws UnexpectedReplyException
 	 */
+	@Override
 	public IModelicaClass.Restriction getRestriction(String className)
 			throws ConnectException, UnexpectedReplyException {
 		ICompilerResult result = sendExpression("getClassRestriction(" + className + ")", true);
@@ -764,6 +769,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * @throws UnexpectedReplyException
 	 * @throws InitializationException
 	 */
+	@Override
 	public ParseResults loadSourceFile(IFile file) throws ConnectException, UnexpectedReplyException {
 		final IPath absoluteWorkspacePath = file.getFullPath();
 		synchronized (getLazyLoadList()) {
@@ -771,8 +777,8 @@ public class OMCProxy implements IModelicaCompiler {
 			if (getLazyLoadList().containsKey(absoluteWorkspacePath)) {
 				if (file.exists()) {
 					long lastModification = file.getModificationStamp();
-					if (lastModification != IFile.NULL_STAMP) {
-						LazyLoadResult llr = (LazyLoadResult)getLazyLoadList().get(absoluteWorkspacePath);
+					if (lastModification != IResource.NULL_STAMP) {
+						LazyLoadResult llr = getLazyLoadList().get(absoluteWorkspacePath);
 						if (llr.lastModification >= lastModification) {
 							return llr.results;
 						}
@@ -786,6 +792,7 @@ public class OMCProxy implements IModelicaCompiler {
 		if (containsDuplicateClasses(file, fullName)) {
 			final IWorkbench workbench = PlatformUI.getWorkbench();
 			workbench.getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					Shell shell = workbench.getActiveWorkbenchWindow().getShell();
 					String message = "Warning, the file '" + absoluteWorkspacePath +
@@ -834,7 +841,7 @@ public class OMCProxy implements IModelicaCompiler {
 		synchronized (getLazyLoadList()) {
 			if (file.exists()) {
 				long lastModification = file.getModificationStamp();
-				if (lastModification != IFile.NULL_STAMP) {
+				if (lastModification != IResource.NULL_STAMP) {
 					getLazyLoadList().put(file.getFullPath(), new LazyLoadResult(res, lastModification));
 				}
 			}
@@ -852,6 +859,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * @throws UnexpectedReplyException
 	 * @throws InvocationError
 	 */
+	@Override
 	public DefinitionLocation getClassLocation(String className)
 			throws ConnectException, UnexpectedReplyException, InvocationError {
 		ICompilerResult res = sendExpression("getCrefInfo(" + className + ")", true);
@@ -911,6 +919,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * @return true if className is a package, false otherwise
 	 * @throws ConnectException
 	 */
+	@Override
 	public boolean isPackage(String className) throws ConnectException {
 		ICompilerResult res = sendExpression("isPackage(" + className + ")", true);
 		String retval = res.getFirstResult();
@@ -926,6 +935,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * @return a <code>Collection</code> (of <code>ElementsInfo</code>)
 	 * containing the information about className
 	 */
+	@Override
 	public Collection<ElementInfo> getElements(String className)
 			throws ConnectException, InvocationError, UnexpectedReplyException {
 		ICompilerResult res = sendExpression("getElementsInfo(" + className + ")", true);
@@ -975,6 +985,7 @@ public class OMCProxy implements IModelicaCompiler {
 		throw new UnexpectedReplyException("getElementsInfo(" + className + ")" + "replies:'" + retval + "'");
 	}
 
+	@Override
 	public IClassInfo getClassInfo(String className)
 			throws ConnectException, UnexpectedReplyException {
 		ICompilerResult res = sendExpression("getClassInformation(" + className + ")", true);
@@ -1016,6 +1027,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * @return the name of the compiler that this plugin tries to communicate
 	 * with (at least it tries...)
 	 */
+	@Override
 	public String getCompilerName() {
 		String version = "";
 		try {
@@ -1034,6 +1046,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * @throws ConnectException if we're unable to start communicating with
 	 * the server
 	 */
+	@Override
 	public String[] getStandardLibrary() throws ConnectException {
 		String[] omcLibrariesFetch = PreferenceManager.getOMCLibrariesArray();
 		if (omcLibraries != omcLibrariesFetch ) {
@@ -1051,6 +1064,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * @throws ConnectException if we're unable to start communicating with
 	 * the server
 	 */
+	@Override
 	public ICompilerResult getClassString(String className) throws ConnectException, UnexpectedReplyException {
 		ICompilerResult res = sendExpression("list("+ className +")", true);
 
@@ -1080,6 +1094,7 @@ public class OMCProxy implements IModelicaCompiler {
 			message = what;
 		}
 
+		@Override
 		public synchronized void run() {
 			if (message != null) {
 				StringTokenizer tokenizer = new StringTokenizer(message, "\n");
@@ -1163,6 +1178,7 @@ public class OMCProxy implements IModelicaCompiler {
 			super("OpenModelica Interactive Compiler Thread");
 		}
 
+		@Override
 		public void run() {
 			File tmp[] = null;
 			try {
@@ -1303,6 +1319,7 @@ public class OMCProxy implements IModelicaCompiler {
 		}
 	}
 
+	@Override
 	public boolean isRunning() {
 		if (fOMCThread.isAlive()) {
 			return true;
@@ -1345,6 +1362,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * the server
 	 */
 
+	@Override
 	public ICompilerResult getNthInheritedClass(String className, int n) throws ConnectException, UnexpectedReplyException {
 		ICompilerResult res = sendExpression("getNthInheritedClass("+ className + ", " + n + ")", true);
 		res.trimFirstResult();
@@ -1359,6 +1377,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * the server
 	 */
 
+	@Override
 	public int getInheritanceCount(String className) throws ConnectException, UnexpectedReplyException {
 		int resNum = 0;
 		ICompilerResult res = sendExpression("getInheritanceCount(" + className + ")", true);
@@ -1376,6 +1395,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * the server
 	 */
 
+	@Override
 	public ICompilerResult getNthAlgorithmItem(String className, int n) throws ConnectException, UnexpectedReplyException {
 		ICompilerResult res = sendExpression("getNthAlgorithmItem("+ className + ", " + n + ")", true);
 		res.trimFirstResult();
@@ -1390,6 +1410,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * the server
 	 */
 
+	@Override
 	public int getAlgorithmItemsCount(String className) throws ConnectException, UnexpectedReplyException {
 		int resNum = 0;
 		ICompilerResult res = sendExpression("getAlgorithmItemsCount(" + className + ")", true);
@@ -1407,6 +1428,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * the server
 	 */
 
+	@Override
 	public ICompilerResult getNthEquationItem(String className, int n) throws ConnectException, UnexpectedReplyException {
 		ICompilerResult res = sendExpression("getNthEquationItem("+ className + ", " + n + ")", true);
 		res.trimFirstResult();
@@ -1421,6 +1443,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * the server
 	 */
 
+	@Override
 	public int getEquationItemsCount(String className) throws ConnectException, UnexpectedReplyException {
 		int resNum = 0;
 		ICompilerResult res = sendExpression("getEquationItemsCount(" + className + ")", true);
@@ -1438,6 +1461,7 @@ public class OMCProxy implements IModelicaCompiler {
 	 * the server
 	 */
 
+	@Override
 	public List getComponents(String className) throws ConnectException, UnexpectedReplyException {
 		ICompilerResult res = sendExpression("getComponents("+ className +")", true);
 		//System.out.println(res.getFirstResult());
@@ -1452,6 +1476,7 @@ public class OMCProxy implements IModelicaCompiler {
 		return list;
 	}
 
+	@Override
 	public boolean existClass(String className) throws ConnectException, UnexpectedReplyException {
 		ICompilerResult res = sendExpression("existClass("+ className +")", true);
 		if (res.getFirstResult().trim().toString().equals("true")) {
@@ -1460,22 +1485,26 @@ public class OMCProxy implements IModelicaCompiler {
 		return false;
 	}
 
+	@Override
 	public ICompilerResult getErrorString() throws ConnectException, UnexpectedReplyException {
 		ICompilerResult res = sendExpression("getErrorString()", true);
 		return res;
 	}
 
+	@Override
 	public ICompilerResult loadFile(String classPath) throws ConnectException, UnexpectedReplyException {
 		classPath = classPath.replace("\\", "/");
 		ICompilerResult res = sendExpression("loadFile(\""+ classPath +"\")", true);
 		return res;
 	}
 
+	@Override
 	public ICompilerResult getSourceFile(String className) throws ConnectException, UnexpectedReplyException {
 		ICompilerResult res = sendExpression("getSourceFile(" + className +")", true);
 		return res;
 	}
 
+	@Override
 	public List parseFile(String fileName) throws ConnectException, UnexpectedReplyException {
 		ICompilerResult retval = sendExpression("parseFile(\""+ fileName + "\")", true);
 
@@ -1491,11 +1520,13 @@ public class OMCProxy implements IModelicaCompiler {
 		return list;
 	}
 
+	@Override
 	public ICompilerResult getClassRestriction(String className) throws ConnectException, UnexpectedReplyException {
 		ICompilerResult res = sendExpression("getClassRestriction(" + className + ")", true);
 		return res;
 	}
 
+	@Override
 	public ICompilerResult getClassComment(String className) throws ConnectException, UnexpectedReplyException {
 		ICompilerResult res = sendExpression("getClassComment(" + className + ")", true);
 		return res;
