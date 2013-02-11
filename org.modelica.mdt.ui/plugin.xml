@@ -381,11 +381,27 @@
                style="push">
       </command>
     </menuContribution>
+    <menuContribution locationURI="popup:org.modelica.mdt.ui.view.ModelicaProjectsView">
+      <command commandId="org.modelica.mdt.ui.actions.commandsimulate"
+        label="Simulate"
+        style="push">
+      </command>
+    </menuContribution>
+    <menuContribution locationURI="popup:popup:#TextEditorContext?after=additions">
+      <command commandId="org.modelica.mdt.ui.actions.commandsimulate"
+               label="Simulate"
+               style="push">
+      </command>
+    </menuContribution>
   </extension>
   <extension point="org.eclipse.ui.commands">
     <command defaultHandler="org.modelica.mdt.ui.actions.GraphHandler"
              id="org.modelica.mdt.ui.actions.commandgraphopener"
              name="Generate">
+    </command>
+    <command defaultHandler="org.modelica.mdt.ui.actions.SimulateHandler"
+             id="org.modelica.mdt.ui.actions.commandsimulate"
+             name="simulate">
     </command>
   </extension>
 </plugin>
