@@ -1,0 +1,61 @@
+** User Guide for "Depdency Browser" and "Optimization Browser" **
+
+
+__ About __
+
+This has been written and developed by Magnus Sjöstrand with the support from Peter Fritzson, Adrian Pop, Adeel Ashgar and Martin Sjölund.
+
+
+__ Depdency Browser __
+
+** Background **
+
+Initially a developer at the company Wolfram Mathcore showcased a depdendency browser in OpenModelica for all of his files in his current workspace. This eventually turned out to be integrated with MDT but with a new set of code which would expand upon what MDT already have and use calls to the OMC, but also a more optimized design of the previous idea.
+
+The purpose of the depdency browser is to find all the depdencies of a given file. There exists other similar tools like this but no one that support Modelica or is integrated with MDT. The reason why someone would find this tool useful is because it can work both in debugging and architectual planning, for someone troubleshooting why certain objects are bounded or hard to remove/edit, or it could be used for giving a quick overview as a form of presentation to new developers or customers and don't want to go through each file in a large set of resources.
+
+** Features **
+
+The dependency browser is a common Eclipse view which can be attached or deattached to Eclipse. The view is renamed "Modelica Graph View" inside of Eclipse. In order to generate something new the user has to right-click a Modelica-file with a .mo file extension and select "Generate Graph View". This will also automatically focus on the Modelica Graph View.
+
+Once the Modelica Graph View has gained focus it will start performing the initiation of the Modelica environment by loading it for a few seconds. NOTE: this is only performed at the beginning of each new chosen file that is to be generated. If the file isn't empty and follows the correct syntax according to Modelica standards it should always show a root-node. This is ment to be the perspective of the whole systems structure and from here on the user will get information on what is connected to this root by generating a tree.
+
+Once the tree has been analyzed and visualized it will show the root and alternativly the most direct dependencies going from this root class and to what classes those depdencies are going to.
+
+This tree is very interactive to give the user as much control as possible over the presented data. Here is a list of things to do inside of this view once the tree has been generated:
+
+- Nodes can be moved around while holding onto their connections without interupting any further analyzes.
+- Nodes can be "expanded", meaning that they can expand the tree by showing the depdencies going further on from that expanded node. This is done by double-clicking on a node. A expanded node will be marked with a bold outline around the node.
+- Nodes can be "destructed", meaning that they in counter to expanding the tree instead will collapse the destructed node along with it's outgoing depdencies. This is done by double-clicking on a node that has previously been expanded.
+- Nodes can show their origins. By right-clicking on a node and selecting "Open selected reference" the user will be redirected to the file in which this class was created from.
+- Nodes can show what transformations is being made to them in a simulation. By right-clickling on a node and selecting "Analyze operations" it will be presented in a separate view.
+- Connections can show what specific lines of code that created it inside of the source file and what the line number is. When clicking on one of the lines the user will be redirected to the file and the specific line in which the dependency was created along with a highlight of the line. NOTE: A connection can contain multiple dependencies but will only be represented with one visual connection for optimization reasons.
+
+
+__ Optimization Browser __
+
+** Background **
+
+This part has been developed as a spin-off to the depdency browser-project. It is based on previous work of Martin Sjölund at the department PELAB of Linköpings University. His recent work has shown that it was possible to generate all transformations that was performed when Modelica tries to optimize mathematical expressions in a Modelica code. This was done by writing a script extension during simulation. Later on this would also be further developed into having a better generator that gives more information, however this is still a work in progress as of now (2013-02-11). 
+
+The idea was that this could be integrated into Modelica so that a user would be able to see how a single expression changes form in each step of optimization "behind the scenes". The main purpose of this would be to get a better overlook of how Modelica works once compiled and that it performs the correct operations for code to be fully optimized.
+
+** Features **
+Just like the Modelica Graph View this is also a Eclipse view and is renamed "Modelica Detailed Graph View". A user will be redirect to this view from the Modelica Graph View when right-clicking on a node and selecting "Analyze operations". The user will then be presented with the mathematical expressions of that class that was contained in chosen node. Each expression is selectable on its own. When a expression is selected a graph will be shown to the right inside of the view that shows the structure of the mathematical expression in the form of a tree structure. Results of each step will at the same time be shown in a text box at the bottom of the view.
+
+__ FAQ __
+
+Q: Why do the nodes and connections have differing styles in the generated tree?
+
+A: The reason for this is to separate different types of depdencies and entities. The grey nodes represent packages and green nodes are classes. Arrows represent depdencies coming from an inheritance or attribute, plain lines are depdencies coming from funciton calls, while dotted lines represent depdencies to packages.
+ 
+
+Q: Why is the structure "moving around" every time I expand a node?
+
+A: This is because the graphical implementation use a layout orderer that will regroup all of the nodes each time new nodes are introduced. The result of that is that the tree will be ordered into a tree with non-crossing branches if possible.
+
+
+Q: When I collapse a node it sometimes wont remove the full branches. Is this a bug?
+
+A: This is not a bug. It could simply be the result of a loop in your tree. By deleting depdencies recursivly for each found level in a single branch it may end up deleting more things than intended, even the root, if it cointains a loop going from this branch. This is a solution to this in where it will only remove the dependency but leave the node alone if it notice that the the next node in that branch has a depdency to something of its own.
+

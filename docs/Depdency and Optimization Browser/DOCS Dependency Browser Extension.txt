@@ -2,7 +2,7 @@ THE MDT-GRAPHICAL DEPENDENCY BROWSER MANUAL
 
 * ABOUT
 
-This feature has been developed by Magnus Sjöstrand as a master thesis subject, based on previous work by Adeel Asghar and Leonardo Laguna Ruiz.
+This feature has been developed by Magnus Sjöstrand as a master thesis subject, based on previous work by Adeel Asghar and Leonardo Laguna Ruiz. All relevant files can be found in the svn repository under org.modelica.mdt.ui.graph .
 
 * THESIS REPORT
 
