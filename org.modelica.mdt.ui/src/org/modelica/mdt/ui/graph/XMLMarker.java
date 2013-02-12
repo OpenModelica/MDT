@@ -28,8 +28,7 @@ public class XMLMarker
 {
 	private static File file;
 
-	// TODO: Attach a className as a input parameter in order to find the correct file and display it for that node
-	public static void readTextFile() {
+	public static void readTextFile(String path) {
 		// Stream to read file
 		FileInputStream fin;		
 

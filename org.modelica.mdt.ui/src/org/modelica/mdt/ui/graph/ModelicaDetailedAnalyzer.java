@@ -20,126 +20,61 @@ public class ModelicaDetailedAnalyzer
 		resultingText = firstEq.substring(0, firstEq.length()) + "\n";
 		simplifyArray.clear();
 	}
+	
+	public static void setEquationIndex(int index) {
+		resultingText = resultingText + "\n\n--Equation "+ index + "--\n\n";
+	}
 
 	public static String getFullText() {
 		return resultingText;
 	}
 
-	public static void handleSimpleOperation(String resultEq) {
-		if (!resultingEquation.contains(resultEq.substring(0, resultEq.indexOf(" "))))
-			return;
+	public static void handleSimpleOperation(String firstOp) {
 		resultingText = resultingText + "   Simple Equation\n";
 
-		// Add the operation in its simplest form
-		resultingText = resultingText + "       " + resultEq + "\n";
-
-		// TODO: This doesn't change the resulting equation?
-
+		// Add operations to the text
+		resultingText = resultingText + "       " + firstOp + "\n";
+		
 		// Then add the resulting equation of the operation
-		resultingText = resultingText + resultingEquation + "\n";
+		//resultingText = resultingText + resultingEquation + "\n";
 	}
 
-	public static void handleSolveOperation(String firstOp, String secondOp, String thirdOp) {
-		if (!resultingEquation.contains(thirdOp.substring(0, thirdOp.indexOf(" "))))
-			return;
+	public static void handleSolveOperation(String firstOp, String secondOp) {
 		resultingText = resultingText + "   Solve\n";
-		// Add the operations in its simplest form
-		addThreeOperationStructure(resultingText, firstOp, secondOp, thirdOp);
 
-		// Modify the resulting equation
-		String toReplace = thirdOp.substring(0, thirdOp.indexOf(" "));
-		String toReplaceWith = thirdOp.substring(firstOp.indexOf("=")+2, thirdOp.length());
-		resultingEquation = resultingEquation.replace(toReplace, toReplaceWith);
-
+		// Add operations to the text
+		resultingText = resultingText + "       " + firstOp + "\n";
+		resultingText = resultingText + "       " + secondOp + "\n";		
+		
 		// Then add the resulting equation of the operation
-		resultingText = resultingText + resultingEquation + "\n";
+		//resultingText = resultingText + resultingEquation + "\n";
 	}
 
-	public static void handleDeriveOperation(String firstOp, String secondOp, String thirdOp) {
+	public static void handleDeriveOperation(String firstOp, String secondOp) {
 		resultingText = resultingText + "   Derive\n";
-		// Add the operations in its simplest form
-		addThreeOperationStructure(resultingText, firstOp, secondOp, thirdOp);
 
-		// TODO: This doesn't change the resulting equation?
-
+		// Add operations to the text
+		resultingText = resultingText + "       " + firstOp + "\n";
+		resultingText = resultingText + "       " + secondOp + "\n";
+		
 		// Then add the resulting equation of the operation
-		resultingText = resultingText + resultingEquation + "\n";
+		//resultingText = resultingText + resultingEquation + "\n";
 	}
 
 	// A Simplification-operation may have been performed before this
-	public static void handleSubstOperation(String firstOp, String secondOp, String thirdOp) {
-		System.out.println(firstOp + "    " + resultingEquation);
+	public static void handleSubstOperation(String firstOp, String secondOp) {
+		resultingText = resultingText + "   Subst\n";
 		
-		if (!resultingEquation.contains(firstOp))
-			return;
-
-		resultingText = resultingText + "   Substitution\n";
-		// Add the operations in its simplest form
-		addThreeOperationStructure(resultingText, firstOp, secondOp, thirdOp);
-
-		String beforeMod = resultingEquation;
-		resultingEquation.replace(firstOp, thirdOp);
-		// TODO: This is just a case-based solution for parenthesis
-		if (resultingEquation.equals(beforeMod))
-			resultingEquation.replace("("+firstOp+")", thirdOp);
-
+		// Add operations to the text
+		resultingText = resultingText + "       " + firstOp + "\n";
+		resultingText = resultingText + "       " + secondOp + "\n";
+		
 		// Then add the resulting equation of the operation
-		resultingText = resultingText + resultingEquation + "\n";
-
-		// Check if there is a simplicification for this equation
-		for (int i = 0; i < simplifyArray.size(); i++) {
-			System.out.println("simplifyArray.get(i)");
-			if (resultingEquation.contains("(" + simplifyArray.get(i) + ")")) {
-				System.out.println("Now we want to perform a simplicification");
-				handleProSimplifyOperation(simplifyArray.get(i), simplifyArray.get(i+1));
-				simplifyArray.remove(i);
-				simplifyArray.remove(i+1);
-			}
-		}
-	}
-
-	// A Simplification-operation will always take place after a substitution (?)
-	public static void handlePreSimplifyOperation(String firstOp, String secondOp, String thirdOp) {
-		// TODO: Can be replaced with a x3-matrix
-		System.out.println("Add " + firstOp + " and " + thirdOp);
-		simplifyArray.add(firstOp);
-		simplifyArray.add(thirdOp);
-
-		// Check if there is a simplicification for this equation
-		for (int i = 0; i < simplifyArray.size(); i++) {
-			if (resultingEquation.contains("(" + simplifyArray.get(i) + ")")) {
-				System.out.println("Now we want to perform a simplicification");
-				handleProSimplifyOperation(simplifyArray.get(i), simplifyArray.get(i+1));
-				simplifyArray.remove(i);
-				simplifyArray.remove(i+1);
-			}
-		}
-	}
-
-	private static void handleProSimplifyOperation(String firstOp, String thirdOp) {
-		resultingText = resultingText + "   Simplifying\n";
-		// Add the operations in its simplest form
-		addThreeOperationStructure(resultingText, firstOp, "==>\n==>", thirdOp);
-
-		String beforeMod = resultingEquation;
-		resultingEquation.replace(firstOp, thirdOp);
-		// TODO: This is just a case-based solution for parenthesis
-		if (resultingEquation.equals(beforeMod))
-			resultingEquation.replace("("+firstOp+")", thirdOp);
-
-
-		// Then add the resulting equation of the operation
-		resultingText = resultingText + resultingEquation + "\n";
+		//resultingText = resultingText + resultingEquation + "\n";
 	}
 
 	public static void handleDummyOperation(String firstEq, String resultEq) {
 		// TODO: Should be fixed in the future
 		System.out.println("Unhandled Dummy-case");
-	}
-
-	private static void addThreeOperationStructure(String text, String a, String b, String c) {
-		resultingText = resultingText + "       " + a + "\n";
-		resultingText = resultingText + "       " + b + "\n";
-		resultingText = resultingText + "       " + c + "\n";
 	}
 }

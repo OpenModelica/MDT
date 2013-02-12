@@ -7,10 +7,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.SWT;
@@ -26,6 +30,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Text;
@@ -38,10 +43,15 @@ import org.eclipse.zest.core.widgets.internal.GraphLabel;
 import org.eclipse.zest.layouts.LayoutStyles;
 import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
+//import org.modelica.mdt.omc.OMCProxy;
+import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.ICompilerResult;
+import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.IModelicaCompiler;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+//import org.modelica.mdt.core.preferences.PreferenceManager;
 
 /**
  * This class sets up another view presenting each equation
@@ -63,10 +73,13 @@ public class ModelicaDetailedGraphView extends ViewPart {
 	private static ScrolledComposite sc2;
 	private static Composite equationPanel;
 	private static Composite graphPanel;
-
+	private static boolean graphVisible;
+	
 	private static ArrayList<Button> buttonArray;
 	private static Graph[] graphArray;
 
+	private static IModelicaCompiler currentCompiler;
+	
 	@Override
 	public void createPartControl(Composite parent)
 	{
@@ -75,7 +88,6 @@ public class ModelicaDetailedGraphView extends ViewPart {
 
 		detailedParent.setLayout(new FillLayout(SWT.VERTICAL));
 		buttonArray = new ArrayList<Button>();
-		
 		
 		Composite topArea = new Composite(detailedParent, SWT.NONE);
 		topArea.setLayout(new FillLayout());
@@ -106,21 +118,25 @@ public class ModelicaDetailedGraphView extends ViewPart {
 		graphPanel.setLayout(fillLayout);
 
 		sc2.setContent(graphPanel);
+		graphVisible = false;
 	}
 
-	private static void callMiniGraph(boolean graphVisible, Composite grid, int index)
+	private static void callMiniGraph(Composite grid, int index)
 	{
 		System.out.println("Do something with the grid based on index " + index);
-
+		System.out.println(graphVisible);
+		
 		// 1. Check if the graph of this index already exist
 		if (!graphVisible) {
 			//	2. if it doesn't, do addMiniGraph(grid, i)
 			addMiniGraph(grid, index);
+			graphVisible = true;
 		} else {
 			//	3. if it does, do removeMiniGraph(grid, i)
 			// TODO: How do we know which one to remove? Create a new class to keep track of int?
 			System.out.println("remove graph at " + index);
 			removeMiniGraph(grid, index);
+			graphVisible = false;
 		}
 	}
 
@@ -171,7 +187,6 @@ public class ModelicaDetailedGraphView extends ViewPart {
 		refreshView();
 		graphArray = new Graph[numberOfEquations];
 		
-		// TODO: How do we stretch the width of these buttons?
 		for (int i = 0; i < numberOfEquations; i++) {
 			final Button equationB = new Button(equationPanel, SWT.RADIO);
 			final int buttonIndex = i;
@@ -184,7 +199,8 @@ public class ModelicaDetailedGraphView extends ViewPart {
 			equationB.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event e) {
 					System.out.println("Clicked on " + buttonArray.get(buttonIndex).getText() + " with int " + buttonIndex);
-					callMiniGraph(!buttonArray.get(buttonIndex).getSelection(), graphPanel, buttonIndex);
+					//callMiniGraph(!buttonArray.get(buttonIndex).getSelection(), graphPanel, buttonIndex);
+					callMiniGraph(graphPanel, buttonIndex);
 					analyzeOptimizations(buttonArray.get(buttonIndex).getText().substring(0, buttonArray.get(buttonIndex).getText().length()-1), className);
 				}
 			});			
@@ -434,10 +450,8 @@ public class ModelicaDetailedGraphView extends ViewPart {
 		ModelicaDetailedAnalyzer.setStartingEquation(equation);
 		try
 		{
-			consoleDump(className);
-		
-			XMLMarker.readTextFile();
-			XMLParser.readTextFile();
+			String localPath = consoleDump(className);
+			XMLParser.readTextFile(localPath);
 			
 		} catch (IOException e1)
 		{
@@ -457,56 +471,35 @@ public class ModelicaDetailedGraphView extends ViewPart {
 	 * 
 	 * @throws IOException 
 	 */
-	private static void consoleDump(String className) throws IOException {
+	private static String consoleDump(String className) throws IOException {
 		// TODO: This has to be fixed within MDT to handle simulation with the dump-flag better
 		System.out.println("Perform dump");
 		
-		FileOutputStream fo = new FileOutputStream("C:/runtime-EclipseApplication/testCases/" + className + ".mos");
-		String localClassPath = ModelicaGraphAnalyzer.classPath;
+		String resPath = "";
 		
-		new PrintStream(fo).println("loadModel(Modelica);");
-		new PrintStream(fo).println("getErrorString();");
-		new PrintStream(fo).println("loadFile(\"" + localClassPath + "\");");
-		new PrintStream(fo).println("getErrorString();");
-		
-		//new PrintStream(fo).println("cd(\"" + "C:/runtime-EclipseApplication/testCases" + "\");");
-		new PrintStream(fo).println("simulate(" + className + ");");
-		new PrintStream(fo).println("getErrorString();");
-
-		consoleDumpCommand(className, localClassPath);
-		/*
-		consoleDumpCommand(new String[]{"cmd", "omc", "+s", "+i=C:/runtime-EclipseApplication/testCases/" + className + ".mo", 
-				"simCodeTarget=Dump", "C:\\runtime-EclipseApplication\\testCases\\" + className + ".mos",
-				">", "C:\\runtime-EclipseApplication\\testCases\\a.txt"});
-		*/
-	}
-
-	private static void consoleDumpCommand(String className, String classPath) throws IOException{
-		// - Set the simCodeTarget option via setCommandLineOptions
-		
-		System.out.println("Do we get here?");
-		// - Run the simulate command.
-		//System.out.println(ModelicaGraphAnalyzer.getModelicaCompiler().sendExpression("simulate(C:\\runtime-EclipseApplication\\testCases\\+ " +className+ ".mos", false);
-		
-		//Process p = Runtime.getRuntime().exec("omc +s +i=C:/runtime-EclipseApplication/testCases/ModelicaC.mo simCodeTarget=Dump C:/runtime-EclipseApplication/testCases/ModelicaC.mos > C:/runtime-EclipseApplication/testCases/a.txt");
-		ProcessBuilder pb = new ProcessBuilder("cmd", "omc", "+s", "+i="+classPath+" simCodeTarget=Dump C:/runtime-EclipseApplication/testCases/"+ className + ".mos");
-		Process p = pb.start();
-		
-		BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-		BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-
-		// read the output from the command
-		String s = null;
-		System.out.println("Here is the standard output of the command:\n");
-		while ((s = stdInput.readLine()) != null) {
-			System.out.println(s);
+		try
+		{
+			currentCompiler = CompilerProxy.getCompiler();
+			
+			System.out.println("Trying to build model" + className);
+			String resList = currentCompiler.buildModel(className).getFirstResult();
+			resPath = resList.substring(2, resList.indexOf(",")-1) + "_info.xml";
+			System.out.println("Recieved file " +resPath);
+		} catch (CompilerInstantiationException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ConnectException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnexpectedReplyException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		// read any errors from the attempted command
-		System.out.println("Here is the standard error of the command (if any):\n");
-		while ((s = stdError.readLine()) != null) {
-			System.out.println(s);
-		}	
+		
+		return resPath;
 	}
 	
 	private static void refreshView() {
@@ -518,6 +511,8 @@ public class ModelicaDetailedGraphView extends ViewPart {
 			for (Graph g: graphArray) {
 				g.dispose();
 			}
+		
+		textPanel.setText("");
 	}
 	
 	@Override

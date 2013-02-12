@@ -314,4 +314,13 @@ public interface IModelicaCompiler
 	 * @throws ConnectException if the path could not be determined
 	 */
 	public File[] getOmcBinaryPaths() throws ConnectException;
+	
+	/**
+	 * Builds the model with various output-files
+	 *
+	 * @param className the name of the class we want to build
+	 * @return if the build was successful
+	 */
+	public ICompilerResult buildModel(String className)
+			throws ConnectException, UnexpectedReplyException;
 }

@@ -68,9 +68,9 @@ public class ModelicaGraphView extends ViewPart {
 
 	private static Composite permaParent;
 	private static Graph graph;
-	private String oldFileName = "";
-	private String newFileName = "";
-	private String objName = "";
+	private static String oldFileName = "";
+	private static String newFileName = "";
+	private static String objName = "";
 	private String source;
 	public static boolean loadedModelica = false;
 	
@@ -111,7 +111,6 @@ public class ModelicaGraphView extends ViewPart {
 
 		permaParent = parent;
 		graph = new Graph(permaParent, SWT.NONE);
-		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(listener);
 		listenerAdder();
 	}
 
@@ -244,7 +243,6 @@ public class ModelicaGraphView extends ViewPart {
 								try {
 									handlerService.executeCommand("org.modelica.mdt.ui.actions.commanddetailedgraphopener", null);
 								} catch (Exception ex) {
-									throw new RuntimeException("CreateView not found");
 								}
 
 								try
@@ -408,10 +406,7 @@ public class ModelicaGraphView extends ViewPart {
 	 * it will start a new thread and update the graph
 	 * in case it was a modelica file.
 	 */
-	private ISelectionListener listener = new ISelectionListener() {
-		public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
-			final IWorkbenchPart final_sourcepart = sourcepart; 
-			final ISelection final_selection = selection;
+	public static void selectionChanged(final ISelection final_selection) {
 			Job job = new Job("Dependency Graph Loading") {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
@@ -424,21 +419,19 @@ public class ModelicaGraphView extends ViewPart {
 			} catch (ClassCastException e) {}
 			catch (NullPointerException e) {}
 
-			if (final_sourcepart != ModelicaGraphView.this &&
-					objName.equals("org.modelica.mdt.internal.core.ModelicaSourceFile")) {
+			if (objName.equals("org.modelica.mdt.internal.core.ModelicaSourceFile")) {
 				System.out.println("[Change Selection] Found a Modelica-file!");
 				updateGraph(final_selection);
 			}
 			else {
 				System.out.println("[Change Selection] Not a Modelia-file");
-				System.out.println(objName + " : " + final_sourcepart.getTitle());
 			}
 			return Status.OK_STATUS;
 			}
 			};
 			job.schedule(); 
 		}
-	};
+	
 	/**
 	 * This will remove all visual graph objects from the graph
 	 * and will perform this asynchronous with Eclips UI thread.
@@ -476,7 +469,7 @@ public class ModelicaGraphView extends ViewPart {
 	 * @param select
 	 *            the selected files
 	 */
-	public void updateGraph(ISelection... select) {
+	public static void updateGraph(ISelection... select) {
 		long tStart = System.currentTimeMillis();
 
 		ISelection selection = null;
@@ -583,7 +576,7 @@ public class ModelicaGraphView extends ViewPart {
 		if (document != null) {
 			IRegion lineInfo = null;
 			try {
-				// line count internally starts with 0, and not with 1 like in
+				// line count internally starts with 0, and not with 1
 				lineInfo = document.getLineInformation(lineNumber - 1);
 			} catch (BadLocationException e) {
 				// ignored because line number may not really exist in document
@@ -602,7 +595,7 @@ public class ModelicaGraphView extends ViewPart {
 	}
 
 	public void dispose() {
-		getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(listener);
+		//getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(listener);
 		super.dispose();
 	}	
 }

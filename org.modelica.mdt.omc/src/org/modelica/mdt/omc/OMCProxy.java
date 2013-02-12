@@ -1586,4 +1586,9 @@ public class OMCProxy implements IModelicaCompiler {
 
 		// TODO: Continue to recurse down.. (?)
 	}
+	
+	public ICompilerResult buildModel(String className) throws ConnectException, UnexpectedReplyException {
+		ICompilerResult res = sendExpression("buildModel(" + className + ")", true);
+		return res;
+	}
 }

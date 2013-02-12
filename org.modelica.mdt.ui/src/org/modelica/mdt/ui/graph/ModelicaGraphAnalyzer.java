@@ -366,8 +366,12 @@ public class ModelicaGraphAnalyzer {
 	 */
 	public static void createBond(String sourceName, String targetName, boolean recursive, int prev, int style, int color) 
 			throws ConnectException, UnexpectedReplyException, InvocationError {
+		
 		// TODO: OpenModelica is missing a good way of checking for a Keyword
-		if (targetName.equals("Real") || targetName.equals("assert")){
+		if (targetName.equals("Real") || 
+			targetName.equals("assert") || 
+			targetName.equals("Integer")) {
+			
 			System.out.println("[Analyze Operation] " + targetName + " is a Keyword and should not be generated or analyzed");
 			return;
 		}

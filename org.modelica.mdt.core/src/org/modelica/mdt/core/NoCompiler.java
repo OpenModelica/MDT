@@ -182,4 +182,10 @@ class NoCompiler implements IModelicaCompiler
 	public File[] getOmcBinaryPaths() throws ConnectException {
 		return null;
 	}
+	
+	@Override
+	public ICompilerResult buildModel(String className) throws ConnectException, UnexpectedReplyException 
+	{	
+		return null;
+	}
 }

@@ -465,4 +465,11 @@ public class CompilerProxy {
 		ICompilerResult res = compiler.getClassComment(className);
 		return res;
 	}
+	
+	public synchronized static ICompilerResult buildModel(String className)
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		ICompilerResult res = compiler.buildModel(className);
+		return res;
+	}
 }

@@ -1,3 +1,4 @@
+
 package org.modelica.mdt.ui.actions;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -7,26 +8,23 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.modelica.mdt.ui.graph.ModelicaGraphView;
 
 /**
  * This is the handler that is called when a user wants to open
- * the graph browser.
+ * the detailed browser, also called optimization browser, which
+ * shows the performed transformations after a simulation.
  *
  * @author: Magnus Sjöstrand
  */
 
-public class GraphHandler extends AbstractHandler {
-
+public class DetailedGraphHandler extends AbstractHandler
+{
 	public Object execute(ExecutionEvent event) throws ExecutionException
 	{
-		System.out.println("Show graph view");
-		
-		ISelection sel = HandlerUtil.getActiveMenuSelection(event);
+		System.out.println("Show detailed view");
 		
 		try {
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("org.modelica.mdt.ui.graph.ModelicaGraphView");
-			ModelicaGraphView.selectionChanged(sel);
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("org.modelica.mdt.ui.graph.ModelicaDetailedGraphView");
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}	
