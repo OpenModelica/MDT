@@ -11,7 +11,6 @@ import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.ZestStyles;
-import org.eclipse.zest.core.widgets.internal.GraphLabel;
 import org.eclipse.zest.layouts.LayoutStyles;
 import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -52,7 +51,7 @@ public class ModelicaGraphGenerator {
 	 */
 	public static void generateNodes(final Graph graph, final String fileName) 
 			throws ConnectException, UnexpectedReplyException {
-		// TODO: This should be possible to be set by a user
+		// TODO: The sorting method should be possible to be set by a user
 		int sorting = 1;
 
 		switch (sorting) {
@@ -62,17 +61,16 @@ public class ModelicaGraphGenerator {
 				public void run() {
 					try
 					{
+						// TODO: Show the name of the genereated class inside of the graph
 						//GraphLabel test = new GraphLabel(true);
 						//test.setText("Hello");
 						
 						generateNodesOriginal(graph, fileName);
 					} catch (ConnectException e)
 					{
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (UnexpectedReplyException e)
 					{
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					graph.setLayoutAlgorithm(new RadialLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
@@ -120,7 +118,6 @@ public class ModelicaGraphGenerator {
 	static void generateExpanding(Graph graph, String... selectedNode) 
 			throws ConnectException, UnexpectedReplyException {
 		if ((nodes.size()-graphNodes.size()) == 0 && selectedNode != null) {
-			System.out.println("[Graph Generation] We got to the end of a branch for " + selectedNode[0]);
 			for(int index = 0; index < graphNodes.size(); index++) {
 				GraphNode currentNode = graphNodes.get(index);
 				if(currentNode.getText().equals(selectedNode[0])) {
@@ -205,11 +202,9 @@ public class ModelicaGraphGenerator {
 	private static void generateModelicaNodes(Graph graph, int startInt) {
 		for(int index = startInt; index < nodes.size(); index++) {
 			ModelicaNode tempMyNode = nodes.get(index);
-			//System.out.println("Create node " + tempMyNode.getName() + " with int " + index );
 			GraphNode tempGraphNode = createModelicaNode(graph, tempMyNode, index);
 			tempGraphNode.setBorderColor(org.eclipse.draw2d.ColorConstants.black);
 
-			//System.out.println("Is this node expandable? " + tempMyNode.isExpandable());
 			if (!tempMyNode.isExpandable())
 				tempGraphNode.setBorderWidth(3);
 			createInfoTip(tempMyNode, tempGraphNode);

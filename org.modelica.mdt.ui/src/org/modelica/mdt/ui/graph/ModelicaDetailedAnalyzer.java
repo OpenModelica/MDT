@@ -2,12 +2,10 @@
 package org.modelica.mdt.ui.graph;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ModelicaDetailedAnalyzer
 {
-	private static String resultingEquation = "";
+	//private static String resultingEquation = "";
 	private static String resultingText = "";
 	private static ArrayList<String> simplifyArray = new ArrayList<String>();;
 
@@ -16,7 +14,7 @@ public class ModelicaDetailedAnalyzer
 
 		firstEq = firstEq.replaceAll("(?<=^|[ ])(\\d+)(?=$|[ ])", "$1.0");
 		// TODO: Has problems with ( and ) in the equation
-		resultingEquation = firstEq.substring(0, firstEq.length());
+		//resultingEquation = firstEq.substring(0, firstEq.length());
 		resultingText = firstEq.substring(0, firstEq.length()) + "\n";
 		simplifyArray.clear();
 	}

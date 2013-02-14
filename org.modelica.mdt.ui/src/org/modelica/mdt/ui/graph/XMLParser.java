@@ -11,15 +11,9 @@ package org.modelica.mdt.ui.graph;
  * @author: Magnus Sjöstrand
  */
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-// File-info:
-// This class will take the previous XML-file, resulting by XMLMarker.java, and parse to see what operations has been made
-
-// This should only be possible to call if MyNode.simulated = true, meaning that the specific class has been simulated
 
 public class XMLParser
 {
@@ -28,13 +22,11 @@ public class XMLParser
 
 	public static void readTextFile(String path) {
 		FileInputStream fin;		
-
 		try
 		{
 			// Open an input stream
 			fin = new FileInputStream(path);
-			System.out.println("[XML-Parser] Setting input");
-
+			
 			bufReader = new BufferedReader(new InputStreamReader(fin));
 			reader();
 
@@ -57,21 +49,6 @@ public class XMLParser
 
 		while(currentLine != null) {
 			// Iterates over each row in the xml-file
-
-			System.out.println(currentLine);
-
-			// Iterates over each row in the correct equation index-block
-
-			// variables
-			//   operations
-			//
-			// equations
-			//   equation #1
-			//      operations
-			//   equation #2
-			//      operations
-
-
 			if (currentLine.contains("<equation index=")){
 				ModelicaDetailedAnalyzer.setEquationIndex(Integer.parseInt(currentLine.substring(currentLine.indexOf("\"")+1, currentLine.lastIndexOf("\""))));
 				while (!currentLine.contains("</equation>")) {
@@ -88,10 +65,6 @@ public class XMLParser
 					}	
 					currentLine = bufReader.readLine();
 				}
-
-
-
-				
 			} else {
 				// otherwise loop and read lines until AFTER </equation>
 				currentLine = bufReader.readLine();
@@ -101,13 +74,9 @@ public class XMLParser
 
 
 	private static void iterateEquations(String tag) throws IOException {
-		System.out.println("---Opearation: " + tag + " ----");
-
 		String firstOp, secondOp;
-
 		currentLine = bufReader.readLine();
-		System.out.println(currentLine);
-
+		
 		if (tag.equals("solved")) {
 			firstOp = currentLine.substring(currentLine.indexOf(">")+1, currentLine.lastIndexOf("<"));
 			currentLine = bufReader.readLine();
@@ -122,7 +91,6 @@ public class XMLParser
 			firstOp = currentLine.substring(currentLine.indexOf(">")+1, currentLine.lastIndexOf("<"));
 			currentLine = bufReader.readLine();
 			secondOp = currentLine.substring(currentLine.indexOf(">")+1, currentLine.lastIndexOf("<"));
-			//ModelicaDetailedAnalyzer.handlePreSimplifyOperation(firstOp, secondOp);
 		} else if (tag.equals("substitution")) {
 			firstOp = currentLine.substring(currentLine.indexOf(">")+1, currentLine.lastIndexOf("<"));
 			currentLine = bufReader.readLine();
@@ -133,7 +101,6 @@ public class XMLParser
 		currentLine = bufReader.readLine();
 		// This will remove all the things we dont need, if there is any
 		while(!currentLine.contains("</"+tag+">")) {
-			System.out.println(currentLine);
 			currentLine = bufReader.readLine();
 		}
 	}

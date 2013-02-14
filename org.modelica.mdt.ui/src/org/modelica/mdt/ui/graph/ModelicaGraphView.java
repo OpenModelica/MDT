@@ -1,12 +1,6 @@
 
 package org.modelica.mdt.ui.graph;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
@@ -34,15 +28,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.Perspective;
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.zest.core.widgets.Graph;
@@ -83,7 +71,6 @@ public class ModelicaGraphView extends ViewPart {
 	 * @param parent
 	 *            the parent that the part is made in
 	 */
-	@SuppressWarnings("restriction")
 	public void createPartControl(Composite parent) {
 		System.out.println("[GraphView initial] Creating a new Graph View");
 
@@ -127,7 +114,6 @@ public class ModelicaGraphView extends ViewPart {
 				new MouseListener() {
 					@Override
 					public void mouseDoubleClick(MouseEvent e) {
-						System.out.println("------------ NEW OPERATION ----------");
 						if (ModelicaGraphAnalyzer.getModelicaCompiler() != null && !graph.getSelection().isEmpty()) {
 							int grab = graph.getSelection().get(0).toString().length();
 							String select = graph.getSelection().get(0).toString().substring(16, grab);
@@ -153,8 +139,8 @@ public class ModelicaGraphView extends ViewPart {
 					@Override
 					public void mouseUp(MouseEvent e)
 					{
-						if (e.button == 3) { // right-click
-							System.out.println("------------ NEW OPERATION ----------");
+						// right-click
+						if (e.button == 3) { 
 							rightClickHandler(e);
 						}
 					}
@@ -186,14 +172,12 @@ public class ModelicaGraphView extends ViewPart {
 
 				if (ModelicaGraphGenerator.nodes.get(i).isExpandable()) {
 					// Expand node dependencies
-					System.out.println("[Graph Operation] Expanding " + select);
 					ModelicaGraphAnalyzer.analyzeClasses(i, select, false);
 					ModelicaGraphGenerator.nodes.get(i).expandable = false;
 					ModelicaGraphGenerator.generateExpanding(graph, ModelicaGraphGenerator.nodes.get(i).getName());
 					// TODO: Set back selection after generation?
 				} else {
 					// Shrink node dependencies
-					System.out.println("[Graph Operation] Shrinking " + select);
 					ModelicaGraphGenerator.nodes.get(i).expandable = true;
 					ArrayList<Integer> destructedConnections = ModelicaGraphAnalyzer.destructClasses(i, select);
 					ModelicaGraphGenerator.removeDependencies(graph, destructedConnections, i);
@@ -230,12 +214,9 @@ public class ModelicaGraphView extends ViewPart {
 				l.addListener (SWT.DefaultSelection, new Listener () {
 					public void handleEvent (Event e) {
 						if (l.getFocusIndex() == 0) {
-							System.out.println("Open selected class");
 							openSelectedReference(referencedClass, 0);
 						}
 						else if (l.getFocusIndex() == 1) {
-							System.out.println("open up" + referencedClass);
-							System.out.println(l.getFocusIndex() + " was opened instead");
 							IWorkbenchPage activePage = getSite().getWorkbenchWindow().getActivePage();
 							if (activePage != null) {
 
@@ -250,11 +231,9 @@ public class ModelicaGraphView extends ViewPart {
 									ModelicaDetailedGraphView.createEquationButtons(referencedClass);
 								} catch (ConnectException e1)
 								{
-									// TODO Auto-generated catch block
 									e1.printStackTrace();
 								} catch (UnexpectedReplyException e1)
 								{
-									// TODO Auto-generated catch block
 									e1.printStackTrace();
 								}
 							}
@@ -305,7 +284,8 @@ public class ModelicaGraphView extends ViewPart {
 	private void addMyTrackListener(final List l) {
 		l.addMouseTrackListener(new MouseTrackListener() { 
 			public void mouseHover(MouseEvent e) {
-				l.redraw(); // TODO: Is this needed?
+				// TODO: Is this needed?
+				l.redraw(); 
 			}    
 			public void mouseExit(MouseEvent e) { 
 				l.dispose();
@@ -333,8 +313,6 @@ public class ModelicaGraphView extends ViewPart {
 	 *                if the Modelica compiler returns something strange
 	 */
 	public void openSelectedReference(String ref, int lineNumber) {
-		System.out.println("------------ NEW OPERATION ----------");
-
 		// TODO: Find a better way of locating files outside workspace
 		//       Right now we create a External Files-folder with the file in it
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
@@ -345,7 +323,6 @@ public class ModelicaGraphView extends ViewPart {
 				project.create(null);
 		} catch (CoreException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if (!project.isOpen())
@@ -354,28 +331,22 @@ public class ModelicaGraphView extends ViewPart {
 				project.open(null);
 		} catch (CoreException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		IPath location = null;
-		System.out.println(ref);
 		try
 		{
 			location = new Path(ModelicaGraphAnalyzer.getModelicaCompiler().getClassLocation(ref).getPath());
 		} catch (ConnectException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnexpectedReplyException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationError e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(location.toOSString());
 		IFile file = project.getFile(location.lastSegment());
 
 		if (!file.exists()){
@@ -384,7 +355,6 @@ public class ModelicaGraphView extends ViewPart {
 				file.createLink(location, IResource.NONE, null);
 			} catch (CoreException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -395,7 +365,6 @@ public class ModelicaGraphView extends ViewPart {
 			goToLine(editor, lineNumber);
 		} catch (PartInitException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -455,7 +424,6 @@ public class ModelicaGraphView extends ViewPart {
 				}
 			}
 		});
-
 	}
 
 	/**
@@ -470,8 +438,6 @@ public class ModelicaGraphView extends ViewPart {
 	 *            the selected files
 	 */
 	public static void updateGraph(ISelection... select) {
-		long tStart = System.currentTimeMillis();
-
 		ISelection selection = null;
 		for (ISelection s : select ) 
 			selection = s;
@@ -486,8 +452,6 @@ public class ModelicaGraphView extends ViewPart {
 			IPath selectedPath = selectedIFile.getLocation();
 			newFileName = selectedString;
 			if (!newFileName.equals(oldFileName)){
-				System.out.println("[Graph Operation]  Updating Graph!");
-
 				// TODO: Move this?
 				// Reset data
 				ModelicaGraphAnalyzer.setNid(0);
@@ -503,18 +467,8 @@ public class ModelicaGraphView extends ViewPart {
 				String fileName = selectedString.replace(".mo", "");
 				try
 				{
-					long t0 = System.currentTimeMillis();
 					ModelicaGraphAnalyzer.initAnalyze(fileName, selectedPath);
 
-					System.out.println("The line-reference analyze rendering took " + ModelicaGraphAnalyzer.elapsedTimeLines + " s");
-					System.out.println("The nodes analyze took " + ModelicaGraphAnalyzer.elapsedTimeNodes + " s");
-					System.out.println("The connections analyze rendering took " + ModelicaGraphAnalyzer.elapsedTimeConnections + " s");
-					System.out.println("The familarity analyze rendering took " + ModelicaGraphAnalyzer.elapsedTimeFamiliar + " s");
-
-					long t1 = System.currentTimeMillis();
-					double elapsedTimeSeconds = (t1 - t0)/1000.0;
-
-					System.out.println("The initizalization took " + elapsedTimeSeconds + " s");
 				} catch (ConnectException e1)
 				{
 					e1.printStackTrace();
@@ -531,13 +485,7 @@ public class ModelicaGraphView extends ViewPart {
 					clearGraph(graph);
 					try
 					{
-						long t3 = System.currentTimeMillis();
-
 						ModelicaGraphGenerator.generateNodes(graph, selectedString);
-
-						long t4 = System.currentTimeMillis();
-						double elapsedTimeSeconds = (t4 - t3)/1000.0;
-						System.out.println("The nodes/connections rendering took " + elapsedTimeSeconds + " s");
 					} catch (ConnectException e)
 					{
 						e.printStackTrace();
@@ -547,10 +495,6 @@ public class ModelicaGraphView extends ViewPart {
 					}
 				}
 			}
-
-			long tEnd = System.currentTimeMillis();
-			double elapsedTimeSeconds = (tEnd - tStart)/1000.0;
-			System.out.println("The whole update " + elapsedTimeSeconds + " s");
 			oldFileName = newFileName;
 		} else {
 			System.out.println("[Selection Error] Couldn't find the Projects View or Selection");
@@ -595,7 +539,6 @@ public class ModelicaGraphView extends ViewPart {
 	}
 
 	public void dispose() {
-		//getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(listener);
 		super.dispose();
 	}	
 }

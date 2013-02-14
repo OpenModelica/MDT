@@ -20,8 +20,6 @@ public class GraphHandler extends AbstractHandler {
 
 	public Object execute(ExecutionEvent event) throws ExecutionException
 	{
-		System.out.println("Show graph view");
-		
 		ISelection sel = HandlerUtil.getActiveMenuSelection(event);
 		
 		try {

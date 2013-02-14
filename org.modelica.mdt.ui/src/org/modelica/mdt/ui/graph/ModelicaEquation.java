@@ -1,8 +1,6 @@
 
 package org.modelica.mdt.ui.graph;
 
-import java.util.ArrayList;
-
 import org.eclipse.zest.core.widgets.GraphNode;
 
 /**

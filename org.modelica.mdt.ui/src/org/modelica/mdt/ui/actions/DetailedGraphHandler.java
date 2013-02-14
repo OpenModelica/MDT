@@ -21,8 +21,6 @@ public class DetailedGraphHandler extends AbstractHandler
 {
 	public Object execute(ExecutionEvent event) throws ExecutionException
 	{
-		System.out.println("Show detailed view");
-		
 		try {
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("org.modelica.mdt.ui.graph.ModelicaDetailedGraphView");
 		} catch (PartInitException e) {

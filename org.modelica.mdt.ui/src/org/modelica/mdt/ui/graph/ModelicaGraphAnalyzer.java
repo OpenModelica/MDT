@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.swt.SWT;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.ICompilerResult;
@@ -64,65 +63,36 @@ public class ModelicaGraphAnalyzer {
 			throws ConnectException, UnexpectedReplyException, InvocationError {
 		String className;
 		ModelicaNode coreNode;
-		long t3 = System.currentTimeMillis();
-		
-		
 		try
 		{
 			// initiate compiler
 			currentCompiler = CompilerProxy.getCompiler();
-			System.out.println("[Analyze Operation] Found the compiler");
-
 		} catch (CompilerInstantiationException e)
 		{
-			System.out.println("[Error] Compiler not found");
 			e.printStackTrace();
 		}
 
-		long tA = System.currentTimeMillis();
-		double elapsedTimeSeconds = (tA - t3)/1000.0;
-	    System.out.println("The first part of initialization of analyze took " + elapsedTimeSeconds + " s");
-		
 		// Load Modelica library only one time
 		if (!ModelicaGraphView.loadedModelica){
 				currentCompiler.getStandardLibrary();
 				ModelicaGraphView.loadedModelica = true;
 		}
 		classPath = filePath.toString();
-		long tB = System.currentTimeMillis();
-		elapsedTimeSeconds = (tB - tA)/1000.0;
-	    System.out.println("The second part of initialization of analyze took " + elapsedTimeSeconds + " s");
 		
 		// load modelica file
 		currentCompiler.loadFile(classPath);
 
-		long tC = System.currentTimeMillis();
-		elapsedTimeSeconds = (tC - tB)/1000.0;
-	    System.out.println("The third part of initialization of analyze took " + elapsedTimeSeconds + " s");
-		
 		// lists local classes of the file
 		List classList = currentCompiler.parseFile(classPath);
 
-		long tD = System.currentTimeMillis();
-		elapsedTimeSeconds = (tD - tC)/1000.0;
-	    System.out.println("The fourth part of initialization of analyze took " + elapsedTimeSeconds + " s");
-				
 		nid = -1;
-		//System.out.println(classPath);
 		
 		for (int j = 0; j < classList.size(); j++) {
 			className = classList.elementAt(j).toString();
 
-			// Standard: (Useful in thesis report - optimizing development phase) 
-			// recursive = true
-
-			// Optional: (Useful in thesis report or as an optional settings - first development phase)
-			// recursive = false
-
 			// Creates root node
 			if (!nodesContains(className)) {
 				nid += 1;
-				System.out.println(nid);
 				if(currentCompiler.isPackage(className)) {
 					coreNode = new ModelicaNode(nid, className, SWT.COLOR_GRAY);
 				} else {
@@ -134,16 +104,6 @@ public class ModelicaGraphAnalyzer {
 				ModelicaGraphGenerator.nodes.add(coreNode);
 			}
 			
-			long t4 = System.currentTimeMillis();
-			elapsedTimeSeconds = (t4 - tD)/1000.0;
-		    System.out.println("The fifth part took " + elapsedTimeSeconds + " s");
-			
-		    elapsedTimeSeconds = (t4 - t3)/1000.0;
-		    System.out.println("The initialization of analyze took " + elapsedTimeSeconds + " s");
-			
-			// TODO: Test if this is correct when a dependency is found between class A to class B before class B has been analyzed
-			//		 Where class A and class B both comes from the same start-file
-
 			analyzeClasses(nid, className, false);
 		}
 	}
@@ -168,11 +128,9 @@ public class ModelicaGraphAnalyzer {
 	 */
 	public static int analyzeClasses(int prevID, String className, boolean recursive) 
 			throws ConnectException, UnexpectedReplyException, InvocationError {
-		System.out.println("[Analyze Operation] Finding classes of " + className + " (cid/nid: " + cid + "/" + nid + ")");
 		currentCompiler.loadFile(classPath);
 
 		// Find the underlying classes of a package
-		
 		if(currentCompiler.isPackage(className)) {
 			List classList = currentCompiler.getClassNames(className);
 			for (int j = 0; j < classList.size(); j++) {
@@ -192,7 +150,6 @@ public class ModelicaGraphAnalyzer {
 		List componentList = currentCompiler.getComponents(className);
 		for (int j = 0; j < componentList.size(); j++) {
 			String nam = componentList.elementAt(j).toString();
-			System.out.println("[Analyze Operation] We found object " + nam + " !");
 			createBond(className, nam, recursive, prevID, SWT.LINE_SOLID, SWT.COLOR_GREEN);
 		}
 
@@ -294,22 +251,11 @@ public class ModelicaGraphAnalyzer {
 			trimRes = trimRes.substring(tempRes.length()+1, trimRes.length());
 
 			trimRes.replaceAll("\\s\\+\\-\\*\\=\\<\\>\\:", "");
-			/*
-			tempRes = tempRes.replaceAll("\\s","");
-			tempRes = tempRes.replaceAll("\\+"," ");
-			tempRes = tempRes.replaceAll("\\-"," ");
-			tempRes = tempRes.replaceAll("\\*"," ");
-			tempRes = tempRes.replaceAll("\\="," ");
-			tempRes = tempRes.replaceAll("\\<"," ");
-			tempRes = tempRes.replaceAll("\\>"," ");
-			tempRes = tempRes.replaceAll("\\:"," ");
-			 */
 			tempRes = tempRes.trim();
 			tempRes = tempRes.substring(tempRes.lastIndexOf(" ")+1,tempRes.length());
 
-			// TODO: Should we make a list of all things that doesn't exist to avoid looking up same things over?
-			System.out.println("[Analyze Operation] Does " + tempRes + " exist? " + currentCompiler.existClass(tempRes));
-
+			// TODO: Keep track of what has been found before?
+			
 			// Create a connection from this found function dependency
 			if (tempRes.length() != 0 && currentCompiler.existClass(tempRes))
 				createBond(className, tempRes, recursive, prevID, SWT.LINE_DOT, SWT.COLOR_GREEN);
@@ -372,19 +318,12 @@ public class ModelicaGraphAnalyzer {
 			targetName.equals("assert") || 
 			targetName.equals("Integer")) {
 			
-			System.out.println("[Analyze Operation] " + targetName + " is a Keyword and should not be generated or analyzed");
 			return;
 		}
 		
-		System.out.println(sourceName);
 		String myPath = (new Path(ModelicaGraphAnalyzer.currentCompiler.getClassLocation(sourceName).getPath()).toString());
-		System.out.println("this is working: " + myPath);
-		
-		long t1 = System.currentTimeMillis();
 		ArrayList<Integer> lineNumbers = findLineNumber(myPath, targetName);
-		long t2 = System.currentTimeMillis();
-		elapsedTimeLines += (t2 - t1)/1000.0;
-	    boolean familiar = true;
+		boolean familiar = true;
 
 		// recursive
 		if (recursive) {
@@ -399,15 +338,11 @@ public class ModelicaGraphAnalyzer {
 
 			// non-recursive
 		} else if (!nodesContains(targetName)) {
-			long t3 = System.currentTimeMillis();
-			
 			nid += 1;
 			ModelicaNode node = new ModelicaNode(nid, targetName, color);
 			ModelicaGraphGenerator.nodes.add(node);
 			familiar = false;
 			setToolTipInfo(node, targetName, myPath);
-			long t4 = System.currentTimeMillis();
-			elapsedTimeNodes = (t4 - t3)/1000.0;
 		}
 
 		int n = 0;
@@ -420,31 +355,21 @@ public class ModelicaGraphAnalyzer {
 			   if (ModelicaGraphGenerator.nodes.get(j).getName().equals(targetName))
 					   n = j;
 		}
-		System.out.println("n: " + n + " and prev: " + prev);
 		
 		ModelicaNode currentNode = ModelicaGraphGenerator.nodes.get(n);
 		ModelicaNode prevNode = ModelicaGraphGenerator.nodes.get(prev);
 
 		if (familiar) {
-			long t3 = System.currentTimeMillis();
-			
 			ModelicaNode instantNode = null;
 			for (int i = 0; i < ModelicaGraphGenerator.nodes.size(); i++)
 				instantNode = ModelicaGraphGenerator.nodes.get(i);
 			if (instantNode.getName().endsWith(targetName))
 				n = instantNode.getId();
-
-			long t4 = System.currentTimeMillis();
-			elapsedTimeFamiliar = (t4 - t3)/1000.0;
 		}
 
-		System.out.println("Does a connection exist between " + prevNode.getName() + " and " + currentNode.getName() + "? " + !connectionsContains(prevNode.getName(), currentNode.getName()));
-		
 		// Connection exist in opposite direction
 		if (connectionsContains(currentNode.getName(), prevNode.getName()) &&
 				!prevNode.getName().equals(currentNode.getName())) {
-			long t3 = System.currentTimeMillis();
-			
 			// Bend what is already there
 			// TODO: This has to be regenerated somehow as well in order to be visualized
 
@@ -462,22 +387,15 @@ public class ModelicaGraphAnalyzer {
 			connect.setBending();
 			ModelicaGraphGenerator.connections.add(connect);	
 			cid += 1;
-			
-			long t4 = System.currentTimeMillis();
-			elapsedTimeConnections = (t4 - t3)/1000.0;
 		}
+		
 		// Connection doesn't exist in neither direction
 		else if (!connectionsContains(prevNode.getName(), currentNode.getName()) &&
 				!prevNode.getName().equals(currentNode.getName())) {
-			long t3 = System.currentTimeMillis();
-			
 			ModelicaConnection connect = new ModelicaConnection(
 					Integer.toString(cid), "test", prevNode, currentNode, style, targetName, lineNumbers);
 			ModelicaGraphGenerator.connections.add(connect);	
 			cid += 1;
-
-			long t4 = System.currentTimeMillis();
-			elapsedTimeConnections = (t4 - t3)/1000.0;
 		}
 	}
 
@@ -543,7 +461,6 @@ public class ModelicaGraphAnalyzer {
 		}  
 		int lineID = 0;  
 		ArrayList<Integer> lineNumbers = new ArrayList<Integer>();  
-		// TODO: Is this covering all cases of occurrences?
 		Pattern pattern =  Pattern.compile("\\b" + text);
 		Matcher matcher = null;  
 
@@ -572,7 +489,6 @@ public class ModelicaGraphAnalyzer {
 		ArrayList<Integer> destroyedConnections = new ArrayList<Integer>();
 		for(int i = 0; i < ModelicaGraphGenerator.connections.size(); i++) {
 			if(ModelicaGraphGenerator.connections.get(i).getSource().getName().equals(className)) {
-				System.out.println("[Analyze Operation] Destroying connection from " + ModelicaGraphGenerator.connections.get(i).getSource().getName() + " to " + ModelicaGraphGenerator.connections.get(i).getDestination().getName());
 				destroyedConnections.add(i);
 			}
 		}

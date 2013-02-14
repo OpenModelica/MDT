@@ -1,38 +1,23 @@
 
 package org.modelica.mdt.ui.graph;
 
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.zest.core.widgets.Graph;
@@ -41,17 +26,13 @@ import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.ZestStyles;
 import org.eclipse.zest.core.widgets.internal.GraphLabel;
 import org.eclipse.zest.layouts.LayoutStyles;
-import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
-//import org.modelica.mdt.omc.OMCProxy;
 import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.IModelicaCompiler;
-import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
-//import org.modelica.mdt.core.preferences.PreferenceManager;
 
 /**
  * This class sets up another view presenting each equation
@@ -69,34 +50,31 @@ public class ModelicaDetailedGraphView extends ViewPart {
 
 	private static Composite detailedParent;
 	private static Text textPanel;
-	private static String equationDescriptions;
 	private static ScrolledComposite sc2;
 	private static Composite equationPanel;
 	private static Composite graphPanel;
 	private static boolean graphVisible;
-	
+
 	private static ArrayList<Button> buttonArray;
 	private static Graph[] graphArray;
 
 	private static IModelicaCompiler currentCompiler;
-	
+
 	@Override
 	public void createPartControl(Composite parent)
 	{
-		System.out.println("[Detailed Graph View] Creating the root view");
 		detailedParent = parent;
 
 		detailedParent.setLayout(new FillLayout(SWT.VERTICAL));
 		buttonArray = new ArrayList<Button>();
-		
+
 		Composite topArea = new Composite(detailedParent, SWT.NONE);
 		topArea.setLayout(new FillLayout());
-		
+
 		Composite bottomArea = new Composite(detailedParent, SWT.NONE);
 		bottomArea.setLayout(new FillLayout());
-	    textPanel = new Text(bottomArea, SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
-		//textPanel.setTextLimit(5);
-		
+		textPanel = new Text(bottomArea, SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+
 		final ScrolledComposite sc1 = new ScrolledComposite(topArea, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		equationPanel = new Composite(sc1, SWT.NONE);
 		sc1.setContent(equationPanel);
@@ -108,7 +86,7 @@ public class ModelicaDetailedGraphView extends ViewPart {
 		sc2 = new ScrolledComposite(topArea, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		sc2.setExpandHorizontal(true);
 		sc2.setExpandVertical(true);
-		
+
 		graphPanel = new Composite(sc2, SWT.NONE);
 
 		FillLayout fillLayout = new FillLayout(SWT.VERTICAL);
@@ -123,18 +101,11 @@ public class ModelicaDetailedGraphView extends ViewPart {
 
 	private static void callMiniGraph(Composite grid, int index)
 	{
-		System.out.println("Do something with the grid based on index " + index);
-		System.out.println(graphVisible);
-		
-		// 1. Check if the graph of this index already exist
 		if (!graphVisible) {
-			//	2. if it doesn't, do addMiniGraph(grid, i)
 			addMiniGraph(grid, index);
 			graphVisible = true;
 		} else {
-			//	3. if it does, do removeMiniGraph(grid, i)
 			// TODO: How do we know which one to remove? Create a new class to keep track of int?
-			System.out.println("remove graph at " + index);
 			removeMiniGraph(grid, index);
 			graphVisible = false;
 		}
@@ -143,8 +114,6 @@ public class ModelicaDetailedGraphView extends ViewPart {
 	private static void addMiniGraph(Composite grid, int index)
 	{
 		// TODO: Find a way for the graphs to stack up, like they do in createPartControl
-		System.out.println("Now we are setting a text");
-		
 		Graph g = new Graph(grid, SWT.NONE);
 		GraphLabel test = new GraphLabel(true);
 		test.setText("Hello");
@@ -153,7 +122,6 @@ public class ModelicaDetailedGraphView extends ViewPart {
 
 		try
 		{
-			System.out.println("Index is " + index);
 			analyzeDetailedClassEquation(buttonArray.get(index).getText().substring(0, buttonArray.get(index).getText().length()-1), index, g);
 		} catch (ConnectException e1)
 		{
@@ -182,24 +150,20 @@ public class ModelicaDetailedGraphView extends ViewPart {
 	}
 
 	public static void createEquationButtons(final String className) throws ConnectException, UnexpectedReplyException {
-		System.out.println("Add equation buttons based on " + className);
 		int numberOfEquations = ModelicaGraphAnalyzer.getModelicaCompiler().getEquationItemsCount(className);
 		refreshView();
 		graphArray = new Graph[numberOfEquations];
-		
+
 		for (int i = 0; i < numberOfEquations; i++) {
 			final Button equationB = new Button(equationPanel, SWT.RADIO);
 			final int buttonIndex = i;
 			ICompilerResult res = ModelicaGraphAnalyzer.getModelicaCompiler().getNthEquationItem(className, buttonIndex+1);
 			String equationString = res.getFirstResult();
 			equationB.setText(equationString.substring(1, equationString.length()-1));
-			System.out.println("Create a new button with index " + buttonIndex + " and equation " + equationB.getText());
 			buttonArray.add(equationB);
 
 			equationB.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event e) {
-					System.out.println("Clicked on " + buttonArray.get(buttonIndex).getText() + " with int " + buttonIndex);
-					//callMiniGraph(!buttonArray.get(buttonIndex).getSelection(), graphPanel, buttonIndex);
 					callMiniGraph(graphPanel, buttonIndex);
 					analyzeOptimizations(buttonArray.get(buttonIndex).getText().substring(0, buttonArray.get(buttonIndex).getText().length()-1), className);
 				}
@@ -211,15 +175,11 @@ public class ModelicaDetailedGraphView extends ViewPart {
 	}
 
 	private static void analyzeDetailedClassEquation(String trimRes, int i, Graph g) throws ConnectException, UnexpectedReplyException {
-		System.out.println("[Detailed Graph View] Analyzing the loaded file's equations");
-
-		System.out.println("Incoming equation: " + trimRes);
-
 		// Remove all annotations from the code line
-		//trimRes = trimRes.substring(0, trimRes.length()-2);
 		if (trimRes.contains("annotation")) {
 			trimRes.replace(trimRes.substring(trimRes.indexOf("annotation"), trimRes.length()), "");
 		}
+
 		// Remove all comments from the code line
 		if (trimRes.contains("//")) {
 			trimRes.replace(trimRes.substring(trimRes.indexOf("//"), trimRes.length()), "");
@@ -236,20 +196,14 @@ public class ModelicaDetailedGraphView extends ViewPart {
 	}
 
 	private static void equationAnalyze(String operationalLine, Graph g) {
-		//operationalLine = "(a.x(y)=c.x)"; // test-data
-		System.out.print("So far we got: " + operationalLine + " ==> ");
-
 		Pattern p = Pattern.compile("(\\w+((\\.\\w+)?)*)|([<|>|=][=|>]|[+|-|*|/|(|)|,|=|^|<|>]|[:][=])");
 		Matcher m = p.matcher(operationalLine);
 		ArrayList<String> tokenArray = new ArrayList<String>();
 
 		while (m.find()) {
 			String token = m.group();
-			System.out.print("[" + token + "]");
 			tokenArray.add(token);
 		}
-		System.out.print("\n");
-
 		operationStack = new Stack<String>();
 		subEquations = new ArrayList<ModelicaEquation>();
 
@@ -264,10 +218,6 @@ public class ModelicaDetailedGraphView extends ViewPart {
 		 */
 		deepEquationAnalyze(tokenArray, g);
 		//}
-
-		// Ordered layout according to tree-nodes
-		//detailedGraph.setLayoutAlgorithm(new TreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
-		//detailedGraph.setNodeStyle(ZestStyles.NODES_NO_ANIMATION);
 	}
 
 	/**
@@ -292,18 +242,10 @@ public class ModelicaDetailedGraphView extends ViewPart {
 		{
 			prevPrecedence = currPrecedence;
 			String c = line.get(i);
-			//System.out.println(i + ": " + c);
 
 			if (c.equals(")")) {
 				// evaluate to the top
 				for(int j = 0; j <= i; j+=1) {
-					//System.out.println("(backwards) " + (i-j) + ": " + line.get(i-j));
-					//System.out.print("Stack is: ");
-					/*
-					for (String ss : operationStack)
-						System.out.print(ss);
-					System.out.println();
-					 */
 					String inner_c = line.get(i-j);
 
 					if (inner_c.equals("(")) {
@@ -407,8 +349,6 @@ public class ModelicaDetailedGraphView extends ViewPart {
 			newEq = operator + "[" + leftSide + " " + rightSide +"]";
 		}
 
-		//System.out.println("We get from createSubTree " + newEq);
-
 		if (operatorNode != null) {
 			subEquations.add(new ModelicaEquation(operatorNode, newEq));
 		} else if (leftNode != null) {
@@ -430,40 +370,32 @@ public class ModelicaDetailedGraphView extends ViewPart {
 		return(gNode);
 	}
 
-	// TODO: Make this possible, should be easy to create
-	private static void analyzeDetailedClassVariables(String className) {
-		System.out.println("[Detailed Graph View] Analyzing the loaded file's variables");
+	// TODO: Make a function that checks for variable assignments
+	// A. Extract the variables that has pre-instantiated values 
+	// B. Check if there is another node containing one of those variables, in that case
+	// we should add a ":= <value>" to the text in the node
+	// for (x...)
+	//		for (y...)
+	// 			if (x.getText().equals(y)
+	//				x.setText(<old value> + ":= <value>");
 
-		// 8. Extract the variables that has pre-instantiated values
-
-		// 9. Check if there is another node containing one of those variables, in that case
-		// we should add a ":= <value>" to the text in the node
-		// for (x...)
-		//		for (y...)
-		// 			if (x.getText().equals(y)
-		//				x.setText(<old value> + ":= <value>");
-	}
 
 	private static void analyzeOptimizations(String equation, String className) {
-		System.out.println("performing analyzation of the optimizations");
-		
 		ModelicaDetailedAnalyzer.setStartingEquation(equation);
 		try
 		{
 			String localPath = consoleDump(className);
 			XMLParser.readTextFile(localPath);
-			
+
 		} catch (IOException e1)
 		{
 			e1.printStackTrace();
 		}
-		
-		// TODO: this is not working?
-		
+
 		// Print out all operations in the textfield
 		textPanel.setText(ModelicaDetailedAnalyzer.getFullText());
 	}
-	
+
 	/**
 	 * This will send a command to the cmd so that a dump operation 
 	 * is performed on a class and dumps operations into a .txt-file.
@@ -472,52 +404,42 @@ public class ModelicaDetailedGraphView extends ViewPart {
 	 * @throws IOException 
 	 */
 	private static String consoleDump(String className) throws IOException {
-		// TODO: This has to be fixed within MDT to handle simulation with the dump-flag better
-		System.out.println("Perform dump");
-		
 		String resPath = "";
-		
+
 		try
 		{
 			currentCompiler = CompilerProxy.getCompiler();
-			
-			System.out.println("Trying to build model" + className);
 			String resList = currentCompiler.buildModel(className).getFirstResult();
 			resPath = resList.substring(2, resList.indexOf(",")-1) + "_info.xml";
-			System.out.println("Recieved file " +resPath);
 		} catch (CompilerInstantiationException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ConnectException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnexpectedReplyException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return resPath;
 	}
-	
+
 	private static void refreshView() {
 		for (Button b : buttonArray)
 			b.dispose();
 		buttonArray = new ArrayList<Button>();
-		
+
 		if (graphArray != null)
 			for (Graph g: graphArray) {
 				g.dispose();
 			}
-		
+
 		textPanel.setText("");
 	}
-	
+
 	@Override
 	public void setFocus()
 	{
-		// TODO Auto-generated method stub
 	}
 }
