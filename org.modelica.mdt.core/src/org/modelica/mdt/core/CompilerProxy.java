@@ -472,4 +472,39 @@ public class CompilerProxy {
 		ICompilerResult res = compiler.buildModel(className);
 		return res;
 	}
+	
+	/**
+	 * @author Magnus Sjöstrand
+	 * @param command
+	 * @return the result of the command execution
+	 * @throws CompilerInstantiationException
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 */	
+	
+	public synchronized static ICompilerResult getNthImport(String className, int n)
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		ICompilerResult res = compiler.getNthImport(className, n);
+		
+		return res;
+	}
+	
+	/**
+	 * @author Magnus Sjöstrand
+	 * @param command
+	 * @return the result of the command execution
+	 * @throws CompilerInstantiationException
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 */	
+	
+	public synchronized static int getImportCount(String className) 
+			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
+		IModelicaCompiler compiler = getCompiler();
+		int resNum = compiler.getImportCount(className);
+		System.out.println("WE IMPORTED: " + resNum + " AMOUNT!");
+		return resNum;
+	}
+	
 }

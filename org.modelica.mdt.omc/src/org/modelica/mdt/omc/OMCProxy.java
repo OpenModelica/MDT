@@ -284,7 +284,6 @@ public class OMCProxy implements IModelicaCompiler {
 	 * @return full path to the omc binary and the working folder
 	 * @throws ConnectException if the path could not be determined
 	 */
-	@Override 
 	public File[] getOmcBinaryPaths() throws ConnectException {
 		String binaryName = "omc";
 
@@ -1590,5 +1589,28 @@ public class OMCProxy implements IModelicaCompiler {
 	public ICompilerResult buildModel(String className) throws ConnectException, UnexpectedReplyException {
 		ICompilerResult res = sendExpression("buildModel(" + className + ")", true);
 		return res;
+	}
+
+	@Override
+	public ICompilerResult getNthImport(String className, int n)
+			throws ConnectException, UnexpectedReplyException
+	{
+		ICompilerResult res = sendExpression("getNthImport("+ className + ", " + n + ")", true);
+		res.trimFirstResult();
+		
+		return res;
+	}
+
+	@Override
+	public int getImportCount(String className) throws ConnectException,
+			UnexpectedReplyException
+	{
+		int resNum = 0;
+		ICompilerResult res = sendExpression("getImportCount(" + className + ")", true);
+		res.trimFirstResult();
+		if (!res.getFirstResult().isEmpty()){
+			resNum = Integer.parseInt(res.getFirstResult());
+		}
+		return resNum;
 	}
 }

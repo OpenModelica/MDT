@@ -426,7 +426,8 @@ public class ModelicaDetailedGraphView extends ViewPart {
 	}
 
 	private static void refreshView() {
-		for (Button b : buttonArray)
+		if (buttonArray != null)
+			for (Button b : buttonArray)
 			b.dispose();
 		buttonArray = new ArrayList<Button>();
 
@@ -435,7 +436,8 @@ public class ModelicaDetailedGraphView extends ViewPart {
 				g.dispose();
 			}
 
-		textPanel.setText("");
+		if (textPanel != null)
+			textPanel.setText("");
 	}
 
 	@Override

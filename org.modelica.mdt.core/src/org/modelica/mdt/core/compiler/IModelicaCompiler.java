@@ -323,4 +323,22 @@ public interface IModelicaCompiler
 	 */
 	public ICompilerResult buildModel(String className)
 			throws ConnectException, UnexpectedReplyException;
+	
+	/**
+	 * Fetches the nth name of imports in a given class
+	 *
+	 * @param className is the name of the class where to look for subclasses, nth subclass
+	 * @return the list of the names of imports
+	 */
+	public ICompilerResult getNthImport(String className, int n)
+			throws ConnectException, UnexpectedReplyException;
+	
+	/**
+	 * Fetches the number of imports in a given class
+	 *
+	 * @param className is the name of the class where to look for amount of subclasses
+	 * @return integer amount of the names of imports
+	 */
+	public int getImportCount(String className) 
+			throws ConnectException, UnexpectedReplyException;
 }

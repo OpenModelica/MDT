@@ -28,9 +28,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.zest.core.widgets.Graph;
@@ -60,8 +62,9 @@ public class ModelicaGraphView extends ViewPart {
 	private static String newFileName = "";
 	private static String objName = "";
 	private String source;
+	private boolean isDetached = false;
 	public static boolean loadedModelica = false;
-	
+
 	String viewId = "org.modelica.mdt.ui.graph.ModelicaGraphView"; 
 
 	/**
@@ -71,30 +74,31 @@ public class ModelicaGraphView extends ViewPart {
 	 * @param parent
 	 *            the parent that the part is made in
 	 */
+	@SuppressWarnings("restriction")
 	public void createPartControl(Composite parent) {
 		System.out.println("[GraphView initial] Creating a new Graph View");
 
 		// TODO: There seems to be an issue with this
+
 		/*
-		// Always detach view
-		// In Eclipse 3.x
 
-		WorkbenchPage page = ((WorkbenchPage) getSite().getPage());
+		// If the parent shell doesn't have a title it has been detached from the main window
+		if(parent.getShell().getText().length() != 0) {
+			// In Eclipse 3.x
 
-		//get the reference for your viewId
-		IViewReference ref = page.findViewReference(viewId);
+			WorkbenchPage page = ((WorkbenchPage) getSite().getPage());
+			IViewReference ref = page.findViewReference("org.modelica.mdt.ui.graph.ModelicaGraphView");
+			page.getActivePerspective().getPresentation().detachPart(ref);
 
-		page.getActivePerspective().getPresentation().detachPart(ref);
-		 */
-
-		// TODO: In Eclipse 4.x the following should be done instead
-		/*
+			// TODO: In Eclipse 4.x the following should be done instead
+			
 		EModelService s = (EModelService) getSite().getService(EModelService.class);
 		MPartSashContainerElement p = (MPart) getSite().getService(MPart.class);
 		if (p.getCurSharedRef() != null)
 			p = p.getCurSharedRef();
 		s.detach(p, 100, 100, 300, 300);
-		 */
+		 
+		*/
 
 		permaParent = parent;
 		graph = new Graph(permaParent, SWT.NONE);
@@ -376,31 +380,31 @@ public class ModelicaGraphView extends ViewPart {
 	 * in case it was a modelica file.
 	 */
 	public static void selectionChanged(final ISelection final_selection) {
-			Job job = new Job("Dependency Graph Loading") {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
+		Job job = new Job("Dependency Graph Loading") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
 
-			objName = "";
-			try {
-				IStructuredSelection newSelection = (IStructuredSelection) final_selection; 
-				Object obj = newSelection.getFirstElement();
-				objName = obj.getClass().getName();
-			} catch (ClassCastException e) {}
-			catch (NullPointerException e) {}
+				objName = "";
+				try {
+					IStructuredSelection newSelection = (IStructuredSelection) final_selection; 
+					Object obj = newSelection.getFirstElement();
+					objName = obj.getClass().getName();
+				} catch (ClassCastException e) {}
+				catch (NullPointerException e) {}
 
-			if (objName.equals("org.modelica.mdt.internal.core.ModelicaSourceFile")) {
-				System.out.println("[Change Selection] Found a Modelica-file!");
-				updateGraph(final_selection);
+				if (objName.equals("org.modelica.mdt.internal.core.ModelicaSourceFile")) {
+					System.out.println("[Change Selection] Found a Modelica-file!");
+					updateGraph(final_selection);
+				}
+				else {
+					System.out.println("[Change Selection] Not a Modelia-file");
+				}
+				return Status.OK_STATUS;
 			}
-			else {
-				System.out.println("[Change Selection] Not a Modelia-file");
-			}
-			return Status.OK_STATUS;
-			}
-			};
-			job.schedule(); 
-		}
-	
+		};
+		job.schedule(); 
+	}
+
 	/**
 	 * This will remove all visual graph objects from the graph
 	 * and will perform this asynchronous with Eclips UI thread.

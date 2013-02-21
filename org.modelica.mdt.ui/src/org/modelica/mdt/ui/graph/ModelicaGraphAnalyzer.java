@@ -128,6 +128,7 @@ public class ModelicaGraphAnalyzer {
 	 */
 	public static int analyzeClasses(int prevID, String className, boolean recursive) 
 			throws ConnectException, UnexpectedReplyException, InvocationError {
+		System.out.println("TESTING");
 		currentCompiler.loadFile(classPath);
 
 		// Find the underlying classes of a package
@@ -139,8 +140,15 @@ public class ModelicaGraphAnalyzer {
 			}
 		}
 
+		// Find service-dependencies among imports
+		int num =  currentCompiler.getImportCount(className);
+		for (int i = 0; i < num; i++) {
+			ICompilerResult res = currentCompiler.getNthImport(className, i+1);
+			createBond(className, res.getFirstResult(), recursive, prevID, SWT.LINE_SOLID, SWT.COLOR_GREEN);
+		}
+		
 		// Find inheritance-dependencies
-		int num =  currentCompiler.getInheritanceCount(className);
+		num =  currentCompiler.getInheritanceCount(className);
 		for (int i = 0; i < num; i++) {
 			ICompilerResult res = currentCompiler.getNthInheritedClass(className, i+1);
 			createBond(className, res.getFirstResult(), recursive, prevID, SWT.LINE_SOLID, SWT.COLOR_GREEN);
@@ -160,7 +168,7 @@ public class ModelicaGraphAnalyzer {
 			String trimRes = res.getFirstResult();
 			checkExist(className, trimRes, recursive, prevID);
 		}
-
+		
 		// Find function-call-dependencies among equations
 		num =  currentCompiler.getEquationItemsCount(className);
 		for (int i = 0; i < num; i++) {

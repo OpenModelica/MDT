@@ -188,4 +188,14 @@ class NoCompiler implements IModelicaCompiler
 	{	
 		return null;
 	}
+
+	@Override
+	public ICompilerResult getNthImport(String className, int n) throws ConnectException, UnexpectedReplyException {
+		return null;
+	}
+
+	@Override
+	public int getImportCount(String className) throws ConnectException, UnexpectedReplyException {
+		return 0;
+	}
 }
