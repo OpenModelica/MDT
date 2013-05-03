@@ -3,7 +3,7 @@
   <eAnnotations xmi:id="_KQmFQVNcEd6YXtyPQ2LL6Q" source="http://www.eclipse.org/uml2/2.0.0/UML">
     <contents xmi:type="ecore:EPackage" xmi:id="_KYoAcVaVEd-OiJEhN960pA" name="ModelicaML" nsURI="http:///schemas/ModelicaML/_KYoAcFaVEd-OiJEhN960pA/103" nsPrefix="ModelicaML">
       <eAnnotations xmi:id="_KqNfsFaVEd-OiJEhN960pA" source="PapyrusVersion">
-        <details xmi:id="_KqNfsVaVEd-OiJEhN960pA" key="Version" value="0.0.102"/>
+        <details xmi:id="_KqNfsVaVEd-OiJEhN960pA" key="Version" value="1.3.1"/>
         <details xmi:id="_KqNfslaVEd-OiJEhN960pA" key="Comment" value=""/>
         <details xmi:id="_KqNfs1aVEd-OiJEhN960pA" key="Copyright" value=""/>
         <details xmi:id="_KqNftFaVEd-OiJEhN960pA" key="Date" value="2010-05-03"/>
@@ -561,7 +561,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_SXdLAAUOEd-XJpWQfXQU0A" name="ModelicaClass">
       <ownedComment xmi:id="_NatSQAUQEd-XJpWQfXQU0A" annotatedElement="_SXdLAAUOEd-XJpWQfXQU0A">
-        <body>This stereotype represents the Modelica &quot;class&quot;. </body>
+        <body>This stereotype is used to represent the Modelica &quot;class&quot;.</body>
       </ownedComment>
       <generalization xmi:id="_U8G5EAUOEd-XJpWQfXQU0A" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_VBGxAAUSEd-XJpWQfXQU0A" name="base_Class" isUnique="false" association="_U3HukAUSEd-XJpWQfXQU0A">
@@ -575,7 +575,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_MbMDoFNTEd6YXtyPQ2LL6Q" name="ModelicaPackage">
       <ownedComment xmi:id="_81OAgFy3Ed6lR6a_09Qo9g" annotatedElement="_MbMDoFNTEd6YXtyPQ2LL6Q">
-        <body>This stereotype represents the Modelica restricted class &quot;package&quot;. </body>
+        <body>This stereotype is used to represent the Modelica restricted class &quot;package&quot;.</body>
       </ownedComment>
       <generalization xmi:id="_gHU2YGChEd6yLItwWIt9kg" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_mIVXMMbWEd6JBtxNmDMs3Q" name="base_Class" isUnique="false" association="_mGGikMbWEd6JBtxNmDMs3Q">
@@ -589,7 +589,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_J8MRoFNTEd6YXtyPQ2LL6Q" name="Model">
       <ownedComment xmi:id="_22szoFy3Ed6lR6a_09Qo9g" annotatedElement="_J8MRoFNTEd6YXtyPQ2LL6Q">
-        <body>This stereotype represents the Modelica restricted class &quot;model&quot;. </body>
+        <body>This stereotype is used to represent the Modelica restricted class &quot;model&quot;. All the following Modelica class elements are allowed in models: Both equation and algorithm sections; connectors, inputs, outputs; states;</body>
       </ownedComment>
       <generalization xmi:id="_fHZqcGChEd6yLItwWIt9kg" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_XREAUWChEd6yLItwWIt9kg" name="base_Class" isUnique="false" association="_XPbBkGChEd6yLItwWIt9kg">
@@ -603,7 +603,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_FEm3oFNTEd6YXtyPQ2LL6Q" name="Block">
       <ownedComment xmi:id="_vBt0YFy3Ed6lR6a_09Qo9g" annotatedElement="_FEm3oFNTEd6YXtyPQ2LL6Q">
-        <body>This stereotype is represents the Modelica restricted class &quot;block&quot;. </body>
+        <body>This stereotype is used to represent the Modelica &quot;block&quot;. Modelica &quot;block&quot; is the same as Modelica &quot;model&quot;, but the ports (instances of &quot;connector&quot; classes)  must have fixed causality (i.e. &quot;input&quot; or &quot;output&quot;).</body>
       </ownedComment>
       <generalization xmi:id="_ecLjMGChEd6yLItwWIt9kg" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_WkDwYGChEd6yLItwWIt9kg" name="base_Class" isUnique="false" association="_WiaxoGChEd6yLItwWIt9kg">
@@ -617,7 +617,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_mYX-YFNTEd6YXtyPQ2LL6Q" name="Connector">
       <ownedComment xmi:id="_Jb1iwFy4Ed6lR6a_09Qo9g" annotatedElement="_mYX-YFNTEd6YXtyPQ2LL6Q">
-        <body>This stereotype is represents the Modelica restricted class &quot;connector&quot;. A &quot;connector&quot; cannot contain equation or algorithm sections, it can have causality and flow specification. All ports must be typed by a &quot;connector&quot; class. </body>
+        <body>This stereotype is used to represent the Modelica restricted class &quot;connector&quot;.  A &quot;connector&quot; cannot contain equation or algorithm sections, it can have causality and flow specification. All ports must be typed by a &quot;connector&quot;.</body>
       </ownedComment>
       <generalization xmi:id="_mLgmYGChEd6yLItwWIt9kg" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_pJZUgFNTEd6YXtyPQ2LL6Q" name="expandable" isUnique="false">
@@ -637,7 +637,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_1z4DEFNTEd6YXtyPQ2LL6Q" name="Record">
       <ownedComment xmi:id="_ExghoFy4Ed6lR6a_09Qo9g" annotatedElement="_1z4DEFNTEd6YXtyPQ2LL6Q">
-        <body>This stereotype represents the Modelica restricted class &quot;record&quot;. </body>
+        <body>This stereotype is used to represent the Modelica &quot;record&quot;. A  Modelica &quot;record&quot; cannot contain equation or algorithm sections and does not contain causality and flow specification.</body>
       </ownedComment>
       <generalization xmi:id="_mZhNMGChEd6yLItwWIt9kg" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_u8pFcMbWEd6JBtxNmDMs3Q" name="base_Class" isUnique="false" association="_uSeHEMbWEd6JBtxNmDMs3Q">
@@ -651,7 +651,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_eTKq4AUVEd-XJpWQfXQU0A" name="Operator">
       <ownedComment xmi:id="_IiRpEAUjEd-trtPDFQJemA" annotatedElement="_eTKq4AUVEd-XJpWQfXQU0A">
-        <body>This stereotype is represents the Modelica restricted class &quot;operator&quot;. </body>
+        <body>This stereotype is used to represent the Modelica restricted class &quot;operator&quot;.</body>
       </ownedComment>
       <generalization xmi:id="_ji4KYAWsEd-eTtxRNHCTLQ" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_jQb2IAUVEd-XJpWQfXQU0A" name="base_Class" isUnique="false" association="_jG5foAUVEd-XJpWQfXQU0A">
@@ -665,7 +665,14 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_DU_7MFNTEd6YXtyPQ2LL6Q" name="Function">
       <ownedComment xmi:id="_i2EW4Fy3Ed6lR6a_09Qo9g" annotatedElement="_DU_7MFNTEd6YXtyPQ2LL6Q">
-        <body>This stereotype represents the Modelica restricted class &quot;function&quot;.</body>
+        <body>Modelica &quot;function&quot; resembles the Modelica &quot;block&quot; but it:&#xD;
+- can only have inputs and outputs; no connectors&#xD;
+- does not have a connectable interface but instead needs to be called&#xD;
+- can be called recursively&#xD;
+- is more dynamic; the arguments are computed at run-time &#xD;
+- does not have internal states&#xD;
+- can have only one algorithm section and no equation section; is always imperative&#xD;
+- becomes part of the equation system as black boxes only; the internals are not manipulated symbolically by the solver</body>
       </ownedComment>
       <generalization xmi:id="_eJjiIGChEd6yLItwWIt9kg" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_V384UWChEd6yLItwWIt9kg" name="base_FunctionBehavior" isUnique="false" association="_V2T5kGChEd6yLItwWIt9kg">
@@ -724,7 +731,8 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_8Nwe0GvUEd65MZ8o9QNr-w" name="CalculationModel">
       <ownedComment xmi:id="_2FU2EGvWEd65MZ8o9QNr-w" annotatedElement="_8Nwe0GvUEd65MZ8o9QNr-w">
-        <body>A CalculationModel does not represent a physical system part. When instantiated, it calculates values that are used by other components.</body>
+        <body>A CalculationModel is a sub-type of Modelica &quot;model&quot;. It is defined in order to enable reusing of equations. It does not represent a physical system part and cannot have external connectors. &#xD;
+When instantiated, it calculates values that are used by other components.</body>
       </ownedComment>
       <generalization xmi:id="__jJtUGvUEd65MZ8o9QNr-w" general="_J8MRoFNTEd6YXtyPQ2LL6Q"/>
       <icon xmi:id="_-eGhQOiNEd6sfa0YGgWZMQ" content="71%73%70%56%57%97%16%0%16%0%-58%66%0%25%25%25%30%31%31%39%39%40%41%41%41%41%42%42%42%43%43%44%44%45%46%47%47%57%58%59%62%63%64%73%75%76%76%77%78%77%78%79%78%79%80%79%81%82%111%113%115%117%117%117%116%118%120%74%125%-80%74%125%-79%75%125%-80%75%125%-79%75%126%-78%76%126%-79%118%120%122%76%127%-77%77%127%-77%77%-128%-76%78%-127%-76%78%-125%-75%79%-125%-74%79%-124%-73%80%-124%-74%80%-124%-73%79%-123%-73%80%-123%-73%127%127%127%-125%-123%-120%-123%-123%-123%-119%-116%-113%-110%-107%-104%112%-96%-60%-105%-102%-99%-104%-101%-98%-99%-99%-99%-93%-90%-87%-92%-89%-86%-81%-77%-74%-75%-71%-67%-74%-70%-66%-72%-68%-65%-70%-66%-62%-68%-64%-60%-61%-57%-53%-60%-56%-52%-44%-40%-36%-42%-37%-33%-34%-30%-25%-31%-26%-21%-31%-23%-12%-27%-22%-17%-24%-17%-9%-20%-14%-7%-16%-11%-6%-6%-5%-3%-3%-3%-2%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%33%-7%4%1%0%0%127%0%44%0%0%0%0%16%0%16%0%0%7%-105%-128%127%127%41%32%33%32%31%33%34%35%35%31%-115%41%-126%127%30%59%-109%-108%-107%59%29%-112%27%61%-101%-100%-99%61%28%-103%62%-94%-93%-92%62%-96%-126%27%63%-86%-85%-84%63%-89%127%27%20%21%19%-78%19%-74%21%18%20%-81%26%64%-67%-66%-65%64%25%-112%23%65%-59%-58%-57%65%22%-61%-56%-52%23%-53%-58%48%0%49%63%-47%52%-50%-126%-60%8%1%65%40%12%10%63%13%14%43%-41%127%23%7%47%-59%15%46%6%37%9%42%17%-28%23%2%51%-59%11%54%24%0%39%51%14%-15%65%5%3%65%8%4%-87%1%-32%-122%63%114%41%46%40%92%-56%-16%-62%35%72%16%35%66%12%4%0%59%">
@@ -763,6 +771,9 @@
     <packagedElement xmi:type="uml:Extension" xmi:id="_jG5foAUVEd-XJpWQfXQU0A" name="Extension_Operator" memberEnd="_jQSFIAUVEd-XJpWQfXQU0A _jQb2IAUVEd-XJpWQfXQU0A">
       <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_jQSFIAUVEd-XJpWQfXQU0A" name="extension_Operator" type="_eTKq4AUVEd-XJpWQfXQU0A" aggregation="composite" association="_jG5foAUVEd-XJpWQfXQU0A"/>
     </packagedElement>
+    <profileApplication xmi:id="_tnKEUF5LEd6vy6oEr0QneQ">
+      <eAnnotations xmi:id="_tpPvAF5LEd6vy6oEr0QneQ" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
+    </profileApplication>
   </packagedElement>
   <packagedElement xmi:type="uml:Profile" xmi:id="_EDAfcFNNEd6YXtyPQ2LL6Q" name="ModelicaCompositeConstructs" metaclassReference="_KSZCwFNhEd6YXtyPQ2LL6Q _N6smMFNhEd6YXtyPQ2LL6Q _Q-MzcFNhEd6YXtyPQ2LL6Q _bJ0WkGDNEd6v450MT6BnSw _CDasoGu_Ed65MZ8o9QNr-w">
     <eAnnotations xmi:id="_KhbWkVNcEd6YXtyPQ2LL6Q" source="http://www.eclipse.org/uml2/2.0.0/UML">
@@ -996,7 +1007,10 @@ If no icon is defined for a property then the icon of the property type is displ
       </ownedAttribute>
       <ownedAttribute xmi:id="_CnP8AFNhEd6YXtyPQ2LL6Q" name="declarationEquationOrAssignment" isUnique="false">
         <ownedComment xmi:id="_WB5_gFzFEd6lR6a_09Qo9g" annotatedElement="_CnP8AFNhEd6YXtyPQ2LL6Q">
-          <body>This refers to the shorthand notation in Modelica. The result must be of the same type as the Modelica component itself. In this case the value is the right-hand-expression of the equation or assignment. The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
+          <body>This refers to the shorthand notation in Modelica. &#xD;
+The result must be of the same type as the Modelica component itself.&#xD;
+In this case the value is the right-hand-expression of the equation or assigment. &#xD;
+The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_lTNr4FtQEd6lR6a_09Qo9g"/>
@@ -1031,7 +1045,7 @@ The keyword &quot;connect&quot; and the parenthesizes are omitted. The string mu
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_-TiUwGoBEd6MDfyi5Yk5ng" name="FunctionArgument">
       <ownedComment xmi:id="_daoVQG-4Ed6iXf-hfUoLSw" annotatedElement="_-TiUwGoBEd6MDfyi5Yk5ng">
-        <body>This stereotype is used to represent Modelica “function” arguments. </body>
+        <body>This stereotype is used to represent variables of functions.</body>
       </ownedComment>
       <generalization xmi:id="_EhfmwHwUEd6RNZXM0YwVGw" general="_Bm_OUFNgEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_RktLEWvREd65MZ8o9QNr-w" name="base_Parameter" isUnique="false" association="_RdGuQGvREd65MZ8o9QNr-w">
@@ -1059,7 +1073,10 @@ The keyword &quot;connect&quot; and the parenthesizes are omitted. The string mu
       </ownedAttribute>
       <ownedAttribute xmi:id="_JqL-9HwUEd6RNZXM0YwVGw" name="declarationEquationOrAssignment" isUnique="false">
         <ownedComment xmi:id="_JqL-9XwUEd6RNZXM0YwVGw" annotatedElement="_JqL-9HwUEd6RNZXM0YwVGw">
-          <body>This refers to the shorthand notation in Modelica. The result must be of the same type as the Modelica component itself. In this case the value is the right-hand-expression of the equation or assignment. The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
+          <body>This refers to the shorthand notation in Modelica. &#xD;
+The result must be of the same type as the Modelica component itself.&#xD;
+In this case the value is the right-hand-expression of the equation or assigment. &#xD;
+The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_JqL-93wUEd6RNZXM0YwVGw"/>
@@ -1068,7 +1085,7 @@ The keyword &quot;connect&quot; and the parenthesizes are omitted. The string mu
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_xezo0GvUEd65MZ8o9QNr-w" name="CalculatedProperty">
       <ownedComment xmi:id="_xyiyQGvWEd65MZ8o9QNr-w" annotatedElement="_xezo0GvUEd65MZ8o9QNr-w">
-        <body>A CalculatedProperty does not represent a physical system part. This component provides other components with calculated values.</body>
+        <body>Does not represent a physical system part. This component supplies other components with calculated values.</body>
       </ownedComment>
       <generalization xmi:id="_0ouAEGvUEd65MZ8o9QNr-w" general="_amVAwFNgEd6YXtyPQ2LL6Q"/>
       <icon xmi:id="_Pgwr8OmJEd60SK7fYbFboQ" content="-119%80%78%71%13%10%26%10%0%0%0%13%73%72%68%82%0%0%0%16%0%0%0%16%8%6%0%0%0%31%-13%-1%97%0%0%0%4%115%66%73%84%8%8%8%8%124%8%100%-120%0%0%0%9%112%72%89%115%0%0%13%-41%0%0%13%-41%1%66%40%-101%120%0%0%0%25%116%69%88%116%83%111%102%116%119%97%114%101%0%119%119%119%46%105%110%107%115%99%97%112%101%46%111%114%103%-101%-18%60%26%0%0%1%-87%73%68%65%84%56%-115%-83%-109%-49%75%84%81%20%-57%63%-25%-66%-21%3%21%27%-59%9%-59%-23%-47%-68%-90%-38%84%4%46%90%68%-110%65%63%86%-46%-94%-96%-99%109%34%-104%77%-8%55%8%-47%-50%77%-123%-117%90%52%-76%-117%32%6%-38%-28%70%108%97%32%86%70%-96%68%-111%-63%-68%55%69%16%90%36%68%111%60%-73%69%-13%-14%21%78%96%118%-106%-9%-100%-49%-25%-98%-5%-123%43%-50%57%-74%83%102%91%-12%-1%16%88%-128%-80%92%-15%-73%-56%-23%-14%-28%-59%6%-128%13%-53%-107%94%-32%33%-112%108%65%-16%30%-72%-112%110%32%-64%-38%-69%79%29%103%-62%-36%-25%-4%-33%-88%-60%73%98%-37%108%55%112%61%61%-77%-4%-52%-95%-85%-40%-69%22%56%-38%-34%-128%68%-101%-29%-50%-73%-56%71%112%-25%-127%-82%-84%64%54%14%36%90%-98%28%45%-90%-51%66%-95%-112%7%-14%-58%-104%117%123%-20%82%31%-35%-31%-115%-12%-62%116%-58%52%5%29%45%-74%-66%2%44%-88%106%-11%-5%-29%91%51%-115%103%-9%10%77%-90%61%43%-56%-108%-54%64%113%-1%-55%-127%-35%-91%-77%-91%83%-105%115%24%-49%34%-14%-42%63%125%117%80%118%-106%-58%53%122%-98%-41%-24%69%79%-106%-80%-65%94%24%-49%-25%-110%-91%-103%-64%-21%-20%-103%-94%61%-25%-42%-5%-10%54%-68%100%-56%-45%104%-63%-24%-54%-46%23%1%-113%29%-3%95%-51%-82%-61%43%-101%10%-110%-89%15%-114%3%-117%-75%-41%47%15%102%50%24%7%-58%-110%-71%-69%-113%-116%49%-77%-50%-71%-5%64%-25%-97%2%7%-12%-101%61%71%39%88%-83%75%88%-82%124%75%-101%-34%-66%97%-85%31%22%-115%127%98%108%4%24%1%-82%53%91%-81%-46%25%73%63%83%16%4%71%84%-11%-119%-120%-36%118%-50%-7%64%21%24%4%-50%-59%113%124%-96%69%-56%27%33%-42%106%-75%57%85%61%-28%-100%-117%85%-11%78%-67%94%-81%-118%-56%52%112%-77%21%-4%-37%6%-1%90%63%0%52%14%-117%9%-6%35%-106%35%0%0%0%0%73%69%78%68%-82%66%96%-126%">
@@ -1092,766 +1109,12 @@ The keyword &quot;connect&quot; and the parenthesizes are omitted. The string mu
     <packagedElement xmi:type="uml:Extension" xmi:id="_RdGuQGvREd65MZ8o9QNr-w" name="Extension_FunctionArgument" memberEnd="_RktLEGvREd65MZ8o9QNr-w _RktLEWvREd65MZ8o9QNr-w">
       <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_RktLEGvREd65MZ8o9QNr-w" name="extension_FunctionArgument" type="_-TiUwGoBEd6MDfyi5Yk5ng" aggregation="composite" association="_RdGuQGvREd65MZ8o9QNr-w"/>
     </packagedElement>
+    <profileApplication xmi:id="_bgmHkF5LEd6vy6oEr0QneQ">
+      <eAnnotations xmi:id="_bh8LYF5LEd6vy6oEr0QneQ" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
+    </profileApplication>
   </packagedElement>
   <packagedElement xmi:type="uml:Profile" xmi:id="_F7HQkFNNEd6YXtyPQ2LL6Q" name="ModelicaBehaviorConstructs" metaclassReference="_n6v0EFp6Ed6wHrenq6l_fA _AvjKcFp7Ed6wHrenq6l_fA _DqHeIFp7Ed6wHrenq6l_fA _q7jdMFp7Ed6wHrenq6l_fA _7kAjQGDIEd6v450MT6BnSw _-lrcAHhXEd61gosBa_LKXQ _IVpC0JxKEd6RMu88zSj-NA _XHgcUMbWEd6JBtxNmDMs3Q _jr3kgDv1Ed-3ucOGnYJ5qw _c8Jc0E-AEd-nnOK4EzJA-w">
     <eAnnotations xmi:id="_KhbWlFNcEd6YXtyPQ2LL6Q" source="http://www.eclipse.org/uml2/2.0.0/UML">
-      <contents xmi:type="ecore:EPackage" xmi:id="_DLElsGYnEeKa6IhMvygGQA" name="ModelicaBehaviorConstructs" nsURI="http://ModelicaML/schemas/ModelicaBehaviorConstructs/_DLD-oGYnEeKa6IhMvygGQA/107" nsPrefix="ModelicaBehaviorConstructs">
-        <eAnnotations xmi:id="_DLElsWYnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/4.0.0/UML" references="_HjkcIFNNEd6YXtyPQ2LL6Q"/>
-        <eAnnotations xmi:id="_DMAZ0GYnEeKa6IhMvygGQA" source="PapyrusVersion">
-          <details xmi:id="_DMAZ0WYnEeKa6IhMvygGQA" key="Version" value="0.0.106"/>
-          <details xmi:id="_DMAZ0mYnEeKa6IhMvygGQA" key="Comment" value="- freezeExpression added to ModelicaMLStateMachine stereotype"/>
-          <details xmi:id="_DMAZ02YnEeKa6IhMvygGQA" key="Copyright" value=""/>
-          <details xmi:id="_DMAZ1GYnEeKa6IhMvygGQA" key="Date" value="2013-01-24"/>
-          <details xmi:id="_DMAZ1WYnEeKa6IhMvygGQA" key="Author" value=""/>
-        </eAnnotations>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_DLElsmYnEeKa6IhMvygGQA" name="AlgorithmCode" eSuperTypes="_DLEluWYnEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_DLEls2YnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_-FADYFNhEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEltGYnEeKa6IhMvygGQA" name="base_OpaqueBehavior" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueBehavior"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEltmYnEeKa6IhMvygGQA" name="initial" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_DLEluWYnEeKa6IhMvygGQA" name="AlgorithmLoopProperties" abstract="true">
-          <eAnnotations xmi:id="_DLElumYnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_7fZ4wFp1Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLElu2YnEeKa6IhMvygGQA" name="loopKind" ordered="false" unique="false" eType="_DLElwWYnEeKa6IhMvygGQA" defaultValueLiteral=""/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLElvWYnEeKa6IhMvygGQA" name="forIndices" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLElv2YnEeKa6IhMvygGQA" name="whileExpression" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_DLElwWYnEeKa6IhMvygGQA" name="ModelicaML_ModelicaPredefinedEnumerations_ModelicaAlgorithmLoopKind">
-          <eAnnotations xmi:id="_DLElwmYnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_lQ1PsFpzEd6wHrenq6l_fA"/>
-          <eLiterals xmi:id="_DLElw2YnEeKa6IhMvygGQA" name="for"/>
-          <eLiterals xmi:id="_DLElxGYnEeKa6IhMvygGQA" name="while" value="1"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_DLElxWYnEeKa6IhMvygGQA" name="EquationsCode" eSuperTypes="_DLElzGYnEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_DLElxmYnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_CZkP4FNiEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLElx2YnEeKa6IhMvygGQA" name="base_OpaqueBehavior" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueBehavior"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLElyWYnEeKa6IhMvygGQA" name="initial" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_DLElzGYnEeKa6IhMvygGQA" name="EquationsLoopProperties" abstract="true">
-          <eAnnotations xmi:id="_DLElzWYnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_r6gLAFp2Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLElzmYnEeKa6IhMvygGQA" name="loopKind" ordered="false" unique="false" eType="_DLEl0mYnEeKa6IhMvygGQA" defaultValueLiteral=""/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEl0GYnEeKa6IhMvygGQA" name="forIndices" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_DLEl0mYnEeKa6IhMvygGQA" name="ModelicaML_ModelicaPredefinedEnumerations_ModelicaEquationsLoopKind">
-          <eAnnotations xmi:id="_DLEl02YnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_dpe8cFp2Ed6wHrenq6l_fA"/>
-          <eLiterals xmi:id="_DLEl1GYnEeKa6IhMvygGQA" name="for"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_DLEl1WYnEeKa6IhMvygGQA" name="If">
-          <eAnnotations xmi:id="_DLEl1mYnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_55tSMFNiEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEl12YnEeKa6IhMvygGQA" name="base_DecisionNode" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//DecisionNode"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_DLEl2WYnEeKa6IhMvygGQA" name="When">
-          <eAnnotations xmi:id="_DLEl2mYnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_9oa_oFNiEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEl22YnEeKa6IhMvygGQA" name="base_DecisionNode" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//DecisionNode"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_DLEl3WYnEeKa6IhMvygGQA" name="ConditionalAlgorithmDiagram" eSuperTypes="_DLEluWYnEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_DLEl3mYnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_KYuS4Fp1Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEl32YnEeKa6IhMvygGQA" name="base_Activity" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Activity"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEl4WYnEeKa6IhMvygGQA" name="isSubActivity" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEl42YnEeKa6IhMvygGQA" name="initial" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_DLEl5mYnEeKa6IhMvygGQA" name="ConditionalEquationsDiagram" eSuperTypes="_DLElzGYnEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_DLEl52YnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_KYuS4lp1Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEl6GYnEeKa6IhMvygGQA" name="base_Activity" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Activity"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEl6mYnEeKa6IhMvygGQA" name="isSubActivity" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEl7GYnEeKa6IhMvygGQA" name="initial" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_DLEl72YnEeKa6IhMvygGQA" name="EquationsCodeInDiagram" eSuperTypes="_DLElzGYnEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_DLEl8GYnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_VPo_0Fp6Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEl8WYnEeKa6IhMvygGQA" name="base_OpaqueAction" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueAction"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_DLEl9GYnEeKa6IhMvygGQA" name="AlgorithmStatementsCodeInDiagram" eSuperTypes="_DLEluWYnEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_DLEl9WYnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_Ypf3kFp6Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEl9mYnEeKa6IhMvygGQA" name="base_OpaqueAction" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueAction"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_DLEl-WYnEeKa6IhMvygGQA" name="Assert">
-          <eAnnotations xmi:id="_DLEl-mYnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_l_65wFNhEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEl-2YnEeKa6IhMvygGQA" name="condition" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEl_WYnEeKa6IhMvygGQA" name="message" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEl_2YnEeKa6IhMvygGQA" name="level" ordered="false" unique="false" lowerBound="1" eType="_DLEmA2YnEeKa6IhMvygGQA" defaultValueLiteral="warning"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEmAWYnEeKa6IhMvygGQA" name="base_Constraint" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Constraint"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_DLEmA2YnEeKa6IhMvygGQA" name="ModelicaML_ModelicaPredefinedEnumerations_ModelicaAssertionLevel">
-          <eAnnotations xmi:id="_DLEmBGYnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_lQ4fwFqDEd6wHrenq6l_fA"/>
-          <eLiterals xmi:id="_DLEmBWYnEeKa6IhMvygGQA" name="warning"/>
-          <eLiterals xmi:id="_DLEmBmYnEeKa6IhMvygGQA" name="error" value="1"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_DLEmB2YnEeKa6IhMvygGQA" name="ModelicaMLStateMachine">
-          <eAnnotations xmi:id="_DLEmCGYnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_J6FREJxKEd6RMu88zSj-NA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEmCWYnEeKa6IhMvygGQA" name="base_StateMachine" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//StateMachine"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEmC2YnEeKa6IhMvygGQA" name="samplingExpression" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEmDWYnEeKa6IhMvygGQA" name="additionalCode" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEmD2YnEeKa6IhMvygGQA" name="freezeExpression" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_DLEmEWYnEeKa6IhMvygGQA" name="StateDependency">
-          <eAnnotations xmi:id="_DLEmEmYnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="__sLxEHhXEd61gosBa_LKXQ"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEmE2YnEeKa6IhMvygGQA" name="isInState" ordered="false" unique="false" lowerBound="1" upperBound="-1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//State"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEmFWYnEeKa6IhMvygGQA" name="base_ControlFlow" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//ControlFlow"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEmF2YnEeKa6IhMvygGQA" name="logicalOperator" ordered="false" unique="false" lowerBound="1" eType="_DLEmG2YnEeKa6IhMvygGQA" defaultValueLiteral="and"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEmGWYnEeKa6IhMvygGQA" name="base_Transition" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Transition"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_DLEmG2YnEeKa6IhMvygGQA" name="ModelicaML_ModelicaPredefinedEnumerations_LogicalOperators">
-          <eAnnotations xmi:id="_DLEmHGYnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_Ky91IHoBEd6HTZA5rjYUOg"/>
-          <eLiterals xmi:id="_DLEmHWYnEeKa6IhMvygGQA" name="and"/>
-          <eLiterals xmi:id="_DLEmHmYnEeKa6IhMvygGQA" name="or" value="1"/>
-          <eLiterals xmi:id="_DLEmH2YnEeKa6IhMvygGQA" name="not" value="2"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_DLEmIGYnEeKa6IhMvygGQA" name="ExecutionOrderPriority">
-          <eAnnotations xmi:id="_DLEmIWYnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_DhKxkAUhEd-trtPDFQJemA"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEmImYnEeKa6IhMvygGQA" name="priority" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="0">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Integer"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEmJGYnEeKa6IhMvygGQA" name="base_Transition" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Transition"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEmJmYnEeKa6IhMvygGQA" name="base_Region" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Region"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEmKGYnEeKa6IhMvygGQA" name="base_ControlFlow" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//ControlFlow"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_DLEmKmYnEeKa6IhMvygGQA" name="StateTransitionSpecification">
-          <eAnnotations xmi:id="_DLEmK2YnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_SZNMYEu4Ed-kMYgIGglkOw"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEmLGYnEeKa6IhMvygGQA" name="base_Transition" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Transition"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEmLmYnEeKa6IhMvygGQA" name="suppressExitActions" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEmMGYnEeKa6IhMvygGQA" name="suppressEntryActions" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_DLEmMmYnEeKa6IhMvygGQA" name="StateSpecification">
-          <eAnnotations xmi:id="_DLEmM2YnEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_dY6RUE-AEd-nnOK4EzJA-w"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_DLEmNGYnEeKa6IhMvygGQA" name="freezeExpression" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_DLEmNmYnEeKa6IhMvygGQA" name="base_State" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//State"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-      </contents>
-      <contents xmi:type="ecore:EPackage" xmi:id="_w-F8EGYfEeKa6IhMvygGQA" name="ModelicaBehaviorConstructs" nsURI="http://ModelicaML/schemas/ModelicaBehaviorConstructs/_w-FVAGYfEeKa6IhMvygGQA/106" nsPrefix="ModelicaBehaviorConstructs">
-        <eAnnotations xmi:id="_w-F8EWYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/4.0.0/UML" references="_HjkcIFNNEd6YXtyPQ2LL6Q"/>
-        <eAnnotations xmi:id="_w_AiEGYfEeKa6IhMvygGQA" source="PapyrusVersion">
-          <details xmi:id="_w_AiEWYfEeKa6IhMvygGQA" key="Version" value="0.0.105"/>
-          <details xmi:id="_w_AiEmYfEeKa6IhMvygGQA" key="Comment" value=""/>
-          <details xmi:id="_w_AiE2YfEeKa6IhMvygGQA" key="Copyright" value=""/>
-          <details xmi:id="_w_AiFGYfEeKa6IhMvygGQA" key="Date" value="2013-01-24"/>
-          <details xmi:id="_w_AiFWYfEeKa6IhMvygGQA" key="Author" value=""/>
-        </eAnnotations>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_w-F8EmYfEeKa6IhMvygGQA" name="AlgorithmCode" eSuperTypes="_w-F8GWYfEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_w-F8E2YfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_-FADYFNhEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8FGYfEeKa6IhMvygGQA" name="base_OpaqueBehavior" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueBehavior"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8FmYfEeKa6IhMvygGQA" name="initial" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_w-F8GWYfEeKa6IhMvygGQA" name="AlgorithmLoopProperties" abstract="true">
-          <eAnnotations xmi:id="_w-F8GmYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_7fZ4wFp1Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8G2YfEeKa6IhMvygGQA" name="loopKind" ordered="false" unique="false" eType="_w-F8IWYfEeKa6IhMvygGQA" defaultValueLiteral=""/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8HWYfEeKa6IhMvygGQA" name="forIndices" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8H2YfEeKa6IhMvygGQA" name="whileExpression" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_w-F8IWYfEeKa6IhMvygGQA" name="ModelicaML_ModelicaPredefinedEnumerations_ModelicaAlgorithmLoopKind">
-          <eAnnotations xmi:id="_w-F8ImYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_lQ1PsFpzEd6wHrenq6l_fA"/>
-          <eLiterals xmi:id="_w-F8I2YfEeKa6IhMvygGQA" name="for"/>
-          <eLiterals xmi:id="_w-F8JGYfEeKa6IhMvygGQA" name="while" value="1"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_w-F8JWYfEeKa6IhMvygGQA" name="EquationsCode" eSuperTypes="_w-F8LGYfEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_w-F8JmYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_CZkP4FNiEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8J2YfEeKa6IhMvygGQA" name="base_OpaqueBehavior" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueBehavior"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8KWYfEeKa6IhMvygGQA" name="initial" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_w-F8LGYfEeKa6IhMvygGQA" name="EquationsLoopProperties" abstract="true">
-          <eAnnotations xmi:id="_w-F8LWYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_r6gLAFp2Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8LmYfEeKa6IhMvygGQA" name="loopKind" ordered="false" unique="false" eType="_w-F8MmYfEeKa6IhMvygGQA" defaultValueLiteral=""/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8MGYfEeKa6IhMvygGQA" name="forIndices" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_w-F8MmYfEeKa6IhMvygGQA" name="ModelicaML_ModelicaPredefinedEnumerations_ModelicaEquationsLoopKind">
-          <eAnnotations xmi:id="_w-F8M2YfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_dpe8cFp2Ed6wHrenq6l_fA"/>
-          <eLiterals xmi:id="_w-F8NGYfEeKa6IhMvygGQA" name="for"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_w-F8NWYfEeKa6IhMvygGQA" name="If">
-          <eAnnotations xmi:id="_w-F8NmYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_55tSMFNiEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8N2YfEeKa6IhMvygGQA" name="base_DecisionNode" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//DecisionNode"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_w-F8OWYfEeKa6IhMvygGQA" name="When">
-          <eAnnotations xmi:id="_w-F8OmYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_9oa_oFNiEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8O2YfEeKa6IhMvygGQA" name="base_DecisionNode" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//DecisionNode"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_w-F8PWYfEeKa6IhMvygGQA" name="ConditionalAlgorithmDiagram" eSuperTypes="_w-F8GWYfEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_w-F8PmYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_KYuS4Fp1Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8P2YfEeKa6IhMvygGQA" name="base_Activity" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Activity"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8QWYfEeKa6IhMvygGQA" name="isSubActivity" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8Q2YfEeKa6IhMvygGQA" name="initial" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_w-F8RmYfEeKa6IhMvygGQA" name="ConditionalEquationsDiagram" eSuperTypes="_w-F8LGYfEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_w-F8R2YfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_KYuS4lp1Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8SGYfEeKa6IhMvygGQA" name="base_Activity" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Activity"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8SmYfEeKa6IhMvygGQA" name="isSubActivity" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8TGYfEeKa6IhMvygGQA" name="initial" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_w-F8T2YfEeKa6IhMvygGQA" name="EquationsCodeInDiagram" eSuperTypes="_w-F8LGYfEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_w-F8UGYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_VPo_0Fp6Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8UWYfEeKa6IhMvygGQA" name="base_OpaqueAction" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueAction"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_w-F8VGYfEeKa6IhMvygGQA" name="AlgorithmStatementsCodeInDiagram" eSuperTypes="_w-F8GWYfEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_w-F8VWYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_Ypf3kFp6Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8VmYfEeKa6IhMvygGQA" name="base_OpaqueAction" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueAction"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_w-F8WWYfEeKa6IhMvygGQA" name="Assert">
-          <eAnnotations xmi:id="_w-F8WmYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_l_65wFNhEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8W2YfEeKa6IhMvygGQA" name="condition" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8XWYfEeKa6IhMvygGQA" name="message" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8X2YfEeKa6IhMvygGQA" name="level" ordered="false" unique="false" lowerBound="1" eType="_w-F8Y2YfEeKa6IhMvygGQA" defaultValueLiteral="warning"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8YWYfEeKa6IhMvygGQA" name="base_Constraint" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Constraint"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_w-F8Y2YfEeKa6IhMvygGQA" name="ModelicaML_ModelicaPredefinedEnumerations_ModelicaAssertionLevel">
-          <eAnnotations xmi:id="_w-F8ZGYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_lQ4fwFqDEd6wHrenq6l_fA"/>
-          <eLiterals xmi:id="_w-F8ZWYfEeKa6IhMvygGQA" name="warning"/>
-          <eLiterals xmi:id="_w-F8ZmYfEeKa6IhMvygGQA" name="error" value="1"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_w-F8Z2YfEeKa6IhMvygGQA" name="ModelicaMLStateMachine">
-          <eAnnotations xmi:id="_w-F8aGYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_J6FREJxKEd6RMu88zSj-NA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8aWYfEeKa6IhMvygGQA" name="base_StateMachine" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//StateMachine"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8a2YfEeKa6IhMvygGQA" name="samplingExpression" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8bWYfEeKa6IhMvygGQA" name="additionalCode" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_w-F8b2YfEeKa6IhMvygGQA" name="StateDependency">
-          <eAnnotations xmi:id="_w-F8cGYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="__sLxEHhXEd61gosBa_LKXQ"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8cWYfEeKa6IhMvygGQA" name="isInState" ordered="false" unique="false" lowerBound="1" upperBound="-1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//State"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8c2YfEeKa6IhMvygGQA" name="base_ControlFlow" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//ControlFlow"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8dWYfEeKa6IhMvygGQA" name="logicalOperator" ordered="false" unique="false" lowerBound="1" eType="_w-F8eWYfEeKa6IhMvygGQA" defaultValueLiteral="and"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8d2YfEeKa6IhMvygGQA" name="base_Transition" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Transition"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_w-F8eWYfEeKa6IhMvygGQA" name="ModelicaML_ModelicaPredefinedEnumerations_LogicalOperators">
-          <eAnnotations xmi:id="_w-F8emYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_Ky91IHoBEd6HTZA5rjYUOg"/>
-          <eLiterals xmi:id="_w-F8e2YfEeKa6IhMvygGQA" name="and"/>
-          <eLiterals xmi:id="_w-F8fGYfEeKa6IhMvygGQA" name="or" value="1"/>
-          <eLiterals xmi:id="_w-F8fWYfEeKa6IhMvygGQA" name="not" value="2"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_w-F8fmYfEeKa6IhMvygGQA" name="ExecutionOrderPriority">
-          <eAnnotations xmi:id="_w-F8f2YfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_DhKxkAUhEd-trtPDFQJemA"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8gGYfEeKa6IhMvygGQA" name="priority" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="0">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Integer"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8gmYfEeKa6IhMvygGQA" name="base_Transition" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Transition"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8hGYfEeKa6IhMvygGQA" name="base_Region" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Region"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8hmYfEeKa6IhMvygGQA" name="base_ControlFlow" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//ControlFlow"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_w-F8iGYfEeKa6IhMvygGQA" name="StateTransitionSpecification">
-          <eAnnotations xmi:id="_w-F8iWYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_SZNMYEu4Ed-kMYgIGglkOw"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8imYfEeKa6IhMvygGQA" name="base_Transition" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Transition"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8jGYfEeKa6IhMvygGQA" name="suppressExitActions" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8jmYfEeKa6IhMvygGQA" name="suppressEntryActions" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_w-F8kGYfEeKa6IhMvygGQA" name="StateSpecification">
-          <eAnnotations xmi:id="_w-F8kWYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_dY6RUE-AEd-nnOK4EzJA-w"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_w-F8kmYfEeKa6IhMvygGQA" name="freezeExpression" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8lGYfEeKa6IhMvygGQA" name="base_State" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//State"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_w-F8lmYfEeKa6IhMvygGQA" name="base_StateMachine" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//StateMachine"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-      </contents>
-      <contents xmi:type="ecore:EPackage" xmi:id="_unyzEGYfEeKa6IhMvygGQA" name="ModelicaBehaviorConstructs" nsURI="http://ModelicaML/schemas/ModelicaBehaviorConstructs/_unxk8GYfEeKa6IhMvygGQA/105" nsPrefix="ModelicaBehaviorConstructs">
-        <eAnnotations xmi:id="_unyzEWYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/4.0.0/UML" references="_HjkcIFNNEd6YXtyPQ2LL6Q"/>
-        <eAnnotations xmi:id="_uopusGYfEeKa6IhMvygGQA" source="PapyrusVersion">
-          <details xmi:id="_uopusWYfEeKa6IhMvygGQA" key="Version" value="0.0.104"/>
-          <details xmi:id="_uopusmYfEeKa6IhMvygGQA" key="Comment" value=""/>
-          <details xmi:id="_uopus2YfEeKa6IhMvygGQA" key="Copyright" value=""/>
-          <details xmi:id="_uoputGYfEeKa6IhMvygGQA" key="Date" value="2013-01-24"/>
-          <details xmi:id="_uoputWYfEeKa6IhMvygGQA" key="Author" value=""/>
-        </eAnnotations>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_unyzEmYfEeKa6IhMvygGQA" name="AlgorithmCode" eSuperTypes="_unyzGWYfEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_unyzE2YfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_-FADYFNhEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzFGYfEeKa6IhMvygGQA" name="base_OpaqueBehavior" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueBehavior"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzFmYfEeKa6IhMvygGQA" name="initial" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_unyzGWYfEeKa6IhMvygGQA" name="AlgorithmLoopProperties" abstract="true">
-          <eAnnotations xmi:id="_unyzGmYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_7fZ4wFp1Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzG2YfEeKa6IhMvygGQA" name="loopKind" ordered="false" unique="false" eType="_unyzIWYfEeKa6IhMvygGQA" defaultValueLiteral=""/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzHWYfEeKa6IhMvygGQA" name="forIndices" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzH2YfEeKa6IhMvygGQA" name="whileExpression" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_unyzIWYfEeKa6IhMvygGQA" name="ModelicaML_ModelicaPredefinedEnumerations_ModelicaAlgorithmLoopKind">
-          <eAnnotations xmi:id="_unyzImYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_lQ1PsFpzEd6wHrenq6l_fA"/>
-          <eLiterals xmi:id="_unyzI2YfEeKa6IhMvygGQA" name="for"/>
-          <eLiterals xmi:id="_unyzJGYfEeKa6IhMvygGQA" name="while" value="1"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_unyzJWYfEeKa6IhMvygGQA" name="EquationsCode" eSuperTypes="_unyzLGYfEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_unyzJmYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_CZkP4FNiEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzJ2YfEeKa6IhMvygGQA" name="base_OpaqueBehavior" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueBehavior"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzKWYfEeKa6IhMvygGQA" name="initial" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_unyzLGYfEeKa6IhMvygGQA" name="EquationsLoopProperties" abstract="true">
-          <eAnnotations xmi:id="_unyzLWYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_r6gLAFp2Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzLmYfEeKa6IhMvygGQA" name="loopKind" ordered="false" unique="false" eType="_unyzMmYfEeKa6IhMvygGQA" defaultValueLiteral=""/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzMGYfEeKa6IhMvygGQA" name="forIndices" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_unyzMmYfEeKa6IhMvygGQA" name="ModelicaML_ModelicaPredefinedEnumerations_ModelicaEquationsLoopKind">
-          <eAnnotations xmi:id="_unyzM2YfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_dpe8cFp2Ed6wHrenq6l_fA"/>
-          <eLiterals xmi:id="_unyzNGYfEeKa6IhMvygGQA" name="for"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_unyzNWYfEeKa6IhMvygGQA" name="If">
-          <eAnnotations xmi:id="_unyzNmYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_55tSMFNiEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzN2YfEeKa6IhMvygGQA" name="base_DecisionNode" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//DecisionNode"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_unyzOWYfEeKa6IhMvygGQA" name="When">
-          <eAnnotations xmi:id="_unyzOmYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_9oa_oFNiEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzO2YfEeKa6IhMvygGQA" name="base_DecisionNode" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//DecisionNode"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_unyzPWYfEeKa6IhMvygGQA" name="ConditionalAlgorithmDiagram" eSuperTypes="_unyzGWYfEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_unyzPmYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_KYuS4Fp1Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzP2YfEeKa6IhMvygGQA" name="base_Activity" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Activity"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzQWYfEeKa6IhMvygGQA" name="isSubActivity" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzQ2YfEeKa6IhMvygGQA" name="initial" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_unyzRmYfEeKa6IhMvygGQA" name="ConditionalEquationsDiagram" eSuperTypes="_unyzLGYfEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_unyzR2YfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_KYuS4lp1Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzSGYfEeKa6IhMvygGQA" name="base_Activity" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Activity"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzSmYfEeKa6IhMvygGQA" name="isSubActivity" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzTGYfEeKa6IhMvygGQA" name="initial" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_unyzT2YfEeKa6IhMvygGQA" name="EquationsCodeInDiagram" eSuperTypes="_unyzLGYfEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_unyzUGYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_VPo_0Fp6Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzUWYfEeKa6IhMvygGQA" name="base_OpaqueAction" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueAction"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_unyzVGYfEeKa6IhMvygGQA" name="AlgorithmStatementsCodeInDiagram" eSuperTypes="_unyzGWYfEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_unyzVWYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_Ypf3kFp6Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzVmYfEeKa6IhMvygGQA" name="base_OpaqueAction" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueAction"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_unyzWWYfEeKa6IhMvygGQA" name="Assert">
-          <eAnnotations xmi:id="_unyzWmYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_l_65wFNhEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzW2YfEeKa6IhMvygGQA" name="condition" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzXWYfEeKa6IhMvygGQA" name="message" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzX2YfEeKa6IhMvygGQA" name="level" ordered="false" unique="false" lowerBound="1" eType="_unyzY2YfEeKa6IhMvygGQA" defaultValueLiteral="warning"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzYWYfEeKa6IhMvygGQA" name="base_Constraint" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Constraint"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_unyzY2YfEeKa6IhMvygGQA" name="ModelicaML_ModelicaPredefinedEnumerations_ModelicaAssertionLevel">
-          <eAnnotations xmi:id="_unyzZGYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_lQ4fwFqDEd6wHrenq6l_fA"/>
-          <eLiterals xmi:id="_unyzZWYfEeKa6IhMvygGQA" name="warning"/>
-          <eLiterals xmi:id="_unyzZmYfEeKa6IhMvygGQA" name="error" value="1"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_unyzZ2YfEeKa6IhMvygGQA" name="ModelicaMLStateMachine">
-          <eAnnotations xmi:id="_unyzaGYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_J6FREJxKEd6RMu88zSj-NA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzaWYfEeKa6IhMvygGQA" name="base_StateMachine" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//StateMachine"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyza2YfEeKa6IhMvygGQA" name="samplingExpression" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzbWYfEeKa6IhMvygGQA" name="additionalCode" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_unyzb2YfEeKa6IhMvygGQA" name="StateDependency">
-          <eAnnotations xmi:id="_unyzcGYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="__sLxEHhXEd61gosBa_LKXQ"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzcWYfEeKa6IhMvygGQA" name="isInState" ordered="false" unique="false" lowerBound="1" upperBound="-1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//State"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzc2YfEeKa6IhMvygGQA" name="base_ControlFlow" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//ControlFlow"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzdWYfEeKa6IhMvygGQA" name="logicalOperator" ordered="false" unique="false" lowerBound="1" eType="_unyzeWYfEeKa6IhMvygGQA" defaultValueLiteral="and"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzd2YfEeKa6IhMvygGQA" name="base_Transition" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Transition"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_unyzeWYfEeKa6IhMvygGQA" name="ModelicaML_ModelicaPredefinedEnumerations_LogicalOperators">
-          <eAnnotations xmi:id="_unyzemYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_Ky91IHoBEd6HTZA5rjYUOg"/>
-          <eLiterals xmi:id="_unyze2YfEeKa6IhMvygGQA" name="and"/>
-          <eLiterals xmi:id="_unyzfGYfEeKa6IhMvygGQA" name="or" value="1"/>
-          <eLiterals xmi:id="_unyzfWYfEeKa6IhMvygGQA" name="not" value="2"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_unyzfmYfEeKa6IhMvygGQA" name="ExecutionOrderPriority">
-          <eAnnotations xmi:id="_unyzf2YfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_DhKxkAUhEd-trtPDFQJemA"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzgGYfEeKa6IhMvygGQA" name="priority" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="0">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Integer"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzgmYfEeKa6IhMvygGQA" name="base_Transition" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Transition"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzhGYfEeKa6IhMvygGQA" name="base_Region" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Region"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzhmYfEeKa6IhMvygGQA" name="base_ControlFlow" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//ControlFlow"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_unyziGYfEeKa6IhMvygGQA" name="StateTransitionSpecification">
-          <eAnnotations xmi:id="_unyziWYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_SZNMYEu4Ed-kMYgIGglkOw"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzimYfEeKa6IhMvygGQA" name="base_Transition" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Transition"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzjGYfEeKa6IhMvygGQA" name="suppressExitActions" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzjmYfEeKa6IhMvygGQA" name="suppressEntryActions" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_unyzkGYfEeKa6IhMvygGQA" name="StateSpecification">
-          <eAnnotations xmi:id="_unyzkWYfEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_dY6RUE-AEd-nnOK4EzJA-w"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_unyzkmYfEeKa6IhMvygGQA" name="freezeExpression" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_unyzlGYfEeKa6IhMvygGQA" name="base_State" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//State"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-      </contents>
-      <contents xmi:type="ecore:EPackage" xmi:id="_0_jy8GYKEeKa6IhMvygGQA" name="ModelicaBehaviorConstructs" nsURI="http://ModelicaML/schemas/ModelicaBehaviorConstructs/_0_gIkGYKEeKa6IhMvygGQA/104" nsPrefix="ModelicaBehaviorConstructs">
-        <eAnnotations xmi:id="_0_jy8WYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/4.0.0/UML" references="_HjkcIFNNEd6YXtyPQ2LL6Q"/>
-        <eAnnotations xmi:id="_1AkfkGYKEeKa6IhMvygGQA" source="PapyrusVersion">
-          <details xmi:id="_1AkfkWYKEeKa6IhMvygGQA" key="Version" value="0.0.103"/>
-          <details xmi:id="_1AkfkmYKEeKa6IhMvygGQA" key="Comment" value="- ADDED: additionalCode property for the ModelicaML stereotype&#xD;&#xA;- DELETED: AdditionalIncludes stereotype for state machines"/>
-          <details xmi:id="_1Akfk2YKEeKa6IhMvygGQA" key="Copyright" value=""/>
-          <details xmi:id="_1AkflGYKEeKa6IhMvygGQA" key="Date" value="2013-01-24"/>
-          <details xmi:id="_1AkflWYKEeKa6IhMvygGQA" key="Author" value=""/>
-        </eAnnotations>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_0_jy8mYKEeKa6IhMvygGQA" name="AlgorithmCode" eSuperTypes="_0_jy-WYKEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_0_jy82YKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_-FADYFNhEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jy9GYKEeKa6IhMvygGQA" name="base_OpaqueBehavior" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueBehavior"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jy9mYKEeKa6IhMvygGQA" name="initial" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_0_jy-WYKEeKa6IhMvygGQA" name="AlgorithmLoopProperties" abstract="true">
-          <eAnnotations xmi:id="_0_jy-mYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_7fZ4wFp1Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jy-2YKEeKa6IhMvygGQA" name="loopKind" ordered="false" unique="false" eType="_0_jzAWYKEeKa6IhMvygGQA" defaultValueLiteral=""/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jy_WYKEeKa6IhMvygGQA" name="forIndices" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jy_2YKEeKa6IhMvygGQA" name="whileExpression" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_0_jzAWYKEeKa6IhMvygGQA" name="ModelicaML_ModelicaPredefinedEnumerations_ModelicaAlgorithmLoopKind">
-          <eAnnotations xmi:id="_0_jzAmYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_lQ1PsFpzEd6wHrenq6l_fA"/>
-          <eLiterals xmi:id="_0_jzA2YKEeKa6IhMvygGQA" name="for"/>
-          <eLiterals xmi:id="_0_jzBGYKEeKa6IhMvygGQA" name="while" value="1"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_0_jzBWYKEeKa6IhMvygGQA" name="EquationsCode" eSuperTypes="_0_jzDGYKEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_0_jzBmYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_CZkP4FNiEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzB2YKEeKa6IhMvygGQA" name="base_OpaqueBehavior" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueBehavior"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzCWYKEeKa6IhMvygGQA" name="initial" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_0_jzDGYKEeKa6IhMvygGQA" name="EquationsLoopProperties" abstract="true">
-          <eAnnotations xmi:id="_0_jzDWYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_r6gLAFp2Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzDmYKEeKa6IhMvygGQA" name="loopKind" ordered="false" unique="false" eType="_0_jzEmYKEeKa6IhMvygGQA" defaultValueLiteral=""/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzEGYKEeKa6IhMvygGQA" name="forIndices" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_0_jzEmYKEeKa6IhMvygGQA" name="ModelicaML_ModelicaPredefinedEnumerations_ModelicaEquationsLoopKind">
-          <eAnnotations xmi:id="_0_jzE2YKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_dpe8cFp2Ed6wHrenq6l_fA"/>
-          <eLiterals xmi:id="_0_jzFGYKEeKa6IhMvygGQA" name="for"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_0_jzFWYKEeKa6IhMvygGQA" name="If">
-          <eAnnotations xmi:id="_0_jzFmYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_55tSMFNiEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzF2YKEeKa6IhMvygGQA" name="base_DecisionNode" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//DecisionNode"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_0_jzGWYKEeKa6IhMvygGQA" name="When">
-          <eAnnotations xmi:id="_0_jzGmYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_9oa_oFNiEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzG2YKEeKa6IhMvygGQA" name="base_DecisionNode" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//DecisionNode"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_0_jzHWYKEeKa6IhMvygGQA" name="ConditionalAlgorithmDiagram" eSuperTypes="_0_jy-WYKEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_0_jzHmYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_KYuS4Fp1Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzH2YKEeKa6IhMvygGQA" name="base_Activity" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Activity"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzIWYKEeKa6IhMvygGQA" name="isSubActivity" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzI2YKEeKa6IhMvygGQA" name="initial" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_0_jzJmYKEeKa6IhMvygGQA" name="ConditionalEquationsDiagram" eSuperTypes="_0_jzDGYKEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_0_jzJ2YKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_KYuS4lp1Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzKGYKEeKa6IhMvygGQA" name="base_Activity" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Activity"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzKmYKEeKa6IhMvygGQA" name="isSubActivity" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzLGYKEeKa6IhMvygGQA" name="initial" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_0_jzL2YKEeKa6IhMvygGQA" name="EquationsCodeInDiagram" eSuperTypes="_0_jzDGYKEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_0_jzMGYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_VPo_0Fp6Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzMWYKEeKa6IhMvygGQA" name="base_OpaqueAction" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueAction"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_0_jzNGYKEeKa6IhMvygGQA" name="AlgorithmStatementsCodeInDiagram" eSuperTypes="_0_jy-WYKEeKa6IhMvygGQA">
-          <eAnnotations xmi:id="_0_jzNWYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_Ypf3kFp6Ed6wHrenq6l_fA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzNmYKEeKa6IhMvygGQA" name="base_OpaqueAction" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueAction"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_0_jzOWYKEeKa6IhMvygGQA" name="Assert">
-          <eAnnotations xmi:id="_0_jzOmYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_l_65wFNhEd6YXtyPQ2LL6Q"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzO2YKEeKa6IhMvygGQA" name="condition" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzPWYKEeKa6IhMvygGQA" name="message" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzP2YKEeKa6IhMvygGQA" name="level" ordered="false" unique="false" lowerBound="1" eType="_0_jzQ2YKEeKa6IhMvygGQA" defaultValueLiteral="warning"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzQWYKEeKa6IhMvygGQA" name="base_Constraint" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Constraint"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_0_jzQ2YKEeKa6IhMvygGQA" name="ModelicaML_ModelicaPredefinedEnumerations_ModelicaAssertionLevel">
-          <eAnnotations xmi:id="_0_jzRGYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_lQ4fwFqDEd6wHrenq6l_fA"/>
-          <eLiterals xmi:id="_0_jzRWYKEeKa6IhMvygGQA" name="warning"/>
-          <eLiterals xmi:id="_0_jzRmYKEeKa6IhMvygGQA" name="error" value="1"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_0_jzR2YKEeKa6IhMvygGQA" name="ModelicaMLStateMachine">
-          <eAnnotations xmi:id="_0_jzSGYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_J6FREJxKEd6RMu88zSj-NA"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzSWYKEeKa6IhMvygGQA" name="base_StateMachine" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//StateMachine"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzS2YKEeKa6IhMvygGQA" name="samplingExpression" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzTWYKEeKa6IhMvygGQA" name="additionalCode" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_0_jzT2YKEeKa6IhMvygGQA" name="StateDependency">
-          <eAnnotations xmi:id="_0_jzUGYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="__sLxEHhXEd61gosBa_LKXQ"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzUWYKEeKa6IhMvygGQA" name="isInState" ordered="false" unique="false" lowerBound="1" upperBound="-1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//State"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzU2YKEeKa6IhMvygGQA" name="base_ControlFlow" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//ControlFlow"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzVWYKEeKa6IhMvygGQA" name="logicalOperator" ordered="false" unique="false" lowerBound="1" eType="_0_jzWWYKEeKa6IhMvygGQA" defaultValueLiteral="and"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzV2YKEeKa6IhMvygGQA" name="base_Transition" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Transition"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_0_jzWWYKEeKa6IhMvygGQA" name="ModelicaML_ModelicaPredefinedEnumerations_LogicalOperators">
-          <eAnnotations xmi:id="_0_jzWmYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_Ky91IHoBEd6HTZA5rjYUOg"/>
-          <eLiterals xmi:id="_0_jzW2YKEeKa6IhMvygGQA" name="and"/>
-          <eLiterals xmi:id="_0_jzXGYKEeKa6IhMvygGQA" name="or" value="1"/>
-          <eLiterals xmi:id="_0_jzXWYKEeKa6IhMvygGQA" name="not" value="2"/>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_0_jzXmYKEeKa6IhMvygGQA" name="ExecutionOrderPriority">
-          <eAnnotations xmi:id="_0_jzX2YKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_DhKxkAUhEd-trtPDFQJemA"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzYGYKEeKa6IhMvygGQA" name="priority" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="0">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Integer"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzYmYKEeKa6IhMvygGQA" name="base_Transition" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Transition"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzZGYKEeKa6IhMvygGQA" name="base_Region" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Region"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzZmYKEeKa6IhMvygGQA" name="base_ControlFlow" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//ControlFlow"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_0_jzaGYKEeKa6IhMvygGQA" name="StateTransitionSpecification">
-          <eAnnotations xmi:id="_0_jzaWYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_SZNMYEu4Ed-kMYgIGglkOw"/>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzamYKEeKa6IhMvygGQA" name="base_Transition" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Transition"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzbGYKEeKa6IhMvygGQA" name="suppressExitActions" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzbmYKEeKa6IhMvygGQA" name="suppressEntryActions" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-        <eClassifiers xmi:type="ecore:EClass" xmi:id="_0_jzcGYKEeKa6IhMvygGQA" name="StateSpecification">
-          <eAnnotations xmi:id="_0_jzcWYKEeKa6IhMvygGQA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_dY6RUE-AEd-nnOK4EzJA-w"/>
-          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_0_jzcmYKEeKa6IhMvygGQA" name="freezeExpression" ordered="false" unique="false">
-            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//String"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzdGYKEeKa6IhMvygGQA" name="base_State" ordered="false" unique="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//State"/>
-          </eStructuralFeatures>
-          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_0_jzdmYKEeKa6IhMvygGQA" name="base_StateMachine" ordered="false" lowerBound="1">
-            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//StateMachine"/>
-          </eStructuralFeatures>
-        </eClassifiers>
-      </contents>
       <contents xmi:type="ecore:EPackage" xmi:id="_Kpnp0FaVEd-OiJEhN960pA" name="ModelicaBehaviorConstructs" nsURI="http://ModelicaML/schemas/ModelicaBehaviorConstructs/_Kpd40FaVEd-OiJEhN960pA/103" nsPrefix="ModelicaBehaviorConstructs">
         <eAnnotations xmi:id="_KqNf7FaVEd-OiJEhN960pA" source="PapyrusVersion">
           <details xmi:id="_KqNf7VaVEd-OiJEhN960pA" key="Version" value="0.0.102"/>
@@ -2038,7 +1301,7 @@ The keyword &quot;connect&quot; and the parenthesizes are omitted. The string mu
           </eStructuralFeatures>
         </eClassifiers>
         <eClassifiers xmi:type="ecore:EClass" xmi:id="_KpnqVVaVEd-OiJEhN960pA" name="AdditionalIncludes">
-          <eAnnotations xmi:id="_KpnqVlaVEd-OiJEhN960pA" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
+          <eAnnotations xmi:id="_KpnqVlaVEd-OiJEhN960pA" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_0M7bsE-AEd-nnOK4EzJA-w"/>
           <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_KpnqV1aVEd-OiJEhN960pA" name="additionalActionCode" ordered="false" unique="false">
             <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
           </eStructuralFeatures>
@@ -2234,7 +1497,7 @@ The keyword &quot;connect&quot; and the parenthesizes are omitted. The string mu
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_J6FREJxKEd6RMu88zSj-NA" name="ModelicaMLStateMachine">
       <ownedComment xmi:id="_DNhdAJxLEd6RMu88zSj-NA" annotatedElement="_J6FREJxKEd6RMu88zSj-NA">
-        <body>This stereotypes indicates that this a special case of the UML StateMachine. It uses a limited sub-set of the UML StateMachine meta-classes and can be translated into executable Modelica code. </body>
+        <body>This stereotypes indicates that this a special case of the UML StateMachine. It uses a limited set of the UML StateMachine meta-model classes. It is capable to be translated into executable Modelica code.</body>
       </ownedComment>
       <ownedAttribute xmi:id="_Yc3lEJxKEd6RMu88zSj-NA" name="base_StateMachine" isUnique="false" association="_YQpuAJxKEd6RMu88zSj-NA">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#StateMachine"/>
@@ -2243,22 +1506,6 @@ The keyword &quot;connect&quot; and the parenthesizes are omitted. The string mu
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_B4YAcD2YEd--2eFnADjMKQ"/>
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_B4YAcT2YEd--2eFnADjMKQ" value="1"/>
-      </ownedAttribute>
-      <ownedAttribute xmi:id="_M-2P4GYGEeKa6IhMvygGQA" name="additionalCode" isUnique="false" aggregation="composite">
-        <ownedComment xmi:id="_SiIv8GYfEeKa6IhMvygGQA">
-          <body>This property allows including additional code that will be inserted at the beginning of the algorithm section in which the state machine code will be generated. </body>
-        </ownedComment>
-        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_M-2P4WYGEeKa6IhMvygGQA"/>
-        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_M-2P4mYGEeKa6IhMvygGQA" value="1"/>
-      </ownedAttribute>
-      <ownedAttribute xmi:id="_x6cycGYmEeKa6IhMvygGQA" name="freezeExpression" isUnique="false">
-        <ownedComment xmi:id="_x6cycWYmEeKa6IhMvygGQA" annotatedElement="_x6cycGYmEeKa6IhMvygGQA">
-          <body>The state machine or the composite state is fozen, i.e., the state is active but no reactions and no actions will be executed inside the state, as long as this expression evaluates to true.</body>
-        </ownedComment>
-        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_x6cycmYmEeKa6IhMvygGQA"/>
-        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_x6cyc2YmEeKa6IhMvygGQA" value="1"/>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="__sLxEHhXEd61gosBa_LKXQ" name="StateDependency">
@@ -2286,30 +1533,24 @@ The keyword &quot;connect&quot; and the parenthesizes are omitted. The string mu
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_DhKxkAUhEd-trtPDFQJemA" name="ExecutionOrderPriority">
-      <ownedComment xmi:id="_yDTt8LQOEeKMMvKD8rDWHw">
-        <body>“ExecutionOrderPriority” specifies the order in which the code of the transition, control flow or region shall be executed relative to the neighbors.</body>
-      </ownedComment>
       <ownedAttribute xmi:id="_FCASMAUhEd-trtPDFQJemA" name="priority" isUnique="false">
         <ownedComment xmi:id="_GbspAAUhEd-trtPDFQJemA" annotatedElement="_FCASMAUhEd-trtPDFQJemA">
-          <body>Execution priority in code. A lower number implies a higher execution priority. Element with the lowest priority is executed first.</body>
+          <body>Execution priority in code. A lower number implies a higher execution priority. Elements with higher priority are executed first.</body>
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
         <defaultValue xmi:type="uml:LiteralInteger" xmi:id="_L_oysAUhEd-trtPDFQJemA"/>
       </ownedAttribute>
-      <ownedAttribute xmi:id="_zlDZQGYJEeKa6IhMvygGQA" name="base_Transition" association="_zlDZQWYJEeKa6IhMvygGQA">
+      <ownedAttribute xmi:id="_Ye5IsQUhEd-trtPDFQJemA" name="base_Transition" isUnique="false" association="_YdQxAAUhEd-trtPDFQJemA">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Transition"/>
       </ownedAttribute>
-      <ownedAttribute xmi:id="_59s9YGYJEeKa6IhMvygGQA" name="base_Region" association="_59s9YWYJEeKa6IhMvygGQA">
-        <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Region"/>
-      </ownedAttribute>
-      <ownedAttribute xmi:id="_7O6toGYJEeKa6IhMvygGQA" name="base_ControlFlow" association="_7O7UsGYJEeKa6IhMvygGQA">
+      <ownedAttribute xmi:id="_h1i8ETv1Ed-3ucOGnYJ5qw" name="base_ControlFlow" isUnique="false" association="_hzwzYDv1Ed-3ucOGnYJ5qw">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#ControlFlow"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:id="_kaEuUTv1Ed-3ucOGnYJ5qw" name="base_Region" isUnique="false" association="_kPyJ4Dv1Ed-3ucOGnYJ5qw">
+        <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Region"/>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_SZNMYEu4Ed-kMYgIGglkOw" name="StateTransitionSpecification">
-      <ownedComment xmi:id="_jyCLQLQPEeKMMvKD8rDWHw">
-        <body>This stereotype captures additional features for state transition behavior which are not included in UML.</body>
-      </ownedComment>
       <ownedAttribute xmi:id="_Vulz0Uu4Ed-kMYgIGglkOw" name="base_Transition" isUnique="false" association="_Vh7Q0Eu4Ed-kMYgIGglkOw">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Transition"/>
       </ownedAttribute>
@@ -2329,12 +1570,9 @@ The keyword &quot;connect&quot; and the parenthesizes are omitted. The string mu
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_dY6RUE-AEd-nnOK4EzJA-w" name="StateSpecification">
-      <ownedComment xmi:id="_LfTnMLQPEeKMMvKD8rDWHw">
-        <body>This stereotype defines additional feature that are not included in UML. </body>
-      </ownedComment>
       <ownedAttribute xmi:id="_gXzEUE-AEd-nnOK4EzJA-w" name="freezeExpression" isUnique="false">
         <ownedComment xmi:id="_KYjQUFaHEd-DhOvTuzSvmw" annotatedElement="_gXzEUE-AEd-nnOK4EzJA-w">
-          <body>Indicates if the state or state machine should be is active but do not react and do not execution actions as long as the expression evaluates to true.</body>
+          <body>The state machine or the composite state is fozen, i.e., the state is active but no reactions and no actions will be executed inside the state, as long as this expression evaluates to true.</body>
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_jEy2EE-AEd-nnOK4EzJA-w"/>
@@ -2342,6 +1580,19 @@ The keyword &quot;connect&quot; and the parenthesizes are omitted. The string mu
       </ownedAttribute>
       <ownedAttribute xmi:id="_rGSnUU-AEd-nnOK4EzJA-w" name="base_State" isUnique="false" association="_rD6BsE-AEd-nnOK4EzJA-w">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#State"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:id="_EBA_gU-BEd-nnOK4EzJA-w" name="base_StateMachine" isUnique="false" association="_DxNo8E-BEd-nnOK4EzJA-w">
+        <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#StateMachine"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Stereotype" xmi:id="_0M7bsE-AEd-nnOK4EzJA-w" name="AdditionalIncludes">
+      <ownedAttribute xmi:id="_37WOME-AEd-nnOK4EzJA-w" name="additionalActionCode" isUnique="false">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_7AL4ME-AEd-nnOK4EzJA-w"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_7AVpME-AEd-nnOK4EzJA-w" value="1"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:id="__okYkU-AEd-nnOK4EzJA-w" name="base_StateMachine" isUnique="false" association="__aHs4E-AEd-nnOK4EzJA-w">
+        <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#StateMachine"/>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Extension" xmi:id="_N3LqYGCiEd6yLItwWIt9kg" name="Extension_Algorithm(Code)" memberEnd="_N4X9MGCiEd6yLItwWIt9kg _N4X9MWCiEd6yLItwWIt9kg">
@@ -2380,21 +1631,30 @@ The keyword &quot;connect&quot; and the parenthesizes are omitted. The string mu
     <packagedElement xmi:type="uml:Extension" xmi:id="_YQEm4MbWEd6JBtxNmDMs3Q" name="Extension_StateDependency" memberEnd="_YYaqkMbWEd6JBtxNmDMs3Q _YYkbkMbWEd6JBtxNmDMs3Q">
       <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_YYaqkMbWEd6JBtxNmDMs3Q" name="extension_StateDependency" type="__sLxEHhXEd61gosBa_LKXQ" aggregation="composite" association="_YQEm4MbWEd6JBtxNmDMs3Q"/>
     </packagedElement>
+    <packagedElement xmi:type="uml:Extension" xmi:id="_YdQxAAUhEd-trtPDFQJemA" name="Extension_StateTransitionSpecification" memberEnd="_Ye5IsAUhEd-trtPDFQJemA _Ye5IsQUhEd-trtPDFQJemA">
+      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_Ye5IsAUhEd-trtPDFQJemA" name="extension_StateTransitionSpecification" type="_DhKxkAUhEd-trtPDFQJemA" aggregation="composite" association="_YdQxAAUhEd-trtPDFQJemA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Extension" xmi:id="_hzwzYDv1Ed-3ucOGnYJ5qw" name="Extension_ExecutionOrderPriority" memberEnd="_h1i8EDv1Ed-3ucOGnYJ5qw _h1i8ETv1Ed-3ucOGnYJ5qw">
+      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_h1i8EDv1Ed-3ucOGnYJ5qw" name="extension_ExecutionOrderPriority" type="_DhKxkAUhEd-trtPDFQJemA" aggregation="composite" association="_hzwzYDv1Ed-3ucOGnYJ5qw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Extension" xmi:id="_kPyJ4Dv1Ed-3ucOGnYJ5qw" name="Extension_ExecutionOrderPriority" memberEnd="_kaEuUDv1Ed-3ucOGnYJ5qw _kaEuUTv1Ed-3ucOGnYJ5qw">
+      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_kaEuUDv1Ed-3ucOGnYJ5qw" name="extension_ExecutionOrderPriority" type="_DhKxkAUhEd-trtPDFQJemA" aggregation="composite" association="_kPyJ4Dv1Ed-3ucOGnYJ5qw"/>
+    </packagedElement>
     <packagedElement xmi:type="uml:Extension" xmi:id="_Vh7Q0Eu4Ed-kMYgIGglkOw" name="Extension_StateTransitionSpecification" memberEnd="_Vulz0Eu4Ed-kMYgIGglkOw _Vulz0Uu4Ed-kMYgIGglkOw">
       <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_Vulz0Eu4Ed-kMYgIGglkOw" name="extension_StateTransitionSpecification" type="_SZNMYEu4Ed-kMYgIGglkOw" aggregation="composite" association="_Vh7Q0Eu4Ed-kMYgIGglkOw"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Extension" xmi:id="_rD6BsE-AEd-nnOK4EzJA-w" name="Extension_StateSpecification" memberEnd="_rGSnUE-AEd-nnOK4EzJA-w _rGSnUU-AEd-nnOK4EzJA-w">
       <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_rGSnUE-AEd-nnOK4EzJA-w" name="extension_StateSpecification" type="_dY6RUE-AEd-nnOK4EzJA-w" aggregation="composite" association="_rD6BsE-AEd-nnOK4EzJA-w"/>
     </packagedElement>
-    <packagedElement xmi:type="uml:Extension" xmi:id="_zlDZQWYJEeKa6IhMvygGQA" name="E_ExecutionOrderPriority_Transition1" memberEnd="_zlDZQmYJEeKa6IhMvygGQA _zlDZQGYJEeKa6IhMvygGQA">
-      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_zlDZQmYJEeKa6IhMvygGQA" name="extension_ExecutionOrderPriority" type="_DhKxkAUhEd-trtPDFQJemA" aggregation="composite" association="_zlDZQWYJEeKa6IhMvygGQA"/>
+    <packagedElement xmi:type="uml:Extension" xmi:id="__aHs4E-AEd-nnOK4EzJA-w" name="Extension_AdditionalIncludes" memberEnd="__okYkE-AEd-nnOK4EzJA-w __okYkU-AEd-nnOK4EzJA-w">
+      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="__okYkE-AEd-nnOK4EzJA-w" name="extension_AdditionalIncludes" type="_0M7bsE-AEd-nnOK4EzJA-w" aggregation="composite" association="__aHs4E-AEd-nnOK4EzJA-w"/>
     </packagedElement>
-    <packagedElement xmi:type="uml:Extension" xmi:id="_59s9YWYJEeKa6IhMvygGQA" name="E_ExecutionOrderPriority_Region1" memberEnd="_59s9YmYJEeKa6IhMvygGQA _59s9YGYJEeKa6IhMvygGQA">
-      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_59s9YmYJEeKa6IhMvygGQA" name="extension_ExecutionOrderPriority" type="_DhKxkAUhEd-trtPDFQJemA" aggregation="composite" association="_59s9YWYJEeKa6IhMvygGQA"/>
+    <packagedElement xmi:type="uml:Extension" xmi:id="_DxNo8E-BEd-nnOK4EzJA-w" name="Extension_StateSpecification" memberEnd="_EBA_gE-BEd-nnOK4EzJA-w _EBA_gU-BEd-nnOK4EzJA-w">
+      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_EBA_gE-BEd-nnOK4EzJA-w" name="extension_StateSpecification" type="_dY6RUE-AEd-nnOK4EzJA-w" aggregation="composite" association="_DxNo8E-BEd-nnOK4EzJA-w"/>
     </packagedElement>
-    <packagedElement xmi:type="uml:Extension" xmi:id="_7O7UsGYJEeKa6IhMvygGQA" name="E_ExecutionOrderPriority_ControlFlow1" memberEnd="_7O7UsWYJEeKa6IhMvygGQA _7O6toGYJEeKa6IhMvygGQA">
-      <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_7O7UsWYJEeKa6IhMvygGQA" name="extension_ExecutionOrderPriority" type="_DhKxkAUhEd-trtPDFQJemA" aggregation="composite" association="_7O7UsGYJEeKa6IhMvygGQA"/>
-    </packagedElement>
+    <profileApplication xmi:id="_MuXgYINNEd6Q_-wxlTEMTQ">
+      <eAnnotations xmi:id="_NTBFkINNEd6Q_-wxlTEMTQ" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
+    </profileApplication>
   </packagedElement>
   <packagedElement xmi:type="uml:Profile" xmi:id="_HjkcIFNNEd6YXtyPQ2LL6Q" name="ModelicaPredefinedEnumerations">
     <eAnnotations xmi:id="_KhbWl1NcEd6YXtyPQ2LL6Q" source="http://www.eclipse.org/uml2/2.0.0/UML">
@@ -2643,7 +1903,7 @@ The keyword &quot;connect&quot; and the parenthesizes are omitted. The string mu
     </elementImport>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_ljL3QFNdEd6YXtyPQ2LL6Q" name="TypeRelation">
       <ownedComment xmi:id="_kUv-kFy7Ed6lR6a_09Qo9g" annotatedElement="_ljL3QFNdEd6YXtyPQ2LL6Q">
-        <body>This stereotype has properties that allow capturing type modifications. It can only be used between classes of primitive type. </body>
+        <body>This stereotype has attributes which allow the capturing of type modifications. It can only be used between classes of primitive type.</body>
       </ownedComment>
       <ownedAttribute xmi:id="_pfnQkFNdEd6YXtyPQ2LL6Q" name="modification" isUnique="false">
         <ownedComment xmi:id="_sJb3UFzFEd6lR6a_09Qo9g" annotatedElement="_pfnQkFNdEd6YXtyPQ2LL6Q">
@@ -2683,9 +1943,6 @@ Commas and the parenthesis &quot;(&quot; and &quot;)&quot; are omitted.</body>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_QvgxQAUYEd-XJpWQfXQU0A" name="RedeclareRelation">
-      <ownedComment xmi:id="_Sd_bILQQEeKMMvKD8rDWHw">
-        <body>This stereotype represents the Modelica “redeclare” relation.</body>
-      </ownedComment>
       <ownedAttribute xmi:id="_by4_IAUYEd-XJpWQfXQU0A" name="modification" isUnique="false">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_hbEIkAUYEd-XJpWQfXQU0A"/>
@@ -2696,9 +1953,6 @@ Commas and the parenthesis &quot;(&quot; and &quot;)&quot; are omitted.</body>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_TwVd8AUYEd-XJpWQfXQU0A" name="ConstrainedByRelation">
-      <ownedComment xmi:id="_x0TMILQPEeKMMvKD8rDWHw">
-        <body>This stereotype represents the Modelica relation “constrainedBy”.</body>
-      </ownedComment>
       <ownedAttribute xmi:id="_jw0fAAUYEd-XJpWQfXQU0A" name="modification" isUnique="false">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_jw0fAgUYEd-XJpWQfXQU0A"/>
@@ -2709,9 +1963,6 @@ Commas and the parenthesis &quot;(&quot; and &quot;)&quot; are omitted.</body>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_X5ddMAUdEd-XJpWQfXQU0A" name="PartialDerivativeOfFunctionRelation">
-      <ownedComment xmi:id="_OALMALQQEeKMMvKD8rDWHw">
-        <body>This stereotype represents the Modelica the relation from a function (source) that is a derivative of another function (target).</body>
-      </ownedComment>
       <ownedAttribute xmi:id="_kcPBQAUdEd-XJpWQfXQU0A" name="base_Dependency" isUnique="false" association="_kbW3gAUdEd-XJpWQfXQU0A">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Dependency"/>
       </ownedAttribute>
@@ -2722,9 +1973,6 @@ Commas and the parenthesis &quot;(&quot; and &quot;)&quot; are omitted.</body>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_FArQ8H-WEeC-I9oqZ53S4w" name="Import">
-      <ownedComment xmi:id="_35XF4LQPEeKMMvKD8rDWHw">
-        <body>This stereotype represents the Modelica “import” relation.</body>
-      </ownedComment>
       <ownedAttribute xmi:id="_GtAP4H-WEeC-I9oqZ53S4w" name="alias">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_LzMtoH-WEeC-I9oqZ53S4w"/>
@@ -2752,6 +2000,9 @@ Commas and the parenthesis &quot;(&quot; and &quot;)&quot; are omitted.</body>
     <packagedElement xmi:type="uml:Extension" xmi:id="_PAPRYX-WEeC-I9oqZ53S4w" name="E_Import_Dependency0" memberEnd="_PAPRYn-WEeC-I9oqZ53S4w _PAPRYH-WEeC-I9oqZ53S4w">
       <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_PAPRYn-WEeC-I9oqZ53S4w" name="extension_Import" type="_FArQ8H-WEeC-I9oqZ53S4w" aggregation="composite" association="_PAPRYX-WEeC-I9oqZ53S4w"/>
     </packagedElement>
+    <profileApplication xmi:id="_rAKfgGvWEd65MZ8o9QNr-w">
+      <eAnnotations xmi:id="_rDmOAGvWEd65MZ8o9QNr-w" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
+    </profileApplication>
   </packagedElement>
   <packagedElement xmi:type="uml:Profile" xmi:id="_GnDQYGC9Ed6v450MT6BnSw" name="ModelicaRequirementConstructs" metaclassReference="_pe6fwGDAEd6v450MT6BnSw _zlr7cGDAEd6v450MT6BnSw _A09-MGDXEd60nrRVgVTh_Q _eXarUKx7EeC2GJQ4iCzxPg">
     <eAnnotations xmi:id="_w_wl32DBEd6v450MT6BnSw" source="http://www.eclipse.org/uml2/2.0.0/UML">
@@ -2904,19 +2155,20 @@ Commas and the parenthesis &quot;(&quot; and &quot;)&quot; are omitted.</body>
     </elementImport>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_bks90FsREd6lR6a_09Qo9g" name="Requirement">
       <ownedComment xmi:id="_D38m8Fy5Ed6lR6a_09Qo9g" annotatedElement="_bks90FsREd6lR6a_09Qo9g">
-        <body>“Requirement” concept, identified by this stereotype, represents a natural language requirements and the corresponding violation monitor. </body>
+        <body>The concept of textual requirements is reused from the OMG SysML. This stereotype is used to represent a requirement with properties such as id, text (representing the textual statement), etc. &#xD;
+Moreover, a requirement can have variables and behavior defined which can be evaluated during simulations.</body>
       </ownedComment>
       <generalization xmi:id="_IYU4YGDLEd6v450MT6BnSw" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_gO5cEFsREd6lR6a_09Qo9g" name="id" visibility="public" isUnique="false">
         <ownedComment xmi:id="_KkKFwGxbEd65MZ8o9QNr-w" annotatedElement="_gO5cEFsREd6lR6a_09Qo9g">
-          <body>Requirement unique identifier.</body>
+          <body>Requirement ID.</body>
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <defaultValue xmi:type="uml:LiteralString" xmi:id="_mLpuYFsREd6lR6a_09Qo9g" value=""/>
       </ownedAttribute>
       <ownedAttribute xmi:id="_iOBbMFsREd6lR6a_09Qo9g" name="text" visibility="public" isUnique="false">
         <ownedComment xmi:id="_IhBwYGxbEd65MZ8o9QNr-w" annotatedElement="_iOBbMFsREd6lR6a_09Qo9g">
-          <body>Natural language statement of the requirement.</body>
+          <body>Textual requirement statement.</body>
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_kOVGEFsREd6lR6a_09Qo9g" value="1"/>
@@ -2982,6 +2234,9 @@ It has properties that can be used for setting up a descriptive traceability bet
     <packagedElement xmi:type="uml:Extension" xmi:id="_DhiSIGDXEd60nrRVgVTh_Q" name="Extension_Traceability" memberEnd="_DiR5AGDXEd60nrRVgVTh_Q _DibC8GDXEd60nrRVgVTh_Q">
       <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_DiR5AGDXEd60nrRVgVTh_Q" name="extension_Traceability" type="_0Pj-4GDAEd6v450MT6BnSw" aggregation="composite" association="_DhiSIGDXEd60nrRVgVTh_Q"/>
     </packagedElement>
+    <profileApplication xmi:id="_NvD4EGDBEd6v450MT6BnSw">
+      <eAnnotations xmi:id="_NyMEkGDBEd6v450MT6BnSw" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
+    </profileApplication>
   </packagedElement>
   <packagedElement xmi:type="uml:Profile" xmi:id="_LT6BEGC9Ed6v450MT6BnSw" name="ModelicaSimulationConstructs" metaclassReference="_1X5qgGDBEd6v450MT6BnSw _SX_ucHwSEd6RNZXM0YwVGw _fKrWwHwSEd6RNZXM0YwVGw _g2af0HwSEd6RNZXM0YwVGw _iEWSkHwSEd6RNZXM0YwVGw _AsA_0HxdEd6oZZ5NPrAB7g _0mY-sAneEd-mxt3ftN7uFA">
     <eAnnotations xmi:id="_xCvoOmDBEd6v450MT6BnSw" source="http://www.eclipse.org/uml2/2.0.0/UML">
@@ -3176,6 +2431,9 @@ It has properties that can be used for setting up a descriptive traceability bet
     <packagedElement xmi:type="uml:Extension" xmi:id="_83E5UKOSEd6QGeS9Jr9djA" name="Extension_Simulation" memberEnd="_9SfqAKOSEd6QGeS9Jr9djA _9Soz8KOSEd6QGeS9Jr9djA">
       <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_9SfqAKOSEd6QGeS9Jr9djA" name="extension_Simulation" type="_10PLQFNaEd6YXtyPQ2LL6Q" aggregation="composite" association="_83E5UKOSEd6QGeS9Jr9djA"/>
     </packagedElement>
+    <profileApplication xmi:id="_VBSloH23Ed61e442Za0IMg">
+      <eAnnotations xmi:id="_VLRoEH23Ed61e442Za0IMg" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
+    </profileApplication>
   </packagedElement>
   <packagedElement xmi:type="uml:Profile" xmi:id="_zPJyIGC9Ed6v450MT6BnSw" name="ModelicaAnnotationConstructs" metaclassReference="_TD7OAGvEEd65MZ8o9QNr-w">
     <eAnnotations xmi:id="_xC4yImDBEd6v450MT6BnSw" source="http://www.eclipse.org/uml2/2.0.0/UML">
@@ -3309,7 +2567,7 @@ It has properties that can be used for setting up a descriptive traceability bet
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_ZvTg4GvEEd65MZ8o9QNr-w" name="Annotation(CodeGeneration)">
       <ownedComment xmi:id="_jAFscG-5Ed6iXf-hfUoLSw" annotatedElement="_ZvTg4GvEEd65MZ8o9QNr-w">
-        <body>Annotation specific to Modelica code generation (not ModelicaML code generation).</body>
+        <body>See the Modelica specification.</body>
       </ownedComment>
       <ownedAttribute xmi:id="_bfg6QGvEEd65MZ8o9QNr-w" name="Evaluate" visibility="public" isUnique="false">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
@@ -3345,7 +2603,8 @@ It has properties that can be used for setting up a descriptive traceability bet
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_FQYwMGvFEd65MZ8o9QNr-w" name="Annotation(SimulationExperiment)">
       <ownedComment xmi:id="_egpLIGvTEd65MZ8o9QNr-w" annotatedElement="_FQYwMGvFEd65MZ8o9QNr-w">
-        <body>The experiment annotation defines the default start time, the stop time, and the default relative integration tolerance for simulation experiments to be carried out with the model at hand. </body>
+        <body>The experiment annotation defines the default start time (StartTime) in [s], the default stop time (StopTime) in [s], &#xD;
+and the default relative integration tolerance (Tolerance) for simulation experiments to be carried out with the model or block at hand.</body>
       </ownedComment>
       <ownedAttribute xmi:id="_HBL_cGvFEd65MZ8o9QNr-w" name="StartTime" isUnique="false">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#UnlimitedNatural"/>
@@ -3368,7 +2627,8 @@ It has properties that can be used for setting up a descriptive traceability bet
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_0hMOAGvPEd65MZ8o9QNr-w" name="Annotation(VersionHandling)">
       <ownedComment xmi:id="_I0H0UGvTEd65MZ8o9QNr-w" annotatedElement="_0hMOAGvPEd65MZ8o9QNr-w">
-        <body>A top-level package or model can specify the version of top-level classes it uses, its own version number, and if possible how to convert from previous versions. This can be used by a tool to guarantee that consistent versions are used, and if possible to upgrade usage from an earlier version to a current one. </body>
+        <body>A top-level package or model can specify the version of top-level classes it uses, its own version number, and if possible how to convert from previous versions. &#xD;
+This can be used by a tool to guarantee that consistent versions are used, and if possible to upgrade usage from an earlier version to a current one.</body>
       </ownedComment>
       <ownedAttribute xmi:id="_4PBKoGvPEd65MZ8o9QNr-w" name="version" isUnique="false">
         <ownedComment xmi:id="_R4YNoGvUEd65MZ8o9QNr-w" annotatedElement="_4PBKoGvPEd65MZ8o9QNr-w">
@@ -3405,9 +2665,6 @@ It has properties that can be used for setting up a descriptive traceability bet
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_I7-Q8D2WEd--2eFnADjMKQ" name="Annotation(Icon)">
-      <ownedComment xmi:id="_0HC_8LQREeKMMvKD8rDWHw">
-        <body>Graphical icon annotation (Modelica code).</body>
-      </ownedComment>
       <ownedAttribute xmi:id="_MwENoT2WEd--2eFnADjMKQ" name="base_Comment" isUnique="false" association="_MvnhsD2WEd--2eFnADjMKQ">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Comment"/>
       </ownedAttribute>
@@ -4726,7 +3983,8 @@ It has properties that can be used for setting up a descriptive traceability bet
     </elementImport>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_T-xLcH-XEeC-I9oqZ53S4w" name="VerificationScenario">
       <ownedComment xmi:id="_QfTBwKx3EeC2GJQ4iCzxPg">
-        <body>VerificationScenario is a model that stimulates the design in such a way that requirement violation monitors are evaluated. </body>
+        <body>Scenario is a step by step description of action that stimulate the system model. &#xD;
+Usually a test scenario also includes the initialization of the system in order to ensure the required pre-condition are met. </body>
       </ownedComment>
       <generalization xmi:id="_2zE4EMQYEeC6UZUtnVcSgg" general="_10PLQFNaEd6YXtyPQ2LL6Q">
         <ownedComment xmi:id="_6rVjEMQYEeC6UZUtnVcSgg"/>
@@ -4744,7 +4002,8 @@ It has properties that can be used for setting up a descriptive traceability bet
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_FK8VgMQZEeC6UZUtnVcSgg" name="VerificationModel">
       <ownedComment xmi:id="_IqBEcMQZEeC6UZUtnVcSgg">
-        <body>A “Verification Model” is composed of one design that is to be verified against s set of requirements by means of one scenario. Some additional models may need to be included as well. </body>
+        <body>A Verification Model (VeM) includes one system model that is to be verified against s set of requirements models by means of one scenario model.&#xD;
+Some additional models requirered by any of the mentioned components may be included in VeM also. </body>
       </ownedComment>
       <ownedAttribute xmi:id="_0LJPoMTgEeCHp7TGKxmB1g" name="base_Class" association="_0LJPocTgEeCHp7TGKxmB1g">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Class"/>
@@ -4752,7 +4011,7 @@ It has properties that can be used for setting up a descriptive traceability bet
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_8VZHcK0qEeCRXd3mzS9MqQ" name="UseToVerify">
       <ownedComment xmi:id="_HpdcsK0rEeCRXd3mzS9MqQ">
-        <body>This relation indicates that the scenario (source) can be used to verify the requirement (target). </body>
+        <body>This relation indicates that the scenario, it points from, can be used to verify the requirement it points to.</body>
       </ownedComment>
       <ownedAttribute xmi:id="_-j2jEK0qEeCRXd3mzS9MqQ" name="base_Dependency" association="_-j2jEa0qEeCRXd3mzS9MqQ">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Dependency"/>
@@ -4760,7 +4019,7 @@ It has properties that can be used for setting up a descriptive traceability bet
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_gl9-cLPjEeGhud1AX_-QHA" name="DoNotUseToVerify">
       <ownedComment xmi:id="_snXTwLPjEeGhud1AX_-QHA">
-        <body>This relation indicates that the scenario (source) should not be used to verify the requirement it points to. </body>
+        <body>This relation indicates that the scenario, it points from, should not be used to verify the requirement it points to.</body>
       </ownedComment>
       <ownedAttribute xmi:id="_knwY4LPjEeGhud1AX_-QHA" name="base_Dependency" association="_knw_8LPjEeGhud1AX_-QHA">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Dependency"/>
@@ -4782,7 +4041,7 @@ It has properties that can be used for setting up a descriptive traceability bet
       </ownedAttribute>
       <ownedAttribute xmi:id="_Np65UMjBEeCnxqjdSD5uGQ" name="always">
         <ownedComment xmi:id="_ejgFkMjBEeCnxqjdSD5uGQ">
-          <body>This property means that the target model shall always be instantiated together with the dependency client model independent if the providers of the target model are used by other components or not.</body>
+          <body>This property means that the target model shall always be instantiated together with the dependency client model.</body>
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
         <defaultValue xmi:type="uml:LiteralBoolean" xmi:id="ActivityPartition-isExternal-_defaultValue"/>
@@ -4790,7 +4049,8 @@ It has properties that can be used for setting up a descriptive traceability bet
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_vx5KMM1hEeCDZMoKmHw59g" name="RequiredFor">
       <ownedComment xmi:id="_28GuIM1hEeCDZMoKmHw59g">
-        <body>This stereotype is the opposite of the &quot;Requires&quot; relation. The two stereotypes are mutually exclusive and should be used depending on the desired direction of the dependency and the resulting modification of the dependency client. </body>
+        <body>This stereotype is the opposite of the &quot;Requires&quot; stereotype. &#xD;
+The two stereotypes are mutually exclusive and should be used depending on the desired direction of the dependency and the resulting modification of the dependency client.</body>
       </ownedComment>
       <generalization xmi:id="_yFj18M1hEeCDZMoKmHw59g" general="_4IrOgMQXEeC6UZUtnVcSgg"/>
     </packagedElement>
@@ -5713,7 +4973,7 @@ It has properties that can be used for setting up a descriptive traceability bet
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_pZ8e4HGGEeCymoXP7CzS_g" name="ValueComputation" isAbstract="true">
       <ownedComment xmi:id="_nUQ8gPAREeCmxdyA8VCpAw">
-        <body>Clients, mediators and providers can have associated operations.</body>
+        <body>Clients, mediators and providers can have operations associated for manipulating values provided.</body>
       </ownedComment>
       <ownedAttribute xmi:id="_2SxLcHGGEeCymoXP7CzS_g" name="operation" visibility="public">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
@@ -5723,7 +4983,7 @@ It has properties that can be used for setting up a descriptive traceability bet
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_suGocH-WEeC-I9oqZ53S4w" name="ObtainsValueFrom">
       <ownedComment xmi:id="_vjfnwPAREeCmxdyA8VCpAw">
-        <body>This relation specifies that the referenced mediator (source) shall be used for inferring binging from the referenced provider (target)</body>
+        <body>Specifies that the referenced mediator obtains value from the referenced provider.</body>
       </ownedComment>
       <generalization xmi:id="_0PkOwH-WEeC-I9oqZ53S4w" general="_pZ8e4HGGEeCymoXP7CzS_g"/>
       <ownedAttribute xmi:id="_6Gov0H-WEeC-I9oqZ53S4w" name="base_Dependency" association="_6Gov0X-WEeC-I9oqZ53S4w">
@@ -5732,7 +4992,7 @@ It has properties that can be used for setting up a descriptive traceability bet
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_uW3WAH-WEeC-I9oqZ53S4w" name="ProvidesValueFor">
       <ownedComment xmi:id="_3O2J4PAREeCmxdyA8VCpAw">
-        <body>This relation specifies that the referenced mediator (source) shall be used for inferring binging for the referenced client (target).</body>
+        <body>Specifies that the referenced mediator provides value to the referenced client.</body>
       </ownedComment>
       <generalization xmi:id="_zoFYAH-WEeC-I9oqZ53S4w" general="_pZ8e4HGGEeCymoXP7CzS_g"/>
       <ownedAttribute xmi:id="_5qBsUH-WEeC-I9oqZ53S4w" name="base_Dependency" association="_5qBsUX-WEeC-I9oqZ53S4w">
@@ -5740,7 +5000,7 @@ It has properties that can be used for setting up a descriptive traceability bet
       </ownedAttribute>
       <ownedAttribute xmi:id="_4ziQoLIUEeCqz59dgZCCXw" name="isRequired">
         <ownedComment xmi:id="_T88msMQYEeC6UZUtnVcSgg">
-          <body>If set to true this property means that it is in mandatory to bind this client even if a default value is specified.</body>
+          <body>If set to true this property means that this client always needs a bindings even if a default value is set in its declaration. </body>
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
         <defaultValue xmi:type="uml:LiteralBoolean" xmi:id="Property-isComposite-_defaultValue"/>
@@ -5999,7 +5259,7 @@ It has properties that can be used for setting up a descriptive traceability bet
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_kEF-AAJhEeG_m9SrLqG2hw" name="InstalledLibrary">
       <ownedComment xmi:id="_ZnSEEOCQEeGn-bDI4pMcpA">
-        <body>This stereotype indicates the this element is a library that is available in the ModelicaML environment and can be imported and used. </body>
+        <body>This stereotype indicates the this is a library that is available and can be imported.</body>
       </ownedComment>
       <ownedAttribute xmi:id="_oEsFoAJhEeG_m9SrLqG2hw" name="base_Model" association="_oEsFoQJhEeG_m9SrLqG2hw">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Model"/>

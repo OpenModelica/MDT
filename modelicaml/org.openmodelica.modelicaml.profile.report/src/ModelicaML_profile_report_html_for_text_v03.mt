@@ -26,6 +26,7 @@ using the ModelicaML profile. <em>Note: In each section the stereotypes are sort
 <br /><br /><br />
 <%ownedElement.filter("Package").Stereotypes%>
 <%ownedElement.filter("Package").PrimitiveTypes%>
+<%ownedElement.filter("Package").ModelicaPredefinedEnumerations%>
 
 </body>
 </html>
@@ -45,7 +46,7 @@ using the ModelicaML profile. <em>Note: In each section the stereotypes are sort
 				<em>Description:</em> <%ownedComment.body.replaceAll("\n", "<br />")%>
 				<br /><br />
 				<%if (getExtendedMetaclasses().name != null){%><em>Extends the UML meta-class:</em> <span><strong><%getExtendedMetaclasses().name.sepStr(", ")%></strong></span><br /><%}%>
-				<%if (superClass.name != null){%><em>Inherits from the Stereotype:</em> 
+				<%if (superClass.name != null){%><em>Inherits from the stereotype</em> 
 				<%--<a href="#<%superClass.namespace.name%>.<%superClass.name%>">--%><span>&#171;<strong><%superClass.name.sepStr(", ")%></strong>&#187;</span><%--</a>--%>
 				the properties: <span><%getInheritedMembers()[!name.startsWith("base_")].name.sepStr(", ")%></span>
 				<br /><%}%><br />
@@ -77,7 +78,15 @@ using the ModelicaML profile. <em>Note: In each section the stereotypes are sort
 	<br /><br />
 <%}%>
 
+<%script type="uml.Package" name="ModelicaPredefinedEnumerations"%>
+<%if (ownedElement.filter("Enumeration").nSize() > 0 && !hasStereotype("ExcludeFromReport")){%>
+	<a name="<%namespace.name%>.<%name%>"></a>
+	<h2><%name%></h2>
 	
-	
+	<%for (ownedElement.filter("Enumeration").nSort()){%>
+			Enumeration <strong><%name%></strong> (<%ownedElement.filter("EnumerationLiteral").name.sepStr(", ")%>)<br />
+	<%}%>
+	<br />
+<%}%>
 	
 	
