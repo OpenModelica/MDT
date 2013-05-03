@@ -561,7 +561,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_SXdLAAUOEd-XJpWQfXQU0A" name="ModelicaClass">
       <ownedComment xmi:id="_NatSQAUQEd-XJpWQfXQU0A" annotatedElement="_SXdLAAUOEd-XJpWQfXQU0A">
-        <body>This stereotype is used to represent the Modelica &quot;class&quot;.</body>
+        <body>This stereotype represents the Modelica &quot;class&quot;. </body>
       </ownedComment>
       <generalization xmi:id="_U8G5EAUOEd-XJpWQfXQU0A" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_VBGxAAUSEd-XJpWQfXQU0A" name="base_Class" isUnique="false" association="_U3HukAUSEd-XJpWQfXQU0A">
@@ -575,7 +575,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_MbMDoFNTEd6YXtyPQ2LL6Q" name="ModelicaPackage">
       <ownedComment xmi:id="_81OAgFy3Ed6lR6a_09Qo9g" annotatedElement="_MbMDoFNTEd6YXtyPQ2LL6Q">
-        <body>This stereotype is used to represent the Modelica restricted class &quot;package&quot;.</body>
+        <body>This stereotype represents the Modelica restricted class &quot;package&quot;. </body>
       </ownedComment>
       <generalization xmi:id="_gHU2YGChEd6yLItwWIt9kg" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_mIVXMMbWEd6JBtxNmDMs3Q" name="base_Class" isUnique="false" association="_mGGikMbWEd6JBtxNmDMs3Q">
@@ -589,7 +589,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_J8MRoFNTEd6YXtyPQ2LL6Q" name="Model">
       <ownedComment xmi:id="_22szoFy3Ed6lR6a_09Qo9g" annotatedElement="_J8MRoFNTEd6YXtyPQ2LL6Q">
-        <body>This stereotype is used to represent the Modelica restricted class &quot;model&quot;. All the following Modelica class elements are allowed in models: Both equation and algorithm sections; connectors, inputs, outputs; states;</body>
+        <body>This stereotype represents the Modelica restricted class &quot;model&quot;. </body>
       </ownedComment>
       <generalization xmi:id="_fHZqcGChEd6yLItwWIt9kg" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_XREAUWChEd6yLItwWIt9kg" name="base_Class" isUnique="false" association="_XPbBkGChEd6yLItwWIt9kg">
@@ -603,7 +603,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_FEm3oFNTEd6YXtyPQ2LL6Q" name="Block">
       <ownedComment xmi:id="_vBt0YFy3Ed6lR6a_09Qo9g" annotatedElement="_FEm3oFNTEd6YXtyPQ2LL6Q">
-        <body>This stereotype is used to represent the Modelica &quot;block&quot;. Modelica &quot;block&quot; is the same as Modelica &quot;model&quot;, but the ports (instances of &quot;connector&quot; classes)  must have fixed causality (i.e. &quot;input&quot; or &quot;output&quot;).</body>
+        <body>This stereotype is represents the Modelica restricted class &quot;block&quot;. </body>
       </ownedComment>
       <generalization xmi:id="_ecLjMGChEd6yLItwWIt9kg" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_WkDwYGChEd6yLItwWIt9kg" name="base_Class" isUnique="false" association="_WiaxoGChEd6yLItwWIt9kg">
@@ -617,7 +617,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_mYX-YFNTEd6YXtyPQ2LL6Q" name="Connector">
       <ownedComment xmi:id="_Jb1iwFy4Ed6lR6a_09Qo9g" annotatedElement="_mYX-YFNTEd6YXtyPQ2LL6Q">
-        <body>This stereotype is used to represent the Modelica restricted class &quot;connector&quot;.  A &quot;connector&quot; cannot contain equation or algorithm sections, it can have causality and flow specification. All ports must be typed by a &quot;connector&quot;.</body>
+        <body>This stereotype is represents the Modelica restricted class &quot;connector&quot;. A &quot;connector&quot; cannot contain equation or algorithm sections, it can have causality and flow specification. All ports must be typed by a &quot;connector&quot; class. </body>
       </ownedComment>
       <generalization xmi:id="_mLgmYGChEd6yLItwWIt9kg" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_pJZUgFNTEd6YXtyPQ2LL6Q" name="expandable" isUnique="false">
@@ -637,7 +637,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_1z4DEFNTEd6YXtyPQ2LL6Q" name="Record">
       <ownedComment xmi:id="_ExghoFy4Ed6lR6a_09Qo9g" annotatedElement="_1z4DEFNTEd6YXtyPQ2LL6Q">
-        <body>This stereotype is used to represent the Modelica &quot;record&quot;. A  Modelica &quot;record&quot; cannot contain equation or algorithm sections and does not contain causality and flow specification.</body>
+        <body>This stereotype represents the Modelica restricted class &quot;record&quot;. </body>
       </ownedComment>
       <generalization xmi:id="_mZhNMGChEd6yLItwWIt9kg" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_u8pFcMbWEd6JBtxNmDMs3Q" name="base_Class" isUnique="false" association="_uSeHEMbWEd6JBtxNmDMs3Q">
@@ -651,7 +651,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_eTKq4AUVEd-XJpWQfXQU0A" name="Operator">
       <ownedComment xmi:id="_IiRpEAUjEd-trtPDFQJemA" annotatedElement="_eTKq4AUVEd-XJpWQfXQU0A">
-        <body>This stereotype is used to represent the Modelica restricted class &quot;operator&quot;.</body>
+        <body>This stereotype is represents the Modelica restricted class &quot;operator&quot;. </body>
       </ownedComment>
       <generalization xmi:id="_ji4KYAWsEd-eTtxRNHCTLQ" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_jQb2IAUVEd-XJpWQfXQU0A" name="base_Class" isUnique="false" association="_jG5foAUVEd-XJpWQfXQU0A">
@@ -665,14 +665,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_DU_7MFNTEd6YXtyPQ2LL6Q" name="Function">
       <ownedComment xmi:id="_i2EW4Fy3Ed6lR6a_09Qo9g" annotatedElement="_DU_7MFNTEd6YXtyPQ2LL6Q">
-        <body>Modelica &quot;function&quot; resembles the Modelica &quot;block&quot; but it:&#xD;
-- can only have inputs and outputs; no connectors&#xD;
-- does not have a connectable interface but instead needs to be called&#xD;
-- can be called recursively&#xD;
-- is more dynamic; the arguments are computed at run-time &#xD;
-- does not have internal states&#xD;
-- can have only one algorithm section and no equation section; is always imperative&#xD;
-- becomes part of the equation system as black boxes only; the internals are not manipulated symbolically by the solver</body>
+        <body>This stereotype represents the Modelica restricted class &quot;function&quot;.</body>
       </ownedComment>
       <generalization xmi:id="_eJjiIGChEd6yLItwWIt9kg" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_V384UWChEd6yLItwWIt9kg" name="base_FunctionBehavior" isUnique="false" association="_V2T5kGChEd6yLItwWIt9kg">
@@ -731,8 +724,7 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_8Nwe0GvUEd65MZ8o9QNr-w" name="CalculationModel">
       <ownedComment xmi:id="_2FU2EGvWEd65MZ8o9QNr-w" annotatedElement="_8Nwe0GvUEd65MZ8o9QNr-w">
-        <body>A CalculationModel is a sub-type of Modelica &quot;model&quot;. It is defined in order to enable reusing of equations. It does not represent a physical system part and cannot have external connectors. &#xD;
-When instantiated, it calculates values that are used by other components.</body>
+        <body>A CalculationModel does not represent a physical system part. When instantiated, it calculates values that are used by other components.</body>
       </ownedComment>
       <generalization xmi:id="__jJtUGvUEd65MZ8o9QNr-w" general="_J8MRoFNTEd6YXtyPQ2LL6Q"/>
       <icon xmi:id="_-eGhQOiNEd6sfa0YGgWZMQ" content="71%73%70%56%57%97%16%0%16%0%-58%66%0%25%25%25%30%31%31%39%39%40%41%41%41%41%42%42%42%43%43%44%44%45%46%47%47%57%58%59%62%63%64%73%75%76%76%77%78%77%78%79%78%79%80%79%81%82%111%113%115%117%117%117%116%118%120%74%125%-80%74%125%-79%75%125%-80%75%125%-79%75%126%-78%76%126%-79%118%120%122%76%127%-77%77%127%-77%77%-128%-76%78%-127%-76%78%-125%-75%79%-125%-74%79%-124%-73%80%-124%-74%80%-124%-73%79%-123%-73%80%-123%-73%127%127%127%-125%-123%-120%-123%-123%-123%-119%-116%-113%-110%-107%-104%112%-96%-60%-105%-102%-99%-104%-101%-98%-99%-99%-99%-93%-90%-87%-92%-89%-86%-81%-77%-74%-75%-71%-67%-74%-70%-66%-72%-68%-65%-70%-66%-62%-68%-64%-60%-61%-57%-53%-60%-56%-52%-44%-40%-36%-42%-37%-33%-34%-30%-25%-31%-26%-21%-31%-23%-12%-27%-22%-17%-24%-17%-9%-20%-14%-7%-16%-11%-6%-6%-5%-3%-3%-3%-2%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%0%33%-7%4%1%0%0%127%0%44%0%0%0%0%16%0%16%0%0%7%-105%-128%127%127%41%32%33%32%31%33%34%35%35%31%-115%41%-126%127%30%59%-109%-108%-107%59%29%-112%27%61%-101%-100%-99%61%28%-103%62%-94%-93%-92%62%-96%-126%27%63%-86%-85%-84%63%-89%127%27%20%21%19%-78%19%-74%21%18%20%-81%26%64%-67%-66%-65%64%25%-112%23%65%-59%-58%-57%65%22%-61%-56%-52%23%-53%-58%48%0%49%63%-47%52%-50%-126%-60%8%1%65%40%12%10%63%13%14%43%-41%127%23%7%47%-59%15%46%6%37%9%42%17%-28%23%2%51%-59%11%54%24%0%39%51%14%-15%65%5%3%65%8%4%-87%1%-32%-122%63%114%41%46%40%92%-56%-16%-62%35%72%16%35%66%12%4%0%59%">
@@ -1004,10 +996,7 @@ If no icon is defined for a property then the icon of the property type is displ
       </ownedAttribute>
       <ownedAttribute xmi:id="_CnP8AFNhEd6YXtyPQ2LL6Q" name="declarationEquationOrAssignment" isUnique="false">
         <ownedComment xmi:id="_WB5_gFzFEd6lR6a_09Qo9g" annotatedElement="_CnP8AFNhEd6YXtyPQ2LL6Q">
-          <body>This refers to the shorthand notation in Modelica. &#xD;
-The result must be of the same type as the Modelica component itself.&#xD;
-In this case the value is the right-hand-expression of the equation or assigment. &#xD;
-The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
+          <body>This refers to the shorthand notation in Modelica. The result must be of the same type as the Modelica component itself. In this case the value is the right-hand-expression of the equation or assignment. The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_lTNr4FtQEd6lR6a_09Qo9g"/>
@@ -1042,7 +1031,7 @@ The keyword &quot;connect&quot; and the parenthesizes are omitted. The string mu
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_-TiUwGoBEd6MDfyi5Yk5ng" name="FunctionArgument">
       <ownedComment xmi:id="_daoVQG-4Ed6iXf-hfUoLSw" annotatedElement="_-TiUwGoBEd6MDfyi5Yk5ng">
-        <body>This stereotype is used to represent variables of functions.</body>
+        <body>This stereotype is used to represent Modelica “function” arguments. </body>
       </ownedComment>
       <generalization xmi:id="_EhfmwHwUEd6RNZXM0YwVGw" general="_Bm_OUFNgEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_RktLEWvREd65MZ8o9QNr-w" name="base_Parameter" isUnique="false" association="_RdGuQGvREd65MZ8o9QNr-w">
@@ -1070,10 +1059,7 @@ The keyword &quot;connect&quot; and the parenthesizes are omitted. The string mu
       </ownedAttribute>
       <ownedAttribute xmi:id="_JqL-9HwUEd6RNZXM0YwVGw" name="declarationEquationOrAssignment" isUnique="false">
         <ownedComment xmi:id="_JqL-9XwUEd6RNZXM0YwVGw" annotatedElement="_JqL-9HwUEd6RNZXM0YwVGw">
-          <body>This refers to the shorthand notation in Modelica. &#xD;
-The result must be of the same type as the Modelica component itself.&#xD;
-In this case the value is the right-hand-expression of the equation or assigment. &#xD;
-The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
+          <body>This refers to the shorthand notation in Modelica. The result must be of the same type as the Modelica component itself. In this case the value is the right-hand-expression of the equation or assignment. The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_JqL-93wUEd6RNZXM0YwVGw"/>
@@ -1082,7 +1068,7 @@ The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_xezo0GvUEd65MZ8o9QNr-w" name="CalculatedProperty">
       <ownedComment xmi:id="_xyiyQGvWEd65MZ8o9QNr-w" annotatedElement="_xezo0GvUEd65MZ8o9QNr-w">
-        <body>Does not represent a physical system part. This component supplies other components with calculated values.</body>
+        <body>A CalculatedProperty does not represent a physical system part. This component provides other components with calculated values.</body>
       </ownedComment>
       <generalization xmi:id="_0ouAEGvUEd65MZ8o9QNr-w" general="_amVAwFNgEd6YXtyPQ2LL6Q"/>
       <icon xmi:id="_Pgwr8OmJEd60SK7fYbFboQ" content="-119%80%78%71%13%10%26%10%0%0%0%13%73%72%68%82%0%0%0%16%0%0%0%16%8%6%0%0%0%31%-13%-1%97%0%0%0%4%115%66%73%84%8%8%8%8%124%8%100%-120%0%0%0%9%112%72%89%115%0%0%13%-41%0%0%13%-41%1%66%40%-101%120%0%0%0%25%116%69%88%116%83%111%102%116%119%97%114%101%0%119%119%119%46%105%110%107%115%99%97%112%101%46%111%114%103%-101%-18%60%26%0%0%1%-87%73%68%65%84%56%-115%-83%-109%-49%75%84%81%20%-57%63%-25%-66%-21%3%21%27%-59%9%-59%-23%-47%-68%-90%-38%84%4%46%90%68%-110%65%63%86%-46%-94%-96%-99%109%34%-104%77%-8%55%8%-47%-50%77%-123%-117%90%52%-76%-117%32%6%-38%-28%70%108%97%32%86%70%-96%68%-111%-63%-68%55%69%16%90%36%68%111%60%-73%69%-13%-14%21%78%96%118%-106%-9%-100%-49%-25%-98%-5%-123%43%-50%57%-74%83%102%91%-12%-1%16%88%-128%-80%92%-15%-73%-56%-23%-14%-28%-59%6%-128%13%-53%-107%94%-32%33%-112%108%65%-16%30%-72%-112%110%32%-64%-38%-69%79%29%103%-62%-36%-25%-4%-33%-88%-60%73%98%-37%108%55%112%61%61%-77%-4%-52%-95%-85%-40%-69%22%56%-38%-34%-128%68%-101%-29%-50%-73%-56%71%112%-25%-127%-82%-84%64%54%14%36%90%-98%28%45%-90%-51%66%-95%-112%7%-14%-58%-104%117%123%-20%82%31%-35%-31%-115%-12%-62%116%-58%52%5%29%45%-74%-66%2%44%-88%106%-11%-5%-29%91%51%-115%103%-9%10%77%-90%61%43%-56%-108%-54%64%113%-1%-55%-127%-35%-91%-77%-91%83%-105%115%24%-49%34%-14%-42%63%125%117%80%118%-106%-58%53%122%-98%-41%-24%69%79%-106%-80%-65%94%24%-49%-25%-110%-91%-103%-64%-21%-20%-103%-94%61%-25%-42%-5%-10%54%-68%100%-56%-45%104%-63%-24%-54%-46%23%1%-113%29%-3%95%-51%-82%-61%43%-101%10%-110%-89%15%-114%3%-117%-75%-41%47%15%102%50%24%7%-58%-110%-71%-69%-113%-116%49%-77%-50%-71%-5%64%-25%-97%2%7%-12%-101%61%71%39%88%-83%75%88%-82%124%75%-101%-34%-66%97%-85%31%22%-115%127%98%108%4%24%1%-82%53%91%-81%-46%25%73%63%83%16%4%71%84%-11%-119%-120%-36%118%-50%-7%64%21%24%4%-50%-59%113%124%-96%69%-56%27%33%-42%106%-75%57%85%61%-28%-100%-117%85%-11%78%-67%94%-81%-118%-56%52%112%-77%21%-4%-37%6%-1%90%63%0%52%14%-117%9%-6%35%-106%35%0%0%0%0%73%69%78%68%-82%66%96%-126%">
@@ -2248,7 +2234,7 @@ The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_J6FREJxKEd6RMu88zSj-NA" name="ModelicaMLStateMachine">
       <ownedComment xmi:id="_DNhdAJxLEd6RMu88zSj-NA" annotatedElement="_J6FREJxKEd6RMu88zSj-NA">
-        <body>This stereotypes indicates that this a special case of the UML StateMachine. It uses a limited set of the UML StateMachine meta-model classes. It is capable to be translated into executable Modelica code.</body>
+        <body>This stereotypes indicates that this a special case of the UML StateMachine. It uses a limited sub-set of the UML StateMachine meta-classes and can be translated into executable Modelica code. </body>
       </ownedComment>
       <ownedAttribute xmi:id="_Yc3lEJxKEd6RMu88zSj-NA" name="base_StateMachine" isUnique="false" association="_YQpuAJxKEd6RMu88zSj-NA">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#StateMachine"/>
@@ -2300,9 +2286,12 @@ The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_DhKxkAUhEd-trtPDFQJemA" name="ExecutionOrderPriority">
+      <ownedComment xmi:id="_yDTt8LQOEeKMMvKD8rDWHw">
+        <body>“ExecutionOrderPriority” specifies the order in which the code of the transition, control flow or region shall be executed relative to the neighbors.</body>
+      </ownedComment>
       <ownedAttribute xmi:id="_FCASMAUhEd-trtPDFQJemA" name="priority" isUnique="false">
         <ownedComment xmi:id="_GbspAAUhEd-trtPDFQJemA" annotatedElement="_FCASMAUhEd-trtPDFQJemA">
-          <body>Execution priority in code. A lower number implies a higher execution priority. Elements with higher priority are executed first.</body>
+          <body>Execution priority in code. A lower number implies a higher execution priority. Element with the lowest priority is executed first.</body>
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
         <defaultValue xmi:type="uml:LiteralInteger" xmi:id="_L_oysAUhEd-trtPDFQJemA"/>
@@ -2318,6 +2307,9 @@ The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_SZNMYEu4Ed-kMYgIGglkOw" name="StateTransitionSpecification">
+      <ownedComment xmi:id="_jyCLQLQPEeKMMvKD8rDWHw">
+        <body>This stereotype captures additional features for state transition behavior which are not included in UML.</body>
+      </ownedComment>
       <ownedAttribute xmi:id="_Vulz0Uu4Ed-kMYgIGglkOw" name="base_Transition" isUnique="false" association="_Vh7Q0Eu4Ed-kMYgIGglkOw">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Transition"/>
       </ownedAttribute>
@@ -2337,9 +2329,12 @@ The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_dY6RUE-AEd-nnOK4EzJA-w" name="StateSpecification">
+      <ownedComment xmi:id="_LfTnMLQPEeKMMvKD8rDWHw">
+        <body>This stereotype defines additional feature that are not included in UML. </body>
+      </ownedComment>
       <ownedAttribute xmi:id="_gXzEUE-AEd-nnOK4EzJA-w" name="freezeExpression" isUnique="false">
         <ownedComment xmi:id="_KYjQUFaHEd-DhOvTuzSvmw" annotatedElement="_gXzEUE-AEd-nnOK4EzJA-w">
-          <body>The state machine or the composite state is fozen, i.e., the state is active but no reactions and no actions will be executed inside the state, as long as this expression evaluates to true.</body>
+          <body>Indicates if the state or state machine should be is active but do not react and do not execution actions as long as the expression evaluates to true.</body>
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_jEy2EE-AEd-nnOK4EzJA-w"/>
@@ -2648,7 +2643,7 @@ The &quot;=&quot; or &quot;:=&quot; sign must be included.</body>
     </elementImport>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_ljL3QFNdEd6YXtyPQ2LL6Q" name="TypeRelation">
       <ownedComment xmi:id="_kUv-kFy7Ed6lR6a_09Qo9g" annotatedElement="_ljL3QFNdEd6YXtyPQ2LL6Q">
-        <body>This stereotype has attributes which allow the capturing of type modifications. It can only be used between classes of primitive type.</body>
+        <body>This stereotype has properties that allow capturing type modifications. It can only be used between classes of primitive type. </body>
       </ownedComment>
       <ownedAttribute xmi:id="_pfnQkFNdEd6YXtyPQ2LL6Q" name="modification" isUnique="false">
         <ownedComment xmi:id="_sJb3UFzFEd6lR6a_09Qo9g" annotatedElement="_pfnQkFNdEd6YXtyPQ2LL6Q">
@@ -2688,6 +2683,9 @@ Commas and the parenthesis &quot;(&quot; and &quot;)&quot; are omitted.</body>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_QvgxQAUYEd-XJpWQfXQU0A" name="RedeclareRelation">
+      <ownedComment xmi:id="_Sd_bILQQEeKMMvKD8rDWHw">
+        <body>This stereotype represents the Modelica “redeclare” relation.</body>
+      </ownedComment>
       <ownedAttribute xmi:id="_by4_IAUYEd-XJpWQfXQU0A" name="modification" isUnique="false">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_hbEIkAUYEd-XJpWQfXQU0A"/>
@@ -2698,6 +2696,9 @@ Commas and the parenthesis &quot;(&quot; and &quot;)&quot; are omitted.</body>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_TwVd8AUYEd-XJpWQfXQU0A" name="ConstrainedByRelation">
+      <ownedComment xmi:id="_x0TMILQPEeKMMvKD8rDWHw">
+        <body>This stereotype represents the Modelica relation “constrainedBy”.</body>
+      </ownedComment>
       <ownedAttribute xmi:id="_jw0fAAUYEd-XJpWQfXQU0A" name="modification" isUnique="false">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_jw0fAgUYEd-XJpWQfXQU0A"/>
@@ -2708,6 +2709,9 @@ Commas and the parenthesis &quot;(&quot; and &quot;)&quot; are omitted.</body>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_X5ddMAUdEd-XJpWQfXQU0A" name="PartialDerivativeOfFunctionRelation">
+      <ownedComment xmi:id="_OALMALQQEeKMMvKD8rDWHw">
+        <body>This stereotype represents the Modelica the relation from a function (source) that is a derivative of another function (target).</body>
+      </ownedComment>
       <ownedAttribute xmi:id="_kcPBQAUdEd-XJpWQfXQU0A" name="base_Dependency" isUnique="false" association="_kbW3gAUdEd-XJpWQfXQU0A">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Dependency"/>
       </ownedAttribute>
@@ -2718,6 +2722,9 @@ Commas and the parenthesis &quot;(&quot; and &quot;)&quot; are omitted.</body>
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_FArQ8H-WEeC-I9oqZ53S4w" name="Import">
+      <ownedComment xmi:id="_35XF4LQPEeKMMvKD8rDWHw">
+        <body>This stereotype represents the Modelica “import” relation.</body>
+      </ownedComment>
       <ownedAttribute xmi:id="_GtAP4H-WEeC-I9oqZ53S4w" name="alias">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_LzMtoH-WEeC-I9oqZ53S4w"/>
@@ -2897,20 +2904,19 @@ Commas and the parenthesis &quot;(&quot; and &quot;)&quot; are omitted.</body>
     </elementImport>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_bks90FsREd6lR6a_09Qo9g" name="Requirement">
       <ownedComment xmi:id="_D38m8Fy5Ed6lR6a_09Qo9g" annotatedElement="_bks90FsREd6lR6a_09Qo9g">
-        <body>The concept of textual requirements is reused from the OMG SysML. This stereotype is used to represent a requirement with properties such as id, text (representing the textual statement), etc. &#xD;
-Moreover, a requirement can have variables and behavior defined which can be evaluated during simulations.</body>
+        <body>“Requirement” concept, identified by this stereotype, represents a natural language requirements and the corresponding violation monitor. </body>
       </ownedComment>
       <generalization xmi:id="_IYU4YGDLEd6v450MT6BnSw" general="_SSA0cFNQEd6YXtyPQ2LL6Q"/>
       <ownedAttribute xmi:id="_gO5cEFsREd6lR6a_09Qo9g" name="id" visibility="public" isUnique="false">
         <ownedComment xmi:id="_KkKFwGxbEd65MZ8o9QNr-w" annotatedElement="_gO5cEFsREd6lR6a_09Qo9g">
-          <body>Requirement ID.</body>
+          <body>Requirement unique identifier.</body>
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <defaultValue xmi:type="uml:LiteralString" xmi:id="_mLpuYFsREd6lR6a_09Qo9g" value=""/>
       </ownedAttribute>
       <ownedAttribute xmi:id="_iOBbMFsREd6lR6a_09Qo9g" name="text" visibility="public" isUnique="false">
         <ownedComment xmi:id="_IhBwYGxbEd65MZ8o9QNr-w" annotatedElement="_iOBbMFsREd6lR6a_09Qo9g">
-          <body>Textual requirement statement.</body>
+          <body>Natural language statement of the requirement.</body>
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_kOVGEFsREd6lR6a_09Qo9g" value="1"/>
@@ -3303,7 +3309,7 @@ It has properties that can be used for setting up a descriptive traceability bet
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_ZvTg4GvEEd65MZ8o9QNr-w" name="Annotation(CodeGeneration)">
       <ownedComment xmi:id="_jAFscG-5Ed6iXf-hfUoLSw" annotatedElement="_ZvTg4GvEEd65MZ8o9QNr-w">
-        <body>See the Modelica specification.</body>
+        <body>Annotation specific to Modelica code generation (not ModelicaML code generation).</body>
       </ownedComment>
       <ownedAttribute xmi:id="_bfg6QGvEEd65MZ8o9QNr-w" name="Evaluate" visibility="public" isUnique="false">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
@@ -3339,8 +3345,7 @@ It has properties that can be used for setting up a descriptive traceability bet
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_FQYwMGvFEd65MZ8o9QNr-w" name="Annotation(SimulationExperiment)">
       <ownedComment xmi:id="_egpLIGvTEd65MZ8o9QNr-w" annotatedElement="_FQYwMGvFEd65MZ8o9QNr-w">
-        <body>The experiment annotation defines the default start time (StartTime) in [s], the default stop time (StopTime) in [s], &#xD;
-and the default relative integration tolerance (Tolerance) for simulation experiments to be carried out with the model or block at hand.</body>
+        <body>The experiment annotation defines the default start time, the stop time, and the default relative integration tolerance for simulation experiments to be carried out with the model at hand. </body>
       </ownedComment>
       <ownedAttribute xmi:id="_HBL_cGvFEd65MZ8o9QNr-w" name="StartTime" isUnique="false">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#UnlimitedNatural"/>
@@ -3363,8 +3368,7 @@ and the default relative integration tolerance (Tolerance) for simulation experi
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_0hMOAGvPEd65MZ8o9QNr-w" name="Annotation(VersionHandling)">
       <ownedComment xmi:id="_I0H0UGvTEd65MZ8o9QNr-w" annotatedElement="_0hMOAGvPEd65MZ8o9QNr-w">
-        <body>A top-level package or model can specify the version of top-level classes it uses, its own version number, and if possible how to convert from previous versions. &#xD;
-This can be used by a tool to guarantee that consistent versions are used, and if possible to upgrade usage from an earlier version to a current one.</body>
+        <body>A top-level package or model can specify the version of top-level classes it uses, its own version number, and if possible how to convert from previous versions. This can be used by a tool to guarantee that consistent versions are used, and if possible to upgrade usage from an earlier version to a current one. </body>
       </ownedComment>
       <ownedAttribute xmi:id="_4PBKoGvPEd65MZ8o9QNr-w" name="version" isUnique="false">
         <ownedComment xmi:id="_R4YNoGvUEd65MZ8o9QNr-w" annotatedElement="_4PBKoGvPEd65MZ8o9QNr-w">
@@ -3401,6 +3405,9 @@ This can be used by a tool to guarantee that consistent versions are used, and i
       </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_I7-Q8D2WEd--2eFnADjMKQ" name="Annotation(Icon)">
+      <ownedComment xmi:id="_0HC_8LQREeKMMvKD8rDWHw">
+        <body>Graphical icon annotation (Modelica code).</body>
+      </ownedComment>
       <ownedAttribute xmi:id="_MwENoT2WEd--2eFnADjMKQ" name="base_Comment" isUnique="false" association="_MvnhsD2WEd--2eFnADjMKQ">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Comment"/>
       </ownedAttribute>
@@ -4719,8 +4726,7 @@ This can be used by a tool to guarantee that consistent versions are used, and i
     </elementImport>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_T-xLcH-XEeC-I9oqZ53S4w" name="VerificationScenario">
       <ownedComment xmi:id="_QfTBwKx3EeC2GJQ4iCzxPg">
-        <body>Scenario is a step by step description of action that stimulate the system model. &#xD;
-Usually a test scenario also includes the initialization of the system in order to ensure the required pre-condition are met. </body>
+        <body>VerificationScenario is a model that stimulates the design in such a way that requirement violation monitors are evaluated. </body>
       </ownedComment>
       <generalization xmi:id="_2zE4EMQYEeC6UZUtnVcSgg" general="_10PLQFNaEd6YXtyPQ2LL6Q">
         <ownedComment xmi:id="_6rVjEMQYEeC6UZUtnVcSgg"/>
@@ -4738,8 +4744,7 @@ Usually a test scenario also includes the initialization of the system in order 
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_FK8VgMQZEeC6UZUtnVcSgg" name="VerificationModel">
       <ownedComment xmi:id="_IqBEcMQZEeC6UZUtnVcSgg">
-        <body>A Verification Model (VeM) includes one system model that is to be verified against s set of requirements models by means of one scenario model.&#xD;
-Some additional models requirered by any of the mentioned components may be included in VeM also. </body>
+        <body>A “Verification Model” is composed of one design that is to be verified against s set of requirements by means of one scenario. Some additional models may need to be included as well. </body>
       </ownedComment>
       <ownedAttribute xmi:id="_0LJPoMTgEeCHp7TGKxmB1g" name="base_Class" association="_0LJPocTgEeCHp7TGKxmB1g">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Class"/>
@@ -4747,7 +4752,7 @@ Some additional models requirered by any of the mentioned components may be incl
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_8VZHcK0qEeCRXd3mzS9MqQ" name="UseToVerify">
       <ownedComment xmi:id="_HpdcsK0rEeCRXd3mzS9MqQ">
-        <body>This relation indicates that the scenario, it points from, can be used to verify the requirement it points to.</body>
+        <body>This relation indicates that the scenario (source) can be used to verify the requirement (target). </body>
       </ownedComment>
       <ownedAttribute xmi:id="_-j2jEK0qEeCRXd3mzS9MqQ" name="base_Dependency" association="_-j2jEa0qEeCRXd3mzS9MqQ">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Dependency"/>
@@ -4755,7 +4760,7 @@ Some additional models requirered by any of the mentioned components may be incl
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_gl9-cLPjEeGhud1AX_-QHA" name="DoNotUseToVerify">
       <ownedComment xmi:id="_snXTwLPjEeGhud1AX_-QHA">
-        <body>This relation indicates that the scenario, it points from, should not be used to verify the requirement it points to.</body>
+        <body>This relation indicates that the scenario (source) should not be used to verify the requirement it points to. </body>
       </ownedComment>
       <ownedAttribute xmi:id="_knwY4LPjEeGhud1AX_-QHA" name="base_Dependency" association="_knw_8LPjEeGhud1AX_-QHA">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Dependency"/>
@@ -4777,7 +4782,7 @@ Some additional models requirered by any of the mentioned components may be incl
       </ownedAttribute>
       <ownedAttribute xmi:id="_Np65UMjBEeCnxqjdSD5uGQ" name="always">
         <ownedComment xmi:id="_ejgFkMjBEeCnxqjdSD5uGQ">
-          <body>This property means that the target model shall always be instantiated together with the dependency client model.</body>
+          <body>This property means that the target model shall always be instantiated together with the dependency client model independent if the providers of the target model are used by other components or not.</body>
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
         <defaultValue xmi:type="uml:LiteralBoolean" xmi:id="ActivityPartition-isExternal-_defaultValue"/>
@@ -4785,8 +4790,7 @@ Some additional models requirered by any of the mentioned components may be incl
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_vx5KMM1hEeCDZMoKmHw59g" name="RequiredFor">
       <ownedComment xmi:id="_28GuIM1hEeCDZMoKmHw59g">
-        <body>This stereotype is the opposite of the &quot;Requires&quot; stereotype. &#xD;
-The two stereotypes are mutually exclusive and should be used depending on the desired direction of the dependency and the resulting modification of the dependency client.</body>
+        <body>This stereotype is the opposite of the &quot;Requires&quot; relation. The two stereotypes are mutually exclusive and should be used depending on the desired direction of the dependency and the resulting modification of the dependency client. </body>
       </ownedComment>
       <generalization xmi:id="_yFj18M1hEeCDZMoKmHw59g" general="_4IrOgMQXEeC6UZUtnVcSgg"/>
     </packagedElement>
@@ -5709,7 +5713,7 @@ The two stereotypes are mutually exclusive and should be used depending on the d
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_pZ8e4HGGEeCymoXP7CzS_g" name="ValueComputation" isAbstract="true">
       <ownedComment xmi:id="_nUQ8gPAREeCmxdyA8VCpAw">
-        <body>Clients, mediators and providers can have operations associated for manipulating values provided.</body>
+        <body>Clients, mediators and providers can have associated operations.</body>
       </ownedComment>
       <ownedAttribute xmi:id="_2SxLcHGGEeCymoXP7CzS_g" name="operation" visibility="public">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
@@ -5719,7 +5723,7 @@ The two stereotypes are mutually exclusive and should be used depending on the d
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_suGocH-WEeC-I9oqZ53S4w" name="ObtainsValueFrom">
       <ownedComment xmi:id="_vjfnwPAREeCmxdyA8VCpAw">
-        <body>Specifies that the referenced mediator obtains value from the referenced provider.</body>
+        <body>This relation specifies that the referenced mediator (source) shall be used for inferring binging from the referenced provider (target)</body>
       </ownedComment>
       <generalization xmi:id="_0PkOwH-WEeC-I9oqZ53S4w" general="_pZ8e4HGGEeCymoXP7CzS_g"/>
       <ownedAttribute xmi:id="_6Gov0H-WEeC-I9oqZ53S4w" name="base_Dependency" association="_6Gov0X-WEeC-I9oqZ53S4w">
@@ -5728,7 +5732,7 @@ The two stereotypes are mutually exclusive and should be used depending on the d
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_uW3WAH-WEeC-I9oqZ53S4w" name="ProvidesValueFor">
       <ownedComment xmi:id="_3O2J4PAREeCmxdyA8VCpAw">
-        <body>Specifies that the referenced mediator provides value to the referenced client.</body>
+        <body>This relation specifies that the referenced mediator (source) shall be used for inferring binging for the referenced client (target).</body>
       </ownedComment>
       <generalization xmi:id="_zoFYAH-WEeC-I9oqZ53S4w" general="_pZ8e4HGGEeCymoXP7CzS_g"/>
       <ownedAttribute xmi:id="_5qBsUH-WEeC-I9oqZ53S4w" name="base_Dependency" association="_5qBsUX-WEeC-I9oqZ53S4w">
@@ -5736,7 +5740,7 @@ The two stereotypes are mutually exclusive and should be used depending on the d
       </ownedAttribute>
       <ownedAttribute xmi:id="_4ziQoLIUEeCqz59dgZCCXw" name="isRequired">
         <ownedComment xmi:id="_T88msMQYEeC6UZUtnVcSgg">
-          <body>If set to true this property means that this client always needs a bindings even if a default value is set in its declaration. </body>
+          <body>If set to true this property means that it is in mandatory to bind this client even if a default value is specified.</body>
         </ownedComment>
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
         <defaultValue xmi:type="uml:LiteralBoolean" xmi:id="Property-isComposite-_defaultValue"/>
@@ -5995,7 +5999,7 @@ The two stereotypes are mutually exclusive and should be used depending on the d
     </packagedElement>
     <packagedElement xmi:type="uml:Stereotype" xmi:id="_kEF-AAJhEeG_m9SrLqG2hw" name="InstalledLibrary">
       <ownedComment xmi:id="_ZnSEEOCQEeGn-bDI4pMcpA">
-        <body>This stereotype indicates the this is a library that is available and can be imported.</body>
+        <body>This stereotype indicates the this element is a library that is available in the ModelicaML environment and can be imported and used. </body>
       </ownedComment>
       <ownedAttribute xmi:id="_oEsFoAJhEeG_m9SrLqG2hw" name="base_Model" association="_oEsFoQJhEeG_m9SrLqG2hw">
         <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Model"/>
