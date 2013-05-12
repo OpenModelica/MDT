@@ -795,9 +795,7 @@ public class OMCProxy implements IModelicaCompiler {
 
 		if (isError(errorString)) {
 			res.setClassNames(new List());
-			if (errorString.equals("") == false) {
-				res.setCompileErrors(OMCParser.parseErrorString(errorString));
-			}
+			res.setCompileErrors(OMCParser.parseErrorString(errorString));
 		}
 		else { // File loaded and parsed successfully
 			try {
