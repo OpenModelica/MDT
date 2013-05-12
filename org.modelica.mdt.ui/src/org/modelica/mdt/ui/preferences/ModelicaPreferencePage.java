@@ -130,7 +130,7 @@ public class ModelicaPreferencePage	extends PreferencePage
 		startOMC.setSelection(PreferenceManager.getStartOMC());
 		
 		/*
-		 * 'error reportting settings' group
+		 * 'error reporting settings' group
 		 */
 		
 		/* dummy label for space */
