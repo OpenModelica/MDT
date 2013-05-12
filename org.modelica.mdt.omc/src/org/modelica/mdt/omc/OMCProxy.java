@@ -139,8 +139,6 @@ public class OMCProxy implements IModelicaCompiler {
 	/* indicates if the Modelica System Library has been loaded */
 	private String[] omcLibraries = {};
 
-	private java.util.List<String> standardLibraryPackages = null;
-
 	/* should we trace the calls to sendExpression? */
 	private boolean traceOMCCalls = false;
 	private boolean traceOMCStatus = true;
