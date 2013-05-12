@@ -257,13 +257,13 @@ public class CompletionProposalsGenerator {
 					computeProposalsFromPackage(importedPackage, null, prefix, offset, proposals);
 					break;
 				case UNQUALIFIED:
-					for (IModelicaElement child : importedPackage.getChildren())
-					{
-						if (!(child instanceof IModelicaClass)) {
-							System.out.println(child.getClass());
+					for (IModelicaElement child : importedPackage.getChildren()) {
+						if (child instanceof IModelicaClass) {
+							computeProposalsFromPackage(((IModelicaClass)child), null, prefix, offset, proposals);
 						}
 						else {
-							computeProposalsFromPackage(((IModelicaClass)child), null, prefix, offset, proposals);
+							// Other types, such as org.modelica.mdt.internal.core.ModelicaExtends
+							//System.out.println("child is not IModelicaClass, it's a '" + child.getClass().getName() + "'.");
 						}
 					}
 					break;
