@@ -117,8 +117,6 @@ public class OMCProxy implements IModelicaCompiler {
 	/* the CORBA object */
 	private OmcCommunication omcc;
 
-	private Boolean bAcceptMetaModelica = null;
-
 	enum osType { WINDOWS, UNIX };
 
 	private String corbaSession = "mdt";
@@ -177,21 +175,6 @@ public class OMCProxy implements IModelicaCompiler {
 			fOMCThread = new OMCThread();
 			// fOMCLock = Platform.getJobManager().newLock();
 		}
-	}
-
-	private Boolean getAcceptMetaModelica() {
-		if (bAcceptMetaModelica == null) {
-			bAcceptMetaModelica = false;
-			String cmd[] = PreferenceManager.getOMCCommandLineParametersArray();
-			for (int i = 0; i < cmd.length; i++) {
-				if (cmd[i].contains("MetaModelica")) {
-					bAcceptMetaModelica = true;
-					break;
-				}
-			}
-		}
-
-		return bAcceptMetaModelica;
 	}
 
 	/**
