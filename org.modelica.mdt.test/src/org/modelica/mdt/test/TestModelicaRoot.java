@@ -123,6 +123,10 @@ public class TestModelicaRoot extends TestCase {
 					else if (projectElementName.equals(PROJECT_NAME_MOD_EXTRA)) {
 						modelicaProjectRemoved = true;
 					}
+				case OPENED:
+				case MODIFIED:
+				case CLOSED:
+					break;
 				}
 			}
 		}
@@ -168,6 +172,10 @@ public class TestModelicaRoot extends TestCase {
 						assertTrue("element morphed into something wierd",
 								element instanceof IModelicaClass);
 						packageAdded = true;
+						break;
+					case OPENED:
+					case MODIFIED:
+					case CLOSED:
 						break;
 					}
 
@@ -222,6 +230,10 @@ public class TestModelicaRoot extends TestCase {
 						assertTrue("element morphed into something wierd",
 								element instanceof IModelicaFolder);
 						folderAdded = true;
+						break;
+					case OPENED:
+					case MODIFIED:
+					case CLOSED:
 						break;
 					}
 
