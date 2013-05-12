@@ -165,7 +165,7 @@ public class OMCProxy implements IModelicaCompiler {
 	private OMCThread fOMCThread = null;
 	private boolean fOMCThreadHasBeenScheduled = false;
 	
-	private boolean DEBUG = true;
+	private boolean DEBUG_PREVENT_DUPLICATE_CLASSNAMES = true;
 
 	//private ILock fOMCLock = null;
 
@@ -769,7 +769,7 @@ public class OMCProxy implements IModelicaCompiler {
 
 		String fullName = file.getLocation().toString();
 
-		if (containsDuplicateClasses(file, fullName)) {
+		if (PreferenceManager.getPreventDuplicateClassNames() && containsDuplicateClasses(file, fullName)) {
 			final IWorkbench workbench = PlatformUI.getWorkbench();
 			workbench.getDisplay().asyncExec(new Runnable() {
 				@Override
@@ -1527,7 +1527,9 @@ public class OMCProxy implements IModelicaCompiler {
 			if (listElement instanceof Element) {
 				Element element = (Element)listElement;
 				String rootClass = element.toString();
-				if (DEBUG) System.out.println(preamble + "Root class found: '" + rootClass + "'");
+				if (DEBUG_PREVENT_DUPLICATE_CLASSNAMES) {
+					System.out.println(preamble + "Root class found: '" + rootClass + "'");
+				}
 				if (loadedClasses.contains(rootClass)) {
 					// The string seems to end in a newline and it's also enclosed in quotation
 					// marks which we must account for when comparing with fullName below.
@@ -1560,7 +1562,9 @@ public class OMCProxy implements IModelicaCompiler {
 				Element element = (Element)rootClasses.elementAt(i);
 				String rootClassName = element.toString();
 				loadedClasses.add(rootClassName);
-				if (DEBUG) System.out.println("Found loaded class '" + rootClassName + "'.");
+				if (DEBUG_PREVENT_DUPLICATE_CLASSNAMES) {
+					System.out.println("Found loaded class '" + rootClassName + "'.");
+				}
 			}
 		}
 

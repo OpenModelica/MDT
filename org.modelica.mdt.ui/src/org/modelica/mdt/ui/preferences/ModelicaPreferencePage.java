@@ -72,6 +72,7 @@ public class ModelicaPreferencePage	extends PreferencePage
 	private Button displayCompErrors;
 	private Button useStandardOmcPath;
 	private Button useCustomOmcPath;
+	private Button preventDuplicateClassNames;
 	private Text customOmcPath;
 	private Text omcIgnoreDirectoriesAndFiles;
 	private Text omcCommandLineParameters;
@@ -311,6 +312,23 @@ public class ModelicaPreferencePage	extends PreferencePage
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		omcIgnoreDirectoriesAndFiles.setLayoutData(data);
 		
+		// 'prevent duplicate class names settings' group
+		/* dummy label for space */
+		new Label(parent, SWT.NONE);
+		group = new Group(parent, SWT.SHADOW_ETCHED_IN);
+		group.setText("Prevent duplicate class names (check box to turn on experimental feature)");
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.grabExcessHorizontalSpace = true;
+		group.setLayoutData(data);
+		layout = new GridLayout();
+		group.setLayout(layout);
+		preventDuplicateClassNames = new Button(group, SWT.CHECK);
+		preventDuplicateClassNames.setText("Prevent duplicate class names (experimental)");
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.grabExcessHorizontalSpace = true;
+		preventDuplicateClassNames.setLayoutData(data);
+		preventDuplicateClassNames.setSelection(PreferenceManager.getPreventDuplicateClassNames());
+		
 		return parent;
 	}
 	
@@ -339,6 +357,7 @@ public class ModelicaPreferencePage	extends PreferencePage
 		omcIgnoreDirectoriesAndFiles.setText(store.getDefaultString(PreferenceManager.OMC_IGNORED_DIRECTORIES_AND_FILES));
 		omcCommandLineParameters.setText(store.getDefaultString(PreferenceManager.OMC_COMMAND_LINE_PARAMETERS));
 		omcLibraries.setText(store.getDefaultString(PreferenceManager.OMC_LIBRARIES));
+		preventDuplicateClassNames.setSelection(store.getDefaultBoolean(PreferenceManager.PREVENT_DUPLICATE_CLASS_NAMES));
 	}
 
 	
@@ -363,6 +382,8 @@ public class ModelicaPreferencePage	extends PreferencePage
 				omcCommandLineParameters.getText());
 		store.setValue(PreferenceManager.OMC_LIBRARIES,
 				omcLibraries.getText());
+		store.setValue(PreferenceManager.PREVENT_DUPLICATE_CLASS_NAMES,
+				preventDuplicateClassNames.getSelection());
 		return true;
 	}
 }

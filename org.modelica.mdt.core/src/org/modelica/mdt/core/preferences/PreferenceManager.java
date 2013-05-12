@@ -84,6 +84,7 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	public static final String OMC_IGNORED_DIRECTORIES_AND_FILES = "OMCIgnoredDirectoriesAndFiles";
 	public static final String OMC_COMMAND_LINE_PARAMETERS = "OMCCommandLineParameters";
 	public static final String OMC_LIBRARIES = "OMCLibraries";
+	public static final String PREVENT_DUPLICATE_CLASS_NAMES = "PreventDuplicateClassNames";
 	
 	protected final static String EDITOR_MATCHING_BRACKETS="matchingBrackets";
 	protected final static String EDITOR_MATCHING_BRACKETS_COLOR="matchingBracketsColor";
@@ -123,6 +124,7 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 		IPreferenceStore store = getStore();
 
 		store.setDefault(DISPLAY_COMPATIBILTY_ERRORS, false);
+		store.setDefault(PREVENT_DUPLICATE_CLASS_NAMES, false);
 		store.setDefault(USE_STANDARD_OMC_PATH, true);
 		store.setDefault(CUSTOM_OMC_PATH, "");
 		store.setDefault(START_OMC, true);
@@ -277,5 +279,12 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 				return true;
 		}
 		return false;
-	}	
+	}
+	
+	/**
+	 * @return current setting for
+	 */
+	 public static boolean getPreventDuplicateClassNames() {
+		 return getStore().getBoolean(PREVENT_DUPLICATE_CLASS_NAMES);
+	 }
 }
