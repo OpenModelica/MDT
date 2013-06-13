@@ -354,7 +354,7 @@ public class GeneratorVeMScenariosBased {
 					HashSet<Element> reqAll = getAllRequirements();
 
 					/*
-					 * NOTE: <<DoNotUseToVerify>> has higher priority, i.e. if there are <<UsedToVerify>> (positive) 
+					 * NOTE: <<DoNotUseToVerify>> has higher priority, i.e. if there are <<UseToVerify>> (positive) 
 					 * and <<DoNotUseToVerify>> (negative) to the same requirement 
 					 * then this requirement is excluded from the <<UseToVerify>> (positive) list
 					 */
@@ -941,12 +941,12 @@ public class GeneratorVeMScenariosBased {
 						//Alternative 2: Faster  ********************************************************************************************
 						/*
 						 * THIS APPROACH IS FASTER because we are reusing existing instantiation graphs instead of instantiating each new VeM.
-						 * We need to create a COPY of the existing instantiation map because the trees must be manipulated for a give VeM, 
-						 * After the trees have been reused and manipulated once in terms of their firstLevelComponent, doth-path and their bindings, 
+						 * We need to create a COPY of the existing instantiation map because the trees will be manipulated for a give VeM, 
+						 * After trees have been reused and manipulated once (in terms of their firstLevelComponent, doth-path and their bindings) 
 						 * they become incorrect for further iterations! 
 						 * 
 						 * However, it is still faster to copy HashMap, and to reuse existing instantiation
-						 * graphs for components that are instantiated once, compared to instantiating each VeM.  
+						 * graphs for components that are instantiated once, compared to completely instantiating each VeM eacht time again and again.  
 						 */
 
 						@SuppressWarnings("unchecked")

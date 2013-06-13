@@ -132,19 +132,18 @@ public class VeMGenerationOptionsDialog extends Dialog {
 	
 	private String messageVemGen = "This helper will create a package that will contain verification models composed of the selected system model, " +
 			"\r\nscenario (if selected) and requirements. Requirements are combined with scenarios based on known " +
-			"\r\nrelations (positive or negative respectively). Note, the composition of the verification models " +
-			"\r\nis based on bindings which must to be defined correctly.";
+			"\r\nrelations. The composition of the verification models is based on bindings which must be defined correctly.";
 
 	private String messageScenarioToReqRelationDiscovery = 
 			"This helper will create a package with models composed of the selected system model, scenario and requirements " +
 			"\r\nthat can be verified, then simulate and analize results in order to determine new relations between scenarios " +
-			"\r\nand requirements. Note, the composition of the verification models is based on bindings which must to be defined correctly.";
+			"\r\nand requirements. The composition of the verification models is based on bindings which must be defined correctly.";
 	
 	private String messageAutomaticScenarioBasedVerification = 
 			"This helper will create a package with models composed of the selected system model, scenarios and requirements " +
-			"\r\nthat can be verified, then simulate them, and then analize results. Note that if the 'minimize' option is selected requierements " +
-			"\r\nwith positive relations will be combined only with corresponding scenarios. Requirements with negative relations will not be combined " +
-			"\r\nfrom corresponding scenarios. The composition of the verification models is based on bindings which must to be defined correctly.";
+			"\r\nthat can be verified, then simulate them, and then analize results. If the 'minimize' option is selected, requierements " +
+			"\r\nwith positive relations will be combined only with referenced scenarios. Requirements with negative relations will not be combined " +
+			"\r\nwith referenced scenarios. The composition of the verification models is based on bindings which must be defined correctly.";
 
 	
 	private String dialogMessage = "";
@@ -479,7 +478,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		});
 		btnScenariosBased.setSelection(true);
 		btnScenariosBased.setBounds(10, 26, 625, 16);
-		btnScenariosBased.setText("Create models based on valid combinations of scenarios and requirements");
+		btnScenariosBased.setText("Create models based on combinations of scenarios and requirements");
 		if (mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
 			btnScenariosBased.setEnabled(false);
 		}
@@ -498,7 +497,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 			}
 		});
 		btnRequirementsBased.setBounds(10, 139, 625, 16);
-		btnRequirementsBased.setText("Create only one model containing the selected model and all possible requirements that can be verified");
+		btnRequirementsBased.setText("Create only one model containing the selected system model and all requirements that can be verified");
 		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
 			btnRequirementsBased.setEnabled(false); 
 		}
@@ -522,7 +521,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		});
 		btnConsiderPositiveRelations.setSelection(considerPositiveRequirementsRelations);
 		btnConsiderPositiveRelations.setBounds(20, 46, 615, 16);
-		btnConsiderPositiveRelations.setText("Consider requirements that are referenced by scenarios by <<"+getLastSegment(Constants.stereotypeQName_UseToVerify, "::")+">> relation");
+		btnConsiderPositiveRelations.setText("For a scenario include all requirements referenced by 'UseToVerify'");
 //		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
 //			btnConsiderPositiveRelations.setEnabled(false); 
 //		}
@@ -543,7 +542,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 				}
 			}
 		});
-		btnConsiderNegativeRelations.setText("Consider requirements that are referenced by scenarios by <<"+getLastSegment(Constants.stereotypeQName_DoNotUseToVerify, "::")+">> relation");
+		btnConsiderNegativeRelations.setText("For a scenario exclude all requirements referenced by 'DoNotUseToVerify'");
 		btnConsiderNegativeRelations.setBounds(20, 68, 615, 16);
 		btnConsiderNegativeRelations.setSelection(considerNegativeRequirementsRelations);
 //		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {
@@ -567,7 +566,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 				}
 			}
 		});
-		btnConsiderAllRequirements.setText("Consider all requirements with unknown relations to scenarios");
+		btnConsiderAllRequirements.setText("For a scenario include all requirements with unknown relations");
 		btnConsiderAllRequirements.setBounds(20, 90, 615, 16);
 		btnConsiderAllRequirements.setSelection(considerAllUnknownRequirementsRelations);
 		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY) {

@@ -440,6 +440,9 @@ public class TreeUtls {
 		
 		HashSet<org.openmodelica.modelicaml.common.instantiation.TreeObject> preferredProviders = new HashSet<org.openmodelica.modelicaml.common.instantiation.TreeObject>();
 		
+		// TODO: improve: include the qualified name of the client and provider in order to reduce 
+		// the probability of wrong pairs of clients and providers resulting from coincidence of their instance names.
+		// TODO: for that a client tree obejct is need and not only the string path
 		if (mediator != null && providers != null) {
 			EList<String> preferredProvidersList = TreeUtls.getStringListPropertyFromElement(mediator, Constants.stereotypeQName_ValueMediator, Constants.propertyName_preferredProviders);
 			for ( org.openmodelica.modelicaml.common.instantiation.TreeObject treeObject : providers) {

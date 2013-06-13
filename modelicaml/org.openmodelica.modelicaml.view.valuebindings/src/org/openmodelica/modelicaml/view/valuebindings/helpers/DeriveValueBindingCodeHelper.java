@@ -453,6 +453,9 @@ public class DeriveValueBindingCodeHelper {
 //						if (clientTreeItem != null && TreeUtls.getPreferredProviderForClient(mediator, providerInstances, clientTreeItem.getDotPath()) != null) {
 //							providers.add(TreeUtls.getPreferredProviderForClient(mediator, providerInstances, clientTreeItem.getDotPath()));
 //						}
+						
+						// TODO: improve: include the qualified name of the client and provider in order to reduce 
+						// the probability of wrong pairs of clients and providers resulting from coincidence of their instance names.
 						HashSet<TreeObject> preferredPoviders = TreeUtls.getPreferredProvidersForClient(mediator, providerInstances, clientTreeItem.getDotPath());
 						if (clientTreeItem != null && preferredPoviders != null && preferredPoviders.size() == 1) {
 							providers.add(TreeUtls.getPreferredProviderForClient(mediator, providerInstances, clientTreeItem.getDotPath()));
