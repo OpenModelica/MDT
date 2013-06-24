@@ -60,42 +60,18 @@
     <availablePage>
       <emfPageIdentifier href="ModelicaML.profile.notation#_6YvLALQSEeKMMvKD8rDWHw"/>
     </availablePage>
+    <availablePage>
+      <emfPageIdentifier href="ModelicaML.profile.notation#_149VQNycEeK1VqB0RNo8yQ"/>
+    </availablePage>
   </pageList>
   <sashModel currentSelection="//@sashModel/@windows.0/@children.0">
     <windows>
       <children xsi:type="di:TabFolder">
         <children>
-          <emfPageIdentifier href="ModelicaML.profile.notation#_SZo9ELQEEeKMMvKD8rDWHw"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="ModelicaML.profile.notation#_Se4lQLQLEeKMMvKD8rDWHw"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="ModelicaML.profile.notation#_P0F9gLQMEeKMMvKD8rDWHw"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="ModelicaML.profile.notation#_RsSYwLQNEeKMMvKD8rDWHw"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="ModelicaML.profile.notation#_Sq6n8Kx7EeC2GJQ4iCzxPg"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="ModelicaML.profile.notation#_6qsuYGFfEeG6JbLdsYaDDQ"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="ModelicaML.profile.notation#_tms_4OCQEeGn-bDI4pMcpA"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="ModelicaML.profile.notation#_2rfM8HyIEeCz14mjmAfPTw"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="ModelicaML.profile.notation#_6YvLALQSEeKMMvKD8rDWHw"/>
-        </children>
-        <children>
-          <emfPageIdentifier href="ModelicaML.profile.notation#_ltbbAH-WEeC-I9oqZ53S4w"/>
-        </children>
-        <children>
           <emfPageIdentifier href="ModelicaML.profile.notation#__YCQAOjpEeCDZad2kIJ0mw"/>
+        </children>
+        <children>
+          <emfPageIdentifier href="ModelicaML.profile.notation#_7bgeIOjrEeCwFYHW_neVqA"/>
         </children>
       </children>
     </windows>

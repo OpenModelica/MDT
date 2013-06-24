@@ -10,19 +10,20 @@ import eadsiw.modelicaml.UmlServices
 <%script type="uml.Profile" name="ModelicaML_profile_report_v01" file="<%ProfileName%>"%>
 <html>
 	<head>
-		<title>ModelicaML Profile - Full List Of Stereotypes (v<%eAnnotations.contents.nFirst().eAllContents().nGet(1).split(":").nLast().trim().split("\)").nFirst()%>)</title>
+		<title>ModelicaML - UML Profile for Modelica (v<%eAnnotations.contents.nFirst().eAllContents().nGet(1).split(":").nLast().trim().split("\)").nFirst()%>)</title>
+		<%-- <title>ModelicaML Profile - Full List Of Stereotypes (v<%eAnnotations.contents.nFirst().eAllContents().nGet(1).split(":").nLast().trim().split("\)").nFirst()%>)</title> --%>
 		
 	<head>
 <body>
 
-	<h1>ModelicaML Profile - Full List Of Stereotypes</h1>
+	<h1>ModelicaML - UML Profile for Modelica</h1>
 	Profile Version: <strong><%eAnnotations.contents.nFirst().eAllContents().nGet(1).split(":").nLast().trim().split("\)").nFirst()%></strong>
 	<br />
 	<%-- The following sections describe how to represent the: <br />
 <%ownedElement.filter("Package").nestedProfilesLinks%>
 using the ModelicaML profile. <em>Note: In each section the stereotypes are sorted alphabetically.</em>
 <br /><br /> --%>
-<em>Note: In each section the stereotypes are sorted alphabetically.</em>
+<em>Note: In each section stereotypes are sorted alphabetically.</em>
 <br /><br /><br />
 <%ownedElement.filter("Package").Stereotypes%>
 <%ownedElement.filter("Package").PrimitiveTypes%>
@@ -41,6 +42,10 @@ using the ModelicaML profile. <em>Note: In each section the stereotypes are sort
 	<a name="<%namespace.name%>.<%name%>"></a>
 	<h2><%name%></h2>
 	<%if (ownedElement.filter("Stereotype") != null){%>
+		
+		<%-- Image --%>
+		<img src="img/<%name%>.gif" /><br />
+		
 		<%for (ownedElement.filter("Stereotype").nSort()){%>
 			<a name="<%namespace.name%>.<%name%>"></a><h3>Stereotype: <span>&#171;<%name%>&#187;</span><%if (isAbstract){%> <span>(is abstract)</span><%}%> <%if (hasStereotype("NotAModelicaConcept")){%>(is not a Modelica concept)<%}%></h3>
 				<em>Description:</em> <%ownedComment.body.replaceAll("\n", "<br />")%>

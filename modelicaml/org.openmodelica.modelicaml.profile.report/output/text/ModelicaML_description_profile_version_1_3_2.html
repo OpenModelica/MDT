@@ -1,17 +1,20 @@
 <html>
 	<head>
-		<title>ModelicaML Profile - Full List Of Stereotypes (v1.3.2)</title>
+		<title>ModelicaML - UML Profile for Modelica (version 1.3.2)</title>
 		
 	<head>
 <body>
 
-	<h1>ModelicaML Profile - Full List Of Stereotypes</h1>
+	<h1>ModelicaML - UML Profile for Modelica</h1>
 	Profile Version: <strong>1.3.2</strong>
 	<br />
-<em>Note: In each section the stereotypes are sorted alphabetically.</em>
+<em>Note: In each section stereotypes are sorted alphabetically.</em>
 <br /><br /><br />
 	<a name="ModelicaML.ModelicaClassConstructs"></a>
 	<h2>ModelicaClassConstructs</h2>
+		
+		<img src="img/ModelicaClassConstructs.gif" /><br />
+		
 			<a name="ModelicaClassConstructs.Block"></a><h3>Stereotype: <span>&#171;Block&#187;</span> </h3>
 				<em>Description:</em> This stereotype is represents the Modelica restricted class "block". 
 				<br /><br />
@@ -140,6 +143,9 @@
 	<br />
 	<a name="ModelicaML.ModelicaCompositeConstructs"></a>
 	<h2>ModelicaCompositeConstructs</h2>
+		
+		<img src="img/ModelicaCompositeConstructs.gif" /><br />
+		
 			<a name="ModelicaCompositeConstructs.CalculatedProperty"></a><h3>Stereotype: <span>&#171;CalculatedProperty&#187;</span> </h3>
 				<em>Description:</em> A CalculatedProperty does not represent a physical system part. This component provides other components with calculated values.
 				<br /><br />
@@ -241,6 +247,9 @@ If no icon is defined for a property then the icon of the property type is displ
 	<br />
 	<a name="ModelicaML.ModelicaBehaviorConstructs"></a>
 	<h2>ModelicaBehaviorConstructs</h2>
+		
+		<img src="img/ModelicaBehaviorConstructs.gif" /><br />
+		
 			<a name="ModelicaBehaviorConstructs.Algorithm(Code)"></a><h3>Stereotype: <span>&#171;Algorithm(Code)&#187;</span> </h3>
 				<em>Description:</em> This stereotype is used to represent a set of statements in an algorithm section.
 				<br /><br />
@@ -404,6 +413,9 @@ If no icon is defined for a property then the icon of the property type is displ
 	<br />
 	<a name="ModelicaML.ModelicaRelationsConstructs"></a>
 	<h2>ModelicaRelationsConstructs</h2>
+		
+		<img src="img/ModelicaRelationsConstructs.gif" /><br />
+		
 			<a name="ModelicaRelationsConstructs.ConstrainedByRelation"></a><h3>Stereotype: <span>&#171;ConstrainedByRelation&#187;</span> </h3>
 				<em>Description:</em> This stereotype represents the Modelica relation “constrainedBy”.
 				<br /><br />
@@ -458,6 +470,9 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 	<br />
 	<a name="ModelicaML.ModelicaRequirementConstructs"></a>
 	<h2>ModelicaRequirementConstructs</h2>
+		
+		<img src="img/ModelicaRequirementConstructs.gif" /><br />
+		
 			<a name="ModelicaRequirementConstructs.Requirement"></a><h3>Stereotype: <span>&#171;Requirement&#187;</span> </h3>
 				<em>Description:</em> “Requirement” concept, identified by this stereotype, represents a natural language requirements and the corresponding violation monitor. 
 				<br /><br />
@@ -495,6 +510,9 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 	<br />
 	<a name="ModelicaML.ModelicaSimulationConstructs"></a>
 	<h2>ModelicaSimulationConstructs</h2>
+		
+		<img src="img/ModelicaSimulationConstructs.gif" /><br />
+		
 			<a name="ModelicaSimulationConstructs.Simulation"></a><h3>Stereotype: <span>&#171;Simulation&#187;</span> </h3>
 				<em>Description:</em> This stereotype contains the properties which are used in the "simulate()" command in Modelica tools.
 				<br /><br />
@@ -520,6 +538,9 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 	<br />
 	<a name="ModelicaML.ModelicaAnnotationConstructs"></a>
 	<h2>ModelicaAnnotationConstructs</h2>
+		
+		<img src="img/ModelicaAnnotationConstructs.gif" /><br />
+		
 			<a name="ModelicaAnnotationConstructs.Annotation(CodeGeneration)"></a><h3>Stereotype: <span>&#171;Annotation(CodeGeneration)&#187;</span> </h3>
 				<em>Description:</em> Annotation specific to Modelica code generation (not ModelicaML code generation).
 				<br /><br />
@@ -589,6 +610,9 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 	<br />
 	<a name="ModelicaML.Verification"></a>
 	<h2>Verification</h2>
+		
+		<img src="img/Verification.gif" /><br />
+		
 			<a name="Verification.DoNotUseToVerify"></a><h3>Stereotype: <span>&#171;DoNotUseToVerify&#187;</span> </h3>
 				<em>Description:</em> This relation indicates that the scenario (source) should not be used to verify the requirement it points to. 
 				<br /><br />
@@ -640,6 +664,9 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 	<br />
 	<a name="ModelicaML.ValueBinding"></a>
 	<h2>ValueBinding</h2>
+		
+		<img src="img/ValueBinding.gif" /><br />
+		
 			<a name="ValueBinding.ObtainsValueFrom"></a><h3>Stereotype: <span>&#171;ObtainsValueFrom&#187;</span> </h3>
 				<em>Description:</em> This relation specifies that the referenced mediator (source) shall be used for inferring binging from the referenced provider (target)
 				<br /><br />
@@ -712,6 +739,9 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 	<br />
 	<a name="ModelicaML.ModelReferences"></a>
 	<h2>ModelReferences</h2>
+		
+		<img src="img/ModelReferences.gif" /><br />
+		
 			<a name="ModelReferences.InstalledLibrary"></a><h3>Stereotype: <span>&#171;InstalledLibrary&#187;</span> </h3>
 				<em>Description:</em> This stereotype indicates the this element is a library that is available in the ModelicaML environment and can be imported and used. 
 				<br /><br />
@@ -735,6 +765,9 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 	<br />
 	<a name="ModelicaML.CodeGeneration"></a>
 	<h2>CodeGeneration</h2>
+		
+		<img src="img/CodeGeneration.gif" /><br />
+		
 			<a name="CodeGeneration.CodeGenerationSpecification"></a><h3>Stereotype: <span>&#171;CodeGenerationSpecification&#187;</span> </h3>
 				<em>Description:</em> This stereotype is used for caturing of code generation specific information.
 				<br /><br />
@@ -788,16 +821,16 @@ Commas and the parenthesis "(" and ")" are omitted.<br />
 					<a name="ModelicaML.ModelicaPredefinedEnumerations"></a>
 	<h2>ModelicaPredefinedEnumerations</h2>
 	
-			Enumeration <strong>LogicalOperators</strong>(and, or, not)<br />
-			Enumeration <strong>ModelicaAccess</strong>(public, protected)<br />
-			Enumeration <strong>ModelicaAlgorithmLoopKind</strong>(for, while)<br />
-			Enumeration <strong>ModelicaAssertionLevel</strong>(warning, error)<br />
-			Enumeration <strong>ModelicaCausality</strong>(input, output)<br />
-			Enumeration <strong>ModelicaEquationsLoopKind</strong>(for)<br />
-			Enumeration <strong>ModelicaFlowFlag</strong>(flow, stream)<br />
-			Enumeration <strong>ModelicaScope</strong>(inner, outer)<br />
-			Enumeration <strong>ModelicaStateSelect</strong>(default, never, avoid, prefer, always)<br />
-			Enumeration <strong>ModelicaVariability</strong>(continuous, discrete, parameter, constant)<br />
+			Enumeration <strong>LogicalOperators</strong> (and, or, not)<br />
+			Enumeration <strong>ModelicaAccess</strong> (public, protected)<br />
+			Enumeration <strong>ModelicaAlgorithmLoopKind</strong> (for, while)<br />
+			Enumeration <strong>ModelicaAssertionLevel</strong> (warning, error)<br />
+			Enumeration <strong>ModelicaCausality</strong> (input, output)<br />
+			Enumeration <strong>ModelicaEquationsLoopKind</strong> (for)<br />
+			Enumeration <strong>ModelicaFlowFlag</strong> (flow, stream)<br />
+			Enumeration <strong>ModelicaScope</strong> (inner, outer)<br />
+			Enumeration <strong>ModelicaStateSelect</strong> (default, never, avoid, prefer, always)<br />
+			Enumeration <strong>ModelicaVariability</strong> (continuous, discrete, parameter, constant)<br />
 	<br />
 									
 

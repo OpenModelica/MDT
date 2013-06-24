@@ -6017,6 +6017,60 @@ It has properties that can be used for setting up a descriptive traceability bet
   </packagedElement>
   <packagedElement xmi:type="uml:Profile" xmi:id="_l7wYAOjrEeCwFYHW_neVqA" name="CodeGeneration">
     <eAnnotations xmi:id="_L7heYOjtEeCwFYHW_neVqA" source="http://www.eclipse.org/uml2/2.0.0/UML">
+      <contents xmi:type="ecore:EPackage" xmi:id="_jqiLENyeEeK1VqB0RNo8yQ" name="CodeGeneration" nsURI="http://ModelicaML/schemas/CodeGeneration/_jqfHwNyeEeK1VqB0RNo8yQ/1" nsPrefix="CodeGeneration">
+        <eAnnotations xmi:id="_jqiLEdyeEeK1VqB0RNo8yQ" source="http://www.eclipse.org/uml2/4.0.0/UML" references="_EDAfcFNNEd6YXtyPQ2LL6Q"/>
+        <eAnnotations xmi:id="_jrLEQNyeEeK1VqB0RNo8yQ" source="PapyrusVersion">
+          <details xmi:id="_jrLEQdyeEeK1VqB0RNo8yQ" key="Version" value="0.1.1"/>
+          <details xmi:id="_jrLEQtyeEeK1VqB0RNo8yQ" key="Comment" value="Diagram updates"/>
+          <details xmi:id="_jrLEQ9yeEeK1VqB0RNo8yQ" key="Copyright" value=""/>
+          <details xmi:id="_jrLERNyeEeK1VqB0RNo8yQ" key="Date" value="2013-06-24"/>
+          <details xmi:id="_jrLERdyeEeK1VqB0RNo8yQ" key="Author" value=""/>
+        </eAnnotations>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_jqiLEtyeEeK1VqB0RNo8yQ" name="CodeGenerationSpecification">
+          <eAnnotations xmi:id="_jqiLE9yeEeK1VqB0RNo8yQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_CE-W0HxdEd6oZZ5NPrAB7g"/>
+          <eStructuralFeatures xmi:type="ecore:EAttribute" xmi:id="_jqiLFNyeEeK1VqB0RNo8yQ" name="excludeFromCG" ordered="false" unique="false" lowerBound="1" defaultValueLiteral="false">
+            <eType xmi:type="ecore:EDataType" href="http://www.eclipse.org/uml2/4.0.0/Types#//Boolean"/>
+          </eStructuralFeatures>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_jqiLFtyeEeK1VqB0RNo8yQ" name="base_Element" ordered="false" unique="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Element"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EClass" xmi:id="_jqiLGNyeEeK1VqB0RNo8yQ" name="ExcludeFromCGIfUserInteractive">
+          <eAnnotations xmi:id="_jqiLGdyeEeK1VqB0RNo8yQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_k0LV4HwSEd6RNZXM0YwVGw"/>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_jqiLGtyeEeK1VqB0RNo8yQ" name="variableReference" ordered="false" unique="false" lowerBound="1" eType="_KpUH8FaVEd-OiJEhN960pA"/>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_jqiLHNyeEeK1VqB0RNo8yQ" name="base_StateMachine" ordered="false" unique="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//StateMachine"/>
+          </eStructuralFeatures>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_jqiLHtyeEeK1VqB0RNo8yQ" name="base_OpaqueBehavior" ordered="false" unique="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//OpaqueBehavior"/>
+          </eStructuralFeatures>
+          <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_jqiLINyeEeK1VqB0RNo8yQ" name="base_Activity" ordered="false" unique="false" lowerBound="1">
+            <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/4.0.0/UML#//Activity"/>
+          </eStructuralFeatures>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_jqiLP9yeEeK1VqB0RNo8yQ" name="ModelicaML_ModelicaPredefinedEnumerations_ModelicaFlowFlag">
+          <eAnnotations xmi:id="_jqiLQNyeEeK1VqB0RNo8yQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_lLefsFNOEd6YXtyPQ2LL6Q"/>
+          <eLiterals xmi:id="_jqiLQdyeEeK1VqB0RNo8yQ" name="flow"/>
+          <eLiterals xmi:id="_jqiLQtyeEeK1VqB0RNo8yQ" name="stream" value="1"/>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_jqiLQ9yeEeK1VqB0RNo8yQ" name="ModelicaML_ModelicaPredefinedEnumerations_ModelicaScope">
+          <eAnnotations xmi:id="_jqiLRNyeEeK1VqB0RNo8yQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_nDPvEFNNEd6YXtyPQ2LL6Q"/>
+          <eLiterals xmi:id="_jqiLRdyeEeK1VqB0RNo8yQ" name="inner"/>
+          <eLiterals xmi:id="_jqiLRtyeEeK1VqB0RNo8yQ" name="outer" value="1"/>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_jqiLR9yeEeK1VqB0RNo8yQ" name="ModelicaML_ModelicaPredefinedEnumerations_ModelicaCausality">
+          <eAnnotations xmi:id="_jqiLSNyeEeK1VqB0RNo8yQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_ypn8UFNNEd6YXtyPQ2LL6Q"/>
+          <eLiterals xmi:id="_jqiLSdyeEeK1VqB0RNo8yQ" name="input"/>
+          <eLiterals xmi:id="_jqiLStyeEeK1VqB0RNo8yQ" name="output" value="1"/>
+        </eClassifiers>
+        <eClassifiers xmi:type="ecore:EEnum" xmi:id="_jqiLS9yeEeK1VqB0RNo8yQ" name="ModelicaML_ModelicaPredefinedEnumerations_ModelicaVariability">
+          <eAnnotations xmi:id="_jqiLTNyeEeK1VqB0RNo8yQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_Y5SVUFNOEd6YXtyPQ2LL6Q"/>
+          <eLiterals xmi:id="_jqiLTdyeEeK1VqB0RNo8yQ" name="continuous"/>
+          <eLiterals xmi:id="_jqiLTtyeEeK1VqB0RNo8yQ" name="discrete" value="1"/>
+          <eLiterals xmi:id="_jqiLT9yeEeK1VqB0RNo8yQ" name="parameter" value="2"/>
+          <eLiterals xmi:id="_jqiLUNyeEeK1VqB0RNo8yQ" name="constant" value="3"/>
+        </eClassifiers>
+      </contents>
       <contents xmi:type="ecore:EPackage" xmi:id="_L7heYejtEeCwFYHW_neVqA" name="CodeGeneration" nsURI="http://ModelicaML/schemas/CodeGeneration/_L7YUcOjtEeCwFYHW_neVqA/0" nsPrefix="CodeGeneration">
         <eAnnotations xmi:id="_L8H7UejtEeCwFYHW_neVqA" source="PapyrusVersion">
           <details xmi:id="_L8H7UujtEeCwFYHW_neVqA" key="Version" value="0.1.0"/>
