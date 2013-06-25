@@ -349,7 +349,14 @@ public class OpenModelicaCompilerCommunication {
 	public String getClassRestriction(String className){
 		return executeCommand("getClassRestriction(" + className + ")");
 	}
+	
+	
+	public boolean isProtectedClass(String owningClassQName, String protectedClassName){
+		String reply = executeCommand("isProtectedClass(" + owningClassQName + ", \""+protectedClassName+"\")");
+		return reply.trim().equals("true");
+	}
 
+	
 	public String isConnector(String className){
 		return executeCommand("isConnector(" + className + ")");
 	}

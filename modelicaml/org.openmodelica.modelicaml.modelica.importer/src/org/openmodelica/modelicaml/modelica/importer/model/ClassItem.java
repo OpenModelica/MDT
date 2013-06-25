@@ -40,12 +40,16 @@ import org.eclipse.emf.common.util.EList;
 
 
 public class ClassItem extends TreeParent {
+	
+	// TODO: is protected? 
+	
 
 	private boolean isFinal = false;
 	private boolean isEncapsulated = false;
 	private boolean isPartial = false;
 	private boolean isReplaceable = false;
 	private boolean isEnumeration = false;
+	private boolean isProtected = false;
 	
 	private String comment;
 	private List<String> annotations;
@@ -190,6 +194,14 @@ public class ClassItem extends TreeParent {
 
 	public boolean isEnumeration() {
 		return isEnumeration;
+	}
+
+	public boolean isProtected() {
+		return isProtected;
+	}
+
+	public void setProtected(boolean isProtected) {
+		this.isProtected = isProtected;
 	}
 	
 }

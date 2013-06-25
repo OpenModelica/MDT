@@ -90,7 +90,6 @@ import org.eclipse.uml2.uml.UMLPackage;
 import org.eclipse.uml2.uml.VisibilityKind;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
-import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.modelica.importer.helper.StringHandler;
 import org.openmodelica.modelicaml.modelica.importer.model.ClassItem;
 import org.openmodelica.modelicaml.modelica.importer.model.ComponentItem;
@@ -267,53 +266,61 @@ public class ModelicaMLElementsCreator {
 				protected void doExecute() {
 					/*
 					 * Note, the order of of clauses is important 
-					 * to make sure that function behavior is checked before class and enum befor promitive type 
+					 * to make sure that function behavior is checked before class and enum before primitive type 
 					 */
-					if (parent instanceof Package) {
-						if (classItem.getClassRestriction().equals("function")) {
-							createdElement = ((Package)parent).createPackagedElement(classItem.getName(), UMLPackage.Literals.FUNCTION_BEHAVIOR);
-						}
-						else if (classItem.isEnumeration()) {
-							createdElement = ((Package)parent).createPackagedElement(classItem.getName(), UMLPackage.Literals.ENUMERATION);
-						}
-						else if (classItem.getClassRestriction().equals("type")) {
-							createdElement = ((Package)parent).createPackagedElement(classItem.getName(), UMLPackage.Literals.PRIMITIVE_TYPE);
-						}
-						else {
-							createdElement = ((Package)parent).createPackagedElement(classItem.getName(), UMLPackage.Literals.CLASS);
-						}
-					}
-					else if (parent instanceof Class) {
-						if (classItem.getClassRestriction().equals("function")) {
-							createdElement = ((Class)parent).createNestedClassifier(classItem.getName(), UMLPackage.Literals.FUNCTION_BEHAVIOR);
-						}
-						else if (classItem.isEnumeration()) {
-							createdElement = ((Class)parent).createNestedClassifier(classItem.getName(), UMLPackage.Literals.ENUMERATION);
-						}
-						else if (classItem.getClassRestriction().equals("type")) {
-							createdElement = ((Class)parent).createNestedClassifier(classItem.getName(), UMLPackage.Literals.PRIMITIVE_TYPE);
-						}
-						else {
-							createdElement = ((Class)parent).createNestedClassifier(classItem.getName(), UMLPackage.Literals.CLASS);
-						}
-					}
 					
 					
-					if (createdElement instanceof Element) {
-	//					Stereotype appliedStereotype = applyModelicaMLClassStereotype((Element)createdElement, (ClassItem) treeObject, applyProxyStereotype);
-					}			
+					// First check if protected elements should be created or not
+					if (classItem.isProtected() && treeBuilder.isSyncOnlyPublicComponents() ) {
+						// Skip this class if it is protected and the option says that only public components should be synchronized.
+					}
 					else {
-						addToLog("Could not create a ModelicaML class '"+classItem.getClassRestriction()+"'.");
-					}
-					
-					// update the created element
-					/*
-					 * Note, we should update (i.e. set stereotype etc.) in order
-					 * to avoid live validation messages caused by the fact the the stereotype was not
-					 * applied yet. 
-					 */
-					if (createdElement instanceof Class) {
-						updateClass(createdElement, (ClassItem) classItem, applyProxyStereotype);
+						if (parent instanceof Package) {
+							if (classItem.getClassRestriction().equals("function")) {
+								createdElement = ((Package)parent).createPackagedElement(classItem.getName(), UMLPackage.Literals.FUNCTION_BEHAVIOR);
+							}
+							else if (classItem.isEnumeration()) {
+								createdElement = ((Package)parent).createPackagedElement(classItem.getName(), UMLPackage.Literals.ENUMERATION);
+							}
+							else if (classItem.getClassRestriction().equals("type")) {
+								createdElement = ((Package)parent).createPackagedElement(classItem.getName(), UMLPackage.Literals.PRIMITIVE_TYPE);
+							}
+							else {
+								createdElement = ((Package)parent).createPackagedElement(classItem.getName(), UMLPackage.Literals.CLASS);
+							}
+						}
+						else if (parent instanceof Class) {
+							if (classItem.getClassRestriction().equals("function")) {
+								createdElement = ((Class)parent).createNestedClassifier(classItem.getName(), UMLPackage.Literals.FUNCTION_BEHAVIOR);
+							}
+							else if (classItem.isEnumeration()) {
+								createdElement = ((Class)parent).createNestedClassifier(classItem.getName(), UMLPackage.Literals.ENUMERATION);
+							}
+							else if (classItem.getClassRestriction().equals("type")) {
+								createdElement = ((Class)parent).createNestedClassifier(classItem.getName(), UMLPackage.Literals.PRIMITIVE_TYPE);
+							}
+							else {
+								createdElement = ((Class)parent).createNestedClassifier(classItem.getName(), UMLPackage.Literals.CLASS);
+							}
+						}
+						
+						
+						if (createdElement instanceof Element) {
+		//					Stereotype appliedStereotype = applyModelicaMLClassStereotype((Element)createdElement, (ClassItem) treeObject, applyProxyStereotype);
+						}			
+						else {
+							addToLog("Could not create a ModelicaML class '"+classItem.getClassRestriction()+"'.");
+						}
+						
+						// update the created element
+						/*
+						 * Note, we should update (i.e. set stereotype etc.) in order
+						 * to avoid live validation messages caused by the fact the the stereotype was not
+						 * applied yet. 
+						 */
+						if (createdElement instanceof Class) {
+							updateClass(createdElement, (ClassItem) classItem, applyProxyStereotype);
+						}
 					}
 				}
 			};
@@ -1052,43 +1059,48 @@ public class ModelicaMLElementsCreator {
 			@Override
 			protected void doExecute() {
 				
-				// alert that the type is missing
-				if (!(componentTreeObject.getComponentTypeProxy() instanceof Classifier)) {
-					addToLog("Could not resolve the type with the qualified name '"+componentTreeObject.getComponentTypeQame()+"'");
-//					System.err.println("Could not resolve the type with the qualified name '"+componentTreeObject.getComponentTypeQame()+"'");
+				// First check if protected components should be created or not
+				if (componentTreeObject.getVisibility().trim().equals("protected") && treeBuilder.isSyncOnlyPublicComponents() ) {
+					// skip this component if it is protected and the option says that only public components should be synchronized.
 				}
+				else {
+					// alert that the type is missing
+					if (!(componentTreeObject.getComponentTypeProxy() instanceof Classifier)) {
+						addToLog("Could not resolve the type with the qualified name '"+componentTreeObject.getComponentTypeQame()+"'");
+//						System.err.println("Could not resolve the type with the qualified name '"+componentTreeObject.getComponentTypeQame()+"'");
+					}
 
-				// port
-				if (componentTreeObject.isPort() && owningClass instanceof Class) {
-					createdElement = ((Class)owningClass).createOwnedPort(componentTreeObject.getName(), (Type) componentTreeObject.getComponentTypeProxy());
-				}
-				// function argument
-				else if (componentTreeObject.isFunctionArgument() && owningClass instanceof FunctionBehavior) {
-					createdElement = ((FunctionBehavior)owningClass).createOwnedParameter(componentTreeObject.getName(), (Type) componentTreeObject.getComponentTypeProxy());
-				}
-				// enum literal
-				else if (componentTreeObject.isEnumarationLiteral() && owningClass instanceof Enumeration) {
-					createdElement = ((Enumeration)owningClass).createOwnedLiteral(componentTreeObject.getName());
-				}
-				// component
-				else if (owningClass instanceof Class) {
-					createdElement = ((Class)owningClass).createOwnedAttribute(componentTreeObject.getName(), (Type) componentTreeObject.getComponentTypeProxy());
-				}
-				
-				// alert that the element could not be created
-				if (!( createdElement instanceof Element )) {
-					addToLog("Could not create ModelicaML component '"+componentTreeObject.getQName()+"'.");
-//					System.err.println("Could not create ModelicaML component '"+componentTreeObject.getQName()+"'.");
-				}
-				
-				
-				/*
-				 * Note, we should update (i.e. set stereotype etc.) in order
-				 * to avoid live validation messages caused by the fact the the stereotype was not
-				 * applied yet. 
-				 */
-				if (createdElement instanceof Element) {
-					updateProperty(owningClass, createdElement, componentTreeObject, applyProxyStereotype);
+					// port
+					if (componentTreeObject.isPort() && owningClass instanceof Class) {
+						createdElement = ((Class)owningClass).createOwnedPort(componentTreeObject.getName(), (Type) componentTreeObject.getComponentTypeProxy());
+					}
+					// function argument
+					else if (componentTreeObject.isFunctionArgument() && owningClass instanceof FunctionBehavior) {
+						createdElement = ((FunctionBehavior)owningClass).createOwnedParameter(componentTreeObject.getName(), (Type) componentTreeObject.getComponentTypeProxy());
+					}
+					// enum literal
+					else if (componentTreeObject.isEnumarationLiteral() && owningClass instanceof Enumeration) {
+						createdElement = ((Enumeration)owningClass).createOwnedLiteral(componentTreeObject.getName());
+					}
+					// component
+					else if (owningClass instanceof Class) {
+						createdElement = ((Class)owningClass).createOwnedAttribute(componentTreeObject.getName(), (Type) componentTreeObject.getComponentTypeProxy());
+					}
+					
+					// alert that the element could not be created
+					if (!( createdElement instanceof Element )) {
+						addToLog("Could not create ModelicaML component '"+componentTreeObject.getQName()+"'.");
+//						System.err.println("Could not create ModelicaML component '"+componentTreeObject.getQName()+"'.");
+					}
+					
+					/*
+					 * Note, we should update (i.e. set stereotype etc.) in order
+					 * to avoid live validation messages caused by the fact that the stereotype was not
+					 * applied yet. 
+					 */
+					if (createdElement instanceof Element) {
+						updateProperty(owningClass, createdElement, componentTreeObject, applyProxyStereotype);
+					}
 				}
 			}
 		};

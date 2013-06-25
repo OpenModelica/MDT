@@ -95,6 +95,8 @@ public class TreeBuilder {
 	private boolean validateProxies = false;
 	private boolean fullImport = false; // indicates of annotations, equations and imports should be included in synchronization
 	
+	private boolean syncOnlyPublicComponents = false;
+	
 	private String MSLModelName = Constants.ModelicaStandardLibraryModelName; 
 	
 	// by default this is null until it is set by the setter
@@ -256,10 +258,16 @@ public class TreeBuilder {
 							
 							treeParent.addChild(item);
 							treeItems.add(item);
-							
+
 							item.setQName(qName);
 							item.setModelicaMLProxy(proxyQNameToElement.get(qName));
-						
+
+							// Visibility of the class
+							// if parent is a class, i.e., if this item is a nested class
+							if (treeParent instanceof ClassItem && ((ClassItem)treeParent).getQName() != null) {
+								item.setProtected(omcc.isProtectedClass(((ClassItem)treeParent).getQName(), item.getName()));
+							}
+							
 							// update class node
 							updateClassNode(item);
 							
@@ -1470,6 +1478,15 @@ public class TreeBuilder {
 			HashSet<Element> proxiesNotExistingInLoadedCode) {
 		this.proxiesNotExistingInLoadedCode = proxiesNotExistingInLoadedCode;
 	}
+
+	public boolean isSyncOnlyPublicComponents() {
+		return syncOnlyPublicComponents;
+	}
+
+	public void setSyncOnlyPublicComponents(boolean syncOnlyPublicComponents) {
+		this.syncOnlyPublicComponents = syncOnlyPublicComponents;
+	}
+
 
 //	public void setErrorLog(String errorLog) {
 //		this.errorLog = errorLog;

@@ -88,6 +88,12 @@ public class ModelicaMLModelicaModelsSynchronization
 				new StringFieldEditor("modelsToExcludeFromLoadingWhenSynchronizing", 
 						"Qualified names of models (comma-separated) to discard:", 
 						getFieldEditorParent()));
+		
+		addField(
+				new BooleanFieldEditor("syncOnlyPublicElements",
+						"Only synchronize public elements, no protected elelemts.",
+						getFieldEditorParent()));
+		
 	}
 
 	/* (non-Javadoc)

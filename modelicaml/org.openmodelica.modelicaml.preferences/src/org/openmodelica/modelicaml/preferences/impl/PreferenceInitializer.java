@@ -69,6 +69,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault("linkClassComponentsTreeWithModelExplorer", false);
 		
 		store.setDefault("loadMSLBeforeSynchronizing", true);
+		store.setDefault("syncOnlyPublicElements", true);
+		
 		
 		store.setDefault("modelsToExcludeFromLoadingWhenSynchronizing", "Modelica.UsersGuide, ModelicaServices, Modelica.Fluid");
 		

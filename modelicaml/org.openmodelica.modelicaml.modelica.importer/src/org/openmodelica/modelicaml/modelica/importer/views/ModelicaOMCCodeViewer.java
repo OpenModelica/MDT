@@ -48,6 +48,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
@@ -80,6 +81,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.papyrus.infra.core.listenerservice.IPapyrusListener;
 import org.eclipse.papyrus.infra.core.resource.NotFoundException;
@@ -177,6 +179,8 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 	private Action actionDecorateTreeItems;
 
 	private Action actionReloadView;
+
+	private Action actionSyncOnlyPublicElements; // indicates that only public elements should be displayed and synchronized
 	
 	// Default values for sync. options
 	private boolean createProxiesAfterLoadingModelicaClasses = false;
@@ -222,6 +226,8 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 			return null;
 		}
 	};
+
+	
 
 
 
@@ -336,6 +342,13 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 //		viewer.setSorter(new NameSorter());
 		viewer.setInput(getViewSite());
 
+		Boolean loadMSLBeforeSynchronizing = Platform.getPreferencesService().getBoolean("org.openmodelica.modelicaml.preferences", "syncOnlyPublicElements", true, null);
+		if (loadMSLBeforeSynchronizing) {
+			// default filters
+			ViewerFilter[] filters = {showOnlyPublicComponentsFilter};
+			viewer.setFilters(filters);
+		}
+		
 		// Create the help context id for the viewer's control
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "org.openmodelica.modelicaml.modelica.importer.viewer");
 		makeActions();
@@ -397,6 +410,8 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 		manager.add(new Separator());
 		manager.add(actionDecorateTreeItems);
 		
+		manager.add(new Separator());
+		manager.add(actionSyncOnlyPublicElements);
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
@@ -991,6 +1006,8 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 				for (int i = 0; i < children.length; i++) {
 					TreeObject treeObject = children[i];
 					
+					System.err.println(((ClassItem)treeObject).getClassRestriction());
+					
 					if (treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("package")) {
 						// ok, do nothing
 					}
@@ -1001,7 +1018,7 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 				
 				if (invalidFirstLevelClasses.size() > 0) {
 					String title = "ModelicaML Proxies Synchronization Error";
-					String message = "To use the ModelicaML Proxies Synchronization feature all first level Modelica classes " +
+					String message = "To use the ModelicaML Modelica models synchronization feature all first level Modelica classes " +
 							"must be packages. Moreover, these packages must not have extends relations " +
 							" to other packages and not be encapsulated, partial, final or replaceable. " +
 							"The following first level classes cannot be synchronized: \n\n";
@@ -1181,7 +1198,38 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 		actionGenerateOMCMarkers.setChecked(true);
 		treeBuilder.setCreateOMCMarker(actionGenerateOMCMarkers.isChecked());
 		
+		
+		
+		
+		
+		
+		// Option to synchronize the protected elements or not
+		actionSyncOnlyPublicElements = new Action("actionSyncOnlyPublicElements", 2) {
+			public void run() {
+				if (actionSyncOnlyPublicElements.isChecked()) {
+					ViewerFilter[] filters = {showOnlyPublicComponentsFilter};
+					viewer.setFilters(filters);
+				}
+				else {
+					viewer.removeFilter(showOnlyPublicComponentsFilter);
+				}
+				
+				// pass the selected option to tree builder
+				treeBuilder.setSyncOnlyPublicComponents(actionSyncOnlyPublicElements.isChecked());
+			}
+		};
+		actionSyncOnlyPublicElements.setText("Synchronize only public elements");
+		actionSyncOnlyPublicElements.setToolTipText("Synchronize only public elements");
 
+		// set default value for the option
+		Boolean syncOnlyPublicElements = Platform.getPreferencesService().getBoolean("org.openmodelica.modelicaml.preferences", "syncOnlyPublicElements", true, null);
+		actionSyncOnlyPublicElements.setChecked(syncOnlyPublicElements);
+		
+		treeBuilder.setSyncOnlyPublicComponents(actionSyncOnlyPublicElements.isChecked()); // default value when the view is started
+		
+		
+		
+		
 		
 		
 		
@@ -1892,6 +1940,36 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 		}
 		return "? Unknown project";
 	}
+	
+	//************************************** Filters
+	
+	// Filter for "Sync only public components" 
+	ShowOnlyPublicComponentsFilter showOnlyPublicComponentsFilter = new ShowOnlyPublicComponentsFilter();
+	class ShowOnlyPublicComponentsFilter extends ViewerFilter {
+			@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+				
+				//protected components
+				if (element instanceof ComponentItem) {
+					ComponentItem item = ((ComponentItem)element); 
+					//System.err.println(item.getName() + ": " + item.getVisibility());
+					if (item.getVisibility().trim().equals("protected")) {
+						return false;
+					}
+				}
+				
+				//protected classes
+				if (element instanceof ClassItem) {
+					ClassItem item = ((ClassItem)element); 
+					//System.err.println(item.getName() + ": " + item.isProtected());
+					if (item.isProtected()) {
+						return false;
+					}
+				}
+			return true;
+		}
+	}
+	
 	
 	
 //	private void showMessage(String message) {
