@@ -98,6 +98,7 @@ import org.openmodelica.modelicaml.modelica.importer.model.ImportRelationItem;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeBuilder;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeObject;
 import org.openmodelica.modelicaml.modelica.importer.model.TreeParent;
+import org.openmodelica.modelicaml.modelica.importer.model.Utilities;
 
 public class ModelicaMLElementsCreator {
 	
@@ -182,8 +183,9 @@ public class ModelicaMLElementsCreator {
 				TreeObject[] children = treeParent.getChildren();
 				
 				for (int i = 0; i < children.length; i++) {
+					
 					TreeObject treeObject = children[i];
-	
+
 					if (treeObject instanceof ClassItem) {
 						Element modelicaMLProxy = treeObject.getModelicaMLProxy();
 						
@@ -1943,9 +1945,11 @@ public class ModelicaMLElementsCreator {
 			
 			// if no root is found -> create one ...
 			final EObject newRoot = EcoreUtil.create(modelicaMLModelRoot.eClass());
-//			final EObject newRoot = EcoreUtil.create(UMLPackage.Literals.CLASS.eClass());
 			((Model)newRoot).setName(name);
-			
+
+//			final EObject newRoot = EcoreUtil.create(UMLPackage.Literals.CLASS);
+//			((element)newRoot).setName(name);
+
 			createdElement = newRoot;
 			if (newRoot instanceof Element) {
 				createdClasses.add((Element) newRoot);	

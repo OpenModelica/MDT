@@ -1006,8 +1006,7 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 				for (int i = 0; i < children.length; i++) {
 					TreeObject treeObject = children[i];
 					
-					System.err.println(((ClassItem)treeObject).getClassRestriction());
-					
+//					System.err.println(((ClassItem)treeObject).getClassRestriction());
 					if (treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("package")) {
 						// ok, do nothing
 					}
@@ -1487,10 +1486,24 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 						
 						// if it is a root -> get or create the model root
 						if (topDownParent.getParent().getName().equals(Constants.folderName_code_sync)) {
-							UMLParent = (Element) ec.createProxyRoot(topDownParent.getName(), applyProxyStereotype);
+							
+							if (topDownParent instanceof ClassItem && 
+									!( ((ClassItem)topDownParent).getClassRestriction().equals("package") || ((ClassItem)topDownParent).getClassRestriction().contains("operator")) ) {
 
-							topDownParent.setModelicaMLProxy(UMLParent);
-							treeBuilder.addProxyToMaps((NamedElement) UMLParent);
+								// Forward the model to the utilities class for creating markers
+								Utilities.ModelicaMLModel = treeBuilder.getModelicaMLModel();
+
+								// generate marker
+								// No need to generate the marker because it was already generated when (re)loading the sub-tree
+//								Utilities.createOMCMarker(topDownParent, "error", "The model '"+topDownParent.getQName()+"' is not a package. " + "At the top level all elements must be packages.");
+							}
+							else {
+								// only create a model if it is a package
+								UMLParent = (Element) ec.createProxyRoot(topDownParent.getName(), applyProxyStereotype);
+
+								topDownParent.setModelicaMLProxy(UMLParent);
+								treeBuilder.addProxyToMaps((NamedElement) UMLParent);
+							}
 						}
 						// if a proxy exists -> update it
 						else if (topDownParent.getModelicaMLProxy() != null) {
@@ -1511,7 +1524,7 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 				}
 				
 				// If the selected element is a class -> sync. class recursively
-				if (treeObject instanceof ClassItem) {
+				if (treeObject instanceof ClassItem && UMLParent != null) {
 					ec.createElements(UMLParent, (TreeParent) treeObject, update, applyProxyStereotype, true);
 				}
 				
@@ -1538,9 +1551,7 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 				 * Delete markers
 				 */
 				if (deleteIncositentProxies) {
-					
 					ec.deleteInvalidProxyElements(treeObject.getQName());
-					
 					Utilities.deleteProxyValidationMarkers(getProject(), treeObject.getQName());
 				}
 				
@@ -1552,7 +1563,7 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 					treeBuilder.validateProxies(project, (TreeParent)treeObject);
 				}
 				else {
-					MessageDialog.openError(getSite().getShell(), "Modelica Models Sync. Error", "Could not validate the sub-tree starting with '" + treeObject.getName() + "'" );
+//					Utilities.createOMCMarker(treeObject, "error", "Could not validate the sub-tree starting with '" + treeObject.getName() + "'.");
 				}
 				
 				done(Status.OK_STATUS);

@@ -52,8 +52,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.papyrus.infra.core.resource.NotFoundException;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Element;
@@ -146,8 +148,9 @@ public class TreeBuilder {
 		if (excludeModels != null) {
 			modelsToBeExcluded.addAll(excludeModels);
 		}
-		
+
 		setMonitorTaskName("Creating class nodes in " + treeRoot.getName());
+
 		// create class nodes
 		createClassNodes(treeRoot, "", true);
 		
@@ -293,6 +296,16 @@ public class TreeBuilder {
 		
 		// set attributes
 		setClassProperties(item, item.getQName());
+		
+		// If it is the first level class node and it is not a package -> error
+		if (Utilities.nodeIsCodeSyncFolder(item.getParent()) && !(item.getClassRestriction().equals("package") || item.getClassRestriction().contains("operator")) ) {
+
+			// Forward the model to the utilities class for creating markers
+			Utilities.ModelicaMLModel = getModelicaMLModel();
+
+			// generate marker
+			Utilities.createOMCMarker(item, "error", "The model '"+item.getQName()+"' is not a package. " + "At the top level all elements must be packages.");
+		}
 		
 		if (isFullImport()) {
 			// set annotations
@@ -574,6 +587,28 @@ public class TreeBuilder {
 		if (annotations.size() > 0 ) {
 			item.setAnnotations(annotations);
 		}
+	}
+	
+	
+	private String getClassRestriction(String classQName){
+		// set class restriction
+		String classRestriction = "class"; // default restriction
+		
+		String classInfo = omcc.getClassInformation(classQName);
+		
+		if (!classInfo.trim().equals("") && !classInfo.equals("Error") && !classInfo.trim().equals("false") ) {
+
+			setMonitorTaskName("Updating information about class " + classQName);
+			
+			// get class data
+			ArrayList<String> classData = StringHandler.unparseStrings(classInfo);
+
+			if (classData.size() > 0 ) {
+				classRestriction = classData.get(0); 
+			}
+		}
+		
+		return classRestriction;
 	}
 	
 	

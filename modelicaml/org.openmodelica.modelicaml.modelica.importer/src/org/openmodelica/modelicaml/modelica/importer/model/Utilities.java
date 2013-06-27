@@ -53,6 +53,15 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
 
 public class Utilities {
+	
+	
+	public static boolean nodeIsCodeSyncFolder(TreeParent treeParent){
+		if (treeParent.getName().startsWith(Constants.folderName_code_sync)) {
+			return true;
+		}
+		return false;
+	}
+	
 
 	// Marker *****************************************
 	

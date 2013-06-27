@@ -416,7 +416,11 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 					
 					TreeObject treeObject = modelicaRoots[i];
 					
-					if (treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("package")) {
+					// only create if it is a package
+					if (treeObject instanceof ClassItem && 
+							( ((ClassItem)treeObject).getClassRestriction().equals("package") 
+									|| ((ClassItem)treeObject).getClassRestriction().contains("operator")) ) {
+						
 						EObject modelicaRoot = ec.createProxyRoot(treeObject.getName(), true);
 						treeObject.setModelicaMLProxy((Element) modelicaRoot);
 						treeBuilder.addProxyToMaps((NamedElement) modelicaRoot);
@@ -426,7 +430,6 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 						if (deleteNotUsedProxies) {
 							ec.deleteInvalidProxyElements("");
 						}
-						
 					}
 				}
 				
