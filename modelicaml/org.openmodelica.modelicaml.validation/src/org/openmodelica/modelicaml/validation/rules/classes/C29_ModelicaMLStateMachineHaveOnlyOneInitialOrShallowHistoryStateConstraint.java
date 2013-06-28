@@ -54,8 +54,8 @@ import org.openmodelica.modelicaml.validation.util.Utility;
  * State Machines
  * 
  * C29:
- * 	Rule :	UML StateMachine A ModelicaML StateMachine must have either one  UML PseudoState 
- * 			of kind initial or one UML PseudoState of kind shallowHistory.
+ * 	Rule :	Any region in a ModelicaML StateMachine must have either one UML PseudoState 
+ * 			of kind 'initial' or one UML PseudoState of kind 'shallowHistory'.
  * 
  * 	Severity : ERROR
  * 
@@ -91,13 +91,14 @@ public class C29_ModelicaMLStateMachineHaveOnlyOneInitialOrShallowHistoryStateCo
 		}
 		
 		if(eObj instanceof StateMachine && Utility.isElementHaveModelicaMLStereotypeApplied((Element)eObj)) {
+			
 			StateMachine stateMachine = (StateMachine) eObj;
 			
 			List<Region> regionList = stateMachine.getRegions();
 			
-			int noOfInitialOrShallowHistoryStates = 0;
-			
 			for (Region region : regionList) {
+				
+				int noOfInitialOrShallowHistoryStates = 0;
 				
 				List <Element> elementList = region.getOwnedElements();
 				
@@ -106,6 +107,7 @@ public class C29_ModelicaMLStateMachineHaveOnlyOneInitialOrShallowHistoryStateCo
 					if( element instanceof Pseudostate) {
 						if(((Pseudostate)element).getKind().getValue() ==  PseudostateKind.SHALLOW_HISTORY 
 								|| ((Pseudostate)element).getKind().getValue() ==  PseudostateKind.INITIAL) {
+							
 							noOfInitialOrShallowHistoryStates++;
 							
 							if(noOfInitialOrShallowHistoryStates > 1) {

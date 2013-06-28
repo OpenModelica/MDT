@@ -39,32 +39,25 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.validation.AbstractModelConstraint;
-import org.eclipse.emf.validation.EMFEventType;
 import org.eclipse.emf.validation.IValidationContext;
+import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
-import org.eclipse.uml2.uml.Pseudostate;
-import org.eclipse.uml2.uml.PseudostateKind;
-import org.eclipse.uml2.uml.Region;
-import org.eclipse.uml2.uml.StateMachine;
-import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.validation.util.Utility;
+import org.openmodelica.modelicaml.validation.util.ValidateAssigmentsInAlgorithmSections;
 
-/**	
- * State Machines
- * 
- * C25:
- * 	Rule :	Any region in a ModelicaML StateMachine can contain at most one 
- * 			UML PseudoState of kind 'initial'.
- * 
- * 	Severity : ERROR
- * 
- *	Mode : Live
- */
+	/**
+	 * C48:
+	 * 	Rule : A variable can be assigned only in one algorithm section.
+	 * 	Severity : ERROR
+	 * 
+	 *	Mode : Batch
+	 */
+	public class C48_SingleAssignmentRule extends AbstractModelConstraint {
 
-public class C25_ModelicaMLStateMachineHaveOnlyOneInitialStateConstraint extends AbstractModelConstraint {
-
-	public C25_ModelicaMLStateMachineHaveOnlyOneInitialStateConstraint() {
+		
+	public C48_SingleAssignmentRule() {
+		
 	}
 
 	/* (non-Javadoc)
@@ -72,52 +65,40 @@ public class C25_ModelicaMLStateMachineHaveOnlyOneInitialStateConstraint extends
 	 */
 	@Override
 	public IStatus validate(IValidationContext ctx) {
-		
-		EObject eObj = ctx.getTarget();
-		EMFEventType eType = ctx.getEventType();
-		
-		if(eType != EMFEventType.NULL) {
-			if(eObj instanceof Pseudostate && ((Pseudostate)eObj).getKind().getValue() ==  PseudostateKind.INITIAL) {
 
-				Region region = (Region) ((Pseudostate) eObj).getOwner();
-				eObj = region.getStateMachine();
-			}
-			else {
-				return ctx.createSuccessStatus();
-			}
-		}
-		
-		if(eObj instanceof StateMachine && Utility.isElementHaveModelicaMLStereotypeApplied((Element)eObj)) {
+		EObject eObj = ctx.getTarget();
+
+		// Live and Batch Mode
+		if(eObj instanceof Element && ((Element)eObj).getOwner() instanceof NamedElement){
 			
-			StateMachine stateMachine = (StateMachine) eObj;
-			
-			List<Region> regionList = stateMachine.getRegions();
-			
-			
-			for (Region region : regionList) {
+			Element element = (Element) eObj;
+
+			if(element instanceof Class && Utility.isElementHaveModelicaMLStereotypeApplied(element)) {
 				
-				int noOfInitialStates = 0;
+				Class clazz = (Class)element;
+				ValidateAssigmentsInAlgorithmSections v = new ValidateAssigmentsInAlgorithmSections();
+				List<String> duplicates = v.getVariableWithMultipleAssignementInAlgorithmSections(clazz);
 				
-				List <Element> elementList = region.getOwnedElements();
-				
-				for (Element element : elementList) {
-					
-					if( element instanceof Pseudostate){
-						if(((Pseudostate)element).getKind().getValue() ==  PseudostateKind.INITIAL){
-							noOfInitialStates++;
-							
-							if(noOfInitialStates > 1)
-							{
-								return ctx.createFailureStatus(new Object[]{ Constants.validationKeyWord_NOT_VALID + ": '" 
-										+ ((NamedElement)eObj).getName() + "' state machine can contian at most one initial state."});
-							}
-						}
+				if (duplicates == null) {
+					return ctx.createSuccessStatus();
+				}
+				else {
+					String msg = "";
+					String vars = "";
+					// Creates message 
+					for (Object object : duplicates) {
+						vars += object.toString() + ",";
 					}
+					
+					msg = "Variable(s) "+ "'" + vars.trim().substring(0, vars.trim().length() - 1)+ "' " +
+							"are set in multiple algorithm sections, state machine(s) or activities." +
+							"'"+element.eClass().getName()+"' '" + ((NamedElement)element).getName()+"' violates the Modelica single assigment rule." +
+							"Note that redeclarations are not taken into account in this analysis.";
+
+					return ctx.createFailureStatus(new Object[] {msg} );
 				}
 			}
 		}
-		
 		return ctx.createSuccessStatus();
 	}
-
 }

@@ -136,7 +136,10 @@ public class EditorServices {
 				ModelExplorerView.reveal(items, modelExplorerView);
 			}
 			else {
-				MessageDialog.openError(ModelicaMLServices.getShell(), "Locate in Model Explorer Error", "Could not access the Model Explorer. Please click on a diagram in order to active the Model Explorer and try again.");
+				MessageDialog.openError(ModelicaMLServices.getShell(), 
+						"Locate in Model Explorer Error", 
+						"Could not access the Model Explorer. " +
+						"Please click on a diagram in order to activate the Model Explorer.");
 			}
       	}
 	}

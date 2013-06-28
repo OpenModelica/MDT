@@ -112,7 +112,7 @@ public class Utilities {
 	}
 	
 	
-	public static IMarker createOMCMarker(TreeObject treeObject, String criticality, String msg){
+	public static IMarker createOMCMarker(TreeObject treeObject, String severity, String msg){
 		if (!msg.trim().equals("") ) {
 			
 			String markerType = Constants.MARKERTYPE_MODELICA_MODELS_LOADING;
@@ -126,17 +126,24 @@ public class Utilities {
 					r = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
 				}
 				try {
-					IMarker marker = r.createMarker(markerType);
-					marker.setAttribute(IMarker.MESSAGE, msg);
+					String sourceID =  treeObject.getQName();
+					String location = treeObject.getQName();
 					
-					if ( criticality.equals("error") ) 	{ marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);	}
-					else 								{ marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO) ; }
-					
-					if ( treeObject != null) {
-						marker.setAttribute(IMarker.SOURCE_ID, treeObject.getQName());
-						marker.setAttribute(IMarker.LOCATION, treeObject.getQName());	
+					// only create new markers if they do not exist yet
+					if (!isMarkerExists(r, markerType, msg, severity, sourceID, location)) {
+						
+						IMarker marker = r.createMarker(markerType);
+						marker.setAttribute(IMarker.MESSAGE, msg);
+						
+						if ( severity.equals("error") ) 	{ marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);	}
+						else 								{ marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO) ; }
+						
+						if ( treeObject != null) {
+							marker.setAttribute(IMarker.SOURCE_ID, sourceID);
+							marker.setAttribute(IMarker.LOCATION, location);	
+						}
+						return marker;						
 					}
-					return marker;
 					
 				} catch (CoreException e) {
 					e.printStackTrace();
@@ -146,6 +153,32 @@ public class Utilities {
 		return null;
 	}
 
+	
+	public static boolean isMarkerExists(IResource r, String markerType, String msg, String severity, String sourceID, String location) {
+		
+		IMarker[] markers = null;
+		try {
+			if (r != null) {
+				markers = r.findMarkers(markerType, true, IResource.DEPTH_INFINITE);
+				for (IMarker marker : markers) {
+					String mMarkerType = marker.getType();
+					String mMsg = marker.getAttribute(IMarker.MESSAGE, "");
+//					String mSeverity = marker.getAttribute(IMarker.SEVERITY, "");
+					String mSourceID = marker.getAttribute(IMarker.SOURCE_ID, "");
+					String mLocation = marker.getAttribute(IMarker.LOCATION, "");
+					
+					if ( mMarkerType.equals(markerType) && mMsg.equals(msg) && mSourceID.equals(sourceID) && mLocation.equals(location)) {
+						return true;
+					}
+				}
+			}
+		} catch (CoreException e) {
+			//e.printStackTrace();
+			return false;
+		}
+		return false;
+	}
+	
 
 	public static void deleteProxyValidationMarkers(IProject iProject, String namespace) {
 		IMarker[] markers = null;

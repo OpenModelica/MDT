@@ -49,14 +49,11 @@ import org.openmodelica.modelicaml.modelica.importer.Activator;
 
 public class SynchronizeOptionsDialog extends Dialog {
 
-	private String title = "ModelicaML Proxies Synchronization Options";
+	private String title = "ModelicaML: Modelica Models Synchronization Options";
 	
 	protected Button bttOK = null;
 	protected Button bttCancel = null;
 
-	private Label lblImage;
-	private Label lblText;
-	
 	boolean applyProxyStereotype = true;
 
 
@@ -91,75 +88,11 @@ public class SynchronizeOptionsDialog extends Dialog {
 		new Label(composite, SWT.NONE);
 		
 		Label lblInfoMessage = new Label(composite, SWT.NONE);
-		lblInfoMessage.setText("This helper will now (re)load the Modelica models that are in the 'code-sync' folder \r\nand translate them into ModelicaML Modelica model proxies. Note that proxies only \r\nrepresent the Modelica models from the 'code-sync' folder. ModelicaML proxies should \r\nbe synchronized whenever the Modelica models have been changed. \r\n\r\nThe translation time depends on the size of the models. \r\nIt may take few seconds up to few hours. Do you want to proceed? \r\n\r\n");
-		
-//		// 2 raw
-//		lblImage = new Label(composite, SWT.NONE);
-//		lblImage.setImage(SWTResourceManager.getImage(SynchronizeOptionsDialog.class, "/org/eclipse/jface/dialogs/images/help.gif"));
-//		
-//		lblText = new Label(composite, SWT.NONE);
-//		lblText.setText( "Select ModelicaML proxies synchronization options: " );
-		
-//		// 3 raw
-//		new Label(composite, SWT.NONE);
-//		new Label(composite, SWT.NONE);
-//
-//		
-		//***************** Buttons 
-		
-//		// 4 raw
-//		new Label(composite, SWT.NONE);
-//		
-//		final Button btnApplyProxyStereotype = new Button(composite, SWT.CHECK);
-//		btnApplyProxyStereotype.setSelection(true);
-//		btnApplyProxyStereotype.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				setApplyProxyStereotype(btnApplyProxyStereotype.getSelection());
-//			}
-//		});
-//		btnApplyProxyStereotype.setText( "Apply proxy stereotype to ModelicaML proxy elements (recommended)." );
-//		btnApplyProxyStereotype.setToolTipText("A proxy stereotype indicates that the a ModelicaML element is not complete. " +
-//				"A proxy repersents a Modelica model and reflects only information required for the usage of the represented Modelica model." +
-//				"No code is generated from a proxy.");
-//		
-//		
-//		// 5 raw
-//		new Label(composite, SWT.NONE);
-//
-//		final Button btnUpdate = new Button(composite, SWT.CHECK);
-//		
-//		btnUpdate.setSelection(true); 	// preselect this option.
-//		setUpdate(true);
-//		
-//		btnUpdate.setText("Update existing proxy elements (recommended).");
-//		btnUpdate.setToolTipText("All data of the exising proxies will be updated.");
-//		btnUpdate.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				setUpdate(btnUpdate.getSelection());
-//			}
-//		});
-
-		
-		
-//		// 5 raw
-//		new Label(composite, SWT.NONE);
-//
-//		final Button btnFullImport = new Button(composite, SWT.CHECK);
-//		
-//		btnFullImport.setSelection(true); 	// preselect this option.
-//		setFullImport(true);
-//		
-//		btnFullImport.setText("Import all model data (including behavior, imports, comments and annotations)");
-//		btnFullImport.setToolTipText("Import all model data (including behavior, imports, comments and annotations)");
-//		btnFullImport.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				setFullImport(btnFullImport.getSelection());
-//			}
-//		});
-		
+		lblInfoMessage.setText("This helper will now (re)load the selected Modelica models " +
+				"and translate them into ModelicaML model proxies. \n" +
+				"Proxies only reflect the Modelica models from the 'code-sync' folder.\n" +
+				"They should be re-synchronized whenever the Modelica models have been changed.\n\n");
+	
 		
 		// 5 raw
 		new Label(composite, SWT.NONE);
@@ -169,8 +102,8 @@ public class SynchronizeOptionsDialog extends Dialog {
 		btnFullImport.setSelection(false); 	// preselect this option.
 		setFullImport(true);
 		
-		btnFullImport.setText("Sync. only the model structure (models, inheritance, components; no behavior, no connections, etc.)");
-		btnFullImport.setToolTipText("Sync. only the model structure (models, inheritance, components; no behavior, no connections, etc.)");
+		btnFullImport.setText("Sync. only the model structure (models, inheritance and components; no behavior, no connections, etc.)");
+		btnFullImport.setToolTipText("Sync. only the model structure (classes, inheritance and components; NO behavior, NO connections, etc.)");
 		btnFullImport.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -189,16 +122,9 @@ public class SynchronizeOptionsDialog extends Dialog {
 		btnDeleteNotUsedProxies.setSelection(false);
 		setDeleteNotUsedProxies(false);
 		
-		btnDeleteNotUsedProxies.setText("Delete proxies that do not exist in the loaded Modelica models (not recommded)");
-		btnDeleteNotUsedProxies.setToolTipText("If proxies are referenced by other elements then the references should " +
-				"be redirected to new proxies before deleting the old proxies.");
-		
-//		btnDeleteNotUsedProxies.setText("Delete proxies that do not exist in the loaded Modelica models (NOT RECOMMENDED)." +
-//				"\n\rNOTE: If existing proxies are referenced by other elements " +
-//				"\n\r(e.g. they are used as types or in value bindings) then the references should be" +
-//				"\n\rredirected to new proxies before deleting the old proxies.");
-//		btnDeleteNotUsedProxies.setToolTipText("If proxies are referenced by other elements then the references should " +
-//				"be redirected to new proxies before deleting the old proxies.");
+		btnDeleteNotUsedProxies.setText("Delete proxies that do not exist anymore in the Modelica models (not recommded*)");
+		btnDeleteNotUsedProxies.setToolTipText("* Note: If proxies are referenced by other elements then the references should be\n" +
+				"redirected to new proxies before deleting old proxies.");
 		
 		btnDeleteNotUsedProxies.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -211,7 +137,8 @@ public class SynchronizeOptionsDialog extends Dialog {
 		new Label(composite, SWT.NONE);
 		Label info = new Label(composite, SWT.NONE);
 		info.setImage(SWTResourceManager.getImage(Activator.class, "/icons/message_warning.gif"));
-		info.setText("If Modelica model proxies are referenced by other elements then the references should be \r\nredirected to new proxies before deleting the old proxies.");
+		info.setText("*Note: If proxies are referenced by other elements then the references should be\n" +
+				"redirected to new proxies before deleting old proxies.");
 		
 		return parent;
 	}
