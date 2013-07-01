@@ -95,8 +95,10 @@ public class TreeBuilder {
 			
 			//NOTE: we have the mediators right here. There is no need to try to re-collect them if the list is empty.
 			BindingsDataCollector dc = new BindingsDataCollector(false);
-			dc.setAllMediators(valueMediators);
-			dc.collectAll(instantiatedClassTreeItem.getSelectedClass().getModel(), classInstantiation, instantiatedClassTreeItem);
+//			dc.setAllMediators(valueMediators);
+//			dc.collectAll(instantiatedClassTreeItem.getSelectedClass().getModel(), classInstantiation, instantiatedClassTreeItem);
+			dc = classInstantiation.getValueBindingsDataCollector(); 
+			
 
 			// add mediators, clients and providers - Mediator Perspective 
 			addValueMediatorsUsedInInstantaitedClass(rootModelNode, dc);
@@ -110,7 +112,7 @@ public class TreeBuilder {
 		else {
 			
 			// create a hint as root
-			TreeParent rootTitle = new TreeParent("Instantiate a class in the Component Tree View and click on the \"(Re)load\" ...");
+			TreeParent rootTitle = new TreeParent("Instantiate a class in the Components Tree View and click on the \"(Re)load\" ...");
 			treeRoot.addChild(rootTitle);
 		}
 	}
@@ -265,7 +267,7 @@ public class TreeBuilder {
 		}
 		else {
 			// create a hint as root
-			TreeParent rootTitle = new TreeParent("Click on the \"(Re)load\" button to load value bindings ...");
+			TreeParent rootTitle = new TreeParent("Click on the \"(Re)load\" button to load bindings ...");
 			treeRoot.addChild(rootTitle);
 		}
 	}

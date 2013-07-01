@@ -102,9 +102,11 @@ import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
+import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
@@ -112,6 +114,7 @@ import org.openmodelica.modelicaml.modelexplorer.ModelExplorerPage;
 import org.openmodelica.modelicaml.profile.handlers.CreateValueMediatorHandler;
 import org.openmodelica.modelicaml.profile.handlers.CreateValueMediatorsContainerHandler;
 import org.openmodelica.modelicaml.view.valuebindings.Activator;
+import org.openmodelica.modelicaml.view.valuebindings.dialogs.ClassInstantiationSelectionDialog;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.ElementSelectionDialog;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.SearchDialog;
 import org.openmodelica.modelicaml.view.valuebindings.display.ViewLabelProviderStyledCell;
@@ -167,6 +170,13 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	private Action actionClear;
 
 	private Action actionFind;
+	
+	// Dialog to select a class to be instantiated
+	private ClassInstantiationSelectionDialog classSelectionDialog;
+
+	private Action actionElementSelectedByDialog;
+
+	private Action actionClearSubTree; 
 	
 	public final static int DEFAULT_EXPAND_LEVEL = 2;
 	public final static int DEFAULT_EXPAND_LEVEL_CLIENTS = 1;
@@ -358,6 +368,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	private void fillContextMenu(IMenuManager manager) {
 		ISelection selection = viewer.getSelection();
 		Object selectedTreeObject = ((IStructuredSelection)selection).getFirstElement();
+		
 		if (selectedTreeObject instanceof TreeObject) {
 			TreeObject item = ((TreeObject)selectedTreeObject);
 			
@@ -444,6 +455,10 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 					actionDeleteModelElement.setText("Delete");
 					manager.add(actionDeleteModelElement);
 				}
+			}
+			
+			if (item.isInstantiatedClass() && actionInstantiatedClassMode.isChecked()) {
+				manager.add(actionClearSubTree);
 			}
 		}
 
@@ -638,81 +653,172 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		actionReload = new Action("actionReload") {
 			public void run() {
 				
-				ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
-				progressDialog.getProgressMonitor().setTaskName("Reloading bindings view");
+				// check if bindings should be shown for the model or for an instantiated class
 				
-				try {
-					progressDialog.run(false, true, new IRunnableWithProgress() {
-						
-						@Override
-						public void run(IProgressMonitor monitor) throws InvocationTargetException,
-								InterruptedException {
-
-//							ISelection selection = viewer.getSelection();
-//							Object obj = ((IStructuredSelection)selection).getFirstElement();
-
-							Object[] expandedElements = viewer.getExpandedElements();
-							TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
+				// bindings for instantiated class
+				if (actionInstantiatedClassMode.isChecked()) {
+					
+					// open dialog to select or confirm the instantiated class to be considered
+					classSelectionDialog = new ClassInstantiationSelectionDialog(
+							//PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), // don't use this because it will block the window underneath 
+							new Shell(),
+							SWTResourceManager.getImage(ElementSelectionDialog.class,"/icons/selectItem.gif"), 
+							"Element Selection", 
+							"Select the model to be instantiated", 
+							org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation,
+							actionElementSelectedByDialog
+							);
+					
+					classSelectionDialog.open();
+				}
+				
+				// bindings for entire model
+				else {
+					ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
+					progressDialog.getProgressMonitor().setTaskName("Reloading bindings view");
+					
+					try {
+						progressDialog.run(false, true, new IRunnableWithProgress() {
 							
-							TreeObject[] children = invisibleRoot.getChildren();
-							for (int i = 0; i < children.length; i++) {
-								invisibleRoot.removeChild(children[i]);
-							}
-							
-							if (actionInstantiatedClassMode.isChecked()) {
+							@Override
+							public void run(IProgressMonitor monitor) throws InvocationTargetException,
+									InterruptedException {
+
+								Object[] expandedElements = viewer.getExpandedElements();
+								TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
 								
-								monitor.subTask("Building tree from the instantiated class ...");
-								
-								treeBuilder.buildTreeFromInstantiatedClass(invisibleRoot, org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation, org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot);
-								((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
-							}
-							else {
+								TreeObject[] children = invisibleRoot.getChildren();
+								for (int i = 0; i < children.length; i++) {
+									invisibleRoot.removeChild(children[i]);
+								}
 								
 								monitor.subTask("Building tree from the ModelicaML model ...");
 								
 								treeBuilder.buildTreeFromUmlModel(invisibleRoot);
 								((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
-							}
-							viewer.setInput(getViewSite());
+								
+								viewer.setInput(getViewSite());
 
-							// validate the client, mediator or provider operation code
-							monitor.subTask("Validating clients, mediators and provider operation code ...");
-							
-							for (int i = 0; i < children.length; i++) {
-								TreeObject treeObject = children[i];
-								if (!treeObject.isReadOnly() && treeObject instanceof TreeParent) {
-									ValueBindingsValidator validator = new ValueBindingsValidator((TreeParent) treeObject);
-									validator.setUmlModel(treeBuilder.getUmlModel());
-									validator.validate();
-									
-									viewer.refresh();
+								// validate the client, mediator or provider operation code
+								monitor.subTask("Validating client, mediator and provider operations ...");
+								
+								for (int i = 0; i < children.length; i++) {
+									TreeObject treeObject = children[i];
+									if (!treeObject.isReadOnly() && treeObject instanceof TreeParent) {
+										ValueBindingsValidator validator = new ValueBindingsValidator((TreeParent) treeObject);
+										validator.setUmlModel(treeBuilder.getUmlModel());
+										validator.validate();
+										
+										viewer.refresh();
+									}
 								}
-							}
-							
-							// refresh the viewer
-							viewer.setExpandedElements(expandedElements);
-							viewer.setExpandedTreePaths(expandedTreePaths);
-							
-//							// select in view
-//							TreeUtls.selectInView(obj, invisibleRoot, viewer);
-//							viewer.expandToLevel(ValueBindingsView.DEFAULT_EXPAND_LEVEL);
-							
-							monitor.done();
-						}
-					});
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-					MessageDialog.openError(ModelicaMLServices.getShell(), "Bindings View Reload Error", "Could not invoke bindings reload.");
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					MessageDialog.openInformation(ModelicaMLServices.getShell(), "Bindings View Reload Canceled", "Bindings reload was canceled");
-				}
+								
+								// refresh the viewer
+								viewer.setExpandedElements(expandedElements);
+								viewer.setExpandedTreePaths(expandedTreePaths);
 
+								monitor.done();
+							}
+						});
+					} catch (InvocationTargetException e) {
+						e.printStackTrace();
+						MessageDialog.openError(ModelicaMLServices.getShell(), "Bindings View Reload Error", "Could not invoke bindings reload.");
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+						MessageDialog.openInformation(ModelicaMLServices.getShell(), "Bindings View Reload Canceled", "Bindings reload was canceled");
+					}					
+				}
 			}
 		};
 		actionReload.setText("(Re)load and validate");
 		actionReload.setToolTipText("(Re)load and validate");
 		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/refresh.gif"));
+		
+		
+		
+		actionElementSelectedByDialog = new Action("actionElementSelectedByDialog") {
+			public void run() {
+				
+				// get the selected element from the dialog and set the view selected class 
+				if (classSelectionDialog != null) {
+					
+					// get new selection from dialog
+					final EObject selectedElement = classSelectionDialog.getSelectedElement();
+					// close the dialog
+					classSelectionDialog.dispose();
+					
+					if (selectedElement instanceof Class) {
+
+						ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(ModelicaMLServices.getShell());
+						progressDialog.getProgressMonitor().setTaskName("Reloading bindings view");
+						
+						try {
+							progressDialog.run(false, true, new IRunnableWithProgress() {
+								
+								@Override
+								public void run(IProgressMonitor monitor) throws InvocationTargetException,
+										InterruptedException {
+									
+									monitor.subTask("Building tree from the instantiated class ...");
+
+									// remember the expand state of the viewer
+									Object[] expandedElements = viewer.getExpandedElements();
+									TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
+									
+									// remember the selection in Components Tree
+									ClassInstantiation ciInCompTree = org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation;
+									org.openmodelica.modelicaml.common.instantiation.TreeObject rootTreeObjIncompTree =	org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot;
+
+									
+									// data to be set
+									ClassInstantiation ci;
+									org.openmodelica.modelicaml.common.instantiation.TreeObject rootTreeObj;
+									
+									// check if it is the same class -> no need for instantiation, just pass it
+									if (ciInCompTree != null && selectedElement.equals(ciInCompTree.getSelectedClass())) {
+										ci = ciInCompTree;
+										rootTreeObj = rootTreeObjIncompTree;
+									}
+									// instantiate the selected class
+									else {
+										ClassInstantiation c = new ClassInstantiation((Class) selectedElement, null, true);
+										c.createTree(); // build tree
+										c.collectBindingsDataFromUmlModel(); // collect bindings
+										
+										ci = c;
+										rootTreeObj = c.getTreeRoot();
+									}
+									
+									// re-create the tree
+									treeBuilder.buildTreeFromInstantiatedClass(invisibleRoot, ci, (org.openmodelica.modelicaml.common.instantiation.TreeParent) rootTreeObj);
+									((ViewLabelProviderStyledCell)viewer.getLabelProvider()).setUmlModel(treeBuilder.getUmlModel());
+									
+									viewer.setInput(getViewSite());
+									
+									// refresh the viewer
+									viewer.setExpandedElements(expandedElements);
+									viewer.setExpandedTreePaths(expandedTreePaths);
+									
+									// TODO: invoke bindings validator? 
+								}
+						});
+						} catch (InvocationTargetException e) {
+							e.printStackTrace();
+							MessageDialog.openError(ModelicaMLServices.getShell(), "Bindings View Reload Error", "Could not invoke bindings reload.");
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+							MessageDialog.openInformation(ModelicaMLServices.getShell(), "Bindings View Reload Canceled", "Bindings reload was canceled.");
+						}
+						
+					}
+				}
+			}
+		};
+		actionElementSelectedByDialog.setText("(Reload");
+		actionElementSelectedByDialog.setToolTipText("Reload");
+		actionElementSelectedByDialog.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/refresh.gif"));
+		actionElementSelectedByDialog.setEnabled(true);
+
 		
 		
 		
@@ -733,17 +839,36 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		actionClear.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
 		
 		
+		actionClearSubTree = new Action("actionClearSubTree") {
+			public void run() {
+				ISelection selection = viewer.getSelection();
+				Object selectedTreeItem = ((IStructuredSelection)selection).getFirstElement();
+				
+				if (selectedTreeItem instanceof TreeParent) {
+					TreeParent treeItem = (TreeParent) selectedTreeItem;
+					TreeParent parent = treeItem.getParent();
+					
+					parent.removeChild(treeItem);
+				}
+				
+				viewer.setInput(getViewSite());
+			}
+		};
+		actionClearSubTree.setText("Clear this sub-tree");
+		actionClearSubTree.setToolTipText("Clear this sub-tree");
+		actionClearSubTree.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
+		
 		
 		actionFind = new Action("actionFind") {
 			public void run() {
-				TreeObject[] children =  invisibleRoot.getChildren();
+//				TreeObject[] children =  invisibleRoot.getChildren();
 				TreeParent root = invisibleRoot;
 				
-				if (children != null && children.length > 0) {
-					if (children[0] instanceof TreeParent) {
-						root = (TreeParent) children[0];
-					}
-				}
+//				if (children != null && children.length > 0) {
+//					if (children[0] instanceof TreeParent) {
+//						root = (TreeParent) children[0];
+//					}
+//				}
 				SearchDialog searchDialog = new SearchDialog(ModelicaMLServices.getShell(), viewer, root, actionShowClientPerspective.isChecked(), actionShowProviderPerspective.isChecked());
 				searchDialog.open();
 			}
@@ -773,7 +898,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 						
 						// UIJob is needed because composites are used for xtext editors. 
 						// TODO: refactor the editors glue code in order to don't use the any UI objects for the validation of action code. 
-						UIJob UIjob = new UIJob("Value Bindings Operations Validation") {
+						UIJob UIjob = new UIJob("Bindings Operations Validation") {
 							public IStatus runInUIThread(IProgressMonitor monitor) {
 								validator.validate();
 								viewer.refresh();
@@ -853,7 +978,22 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 								for (int i = 0; i < children.length; i++) {
 									invisibleRoot.removeChild(children[i]);
 								}
-								treeBuilder.buildTreeFromInstantiatedClass(invisibleRoot, org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation, org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot);
+								
+								// open dialog to select or confirm the instantiated class to be considered
+								classSelectionDialog = new ClassInstantiationSelectionDialog(
+										//PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), // don't use this because it will block the window underneath 
+										new Shell(),
+										SWTResourceManager.getImage(ElementSelectionDialog.class,"/icons/selectItem.gif"), 
+										"Element Selection", 
+										"Select the model to be instantiated", 
+										org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation,
+										actionElementSelectedByDialog
+										);
+								
+								classSelectionDialog.open();
+								
+//								treeBuilder.buildTreeFromInstantiatedClass(invisibleRoot, org.openmodelica.modelicaml.common.instantiation.TreeUtls.classInstantiation, org.openmodelica.modelicaml.common.instantiation.TreeUtls.componentsTreeRoot);
+								
 								viewer.setInput(getViewSite());
 								viewer.expandToLevel(DEFAULT_EXPAND_LEVEL);
 							}
@@ -1199,7 +1339,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	}
 	private void showMessage(String message) {
 		MessageDialog.openInformation(
-			viewer.getControl().getShell(), "Value Bindings View", message);
+			viewer.getControl().getShell(), "Bindings View", message);
 	}
 
 	/**

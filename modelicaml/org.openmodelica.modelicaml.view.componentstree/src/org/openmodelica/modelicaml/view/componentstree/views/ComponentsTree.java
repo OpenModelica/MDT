@@ -723,7 +723,6 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionReload = new Action("actionReload") {
 			public void run() {
 				
-				
 				elementSelectionDialog = new ElementSelectionDialog(
 						//PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), // don't use this because it will block the window underneath 
 						new Shell(),
