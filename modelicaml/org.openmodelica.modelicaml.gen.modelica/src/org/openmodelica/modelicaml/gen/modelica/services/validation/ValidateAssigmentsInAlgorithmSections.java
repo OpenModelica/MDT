@@ -69,11 +69,11 @@ import fr.obeo.acceleo.gen.template.eval.ENodeCastException;
 public class ValidateAssigmentsInAlgorithmSections {
 
 /**
- * Gets the error message for single assignement rule in algorithm sections.
+ * Gets the error message for single assignment rule in algorithm sections.
  * 
  * @param classifier
  *            the classifier
- * @return the error message for single assignement rule in algorithm sections
+ * @return the error message for single assignment rule in algorithm sections
  * @throws ENodeCastException
  *             the e node cast exception
  */

@@ -62,7 +62,6 @@ import org.eclipse.papyrus.infra.core.resource.uml.ExtendedUmlModel;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlModel;
 import org.eclipse.papyrus.infra.core.resource.uml.UmlUtils;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
@@ -132,7 +131,7 @@ public class OMCClassValidator {
 	
 	private String dotPath_classToBeValidated = "";
 	
-	private Job job = new Job("Loading ModelicaML model into OMC") {
+	private Job job = new Job("Validating Model using OMC") {
 		
 		protected IStatus run(IProgressMonitor monitor) {
 			
@@ -194,14 +193,12 @@ public class OMCClassValidator {
 				e.printStackTrace();
 			}
 			
-			loadAndCheckInOMC();
+			loadAndCheckInOMC(monitor);
 			
 			// reset generation type to default
 			PostGenerationForAutomaticBuild.generationType = "files"; 
 			return Status.OK_STATUS;
 		}
-		
-		
 	};
 	
 	JobChangeAdapter jobChangeAdapter = new JobChangeAdapter() {
@@ -327,10 +324,12 @@ public class OMCClassValidator {
 
 	private String log = "";
 	
-	private void loadAndCheckInOMC(){
+	private void loadAndCheckInOMC(IProgressMonitor monitor){
 		String status, errorString = null;
 		try {
-
+			
+			monitor.setTaskName("Accessing ModelicaML model ...");
+			
 			EObject modelElement = null; 
 			if (umlModel != null) {
 				modelElement = umlModel.getResource().getContents().get(0);
@@ -356,6 +355,8 @@ public class OMCClassValidator {
 				//ModelicaMLOMCMarkerSupport.deleteAllOMCMarkers(iProject);
 			}
 			
+			monitor.setTaskName("Obtaining preferences ...");
+			
 			if (packageMoFilePath != null) {
 				Boolean ClearOMCBeforeReloadingCode = Platform.getPreferencesService().getBoolean("org.openmodelica.modelicaml.preferences", "ClearOMCBeforeReloadingCode", true, null);
 				if (ClearOMCBeforeReloadingCode) {
@@ -367,11 +368,21 @@ public class OMCClassValidator {
 						System.err.println("Cannot clear OMC before loading " + packageMoFilePath + ".");
 					}
 				}
+
+				monitor.setTaskName("Loading Modelica Standard Library (MSL)...");
 				
+				// Load MSL
+				status = proxy.sendExpression("loadModel(Modelica)");
+				System.err.println("Status for loadinf MSL:" + status);
+				
+				if (status.contains("rror") || status.contains("rror") || status.contains("false")) {
+					monitor.setTaskName("ERROR: Could not load MSL...");
+				}
 				
 				/*
 				 * Load first the code from code-sync folder
 				 */
+				monitor.setTaskName("Loading models from '"+Constants.folderName_code_sync+"' folder...");
 				List<String> filesToLoad = new ArrayList<String>(); 
 				filesToLoad.addAll(ModelicaMLServices.getFilesToLoad(codeSyncFolderPath));
 				for (String path : filesToLoad) {
@@ -382,6 +393,7 @@ public class OMCClassValidator {
 				/*
 				 * Load code from the code-gen folder
 				 */
+				monitor.setTaskName("Loading models from '"+Constants.folderName_code_gen+"' folder...");
 				status = proxy.sendExpression("loadFile(\"" + packageMoFilePath + "\")");
 //				status = proxy.sendExpression("loadFile(\"" + packageMoFilePath + "\", encoding=\""+Constants.fileEncoding+"\")");
 				setLog(status);
