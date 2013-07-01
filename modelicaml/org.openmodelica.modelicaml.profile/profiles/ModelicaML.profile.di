@@ -73,6 +73,9 @@
         <children>
           <emfPageIdentifier href="ModelicaML.profile.notation#_7bgeIOjrEeCwFYHW_neVqA"/>
         </children>
+        <children>
+          <emfPageIdentifier href="ModelicaML.profile.notation#_EiqJ4GYKEeKa6IhMvygGQA"/>
+        </children>
       </children>
     </windows>
   </sashModel>
