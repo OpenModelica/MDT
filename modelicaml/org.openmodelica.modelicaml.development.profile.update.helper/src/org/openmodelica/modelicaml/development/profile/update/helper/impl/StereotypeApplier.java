@@ -27,6 +27,7 @@ import org.eclipse.uml2.uml.FunctionBehavior;
 import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.OpaqueBehavior;
+import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Parameter;
 import org.eclipse.uml2.uml.ParameterDirectionKind;
 import org.eclipse.uml2.uml.Port;
@@ -54,7 +55,11 @@ public class StereotypeApplier {
 	private HashSet<OpaqueBehavior> opaqueBehaviors = new HashSet<OpaqueBehavior>();
 	private HashSet<StateMachine> stateMachines = new HashSet<StateMachine>();
 	
+	// elements for which no appropriate stereotype coudl be found
+	private List<Element> unhandledElements = new ArrayList<Element>();
 	
+
+
 	private String mMessage = "Applying ModelicaML stereotypes";
 	
 	private ServicesRegistry serviceRegistry = null;
@@ -70,6 +75,7 @@ public class StereotypeApplier {
 		ports.clear();
 		connectors.clear();
 		dependecies.clear();
+		unhandledElements.clear();
 	}
 	
 	public void applyStereotypes(final EObject root){
@@ -157,9 +163,14 @@ public class StereotypeApplier {
 			numberOfElements ++;
 		}
 		else if (object instanceof OpaqueBehavior) {
-			setMonitorText(object, "Found ");
-			opaqueBehaviors.add((OpaqueBehavior) object);
-			numberOfElements ++;
+			OpaqueBehavior ob = (OpaqueBehavior) object;
+			Element owner = ob.getOwner();
+			// make sure that not state entry/exit OpaqueBehaviors are collected, but only those owned by classes
+			if (owner instanceof Class) {
+				setMonitorText(object, "Found ");
+				opaqueBehaviors.add((OpaqueBehavior) object);
+				numberOfElements ++;
+			}
 		}
 		else if (object instanceof Property && !(object instanceof Port)) {
 			setMonitorText(object, "Found ");
@@ -231,7 +242,7 @@ public class StereotypeApplier {
 		numberOfUpdatedElements += dependecies.size();
 		progressMonitor.getProgressMonitor().setTaskName("(" + numberOfUpdatedElements +" of " + numberOfElements + "): Applying stereotypes to dependecies ...");
 		applyStereotypesForDependencies();
-		System.err.println("worked:" + numberOfUpdatedElements);
+//		System.err.println("worked:" + numberOfUpdatedElements);
 		progressMonitor.getProgressMonitor().worked(numberOfUpdatedElements);
 
 		// Classes
@@ -316,7 +327,7 @@ public class StereotypeApplier {
 			}
 			
 			// scenarios to requirements relations
-			else if (dep.getName().toLowerCase().contains("UseToVerify") || dep.getName().toLowerCase().contains("UsedToVerify")) {
+			else if (dep.getName().toLowerCase().contains("usetoverify") || dep.getName().toLowerCase().contains("usedtoverify")) {
 				Stereotype s = dep.getApplicableStereotype(Constants.stereotypeQName_UseToVerify);
 				if (s != null && !ModelicaMLServices.isModelicaMLStereotypeApplied(dep)) {
 					
@@ -325,7 +336,7 @@ public class StereotypeApplier {
 					
 				}
 			}
-			else if(dep.getName().toLowerCase().contains("DoNotUseToVerify")) {
+			else if(dep.getName().toLowerCase().contains("donotusetoverify")) {
 				Stereotype s = dep.getApplicableStereotype(Constants.stereotypeQName_DoNotUseToVerify);
 				if (s != null && !ModelicaMLServices.isModelicaMLStereotypeApplied(dep)) {
 					dep.applyStereotype(s);
@@ -356,9 +367,13 @@ public class StereotypeApplier {
 					dep.applyStereotype(s);
 				}
 			}
+			else {
+				addToUnhandledElements(dep);
+			}
 		}
 	}
 	
+
 	
 	private void applyStereotypesForClasses(){
 		for (Class clazz : classes) {
@@ -406,11 +421,15 @@ public class StereotypeApplier {
 			if (s != null && !ModelicaMLServices.isModelicaMLStereotypeApplied(clazz)) {
 				clazz.applyStereotype(s);
 			}
+			else {
+				addToUnhandledElements(clazz);
+			}
 		}
 	}
 	
 	private void applyStereotypesForBehaviors(){
 		for (OpaqueBehavior behavior : opaqueBehaviors) {
+			
 			String name = behavior.getName();
 			
 			if (name.startsWith("alg") || name.toLowerCase().contains("algorithm")) {
@@ -425,6 +444,9 @@ public class StereotypeApplier {
 					behavior.applyStereotype(s);
 				}
 			}
+			else {
+				addToUnhandledElements(behavior);
+			}
 		}
 		
 		// state machines
@@ -433,6 +455,9 @@ public class StereotypeApplier {
 			if (s != null && !ModelicaMLServices.isModelicaMLStereotypeApplied(sm)) {
 				sm.applyStereotype(s);
 			}
+			else {
+				addToUnhandledElements(sm);
+			}
 		}
 		
 		// functions
@@ -440,6 +465,9 @@ public class StereotypeApplier {
 			Stereotype s = function.getApplicableStereotype(Constants.stereotypeQName_Function);
 			if (s != null && !ModelicaMLServices.isModelicaMLStereotypeApplied(function)) {
 				function.applyStereotype(s);
+			}
+			else {
+				addToUnhandledElements(function);
 			}
 		}
 	}
@@ -454,10 +482,11 @@ public class StereotypeApplier {
 					generalization.applyStereotype(sExtendsType);
 				}
 			}
+			else if (sExtends != null && !ModelicaMLServices.isModelicaMLStereotypeApplied(generalization, Constants.stereotypeQName_ExtendsRelation)) {
+				generalization.applyStereotype(sExtends);
+			}
 			else {
-				if (sExtends != null && !ModelicaMLServices.isModelicaMLStereotypeApplied(generalization, Constants.stereotypeQName_ExtendsRelation)) {
-					generalization.applyStereotype(sExtends);
-				}
+				addToUnhandledElements(generalization);
 			}
 		}
 	}
@@ -467,6 +496,9 @@ public class StereotypeApplier {
 			Stereotype s = connection.getApplicableStereotype(Constants.stereotypeQName_Connection);
 			if (s != null && !ModelicaMLServices.isModelicaMLStereotypeApplied(connection, Constants.stereotypeQName_Connection)) {
 				connection.applyStereotype(s);
+			}
+			else {
+				addToUnhandledElements(connection);
 			}
 		}
 	}
@@ -479,6 +511,9 @@ public class StereotypeApplier {
 			Stereotype s = port.getApplicableStereotype(Constants.stereotypeQName_ConnectionPort);
 			if (s != null && !ModelicaMLServices.isModelicaMLStereotypeApplied(port, Constants.stereotypeQName_ConnectionPort)) {
 				port.applyStereotype(s);
+			}
+			else {
+				addToUnhandledElements(port);
 			}
 		}
 		
@@ -506,6 +541,9 @@ public class StereotypeApplier {
 			else if (sComponent != null && !ModelicaMLServices.isModelicaMLStereotypeApplied(property)) {
 				property.applyStereotype(sComponent);
 			}
+			else {
+				addToUnhandledElements(property);
+			}
 		}
 		
 		// functions arguments
@@ -520,6 +558,9 @@ public class StereotypeApplier {
 				if (parameter.getDirection().equals(ParameterDirectionKind.OUT_LITERAL)) {
 					parameter.setValue(s, Constants.propertyName_causality, "output");
 				}
+			}
+			else {
+				addToUnhandledElements(parameter);
 			}
 		}
 	}
@@ -616,4 +657,22 @@ public class StereotypeApplier {
 		}
 		return false;
 	}
+	
+	
+	
+	private void addToUnhandledElements(Element element){
+		if (!(element instanceof Package) && !ModelicaMLServices.isModelicaMLStereotypeApplied(element)) {
+			unhandledElements.add(element);
+		}
+	}
+	
+	
+	/*
+	 * Getters
+	 */
+	
+	public List<Element> getUnhandledElements() {
+		return unhandledElements;
+	}
+
 }

@@ -18,6 +18,7 @@ import org.eclipse.papyrus.infra.core.services.ServiceException;
 import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
 import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
 import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
@@ -55,18 +56,24 @@ public class StereotypeUnApplier {
 						
 						monitor.setTaskName("Collecting data ...");
 						
-						// collect
-						collectElements(root);
-						
-						monitor.beginTask(mMessage, elements.size());
-						
-						// apply stereotypes
-						try {
-							unApplyStereotypesCommand(monitor);
+						if (root instanceof Element) {
 							
-						} catch (ServiceException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							// collect
+							collectElements((Element) root);
+							
+							monitor.beginTask(mMessage, elements.size());
+							
+							// apply stereotypes
+							try {
+								unApplyStereotypesCommand(monitor);
+								
+							} catch (ServiceException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						else {
+							MessageDialog.openError(new Shell(), "Selection Error", "The selected element is not a UML element.");
 						}
 						monitor.done();
 					}
@@ -81,7 +88,10 @@ public class StereotypeUnApplier {
 		}
 	}
 	
-	private void collectElements(EObject root){
+	private void collectElements(Element root){
+		
+		elements.add(root);
+		
 		// collect
 		Iterator<EObject> i = root.eAllContents();
 		
