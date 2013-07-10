@@ -54,11 +54,14 @@ public class StereotypeApplier {
 	
 	private HashSet<OpaqueBehavior> opaqueBehaviors = new HashSet<OpaqueBehavior>();
 	private HashSet<StateMachine> stateMachines = new HashSet<StateMachine>();
+
+	// elements for which stereotype could be found
+	private List<EObject> handledElements = new ArrayList<EObject>();
+
 	
-	// elements for which no appropriate stereotype coudl be found
+	// elements for which no appropriate stereotype could be found
 	private List<Element> unhandledElements = new ArrayList<Element>();
 	
-
 
 	private String mMessage = "Applying ModelicaML stereotypes";
 	
@@ -67,7 +70,12 @@ public class StereotypeApplier {
 	
 	private ProgressMonitorDialog progressMonitor;
 	
-	private int numberOfElements = 0;
+	// number of elements considered
+	private int numberOfElementsConsidered = 0;
+
+
+
+
 
 	private void clearLists(){
 		classes.clear();
@@ -75,8 +83,17 @@ public class StereotypeApplier {
 		ports.clear();
 		connectors.clear();
 		dependecies.clear();
+		generalizations.clear();
+		functions.clear();
+		parameters.clear();
+		opaqueBehaviors.clear();
+		stateMachines.clear();
+		
+		// elements for which no appropriate stereotype could be found.
 		unhandledElements.clear();
 	}
+	
+	
 	
 	public void applyStereotypes(final EObject root){
 		if (root instanceof Element) {
@@ -98,7 +115,7 @@ public class StereotypeApplier {
 						// collect before modifying
 						collectElements(root);
 
-						monitor.beginTask(mMessage, numberOfElements);
+						monitor.beginTask(mMessage, numberOfElementsConsidered);
 
 						// apply stereotypes
 						try {
@@ -150,17 +167,17 @@ public class StereotypeApplier {
 		if (object instanceof Class && !(object instanceof FunctionBehavior) && !(object instanceof OpaqueBehavior)) {
 			setMonitorText(object, "Found ");
 			classes.add((Class) object);
-			numberOfElements ++;
+			numberOfElementsConsidered ++;
 		}
 		else if (object instanceof StateMachine) {
 			setMonitorText(object, "Found ");
 			stateMachines.add((StateMachine) object);
-			numberOfElements ++;
+			numberOfElementsConsidered ++;
 		}
 		else if (object instanceof FunctionBehavior) {
 			setMonitorText(object, "Found ");
 			functions.add((FunctionBehavior) object);
-			numberOfElements ++;
+			numberOfElementsConsidered ++;
 		}
 		else if (object instanceof OpaqueBehavior) {
 			OpaqueBehavior ob = (OpaqueBehavior) object;
@@ -169,38 +186,38 @@ public class StereotypeApplier {
 			if (owner instanceof Class) {
 				setMonitorText(object, "Found ");
 				opaqueBehaviors.add((OpaqueBehavior) object);
-				numberOfElements ++;
+				numberOfElementsConsidered ++;
 			}
 		}
 		else if (object instanceof Property && !(object instanceof Port)) {
 			setMonitorText(object, "Found ");
 			properties.add((Property) object);
-			numberOfElements ++;
+			numberOfElementsConsidered ++;
 		}
 		else if (object instanceof Parameter) {
 			setMonitorText(object, "Found ");
 			parameters.add((Parameter) object);
-			numberOfElements ++;
+			numberOfElementsConsidered ++;
 		}
 		else if (object instanceof Port) {
 			setMonitorText(object, "Found ");
 			ports.add((Port) object);
-			numberOfElements ++;
+			numberOfElementsConsidered ++;
 		}
 		else if (object instanceof Connector) {
 			setMonitorText(object, "Found ");
 			connectors.add((Connector) object);
-			numberOfElements ++;
+			numberOfElementsConsidered ++;
 		}
 		else if (object instanceof Dependency) {
 			setMonitorText(object, "Found ");
 			dependecies.add((Dependency) object);
-			numberOfElements ++;
+			numberOfElementsConsidered ++;
 		}
 		else if (object instanceof Generalization) {
 			setMonitorText(object, "Found ");
 			generalizations.add((Generalization) object);
-			numberOfElements ++;
+			numberOfElementsConsidered ++;
 		}
 	}
 	
@@ -240,7 +257,7 @@ public class StereotypeApplier {
 		 */
 		if (progressMonitor.getProgressMonitor().isCanceled()) { return;}
 		numberOfUpdatedElements += dependecies.size();
-		progressMonitor.getProgressMonitor().setTaskName("(" + numberOfUpdatedElements +" of " + numberOfElements + "): Applying stereotypes to dependecies ...");
+		progressMonitor.getProgressMonitor().setTaskName("(" + numberOfUpdatedElements +" of " + numberOfElementsConsidered + "): Applying stereotypes to dependecies ...");
 		applyStereotypesForDependencies();
 //		System.err.println("worked:" + numberOfUpdatedElements);
 		progressMonitor.getProgressMonitor().worked(numberOfUpdatedElements);
@@ -252,7 +269,7 @@ public class StereotypeApplier {
 		 */
 		if (progressMonitor.getProgressMonitor().isCanceled()) { return;}
 		numberOfUpdatedElements += classes.size();
-		progressMonitor.getProgressMonitor().setTaskName("(" + numberOfUpdatedElements +" of " + numberOfElements + "): Applying stereotypes to classes ...");
+		progressMonitor.getProgressMonitor().setTaskName("(" + numberOfUpdatedElements +" of " + numberOfElementsConsidered + "): Applying stereotypes to classes ...");
 		applyStereotypesForClasses();
 //		System.err.println("worked:" + numberOfUpdatedElements);
 		progressMonitor.getProgressMonitor().worked(numberOfUpdatedElements);
@@ -260,7 +277,7 @@ public class StereotypeApplier {
 		// Properties: variables, ports, function arguments
 		if (progressMonitor.getProgressMonitor().isCanceled()) { return;}
 		numberOfUpdatedElements = properties.size();
-		progressMonitor.getProgressMonitor().setTaskName("(" + numberOfUpdatedElements +" of " + numberOfElements + "): Applying stereotypes to properties ...");
+		progressMonitor.getProgressMonitor().setTaskName("(" + numberOfUpdatedElements +" of " + numberOfElementsConsidered + "): Applying stereotypes to properties ...");
 		applyStereotypesForProperties();
 //		System.err.println("worked:" + numberOfUpdatedElements);
 		progressMonitor.getProgressMonitor().worked(numberOfUpdatedElements);
@@ -269,7 +286,7 @@ public class StereotypeApplier {
 		// Behaviors: equations or algorithm sections, functions, state machines
 		if (progressMonitor.getProgressMonitor().isCanceled()) { return;}
 		numberOfUpdatedElements += opaqueBehaviors.size() + stateMachines.size() + functions.size();
-		progressMonitor.getProgressMonitor().setTaskName("(" + numberOfUpdatedElements +" of " + numberOfElements + "): Applying stereotypes to behvaior ...");
+		progressMonitor.getProgressMonitor().setTaskName("(" + numberOfUpdatedElements +" of " + numberOfElementsConsidered + "): Applying stereotypes to behvaior ...");
 		applyStereotypesForBehaviors();
 //		System.err.println("worked:" + numberOfUpdatedElements);
 		progressMonitor.getProgressMonitor().worked(numberOfUpdatedElements);
@@ -277,7 +294,7 @@ public class StereotypeApplier {
 		// Generalizations
 		if (progressMonitor.getProgressMonitor().isCanceled()) { return;}
 		numberOfUpdatedElements += generalizations.size();
-		progressMonitor.getProgressMonitor().setTaskName("(" + numberOfUpdatedElements +" of " + numberOfElements + "): Applying stereotypes to generalizations ...");
+		progressMonitor.getProgressMonitor().setTaskName("(" + numberOfUpdatedElements +" of " + numberOfElementsConsidered + "): Applying stereotypes to generalizations ...");
 		applyStereotypesForGeneralizations();
 //		System.err.println("worked:" + numberOfUpdatedElements);
 		progressMonitor.getProgressMonitor().worked(numberOfUpdatedElements);
@@ -285,7 +302,7 @@ public class StereotypeApplier {
 		//Connections
 		if (progressMonitor.getProgressMonitor().isCanceled()) { return;}
 		numberOfUpdatedElements += connectors.size();
-		progressMonitor.getProgressMonitor().setTaskName("(" + numberOfUpdatedElements +" of " + numberOfElements + "): Applying stereotypes to connectors ...");
+		progressMonitor.getProgressMonitor().setTaskName("(" + numberOfUpdatedElements +" of " + numberOfElementsConsidered + "): Applying stereotypes to connectors ...");
 		applyStereotypesForConnections();
 //		System.err.println("worked:" + numberOfUpdatedElements);
 		progressMonitor.getProgressMonitor().worked(numberOfUpdatedElements);
@@ -671,8 +688,30 @@ public class StereotypeApplier {
 	 * Getters
 	 */
 	
+	public List<EObject> getConsideredElements(){
+		
+		List<EObject> elements = new ArrayList<EObject>();
+		
+		elements.addAll(classes);
+		elements.addAll(properties);
+		elements.addAll(ports);
+		elements.addAll(connectors);
+		elements.addAll(dependecies);
+		elements.addAll(generalizations);
+		elements.addAll(functions);
+		elements.addAll(parameters);
+		elements.addAll(opaqueBehaviors);
+		elements.addAll(stateMachines);
+		
+		return elements;
+	}
+	
 	public List<Element> getUnhandledElements() {
 		return unhandledElements;
 	}
-
+	
+	public int getNumberOfElementsConsidered() {
+		return numberOfElementsConsidered;
+	}
+	
 }

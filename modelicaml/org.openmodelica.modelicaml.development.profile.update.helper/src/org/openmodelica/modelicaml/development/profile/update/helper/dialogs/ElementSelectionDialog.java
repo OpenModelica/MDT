@@ -285,17 +285,28 @@ public class ElementSelectionDialog extends Dialog {
 						StereotypeApplier sa = new StereotypeApplier();
 						sa.applyStereotypes(selectedElement);
 						
+						// report dialog image
+						Image dialogImage = null;
+						String title = "Stereotypes Application Report";
 						if (sa.getUnhandledElements().size() > 0) {
-							// report 
-							ResultsUnhandledElementsDialogHTML results = new ResultsUnhandledElementsDialogHTML(
-									new Shell(), 
-									"Unhandled Elements",
-									SWTResourceManager.getImage(ElementSelectionDialog.class,"/icons/error_log.gif"), 
-									sa.getUnhandledElements()
-									);
-							
-							results.open();
+							dialogImage = SWTResourceManager.getImage(ElementSelectionDialog.class,"/icons/error_log.gif");
+							title += ": Unhandled Elements";
 						}
+						else {
+							dialogImage = SWTResourceManager.getImage(ElementSelectionDialog.class,"/icons/sample.gif");
+						}
+						
+						// report 
+						ResultsUnhandledElementsDialogHTML results = new ResultsUnhandledElementsDialogHTML(
+								new Shell(), 
+								title,
+								dialogImage, 
+								sa.getConsideredElements(), 
+								sa.getUnhandledElements()
+								);
+						
+						results.open();
+						
 					}
 					else if (unapplyStereotypes) {
 						StereotypeUnApplier su = new StereotypeUnApplier();

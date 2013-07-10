@@ -67,6 +67,7 @@ public class ResultsUnhandledElementsDialogHTML extends Dialog {
 	private Browser browser;
 	protected Image image = null;
 	
+	private List<EObject> consideredElements;
 	private List<Element> unhandeledElements;
 	private HashMap<String, Element> unhandeledElementsMap = new HashMap<String, Element>();
 
@@ -75,6 +76,7 @@ public class ResultsUnhandledElementsDialogHTML extends Dialog {
 			Shell parentShell, 
 			String title,
 			Image image,
+			List<EObject> consideredElements,
 			List<Element> unhandeledElements) {
 		
 		super(parentShell);
@@ -84,6 +86,7 @@ public class ResultsUnhandledElementsDialogHTML extends Dialog {
 		
         this.title = title;
 		this.image = image;
+		this.consideredElements = consideredElements;
         this.unhandeledElements = unhandeledElements;
 	}
 	
@@ -136,45 +139,66 @@ public class ResultsUnhandledElementsDialogHTML extends Dialog {
 	    
 	        composite.setLayout(new FillLayout(SWT.HORIZONTAL));
 		    browser = new Browser(composite, SWT.NONE);
-		    
+
 		    // HTML source
 		    String html = "<html><head>"
 		    		+ "<title>Unhandled elements</title>"
 		    		+ "<style type=\"text/css\">body {color: #000000; font-size:11px; color:#000000; font-family:Verdana;}</style>"
 		    		+ "</head>"
 		    		+ "<body>";
+		    int numberOfHandledElements = (consideredElements.size() - unhandeledElements.size());
 		    
-		    html += "<ul>";
-		    
-			for (int i = 0; i < this.unhandeledElements.size(); i++) {
-			
-				final Element element = unhandeledElements.get(i);
-				String XMIid = element.eResource().getURIFragment(element);
-				unhandeledElementsMap.put(XMIid, element);
-				
-				String qName = ""; 
-				String linkString =  "<span style=\"color:grey;\">" + getMetaClassName(element) + "</span> ";
-				
-				html += "<li>";
-				if (element instanceof NamedElement) {
-					qName = ((NamedElement)element).getQualifiedName();
-					linkString += "<a href=\""+XMIid+"\">" + ((NamedElement)element).getName() + "</a>";
+		    String plural = "";
+		    if (numberOfHandledElements > 0) {
+		    	
+		    	if (numberOfHandledElements > 1) {
+					plural = "s";
 				}
-				else {
-					// get the owner name
-					Element owner = element.getOwner();
-					if (owner instanceof NamedElement) {
-						qName = ((NamedElement)owner).getQualifiedName();
+			    html += "For <strong>" +  numberOfHandledElements
+			    		+ "</strong> element"+plural+" stereotype"+plural+" could be identified. <br /><br />";
+			}
+		    
+		    if (this.unhandeledElements.size() > 0) {
+		    	
+		    	plural = "";
+		    	if (this.unhandeledElements.size() > 1) {
+					plural = "s";
+				}
+		    	
+		    	html += "For the following <strong>"+this.unhandeledElements.size()+"</strong> element"+plural+" no appropriate streotype could be found:";
+			    html += "<ul>";
+			    
+				for (int i = 0; i < this.unhandeledElements.size(); i++) {
+				
+					final Element element = unhandeledElements.get(i);
+					String XMIid = element.eResource().getURIFragment(element);
+					unhandeledElementsMap.put(XMIid, element);
+					
+					String qName = ""; 
+					String linkString =  "<span style=\"color:grey;\">" + getMetaClassName(element) + "</span> ";
+					
+					html += "<li>";
+					if (element instanceof NamedElement) {
+						qName = ((NamedElement)element).getQualifiedName();
+						linkString += "<a href=\""+XMIid+"\">" + ((NamedElement)element).getName() + "</a>";
+					}
+					else {
+						// get the owner name
+						Element owner = element.getOwner();
+						if (owner instanceof NamedElement) {
+							qName = ((NamedElement)owner).getQualifiedName();
+						}
+						
+						linkString += "<a href=\""+XMIid+"\">" + getMetaClassName(element) + "</a>";
 					}
 					
-					linkString += "<a href=\""+XMIid+"\">" + getMetaClassName(element) + "</a>";
-				}
+					html += linkString + "<ul><li><span style=\"color:grey;\">("+qName.trim()+")</span></li></ul>";
+					html += "</li>";
+				}	
 				
-				html += linkString + "<ul><li><span style=\"color:grey;\">("+qName.trim()+")</span></li></ul>";
-				html += "</li>";
-			}	
-			
-			html += "</ul>";
+				html += "</ul>";
+			}
+		    
 			html += "</body></html>";
 		    
 			

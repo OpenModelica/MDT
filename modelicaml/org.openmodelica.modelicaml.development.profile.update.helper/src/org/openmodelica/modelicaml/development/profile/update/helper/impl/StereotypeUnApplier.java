@@ -27,7 +27,7 @@ import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 public class StereotypeUnApplier {
 	
 	private HashSet<Element> elements = new HashSet<Element>();
-	
+	private int numberOfHandledElements = 0;
 	private String mMessage = "Un-Applying all ModelicaML stereotypes ...";
 	
 	private ServicesRegistry serviceRegistry = null;
@@ -76,6 +76,11 @@ public class StereotypeUnApplier {
 							MessageDialog.openError(new Shell(), "Selection Error", "The selected element is not a UML element.");
 						}
 						monitor.done();
+
+						// report
+						MessageDialog.openInformation(ModelicaMLServices.getShell(), 
+								"Result for Removing ModelicaML Stereotypes", 
+								"For " + numberOfHandledElements + " of " + elements.size() + " elements found stereotypes were removed.");
 					}
 				});
 			} catch (InvocationTargetException e) {
@@ -130,6 +135,7 @@ public class StereotypeUnApplier {
 				
 				for (Element element : elements) {
 					if (!monitor.isCanceled()) {
+						
 						List<Stereotype> sl = element.getAppliedStereotypes();
 						for (Stereotype stereotype : sl) {
 							if (stereotype.getQualifiedName().startsWith("ModelicaML::")) {
@@ -142,6 +148,7 @@ public class StereotypeUnApplier {
 						
 						i ++;
 						monitor.worked(i);
+						numberOfHandledElements ++;
 					}
 				}
 			}
