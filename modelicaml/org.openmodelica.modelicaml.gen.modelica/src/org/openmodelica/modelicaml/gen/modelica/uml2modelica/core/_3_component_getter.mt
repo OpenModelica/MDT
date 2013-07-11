@@ -15,28 +15,28 @@ import org.openmodelica.modelicaml.common.services.StringUtls
 		|| isSetModelicaComponentStereotypeValueBoolean("s_p_final") == "true"){%>final <%}%>
 
 <%script type="uml.TypedElement" name="public_protected"%>
-<%--<%if ( visibility == "protected" || getModelicaComponentStereotypeValueEnum("s_p_visibility") == "protected" ){%>protected <%}%>--%>
-<%if ( visibility == "protected" ){%>protected <%}%><%-- NOTE: 'public' is default. --%>
+<%if ( visibility == "protected" || getModelicaComponentStereotypeValueEnum("s_p_visibility") == "protected" ){%>protected <%}%>
+<%--<%if ( visibility == "protected" ){%>protected <%}%>--%><%-- NOTE: 'public' is default. --%>
 
 
 <%script type="uml.TypedElement" name="innerouter"%>
 <%-- ISSUE: TODO: inner/outer for components/ports, etc.? <%if (getStereotypeValue(getProperty("s_component"), getProperty("s_p_innerouter"))){%><%getStereotypeValue(getProperty("s_component"), getProperty("s_p_innerouter")).name%> <%}%>--%>
-<%if (getStereotypeValue(getProperty("s_variable"), getProperty("s_p_innerouter"))){%><%getStereotypeValue(getProperty("s_variable"), getProperty("s_p_innerouter")).name%> <%}%>
+<%if (getStereotypeValue(getProperty("s_variable"), getProperty("s_p_innerouter"))){%><%if (getStereotypeValue(getProperty("s_variable"), getProperty("s_p_innerouter")).name != "undefined"){%><%getStereotypeValue(getProperty("s_variable"), getProperty("s_p_innerouter")).name%> <%}%><%}%>
 
 <%script type="uml.TypedElement" name="replaceable"%>
 <%if ( isSetModelicaComponentStereotypeValueBoolean("s_p_replaceable") ){%>replaceable <%}%>
 
 <%script type="uml.TypedElement" name="flowFlag"%>
-<%if (getStereotypeValue(getProperty("s_variable"), getProperty("s_p_flowFlag"))){%><%getStereotypeValue(getProperty("s_variable"), getProperty("s_p_flowFlag")).name%> <%}%>
+<%if (getStereotypeValue(getProperty("s_variable"), getProperty("s_p_flowFlag"))){%><%if (getStereotypeValue(getProperty("s_variable"), getProperty("s_p_flowFlag")).name != "undefined"){%><%getStereotypeValue(getProperty("s_variable"), getProperty("s_p_flowFlag")).name%> <%}%><%}%>
 
 <%script type="uml.TypedElement" name="variability"%>
 <%if (getStereotypeValue(getProperty("s_variable"), getProperty("s_p_variability"))){%><%if (getStereotypeValue(getProperty("s_variable"), getProperty("s_p_variability")).name != "continuous"){%><%getStereotypeValue(getProperty("s_variable"), getProperty("s_p_variability")).name%> <%}%><%}%>
 <%if (getStereotypeValue(getProperty("s_functionArgument"), getProperty("s_p_variability"))){%><%if (getStereotypeValue(getProperty("s_functionArgument"), getProperty("s_p_variability")).name != "continuous"){%><%getStereotypeValue(getProperty("s_functionArgument"), getProperty("s_p_variability")).name%> <%}%><%}%>
 
 <%script type="uml.TypedElement" name="causality"%>
-<%if (getStereotypeValue(getProperty("s_variable"), getProperty("s_p_causality"))){%><%getStereotypeValue(getProperty("s_variable"), getProperty("s_p_causality")).name%> <%}%>
-<%if (getStereotypeValue(getProperty("s_port"), getProperty("s_p_causality"))){%><%getStereotypeValue(getProperty("s_port"), getProperty("s_p_causality")).name%> <%}%>
-<%if (getStereotypeValue(getProperty("s_functionArgument"), getProperty("s_p_causality"))){%><%getStereotypeValue(getProperty("s_functionArgument"), getProperty("s_p_causality")).name%> <%}%>
+<%if (getStereotypeValue(getProperty("s_variable"), getProperty("s_p_causality"))){%><%if (getStereotypeValue(getProperty("s_variable"), getProperty("s_p_causality")).name != "undefined"){%><%getStereotypeValue(getProperty("s_variable"), getProperty("s_p_causality")).name%> <%}%><%}%>
+<%if (getStereotypeValue(getProperty("s_port"), getProperty("s_p_causality"))){%><%if (getStereotypeValue(getProperty("s_port"), getProperty("s_p_causality")).name != "undefined"){%><%getStereotypeValue(getProperty("s_port"), getProperty("s_p_causality")).name%> <%}%><%}%>
+<%if (getStereotypeValue(getProperty("s_functionArgument"), getProperty("s_p_causality"))){%><%if (getStereotypeValue(getProperty("s_functionArgument"), getProperty("s_p_causality")).name != "undefined"){%><%getStereotypeValue(getProperty("s_functionArgument"), getProperty("s_p_causality")).name%> <%}%><%}%>
 
 <%script type="uml.TypedElement" name="conditional_attribute" post="trim()"%>
 <%if (getStereotypeValue(getProperty("s_component"), getProperty("s_p_conditionalAttribute"))){%>if <%getStereotypeValue(getProperty("s_component"), getProperty("s_p_conditionalAttribute"))%><%}%>
