@@ -109,7 +109,8 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 			e.printStackTrace();
 		}
 		
-		if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+//		if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+		if (editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
 			treeRoot = new TreeParent(Constants.folderName_code_sync);
 			treeBuilder.setValidateProxies(true);
 			treeBuilder.setCreateOMCMarker(true);
@@ -180,7 +181,8 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 //					final TransactionalEditingDomain editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
 					final TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 					
-					if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+//					if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+					if (editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
 						
 						// ask to set options
 						SynchronizeOptionsDialog dialog = new SynchronizeOptionsDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
@@ -466,7 +468,8 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 				}
 			}
 			
-			if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+//			if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+			if (editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
 				Job job = createSynchJob(serviceRegistry, 
 						editingDomain, 
 						umlModel, 

@@ -620,7 +620,8 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 							"Please make sure that the ModelicaML model is open in the active editor.");
 				}
 				else {
-					if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+//					if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+					if (editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
 						
 						// Open a dialog to as for this option
 						String title = "Modelica Proxies Synchronization Option";
@@ -1035,7 +1036,8 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 				// refresh in order to update the proxies (in case there were deleted in the mean time)
 				actionRefreshAndValidate.run();
 
-				if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+//				if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+				if (editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
 										
 					if (createProxiesAfterLoadingModelicaClasses) {
 
@@ -1813,7 +1815,8 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 //					editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
 					editingDomain = EditorServices.getPapyrusEditingDomain();
 					
-					if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+//					if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+					if (editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
 						
 						// set the uml model to encapsulate the job required data
 						treeBuilder.setModelicaMLModel(umlModel);
