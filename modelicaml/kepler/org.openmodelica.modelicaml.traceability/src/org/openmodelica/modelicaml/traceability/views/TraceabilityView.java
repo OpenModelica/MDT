@@ -67,11 +67,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.papyrus.infra.core.services.ServiceException;
-import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
 import org.eclipse.papyrus.infra.emf.utils.BusinessModelResolver;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView;
 import org.eclipse.papyrus.views.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
@@ -92,8 +88,8 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Package;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
-import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.services.EditorServices;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.helper.generators.GeneratorVeMScenariosBased;
@@ -438,10 +434,10 @@ public class TraceabilityView extends ViewPart {
 					final TreeParent treeItem = (TreeParent) obj;
 					if (treeItem.getUmlElement() != null && treeBuilder.getSelectedElement() != null) {
 						
-						ServicesRegistry serviceRegistry;
-						try {
-							serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-							TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+//						ServicesRegistry serviceRegistry;
+//							serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+//							TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+							TransactionalEditingDomain  editingDomain = EditorServices.getPapyrusEditingDomain();
 
 							CompoundCommand cc = new CompoundCommand("actionCreateVerificationModel");
 							Command command = new RecordingCommand(editingDomain) {
@@ -471,9 +467,6 @@ public class TraceabilityView extends ViewPart {
 							};
 							cc.append(command);
 							editingDomain.getCommandStack().execute(cc);
-						} catch (ServiceException e) {
-							e.printStackTrace();
-						}
 					}
 				}
 				

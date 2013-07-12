@@ -76,6 +76,21 @@ public class EditorServices {
 		return editingDomain;
 	}
 	
+	public static void refreshModelExplorerView(){
+		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
+		
+		ModelExplorerPageBookView modelExplorerPageBookView = null;
+		if (view instanceof ModelExplorerPageBookView) {
+			modelExplorerPageBookView = (ModelExplorerPageBookView)view;
+			
+			Object adopterClass = (ModelExplorerView) modelExplorerPageBookView.getAdapter(ModelExplorerView.class); 
+			if ( adopterClass != null) {
+				CommonViewer modelExplorerView = ((ModelExplorerView)adopterClass).getCommonViewer();
+				modelExplorerView.refresh();
+			}
+		}
+	}
+	
 	
 	public static CommonViewer getModelExplorerView(){
 		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);

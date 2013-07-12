@@ -255,10 +255,12 @@ public class TreeUtls {
 		//The stereotype for the dependency from the mediator to the selected client or provider
 		
 		if ( mode == Constants.MODE_ADD_CLIENT ) {
-			return "Provides value for: ";
+//			return "Provides value for: ";
+			return "Mediator to client: ";
 		}
 		else if (mode == Constants.MODE_ADD_PROVIDER ) {
-			return "Obtains value from: ";
+//			return "Obtains value from: ";
+			return "Mediator to provider: ";
 		}
 		return null;
 	}

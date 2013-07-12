@@ -76,10 +76,13 @@ public class GetDependecyLabel implements IJavaModelQuery<Dependency, String> {
 				else if (supplier instanceof Property && client instanceof Property
 							&& client.getAppliedStereotype(Constants.stereotypeQName_ValueMediator) != null ) {
 					if (context.getAppliedStereotype(Constants.stereotypeQName_ObtainsValueFrom) != null ){
-						return "'" + ((NamedElement)client).getName() + "'" + " obtains value from " + "'" + ((NamedElement)supplier).getName() + "'";
+//						return "'" + ((NamedElement)client).getName() + "'" + " obtains value from " + "'" + ((NamedElement)supplier).getName() + "'";
+						return "'" + ((NamedElement)client).getName() + "'" + " inferes binding based on provider " + "'" + ((NamedElement)supplier).getName() + "'";
+						
 					}
 					else if (context.getAppliedStereotype(Constants.stereotypeQName_ProvidesValueFor) != null) {
-						return "'" + ((NamedElement)client).getName() + "'" + " provides value for " + "'" + ((NamedElement)supplier).getName() + "'";
+//						return "'" + ((NamedElement)client).getName() + "'" + " provides value for " + "'" + ((NamedElement)supplier).getName() + "'";
+						return "'" + ((NamedElement)client).getName() + "'" + " inferes binding for client " + "'" + ((NamedElement)supplier).getName() + "'";
 					}
 				}
 				

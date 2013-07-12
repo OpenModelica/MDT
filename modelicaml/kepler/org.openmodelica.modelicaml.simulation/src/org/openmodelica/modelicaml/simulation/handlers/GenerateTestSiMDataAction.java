@@ -82,6 +82,7 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.datacollection.ElementsCollector;
 import org.openmodelica.modelicaml.common.helpers.VerificationServices;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.simulation.testexecution.actions.ExecuteTestsAction;
 import org.openmodelica.modelicaml.simulation.testexecution.dialogs.SelectSimulationModelsToExecuteDialog;
@@ -128,15 +129,10 @@ public class GenerateTestSiMDataAction extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 //		TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
 		ServicesRegistry serviceRegistry;
-		try {
-			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-			TransactionalEditingDomain editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+//			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+//			TransactionalEditingDomain editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+			TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 			editingDomain.getCommandStack().execute(getCommand(editingDomain));
-
-		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		return null;
 	}

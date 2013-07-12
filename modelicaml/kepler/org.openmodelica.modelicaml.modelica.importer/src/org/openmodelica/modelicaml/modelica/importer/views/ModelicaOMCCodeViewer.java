@@ -1809,9 +1809,9 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 
 			try {
 				ModelicaMLRoot = umlModel.lookupRoot();
-				try {
-					serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-					editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+//					serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+//					editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+					editingDomain = EditorServices.getPapyrusEditingDomain();
 					
 					if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
 						
@@ -1836,15 +1836,6 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 						MessageDialog.openError(getSite().getShell(), "Loading error", 
 								"Could not access the Papyrus editing domain and the uml model.");
 					}
-					
-				} catch (ServiceException e) {
-					MessageDialog.openError(getSite().getShell(), 
-							"ModelicaML Model Editing Domain Access Error", 
-						"Cannot acceess the ModelicaML model or its editing domain. " +
-						"Please make sure that the ModelicaML model is open in the active editor.");
-
-					e.printStackTrace();
-				}
 			} catch (NotFoundException e) {
 				MessageDialog.openError(getSite().getShell(), 
 						"ModelicaML Model Access Error", 

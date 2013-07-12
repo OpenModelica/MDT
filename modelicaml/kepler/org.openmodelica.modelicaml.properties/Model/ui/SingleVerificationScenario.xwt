@@ -6,6 +6,21 @@
 	<Composite.layout>
 		<ppel:PropertiesLayout></ppel:PropertiesLayout>
 	</Composite.layout>
+	<Group>
+		<Group.layout>
+			<ppel:PropertiesLayout numColumns="1"></ppel:PropertiesLayout>
+		</Group.layout>
+		<ppe:StringEditor input="{Binding}"
+			property="ModelicaML:ModelicaSimulationConstructs:Simulation:startTime"></ppe:StringEditor>
+		<ppe:StringEditor input="{Binding}"
+			property="ModelicaML:ModelicaSimulationConstructs:Simulation:stopTime"></ppe:StringEditor>
+		<ppe:StringEditor input="{Binding}"
+			property="ModelicaML:ModelicaSimulationConstructs:Simulation:tolerance"></ppe:StringEditor>
+		<ppe:IntegerEditor input="{Binding}"
+			property="ModelicaML:ModelicaSimulationConstructs:Simulation:numberOfIntervals"></ppe:IntegerEditor>
+	</Group>
+	
+	<!-- 
 	<Composite>
 		<Composite.layout>
 			<ppel:PropertiesLayout numColumns="1"></ppel:PropertiesLayout>
@@ -19,4 +34,5 @@
 		<ppe:IntegerEditor input="{Binding}"
 			property="ModelicaML:ModelicaSimulationConstructs:Simulation:numberOfIntervals"></ppe:IntegerEditor>
 	</Composite>
+	 -->
 </Composite>

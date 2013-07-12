@@ -52,10 +52,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.papyrus.infra.core.resource.NotFoundException;
-import org.eclipse.papyrus.infra.core.services.ServiceException;
 import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.papyrus.uml.tools.model.UmlModel;
 import org.eclipse.papyrus.uml.tools.model.UmlUtils;
 import org.eclipse.papyrus.uml.tools.utils.OpaqueBehaviorUtil;
@@ -88,6 +85,7 @@ import org.eclipse.uml2.uml.TypedElement;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.eclipse.uml2.uml.VisibilityKind;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.modelica.importer.helper.StringHandler;
 import org.openmodelica.modelicaml.modelica.importer.model.ClassItem;
@@ -100,7 +98,7 @@ import org.openmodelica.modelicaml.modelica.importer.model.TreeParent;
 
 public class ModelicaMLElementsCreator {
 	
-	private ServicesRegistry serviceRegistry = null;
+//	private ServicesRegistry serviceRegistry = null;
 	private TransactionalEditingDomain editingDomain = null;
 	private UmlModel umlModel = null;
 	private EObject ModelicaMLRoot = null;
@@ -140,7 +138,7 @@ public class ModelicaMLElementsCreator {
 			TreeBuilder treeBuilder,
 			IProgressMonitor monitor){
 		
-		this.serviceRegistry = serviceRegistry;
+//		this.serviceRegistry = serviceRegistry;
 		this.editingDomain = editingDomain;
 		this.umlModel = umlModel;
 		this.ModelicaMLRoot = ModelicaMLRoot;
@@ -2168,14 +2166,9 @@ public class ModelicaMLElementsCreator {
 	 */
 	
 	private void setEditingDomain(){
-		try {
-			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
-
-		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+//			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+		editingDomain = EditorServices.getPapyrusEditingDomain();
 	}
 
 	

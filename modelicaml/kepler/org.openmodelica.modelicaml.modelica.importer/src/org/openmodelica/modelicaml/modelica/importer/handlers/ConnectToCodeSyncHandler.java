@@ -65,6 +65,7 @@ import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 
 public class ConnectToCodeSyncHandler extends AbstractHandler {
 	private EObject selectedElement = null;
@@ -96,19 +97,10 @@ public class ConnectToCodeSyncHandler extends AbstractHandler {
 	}
 
 	private void applyProxyStereotype(NamedElement proxy){
-		ServicesRegistry serviceRegistry;
-		try {
-			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-			TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
-			
-			// execute 
-			editingDomain.getCommandStack().execute(getCommand(editingDomain, proxy));
-
-			
-		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		ServicesRegistry serviceRegistry;
+		TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
+		// execute 
+		editingDomain.getCommandStack().execute(getCommand(editingDomain, proxy));
 	}
 	
 	

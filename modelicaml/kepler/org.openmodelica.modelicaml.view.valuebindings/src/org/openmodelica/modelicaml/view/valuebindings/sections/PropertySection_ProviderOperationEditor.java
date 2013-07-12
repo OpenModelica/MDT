@@ -43,10 +43,6 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.infra.core.services.ServiceException;
-import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -65,6 +61,7 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.ui.internal.ProviderActivator;
@@ -188,17 +185,9 @@ public class PropertySection_ProviderOperationEditor extends AbstractPropertySec
 			}
 		});
 		
-		// Get Papyrus editing domain
-//		editingDomain = EditorUtils.getTransactionalEditingDomain();
-		ServicesRegistry serviceRegistry;
-		try {
-			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
-
-		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+//			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+		editingDomain = EditorServices.getPapyrusEditingDomain();
 	}
 	
 	private Boolean isValidElement(){

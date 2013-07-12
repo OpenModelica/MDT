@@ -15,13 +15,11 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.papyrus.infra.core.services.ServiceException;
-import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 
 public class StereotypeUnApplier {
@@ -30,7 +28,7 @@ public class StereotypeUnApplier {
 	private int numberOfHandledElements = 0;
 	private String mMessage = "Un-Applying all ModelicaML stereotypes ...";
 	
-	private ServicesRegistry serviceRegistry = null;
+//	private ServicesRegistry serviceRegistry = null;
 	private TransactionalEditingDomain editingDomain = null;
 	private ProgressMonitorDialog progressMonitor;
 
@@ -122,8 +120,9 @@ public class StereotypeUnApplier {
 	
 	private void unApplyStereotypesCommand(final IProgressMonitor monitor) throws ServiceException {
 		
-		serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-		editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+//		serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+//		editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+		editingDomain = EditorServices.getPapyrusEditingDomain();
 		
 		CompoundCommand cc = new CompoundCommand("Unapplying ModelicaML Stereotypes");
 		Command command = new RecordingCommand(editingDomain) {

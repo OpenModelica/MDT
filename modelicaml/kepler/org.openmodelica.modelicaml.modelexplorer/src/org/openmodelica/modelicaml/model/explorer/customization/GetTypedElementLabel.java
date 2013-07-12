@@ -32,7 +32,6 @@
  *   Uwe Pohlmann, University of Paderborn 2009-2010, contribution to the Modelica code generation for state machine behavior, contribution to Papyrus GUI adaptations
  */
 package org.openmodelica.modelicaml.model.explorer.customization;
-import org.eclipse.core.internal.expressions.InstanceofExpression;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.facet.infra.query.core.exception.ModelQueryExecutionException;
 import org.eclipse.emf.facet.infra.query.core.java.IJavaModelQuery;
@@ -42,6 +41,7 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.TypedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.valuebindings.helpers.BindingsData;
 
 // TODO: Auto-generated Javadoc
 /** returns the name, type name, etc. of the typed element */
@@ -205,8 +205,29 @@ public class GetTypedElementLabel implements IJavaModelQuery<TypedElement, Strin
 			}
 		}
 		
+		// retrieve bindings information -> indicate if a property is a clients or provider ...
+		String clientProviderString = "";
+		if (BindingsData.getClientsMandatory().contains(context)) {
+			clientProviderString = "mc ";
+		}
+		else if (BindingsData.getClients().contains(context)) {
+			clientProviderString = "c ";
+		}
+		if (BindingsData.getProviders().contains(context)) {
+			if (!clientProviderString.isEmpty()) {
+				clientProviderString += ",p" ;
+			}
+			else {
+				clientProviderString += "p" ;
+			}
+		}
+		
+		if (!clientProviderString.isEmpty()) {
+			name = "{"+clientProviderString.trim() +"} " + name;
+		}
 		
 		
+		// substring in order to avoid long name labels.
 		int maxLength = 150;
 		if (name.length() > maxLength) {
 			return name.substring(0,maxLength);
@@ -223,7 +244,7 @@ public class GetTypedElementLabel implements IJavaModelQuery<TypedElement, Strin
 	 * @return the boolean
 	 */
 	private Boolean hasModifications(TypedElement element, Stereotype stereotype){
-		EList<String> modList = (EList<String>) element.getValue(stereotype, "modification");
+		EList<String> modList = (EList<String>) element.getValue(stereotype, Constants.propertyName_modification);
 		if (modList != null && modList.size() > 0) {
 			for (String string : modList) {
 				if (!string.trim().equals("")) {

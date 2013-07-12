@@ -55,12 +55,9 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.papyrus.infra.core.resource.NotFoundException;
+import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
 import org.eclipse.papyrus.uml.tools.model.UmlModel;
 import org.eclipse.papyrus.uml.tools.model.UmlUtils;
-import org.eclipse.papyrus.infra.core.services.ServiceException;
-import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
@@ -103,13 +100,11 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 		
 		try {
 			ModelicaMLRoot = umlModel.lookupRoot();
-			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+//			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+//			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+			editingDomain = EditorServices.getPapyrusEditingDomain();
 			
 		} catch (NotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -181,9 +176,9 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 		else {
 			try {
 				final EObject ModelicaMLRoot = umlModel.lookupRoot();
-				try {
-					final ServicesRegistry serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-					final TransactionalEditingDomain editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+//					final ServicesRegistry serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+//					final TransactionalEditingDomain editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+					final TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 					
 					if (serviceRegistry != null && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
 						
@@ -257,15 +252,6 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 						MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Loading error", 
 								"Could not access the Papyrus editing domain and the uml model.");
 					}
-					
-				} catch (ServiceException e) {
-					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
-							"ModelicaML Model Editing Domain Access Error", 
-						"Cannot acceess the ModelicaML model or its editing domain. " +
-						"Please make sure that the ModelicaML model is open in the active editor.");
-
-					e.printStackTrace();
-				}
 			} catch (NotFoundException e) {
 				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 						"ModelicaML Model Access Error", 
@@ -573,8 +559,9 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 				EObject ModelicaMLRoot = umlModel.lookupRoot();
 				if (ModelicaMLRoot != null) {
 					
-					ServicesRegistry serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-					TransactionalEditingDomain editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+//					ServicesRegistry serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+//					TransactionalEditingDomain editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+					TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 					
 					if (serviceRegistry != null 
 							&& editingDomain != null 
@@ -585,8 +572,6 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 					}
 				}
 			} catch (NotFoundException e) {
-				e.printStackTrace();
-			} catch (ServiceException e) {
 				e.printStackTrace();
 			}
 		}

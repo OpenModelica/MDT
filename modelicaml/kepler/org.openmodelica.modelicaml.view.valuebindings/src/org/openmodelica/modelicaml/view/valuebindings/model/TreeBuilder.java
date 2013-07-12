@@ -54,6 +54,7 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
+import org.openmodelica.modelicaml.common.valuebindings.helpers.BindingsData;
 import org.openmodelica.modelicaml.common.valuebindings.helpers.BindingsDataCollector;
 import org.openmodelica.modelicaml.common.valuebindings.helpers.MediatorsCollector;
 
@@ -581,6 +582,15 @@ public class TreeBuilder {
 		
 	
 	private void sortData(){
+		
+		// clear the data in the common service in order to 
+		BindingsData.clearAll();
+		
+		// collect data to pass to the common service for other views
+		HashSet<Element> clients = new HashSet<Element>();
+		HashSet<Element> clientsMandatory = new HashSet<Element>();
+		HashSet<Element> providers = new HashSet<Element>();
+		
 		for (Element valueMediator : valueMediators) {
 			if (valueMediator instanceof Property) {
 				EList<Dependency> mediatorDependencies = ((Property)valueMediator).getClientDependencies();
@@ -592,6 +602,9 @@ public class TreeBuilder {
 						for (Element element : targets) {
 							// add items to the overall map 
 							addToMapList(valueMediatorToValueProviders, valueMediator, element);
+							
+							// collect to pass to the common service							
+							providers.add(element);
 						}
 					}
 					// find clients
@@ -600,11 +613,19 @@ public class TreeBuilder {
 						for (Element element : targets) {
 							// add items to the overall map 
 							addToMapList(valueMediatorToValueClients, valueMediator, element);
+							
+							// collect to pass to the common service
+							clients.add(element);
+							clientsMandatory.addAll(getRequiredValueClients(valueMediator));
 						}
 					}
 				}
 			}
 		}
+		
+		// pass collected bindings data to the common service so that other views can use it
+		BindingsData.setBindingsData(clients, clientsMandatory, providers, valueMediators);
+
 	}
 	
 	// ###################### END: Collect and sort data

@@ -679,8 +679,8 @@ public class GeneratorVeMScenariosBased {
 				for (Element testScenario : userSelectedTestScenariosSorted) {
 					
 					// start time
-					long startTime = System.currentTimeMillis();
-					System.err.println("Started creating VeM for '" + ModelicaMLServices.getName(testScenario) + "'");
+//					long startTime = System.currentTimeMillis(); // DEBUG ONLY
+//					System.err.println("Started creating VeM for '" + ModelicaMLServices.getName(testScenario) + "'"); // DEBUG ONLY
 					
 					boolean scenarioHasRequirements = false;
 					HashSet<Element> scenarioRequirements = userSelectedScenariosAndRequirements.get(testScenario);
@@ -1119,8 +1119,8 @@ public class GeneratorVeMScenariosBased {
 						counter++;
 					}
 					
-					long endTime = System.currentTimeMillis();
-					System.err.println((endTime - startTime)+ "ms for generating a Vem for " + ModelicaMLServices.getName(testScenario) + "\n\n");
+//					long endTime = System.currentTimeMillis(); // DEBUG ONLY
+//					System.err.println((endTime - startTime)+ "ms for generating a Vem for " + ModelicaMLServices.getName(testScenario) + "\n\n"); // DEBUG ONLY
 				}
 			}
 			else {

@@ -47,10 +47,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.papyrus.infra.core.services.ServiceException;
-import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView;
 import org.eclipse.papyrus.views.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
@@ -80,6 +76,7 @@ import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeUtls;
@@ -301,17 +298,12 @@ public class PropertySection_Details extends AbstractPropertySection {
     	final NamedElement element = (NamedElement)item.getUmlElement();
 		//########## storing start
 //		TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
-		ServicesRegistry serviceRegistry;
-		TransactionalEditingDomain editingDomain = null;
+//		ServicesRegistry serviceRegistry;
+//		TransactionalEditingDomain editingDomain = null;
 
-		try {
-			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
-
-		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+//			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+		TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 
 		CompoundCommand cc = new CompoundCommand();
 		Command command = new RecordingCommand(editingDomain) {
@@ -358,17 +350,12 @@ public class PropertySection_Details extends AbstractPropertySection {
 			
 			//########## storing start
 //			TransactionalEditingDomain editingDomain = EditorUtils.getTransactionalEditingDomain();
-			ServicesRegistry serviceRegistry;
-			TransactionalEditingDomain editingDomain = null;
+//			ServicesRegistry serviceRegistry;
+//			TransactionalEditingDomain editingDomain = null;
 
-			try {
-				serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-				editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
-
-			} catch (ServiceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//				serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+//				editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+			TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 			
 			CompoundCommand cc = new CompoundCommand();
 			Command command = new RecordingCommand(editingDomain) {

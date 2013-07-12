@@ -48,11 +48,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.infra.core.services.ServiceException;
-import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
 import org.eclipse.papyrus.infra.emf.utils.BusinessModelResolver;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -692,40 +688,34 @@ public class VeMGenerationOptionsDialog extends Dialog {
 				HashSet<Element> systemModels = new HashSet<Element>();
 				systemModels.add(getSystemModel());
 				
-				try {
-					ServicesRegistry  serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-					TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
-					
-					rmg = new GeneratorVeMRequirementsBased(
-							systemModels, 
-							getTargetPackge(), 
-							getRequirementsPackage(), 
-							getScenariosPackage(), 
-							getBindingsPackage(), 
-							getSuperClass(),
-							isConsiderPositiveRequirementsRelations(), 
-							isConsiderNegativeRequirementsRelations(), 
-							isConsiderAllUnknownRequirementsRelations()
-							);
-					
-					if (!rmg.isTestSimulationModelGenerationCanceled()) {
+				TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
+				
+				rmg = new GeneratorVeMRequirementsBased(
+						systemModels, 
+						getTargetPackge(), 
+						getRequirementsPackage(), 
+						getScenariosPackage(), 
+						getBindingsPackage(), 
+						getSuperClass(),
+						isConsiderPositiveRequirementsRelations(), 
+						isConsiderNegativeRequirementsRelations(), 
+						isConsiderAllUnknownRequirementsRelations()
+						);
+				
+				if (!rmg.isTestSimulationModelGenerationCanceled()) {
 
-						// execute 
-						editingDomain.getCommandStack().execute(getCommand(editingDomain));
+					// execute 
+					editingDomain.getCommandStack().execute(getCommand(editingDomain));
 
-						if (getMode()== Constants.MODE_VEM_GENERATION) {
-							// show log
-							String msg = "Generation of Verification Models for '" + ((NamedElement)getSystemModel()).getName() + "'\n" +
-										 "Number of created models: 1\n\n";
+					if (getMode()== Constants.MODE_VEM_GENERATION) {
+						// show log
+						String msg = "Generation of Verification Models for '" + ((NamedElement)getSystemModel()).getName() + "'\n" +
+									 "Number of created models: 1\n\n";
 
-							DialogMessage dialog = new DialogMessage(getShell(), "Verification Models Generation Log", 
-									"Data collecation and models generation log entries:", msg + rmg.getLog().trim(), false);
-							dialog.open();
-						}
+						DialogMessage dialog = new DialogMessage(getShell(), "Verification Models Generation Log", 
+								"Data collecation and models generation log entries:", msg + rmg.getLog().trim(), false);
+						dialog.open();
 					}
-
-				} catch (ServiceException e) {
-					e.printStackTrace();
 				}
 			} 
 			
@@ -1169,13 +1159,13 @@ public class VeMGenerationOptionsDialog extends Dialog {
 		}
 	}
 
-	private String getLastSegment(String string, String separator){
-		if (string != null) {
-			String[] splitted = string.split(separator);
-			return splitted[splitted.length - 1];
-		}
-		return string;
-	}
+//	private String getLastSegment(String string, String separator){
+//		if (string != null) {
+//			String[] splitted = string.split(separator);
+//			return splitted[splitted.length - 1];
+//		}
+//		return string;
+//	}
 	
 	
 	

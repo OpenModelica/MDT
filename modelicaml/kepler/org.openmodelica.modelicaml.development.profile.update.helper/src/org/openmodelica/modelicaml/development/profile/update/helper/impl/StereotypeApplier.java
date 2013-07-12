@@ -16,9 +16,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.papyrus.infra.core.services.ServiceException;
-import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Connector;
 import org.eclipse.uml2.uml.Dependency;
@@ -37,6 +34,7 @@ import org.eclipse.uml2.uml.StateMachine;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 
 public class StereotypeApplier {
@@ -56,7 +54,7 @@ public class StereotypeApplier {
 	private HashSet<StateMachine> stateMachines = new HashSet<StateMachine>();
 
 	// elements for which stereotype could be found
-	private List<EObject> handledElements = new ArrayList<EObject>();
+//	private List<EObject> handledElements = new ArrayList<EObject>();
 
 	
 	// elements for which no appropriate stereotype could be found
@@ -65,7 +63,7 @@ public class StereotypeApplier {
 
 	private String mMessage = "Applying ModelicaML stereotypes";
 	
-	private ServicesRegistry serviceRegistry = null;
+//	private ServicesRegistry serviceRegistry = null;
 	private TransactionalEditingDomain editingDomain = null;
 	
 	private ProgressMonitorDialog progressMonitor;
@@ -228,8 +226,10 @@ public class StereotypeApplier {
 	
 	private void applyStereotypesCommand() throws ServiceException {
 		
-		serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-		editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+//		serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+//		editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+		
+		editingDomain = EditorServices.getPapyrusEditingDomain();
 		
 		CompoundCommand cc = new CompoundCommand("Unapplying ModelicaML Stereotypes");
 		Command command = new RecordingCommand(editingDomain) {

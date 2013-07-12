@@ -50,11 +50,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.infra.core.services.ServiceException;
-import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
 import org.eclipse.papyrus.infra.emf.utils.BusinessModelResolver;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Element;
@@ -62,6 +58,7 @@ import org.eclipse.uml2.uml.Enumeration;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 
 public class DisconnectFromCodeSyncHandler extends AbstractHandler {
 	private EObject selectedElement = null;
@@ -90,19 +87,12 @@ public class DisconnectFromCodeSyncHandler extends AbstractHandler {
 	}
 
 	private void unapplyProxyStereotype(NamedElement proxy){
-		ServicesRegistry serviceRegistry;
-		try {
-			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-			TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
-			
-			// execute 
-			editingDomain.getCommandStack().execute(getCommand(editingDomain, proxy));
-
-			
-		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		ServicesRegistry serviceRegistry;
+		//			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+		//			TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+		TransactionalEditingDomain  editingDomain = EditorServices.getPapyrusEditingDomain();
+		// execute 
+		editingDomain.getCommandStack().execute(getCommand(editingDomain, proxy));
 	}
 	
 	

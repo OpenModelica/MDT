@@ -41,10 +41,6 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.papyrus.infra.core.services.ServiceException;
-import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.papyrus.infra.emf.utils.BusinessModelResolver;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -61,10 +57,10 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.contentassist.ModelicaMLContentAssist;
+import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
 import org.openmodelica.modelicaml.editor.xtext.valuebinding.ui.internal.MediatorActivator;
 import org.openmodelica.modelicaml.tabbedproperties.editors.glue.edit.part.PropertiesSectionXtextEditorHelper;
-import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
 
 import com.google.inject.Injector;
 
@@ -72,7 +68,7 @@ import com.google.inject.Injector;
 public class PropertySection_MediatorOperationEditor extends AbstractPropertySection {
 	
 //	private Link textOperation;
-	private TreeObject item = null;
+//	private TreeObject item = null;
 	
 	
 	/** The LANGUAGE. */
@@ -103,7 +99,7 @@ public class PropertySection_MediatorOperationEditor extends AbstractPropertySec
 	private String textToEdit = "";
 	
 	/** The owning class. */
-	private Element owningClass;
+//	private Element owningClass;
 	
 	/** The is new selection. */
 	private boolean isNewSelection;
@@ -161,15 +157,10 @@ public class PropertySection_MediatorOperationEditor extends AbstractPropertySec
 		
 		// Get Papyrus editing domain
 //		editingDomain = EditorUtils.getTransactionalEditingDomain();
-		ServicesRegistry serviceRegistry;
-		try {
-			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
-
-		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		ServicesRegistry serviceRegistry;
+//			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+//			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+		editingDomain = EditorServices.getPapyrusEditingDomain();
 	}
 
 	private Boolean isValidElement(){

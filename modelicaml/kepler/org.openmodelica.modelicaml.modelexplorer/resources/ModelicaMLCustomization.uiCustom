@@ -404,14 +404,11 @@
   </types>
   <types metaclassName="uml.TypedElement">
     <references referenceName="type">
-      <customizedFeatures>
-        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="true"/>
-      </customizedFeatures>
       <customizedFeatures customizedFeature="label">
         <defaultValue xsi:type="uicustom:StaticFeatureValue" value="type"/>
       </customizedFeatures>
       <customizedFeatures customizedFeature="collapseLink">
-        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="true"/>
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="false"/>
       </customizedFeatures>
     </references>
   </types>
