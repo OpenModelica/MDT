@@ -1,0 +1,30 @@
+Manifest-Version: 1.0
+Bundle-Name: ModelicaML Code Generator
+Bundle-SymbolicName: org.openmodelica.modelicaml.gen.modelica;singleton=true
+Bundle-Version: 1.2.2.qualifier
+Bundle-Localization: plugin
+Require-Bundle: fr.obeo.acceleo.gen,
+ fr.obeo.acceleo.template;bundle-version="2.6.1",
+ fr.obeo.acceleo.chain;bundle-version="2.6.1",
+ org.eclipse.ui;bundle-version="3.5.1",
+ org.eclipse.ui.ide;bundle-version="3.5.1",
+ org.eclipse.uml2.uml,
+ org.openmodelica.modelicaml.common;bundle-version="1.0.0",
+ org.eclipse.core.runtime;bundle-version="3.7.0",
+ org.eclipse.core.resources;bundle-version="3.7.101",
+ org.eclipse.papyrus.editor;bundle-version="0.8.2",
+ org.eclipse.emf.transaction;bundle-version="1.4.0",
+ org.eclipse.papyrus.infra.ui.resources;bundle-version="0.9.0",
+ org.eclipse.papyrus.uml.diagram.common;bundle-version="0.9.0",
+ org.eclipse.papyrus.uml.tools;bundle-version="0.10.0",
+ org.eclipse.papyrus.infra.core;bundle-version="0.10.0"
+Import-Package: org.eclipse.emf.ecore.xmi,
+ org.eclipse.jface.dialogs,
+ org.eclipse.swt.widgets,
+ org.eclipse.ui.views.contentoutline
+Bundle-Vendor: OpenModelica Project
+Eclipse-AutoStart: false
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Provide-Package: org.openmodelica.modelicaml.gen.modelica.cg.helpers,
+ org.openmodelica.modelicaml.gen.modelica.popupactions
+Export-Package: org.openmodelica.modelicaml.gen.modelica.services

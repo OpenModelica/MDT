@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="org.openmodelica.modelicaml.marker.actionCode"
+         name="ModelicaML Action Code"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.emf.validation.problem">
+      </super>
+      <super
+            type="org.eclipse.emf.ecore.diagnostic">
+      </super>
+	  <super
+            type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         id="org.openmodelica.modelicaml.marker.omc"
+         name="ModelicaML Simulation"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.emf.validation.problem">
+      </super>
+      <super
+            type="org.eclipse.emf.ecore.diagnostic">
+      </super>
+	  <super
+            type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent
+            value="false">
+      </persistent>
+   </extension>
+   <extension
+         id="org.openmodelica.modelicaml.marker.validation.problemmarker"
+         name="ModelicaML Validation"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.emf.validation.problem">
+      </super>
+      <super
+            type="org.eclipse.emf.ecore.diagnostic">
+      </super>
+	  <super
+            type="org.eclipse.core.resources.marker">
+      </super>
+
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         id="org.openmodelica.modelicaml.marker.actionCode.componentmodification"
+         name="ModelicaML Component Modifications"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.emf.validation.problem">
+      </super>
+      <super
+            type="org.eclipse.emf.ecore.diagnostic">
+      </super>
+      <super
+            type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+      <extension
+         id="org.openmodelica.modelicaml.marker.modelicamlproxies"
+         name="Modelica Model Proxies Synchronization"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.emf.validation.problem">
+      </super>
+      <super
+            type="org.eclipse.emf.ecore.diagnostic">
+      </super>
+      <super
+            type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent
+            value="false">
+      </persistent>
+   </extension>
+   <extension
+         id="org.openmodelica.modelicaml.marker.modelicaloading"
+         name="OMC Modelica Models Loading"
+         point="org.eclipse.core.resources.markers">
+       <super
+            type="org.eclipse.emf.validation.problem">
+      </super>
+      <super
+            type="org.eclipse.emf.ecore.diagnostic">
+      </super>
+      <super
+            type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent
+            value="false">
+      </persistent>
+   </extension>
+   	<extension
+       id="org.openmodelica.modelicaml.marker.bindings"
+       name="ModelicaML Value Bindings"
+       point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.emf.validation.problem">
+      </super>
+      <super
+            type="org.eclipse.emf.ecore.diagnostic">
+      </super>
+      <super
+            type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   
+   <extension
+         point="org.eclipse.papyrus.infra.core.modelListener">
+      <listener
+            name="org.openmodelica.modelicaml.listeners.umlModelChanged"
+            realization="org.openmodelica.modelicaml.common.listeners.PapyrusListener">
+      </listener>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.openmodelica.modelicaml.category"
+            name="ModelicaML">
+      </category>
+   </extension>
+   	<extension
+       id="org.openmodelica.modelicaml.marker.bindings"
+       name="ModelicaML Value Bindings"
+       point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.emf.validation.problem">
+      </super>
+      <super
+            type="org.eclipse.emf.ecore.diagnostic">
+      </super>
+      <super
+            type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+
+</plugin>

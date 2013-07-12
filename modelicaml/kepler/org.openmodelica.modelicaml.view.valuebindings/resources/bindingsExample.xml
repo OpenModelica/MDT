@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bindings>
+	<mediatorContainer qualifiedName="aaa.bbb.ccc">
+	
+		<toolSpecific>
+			<qualifiedNameLabel language="ModelicaML" tool="Eclipse">a aa::b bb::c cc</qualifiedNameLabel>
+		</toolSpecific>
+		<comment>Description of this container</comment>
+				
+		<mediator name="aaa.bbb.ccc.m1" type="qq.ee.tt" variability="continuous">
+			<toolSpecific>
+				<typeQualifiedNameLabel language="ModelicaML" tool="Eclipse">a aa::b bb::c cc::Real</typeQualifiedNameLabel>
+				<qualifiedNameLabel language="ModelicaML" tool="Eclipse">a aa::b bb::c cc::m1</qualifiedNameLabel>
+			</toolSpecific>
+		
+			<comment>Description of this mediator</comment>
+			<operation lanugage="Modelica" languageVersion="3.3"></operation>
+			
+			<client qualifiedName="aaa.bbb.ccc" type="qq.ee.tt" variability="continuous">
+				<toolSpecific>
+					<typeQualifiedNameLabel language="ModelicaML" tool="Eclipse">a aa::b bb::c cc::Real</typeQualifiedNameLabel>
+					<qualifiedNameLabel language="ModelicaML" tool="Eclipse">a aa::b bb::c cc::m1</qualifiedNameLabel>
+				</toolSpecific>
+
+				<comment>Description of this client</comment>
+				<operation lanugage="Modelica" languageVersion="3.3">clientPath.subComponent1 = getBindings();</operation>
+			</client>
+			
+			<provider qualifiedName="aaa.bbb.ccc" variability="continuous">
+				<toolSpecific>
+					<typeQualifiedNameLabel language="ModelicaML" tool="Eclipse">a aa::b bb::c cc::Real</typeQualifiedNameLabel>
+					<qualifiedNameLabel language="ModelicaML" tool="Eclipse">a aa::b bb::c cc::m1</qualifiedNameLabel>
+				</toolSpecific>				
+
+				<comment>Description of this provider</comment>
+				<operation lanugage="Modelica" languageVersion="3.3">providerPath.subComponent1</operation>
+			</provider>
+			
+		</mediator>
+	</mediatorContainer>
+</bindings>

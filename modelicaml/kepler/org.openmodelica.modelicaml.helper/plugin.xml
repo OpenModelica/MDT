@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+    <!--<extension
+         point="org.eclipse.ui.views">
+      <view
+            name="Intstantiated Requirements"
+            icon="icons/requirement.gif"
+            category="org.openmodelica.modelicaml.gen.modelica.category1"
+            class="org.openmodelica.modelicaml.helper.views.InstantiatedRequirementsView"
+            id="org.openmodelica.modelicaml.helper.view.instantiated.requirements">
+      </view>
+   </extension>
+   -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <!--
+      <command
+            id="org.openmodelica.modelicaml.helper.commands.instantiaterequirements"
+            name="Instantiate Requirements">
+      </command>
+      <command
+            id="org.openmodelica.modelicaml.helper.commands.updateTestOracleElements"
+            name="Create/Update Test Oracle Elements">
+      </command>
+      -->
+      <command
+            id="org.openmodelica.modelicaml.helper.commands.generatesimmodels"
+            name="Generate Verification Models Popup">
+      </command>
+      <command
+            id="org.openmodelica.modelicaml.helper.commands.toolbar.generatesimmodels"
+            name="Generate Verification Models Toolbar">
+      </command>
+      <command
+            id="org.openmodelica.modelicaml.helper.commands.toolbar.discoverScenToReqRelations"
+            name="Discover Scenarios to Requirements Relations Toolbar">
+      </command>
+      <command
+            id="org.openmodelica.modelicaml.helper.commands.toolbar.automaticScenarioBasedVerification"
+            name="Automatic Scenario-Based Verification">
+      </command>
+      <command
+            id="org.openmodelica.modelicaml.helper.commands.toolbar.analyzesimulationresults"
+            name="Analyze Simulation Results Toolbar">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <!--
+      <handler
+            class="org.openmodelica.modelicaml.helper.handlers.InstantiateRequirementsHandler"
+            commandId="org.openmodelica.modelicaml.helper.commands.instantiaterequirements">
+         <activeWhen>
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <adapt
+                        type="org.eclipse.emf.ecore.EObject">
+                     <and>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.Class">
+                        </instanceof>
+                        <or>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Block"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Model"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                        </or>
+                        <and>
+                           <not>
+                              <instanceof
+                                    value="org.eclipse.uml2.uml.Behavior">
+                              </instanceof>
+                           </not>
+                        </and>
+                     </and>
+                  </adapt>
+               </iterate>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.helper.handlers.GenerateTestOracleElementsHandler"
+            commandId="org.openmodelica.modelicaml.helper.commands.updateTestOracleElements">
+         <activeWhen>
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <adapt
+                        type="org.eclipse.emf.ecore.EObject">
+                     <and>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.Class">
+                        </instanceof>
+                        <or>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Block"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Model"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                        </or>
+                        <and>
+                           <not>
+                              <instanceof
+                                    value="org.eclipse.uml2.uml.Behavior">
+                              </instanceof>
+                           </not>
+                        </and>
+                     </and>
+                  </adapt>
+               </iterate>
+            </with>
+         </activeWhen>
+      </handler>
+      -->
+      <handler
+            class="org.openmodelica.modelicaml.helper.handlers.VeMGenaratorPopupHandler"
+            commandId="org.openmodelica.modelicaml.helper.commands.generatesimmodels">
+         <activeWhen>
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <adapt
+                        type="org.eclipse.emf.ecore.EObject">
+                     <and>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.Class">
+                        </instanceof>
+                        <or>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Block"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::Model"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                           <test
+                                 args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                 property="org.openmodelica.modelicaml.testers.hasStereotype">
+                           </test>
+                        </or>
+                        <and>
+                           <not>
+                              <instanceof
+                                    value="org.eclipse.uml2.uml.Behavior">
+                              </instanceof>
+                           </not>
+                        </and>
+                     </and>
+                  </adapt>
+               </iterate>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.helper.handlers.VeMGenaratorToobarHandler"
+            commandId="org.openmodelica.modelicaml.helper.commands.toolbar.generatesimmodels">
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.helper.handlers.ScenariosToRequirementsRelationsDiscoveryToolbarHandler"
+            commandId="org.openmodelica.modelicaml.helper.commands.toolbar.discoverScenToReqRelations">
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.helper.handlers.AutomaticScenarioBasedVerificationToolbarHandler"
+            commandId="org.openmodelica.modelicaml.helper.commands.toolbar.automaticScenarioBasedVerification">
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.helper.handlers.AnalyzeSimulationResultsToolbarHandler"
+            commandId="org.openmodelica.modelicaml.helper.commands.toolbar.analyzesimulationresults">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="org.openmodelica.modelicaml.toolbar.helper"
+               label="ModelicaML Verification">
+            
+            <!--<visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="org.openmodelica.modelicaml.perspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+            -->
+            
+            <separator
+                  name="org.openmodelica.modelicaml.helper.separator1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.helper.commands.toolbar.automaticScenarioBasedVerification"
+                  icon="icons/automaticScenarioBasedVerification.gif"
+                  label="Automatic Scenario-Based Verification"
+                  style="push"
+                  tooltip="Automatic Scenario-Based Verification">
+               <visibleWhen>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
+                     </equals>
+                  </with>
+               </visibleWhen>
+               
+               <!--<visibleWhen>
+					<reference definitionId="org.eclipse.papyrus.uml.diagram.common.IsPapyrusActiveWithUMLModel"/>
+				</visibleWhen>
+				-->
+            </command>
+            <command
+                  commandId="org.openmodelica.modelicaml.helper.commands.toolbar.discoverScenToReqRelations"
+                  icon="icons/discoverRelations2.gif"
+                  label="Discover Relations Between Scenarios and Requirements"
+                  style="push"
+                  tooltip="Discover Relations Between Scenarios and Requirements">
+              
+               <visibleWhen>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
+                     </equals>
+                  </with>
+               </visibleWhen>
+               
+                <!--<visibleWhen>
+					<reference definitionId="org.eclipse.papyrus.uml.diagram.common.IsPapyrusActiveWithUMLModel"/>
+				</visibleWhen> 
+				-->
+            </command>
+            <separator
+                  name="org.openmodelica.modelicaml.helper.separator2"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.helper.commands.toolbar.generatesimmodels"
+                  icon="icons/new_testsuite.gif"
+                  label="Create Design Verification Models"
+                  style="push"
+                  tooltip="Create Design Verification Models">
+               <visibleWhen>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
+                     </equals>
+                  </with>
+               </visibleWhen>
+               
+                <!--<visibleWhen>
+					<reference definitionId="org.eclipse.papyrus.uml.diagram.common.IsPapyrusActiveWithUMLModel"/>
+				</visibleWhen>
+				-->
+            </command>
+            <separator
+                  name="org.openmodelica.modelicaml.helper.separator3"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.helper.commands.toolbar.analyzesimulationresults"
+                  icon="icons/runanalysis.gif"
+                  label="Analyze Verification Results"
+                  style="push"
+                  tooltip="Analyze Verification Results">
+               <visibleWhen>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
+                     </equals>
+                  </with>
+               </visibleWhen>
+               
+               <!--<visibleWhen>
+					<reference definitionId="org.eclipse.papyrus.uml.diagram.common.IsPapyrusActiveWithUMLModel"/>
+				</visibleWhen>
+				-->
+            </command>
+            <!--
+            <command
+                  commandId="org.openmodelica.modelicaml.helper.commands.runtests"
+                  icon="icons/tscriptrun.gif"
+                  label="Run Design Verification Models"
+                  style="push"
+                  tooltip="Run Design Verification Models">
+               <visibleWhen>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
+                     </equals>
+                  </with>
+               </visibleWhen>
+            </command>
+            -->
+         </toolbar>
+      </menuContribution>
+   </extension>
+
+</plugin>

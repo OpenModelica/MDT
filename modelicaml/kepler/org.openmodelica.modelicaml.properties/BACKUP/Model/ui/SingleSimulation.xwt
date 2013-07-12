@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Composite xmlns:ppe="clr-namespace:org.eclipse.papyrus.properties.widgets"
+	xmlns:x="http://www.eclipse.org/xwt" xmlns:j="clr-namespace:java.lang"
+	xmlns="http://www.eclipse.org/xwt/presentation" xmlns:ppel="clr-namespace:org.eclipse.papyrus.properties.widgets.layout">
+	<Composite.layout>
+		<ppel:PropertiesLayout></ppel:PropertiesLayout>
+	</Composite.layout>
+	<Composite>
+		<Composite.layout>
+			<ppel:PropertiesLayout numColumns="1"></ppel:PropertiesLayout>
+		</Composite.layout>
+		<ppe:StringEditor input="{Binding}"
+			property="ModelicaML:ModelicaSimulationConstructs:Simulation:startTime"></ppe:StringEditor>
+		<ppe:StringEditor input="{Binding}"
+			property="ModelicaML:ModelicaSimulationConstructs:Simulation:stopTime"></ppe:StringEditor>
+		<ppe:StringEditor input="{Binding}"
+			property="ModelicaML:ModelicaSimulationConstructs:Simulation:tolerance"></ppe:StringEditor>
+		<ppe:StringEditor input="{Binding}"
+			property="ModelicaML:ModelicaSimulationConstructs:Simulation:numberOfIntervals"></ppe:StringEditor>
+	</Composite>
+</Composite>

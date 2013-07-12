@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description name="ModelicaML Update Site" url="http://www.ida.liu.se/labs/pelab/modelica/OpenModelica/MDT/ModelicaML/update/kepler">
+      ModelicaML is a UML Profile for modeling and simulating of the system dynamic behavior. It enables engineers to formalize system  requirements and designs, to simulate designs and to verify desings againts requirements.
+
+The Eclipse plugins provided by this update site are add-ons to the Papyrus (MDT) UML modeling tool. They customize Papyrus with ModelicaML modeling features, provide a Modelica code generator and a connection to the OpenModelica compiler.
+   </description>
+   <feature url="features/org.openmodelica.modelicaml.feature_1.9.6.201307110935.jar" id="org.openmodelica.modelicaml.feature" version="1.9.6.201307110935">
+      <category name="org.openmodelica.modelicaml"/>
+   </feature>
+   <category-def name="org.openmodelica.modelicaml" label="ModelicaML - A UML Profile for System Dynamics Engineering using Modelica">
+      <description>
+         ModelicaML is a UML Profile for modeling and simulating of the system dynamic behavior. It enables engineers to formalize system  requirements and designs, to simulate designs and to verify desings againts requirements.
+
+The Eclipse plugins provided by this update site are add-ons to the Papyrus (MDT) UML modeling tool. They customize Papyrus with ModelicaML modeling features, provide a Modelica code generator and a connection to the OpenModelica compiler.
+      </description>
+   </category-def>
+</site>

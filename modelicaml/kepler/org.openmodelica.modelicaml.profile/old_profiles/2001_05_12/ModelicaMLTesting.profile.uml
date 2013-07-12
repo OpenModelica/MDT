@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Profile xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="_KdbjIEsVEeCWwP2csDYIyw" name="ModelicaMLTesting" metaclassReference="_XMsrEEsVEeCWwP2csDYIyw _aSvO8EsVEeCWwP2csDYIyw _SUkhcEu4EeCvhJzzW5F_Ew">
+  <eAnnotations xmi:id="_Z_rTkEsWEeCLrv7S0OCHfw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+    <contents xmi:type="ecore:EPackage" xmi:id="_dWOQMHfaEeCiIrs8wuP5zg" name="ModelicaMLTesting" nsURI="http:///schemas/ModelicaMLTesting/_dV7VQHfaEeCiIrs8wuP5zg/5" nsPrefix="ModelicaMLTesting">
+      <eAnnotations xmi:id="_dWq8KnfaEeCiIrs8wuP5zg" source="PapyrusVersion">
+        <details xmi:id="_dWq8K3faEeCiIrs8wuP5zg" key="Version" value="0.0.6"/>
+        <details xmi:id="_dWq8LHfaEeCiIrs8wuP5zg" key="Comment" value=""/>
+        <details xmi:id="_dWq8LXfaEeCiIrs8wuP5zg" key="Copyright" value=""/>
+        <details xmi:id="_dWq8LnfaEeCiIrs8wuP5zg" key="Date" value="2011-05-06"/>
+        <details xmi:id="_dWq8L3faEeCiIrs8wuP5zg" key="Author" value=""/>
+      </eAnnotations>
+    </contents>
+    <contents xmi:type="ecore:EPackage" xmi:id="_TGmjMHGHEeCymoXP7CzS_g" name="ModelicaMLTesting" nsURI="http:///schemas/ModelicaMLTesting/_TGJ3QHGHEeCymoXP7CzS_g/4" nsPrefix="ModelicaMLTesting">
+      <eAnnotations xmi:id="_TG5eIHGHEeCymoXP7CzS_g" source="PapyrusVersion">
+        <details xmi:id="_TG5eIXGHEeCymoXP7CzS_g" key="Version" value="0.0.5"/>
+        <details xmi:id="_TG5eInGHEeCymoXP7CzS_g" key="Comment" value=""/>
+        <details xmi:id="_TG5eI3GHEeCymoXP7CzS_g" key="Copyright" value=""/>
+        <details xmi:id="_TG5eJHGHEeCymoXP7CzS_g" key="Date" value="2011-04-28"/>
+        <details xmi:id="_TG5eJXGHEeCymoXP7CzS_g" key="Author" value=""/>
+      </eAnnotations>
+    </contents>
+    <contents xmi:type="ecore:EPackage" xmi:id="_LVsOUUu5EeCvhJzzW5F_Ew" name="ModelicaMLTesting" nsURI="http:///schemas/ModelicaMLTesting/_LVsOUEu5EeCvhJzzW5F_Ew/3" nsPrefix="ModelicaMLTesting">
+      <eAnnotations xmi:id="_LVsOaku5EeCvhJzzW5F_Ew" source="PapyrusVersion">
+        <details xmi:id="_LVsOa0u5EeCvhJzzW5F_Ew" key="Version" value="0.0.4"/>
+        <details xmi:id="_LVsObEu5EeCvhJzzW5F_Ew" key="Comment" value=""/>
+        <details xmi:id="_LVsObUu5EeCvhJzzW5F_Ew" key="Copyright" value=""/>
+        <details xmi:id="_LVsObku5EeCvhJzzW5F_Ew" key="Date" value="2011-03-11"/>
+        <details xmi:id="_LVsOb0u5EeCvhJzzW5F_Ew" key="Author" value=""/>
+      </eAnnotations>
+    </contents>
+    <contents xmi:type="ecore:EPackage" xmi:id="_5qD6EEu4EeCvhJzzW5F_Ew" name="ModelicaMLTesting" nsURI="http:///schemas/ModelicaMLTesting/_5pwYEEu4EeCvhJzzW5F_Ew/2" nsPrefix="ModelicaMLTesting">
+      <eAnnotations xmi:id="_5qNEGEu4EeCvhJzzW5F_Ew" source="PapyrusVersion">
+        <details xmi:id="_5qNEGUu4EeCvhJzzW5F_Ew" key="Version" value="0.0.3"/>
+        <details xmi:id="_5qNEGku4EeCvhJzzW5F_Ew" key="Comment" value=""/>
+        <details xmi:id="_5qNEG0u4EeCvhJzzW5F_Ew" key="Copyright" value=""/>
+        <details xmi:id="_5qNEHEu4EeCvhJzzW5F_Ew" key="Date" value="2011-03-11"/>
+        <details xmi:id="_5qNEHUu4EeCvhJzzW5F_Ew" key="Author" value=""/>
+      </eAnnotations>
+    </contents>
+    <contents xmi:type="ecore:EPackage" xmi:id="_rkCQQUsYEeCLrv7S0OCHfw" name="ModelicaML" nsURI="http:///schemas/ModelicaML/_rkCQQEsYEeCLrv7S0OCHfw/1" nsPrefix="ModelicaML">
+      <eAnnotations xmi:id="_rkCQU0sYEeCLrv7S0OCHfw" source="PapyrusVersion">
+        <details xmi:id="_rkCQVEsYEeCLrv7S0OCHfw" key="Version" value="0.0.2"/>
+        <details xmi:id="_rkCQVUsYEeCLrv7S0OCHfw" key="Comment" value=""/>
+        <details xmi:id="_rkCQVksYEeCLrv7S0OCHfw" key="Copyright" value=""/>
+        <details xmi:id="_rkCQV0sYEeCLrv7S0OCHfw" key="Date" value="2011-03-10"/>
+        <details xmi:id="_rkCQWEsYEeCLrv7S0OCHfw" key="Author" value=""/>
+      </eAnnotations>
+    </contents>
+    <contents xmi:type="ecore:EPackage" xmi:id="_Z_rTkUsWEeCLrv7S0OCHfw" name="ModelicaMLTesting" nsURI="http:///schemas/ModelicaMLTesting/_Z_YYoEsWEeCLrv7S0OCHfw/0" nsPrefix="ModelicaMLTesting">
+      <eAnnotations xmi:id="_Z_1ElEsWEeCLrv7S0OCHfw" source="PapyrusVersion">
+        <details xmi:id="_Z_1ElUsWEeCLrv7S0OCHfw" key="Version" value="0.0.1"/>
+        <details xmi:id="_Z_1ElksWEeCLrv7S0OCHfw" key="Comment" value=""/>
+        <details xmi:id="_Z_1El0sWEeCLrv7S0OCHfw" key="Copyright" value=""/>
+        <details xmi:id="_Z_1EmEsWEeCLrv7S0OCHfw" key="Date" value="2011-03-10"/>
+        <details xmi:id="_Z_1EmUsWEeCLrv7S0OCHfw" key="Author" value=""/>
+      </eAnnotations>
+      <eClassifiers xmi:type="ecore:EClass" xmi:id="_Z_rTkksWEeCLrv7S0OCHfw" name="ValueProxyContainer">
+        <eAnnotations xmi:id="_Z_rTk0sWEeCLrv7S0OCHfw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+          <references xmi:type="uml:Stereotype" href="ModelicaML.profile.uml#_PTFDcEsVEeCWwP2csDYIyw"/>
+        </eAnnotations>
+        <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_Z_rTlEsWEeCLrv7S0OCHfw" name="base_Class" ordered="false" lowerBound="1">
+          <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
+        </eStructuralFeatures>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EClass" xmi:id="_Z_rTlksWEeCLrv7S0OCHfw" name="ValueProxy">
+        <eAnnotations xmi:id="_Z_rTl0sWEeCLrv7S0OCHfw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+          <references xmi:type="uml:Stereotype" href="ModelicaML.profile.uml#_UCVA0EsVEeCWwP2csDYIyw"/>
+        </eAnnotations>
+        <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_Z_rTmEsWEeCLrv7S0OCHfw" name="base_Property" ordered="false" lowerBound="1">
+          <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Property"/>
+        </eStructuralFeatures>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EClass" xmi:id="_Z_rTmksWEeCLrv7S0OCHfw" name="ValueBinding">
+        <eAnnotations xmi:id="_Z_rTm0sWEeCLrv7S0OCHfw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+          <references xmi:type="uml:Stereotype" href="ModelicaML.profile.uml#_yg9GcEsVEeCLrv7S0OCHfw"/>
+        </eAnnotations>
+        <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_Z_rTnEsWEeCLrv7S0OCHfw" name="base_Property" ordered="false" lowerBound="1">
+          <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Property"/>
+        </eStructuralFeatures>
+        <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_Z_rTnksWEeCLrv7S0OCHfw" name="valueProxyReference" ordered="false" upperBound="-1" eType="_Z_rTlksWEeCLrv7S0OCHfw"/>
+      </eClassifiers>
+    </contents>
+  </eAnnotations>
+  <elementImport xmi:id="_XMsrEEsVEeCWwP2csDYIyw" alias="Class">
+    <importedElement xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Class"/>
+  </elementImport>
+  <elementImport xmi:id="_aSvO8EsVEeCWwP2csDYIyw" alias="Property">
+    <importedElement xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Property"/>
+  </elementImport>
+  <elementImport xmi:id="_SUkhcEu4EeCvhJzzW5F_Ew" alias="State">
+    <importedElement xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#State"/>
+  </elementImport>
+</uml:Profile>

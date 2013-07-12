@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            category="org.openmodelica.modelicaml.category"
+            class="org.openmodelica.modelicaml.relations.views.RelationsView"
+            icon="icons/relationships.gif"
+            id="org.openmodelica.modelicaml.relations.views.RelationsView"
+            name="Relations">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.openmodelica.modelicaml.relations.commands.toolbar.findInvalidRelations"
+            name="Find Invalid Relations">
+      </command>
+      <command
+            id="org.openmodelica.modelicaml.relations.findReferences"
+            name="Find References">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.openmodelica.modelicaml.relations.handlers.FindInvalidRelationsToolbarHandler"
+            commandId="org.openmodelica.modelicaml.relations.commands.toolbar.findInvalidRelations">
+      </handler>
+      <handler
+            class="org.openmodelica.modelicaml.relations.handlers.FindReferencesPopupHandler"
+            commandId="org.openmodelica.modelicaml.relations.findReferences">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="org.openmodelica.modelicaml.toolbar.relations"
+               label="ModelicaML Clean Up">
+            <separator
+                  name="org.openmodelica.modelicaml.relations.separator1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openmodelica.modelicaml.relations.commands.toolbar.findInvalidRelations"
+                  icon="icons/clear.gif"
+                  label="Find Invalid Relations"
+                  style="push"
+                  tooltip="Find Invalid Relations">
+               <visibleWhen>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
+                     </equals>
+                  </with>
+               </visibleWhen>
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.openmodelica.modelicaml.perspective">
+         <view
+               id="org.openmodelica.modelicaml.relations.views.RelationsView"
+               ratio="0.5"
+               relationship="stack"
+               relative="org.openmodelica.modelicaml.view.componentstree">
+         </view>
+      </perspectiveExtension>
+   </extension>
+
+</plugin>

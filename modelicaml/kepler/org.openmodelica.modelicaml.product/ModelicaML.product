@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="ModelicaML" id="org.openmodelica.modelicaml.product.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
+
+   <aboutInfo>
+      <image path="/org.openmodelica.modelicaml.common/icons/logos/ModelicaML_logo_64x64.png"/>
+      <text>
+         ModelicaML is a UML Profile for modeling and simulating of the system dynamic behavior. It enables engineers to formalize system requirements and designs, to simulate designs  and to verify desings againts requirements.
+      </text>
+   </aboutInfo>
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <programArgs>-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog</programArgs>
+      <vmArgs>-Xmx1024m -XX:PermSize=128m -XX:MaxPermSize=1024m</vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+   </launcherArgs>
+
+   <windowImages i16="/org.openmodelica.modelicaml.common/icons/logos/ModelicaML_logo_16x16.png" i32="/org.openmodelica.modelicaml.common/icons/logos/ModelicaML_logo_32x32.png" i48="/org.openmodelica.modelicaml.common/icons/logos/ModelicaML_logo_48x48.png" i64="/org.openmodelica.modelicaml.common/icons/logos/ModelicaML_logo_64x64.png" i128="/org.openmodelica.modelicaml.common/icons/logos/ModelicaML_logo_128x128.png"/>
+
+   <launcher name="ModelicaML">
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+   <vm>
+   </vm>
+
+   <license>
+        <url>http://www.openmodelica.org/index.php/home/license</url>
+        <text>
+   THIS PROGRAM IS PROVIDED UNDER THE TERMS OF GPL VERSION 3 
+AND THIS OSMC PUBLIC LICENSE (OSMC-PL). 
+ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS PROGRAM CONSTITUTES
+RECIPIENT&amp;apos;S ACCEPTANCE OF THE OSMC PUBLIC LICENSE.
+The OpenModelica software and the Open Source Modelica
+Consortium (OSMC) Public License (OSMC-PL) are obtained
+from Linköping University, either from the above address,
+from the URLs: http://www.ida.liu.se/projects/OpenModelica
+or  
+http://www.openmodelica.org, and in the OpenModelica distribution.
+GNU version 3 is obtained from: http://www.gnu.org/copyleft/gpl.html.
+This program is distributed WITHOUT ANY WARRANTY; without
+even the implied warranty of  MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE, EXCEPT AS EXPRESSLY SET FORTH
+IN THE BY RECIPIENT SELECTED SUBSIDIARY LICENSE CONDITIONS
+OF OSMC-PL.
+See the full OSMC Public License conditions for more details.
+         </text>
+   </license>
+
+   <plugins>
+   </plugins>
+
+   <features>
+      <feature id="org.eclipse.papyrus.uml.textedit.feature"/>
+      <feature id="org.eclipse.papyrus.uml.feature"/>
+      <feature id="org.eclipse.uml2"/>
+      <feature id="org.eclipse.papyrus.infra.feature"/>
+      <feature id="org.eclipse.papyrus.views.properties.feature"/>
+      <feature id="org.eclipse.papyrus.infra.gmfdiag.feature"/>
+      <feature id="org.eclipse.papyrus.uml.table.feature"/>
+      <feature id="org.eclipse.papyrus.infra.services.feature"/>
+      <feature id="org.eclipse.papyrus.infra.widget.feature"/>
+      <feature id="org.eclipse.papyrus.uml.properties.feature"/>
+      <feature id="org.eclipse.papyrus.infra.core.feature"/>
+      <feature id="org.eclipse.papyrus.uml.tools.feature"/>
+      <feature id="org.eclipse.papyrus.editor.feature"/>
+      <feature id="fr.obeo.acceleo"/>
+      <feature id="org.modelica.mdt"/>
+      <feature id="org.eclipse.xtext.ui"/>
+      <feature id="org.eclipse.papyrus.infra.table.feature"/>
+      <feature id="org.eclipse.papyrus.uml.modelexplorer.feature"/>
+      <feature id="org.eclipse.papyrus.infra.emf.feature"/>
+      <feature id="org.eclipse.papyrus.uml.diagram.feature"/>
+      <feature id="org.eclipse.papyrus.xwt.feature"/>
+      <feature id="org.eclipse.papyrus.customization.feature"/>
+      <feature id="org.eclipse.emf.validation"/>
+      <feature id="org.eclipse.papyrus.infra.queries.feature"/>
+      <feature id="org.eclipse.papyrus.uml.alf.feature"/>
+      <feature id="org.eclipse.xtext.runtime"/>
+      <feature id="org.eclipse.papyrus.infra.discovery.feature"/>
+      <feature id="org.eclipse.papyrus.views.modelexplorer.feature"/>
+      <feature id="org.eclipse.emf.ecore"/>
+      <feature id="org.eclipse.e4.rcp"/>
+      <feature id="org.eclipse.emf.common"/>
+      <feature id="org.openmodelica.modelicaml.feature" version="1.9.1.qualifier"/>
+   </features>
+
+
+</product>

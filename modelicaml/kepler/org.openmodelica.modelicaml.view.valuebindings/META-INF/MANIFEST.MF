@@ -1,0 +1,46 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ModelicaML Value Bindings View
+Bundle-SymbolicName: org.openmodelica.modelicaml.view.valuebindings; singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.openmodelica.modelicaml.view.valuebindings.Activator
+Bundle-Vendor: OpenModelica Project
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.emf;bundle-version="2.6.0",
+ org.eclipse.ui.navigator;bundle-version="3.5.0",
+ com.google.inject;bundle-version="2.0.0",
+ org.eclipse.uml2.uml;bundle-version="3.1.2",
+ org.eclipse.ocl.uml.edit;bundle-version="4.0.0",
+ org.eclipse.papyrus.uml.profile;bundle-version="0.9.0",
+ org.eclipse.papyrus.uml.modelexplorer;bundle-version="0.9.0",
+ org.eclipse.papyrus.uml.diagram.common;bundle-version="0.9.0",
+ org.eclipse.papyrus.views.modelexplorer;bundle-version="0.9.0",
+ org.openmodelica.modelicaml.profile;bundle-version="1.2.19",
+ org.openmodelica.modelicaml.common;bundle-version="1.0.1",
+ org.openmodelica.modelicaml.editor.xtext.modification.ui;bundle-version="1.0.0",
+ org.openmodelica.modelicaml.tabbedproperties.editors.glue;bundle-version="1.0.0",
+ org.openmodelica.modelicaml.tabbedproperties.editors;bundle-version="1.0.1",
+ org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ui;bundle-version="1.0.0",
+ org.openmodelica.modelicaml.editor.xtext.valuebinding.provider.ui;bundle-version="1.0.0",
+ org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui;bundle-version="1.0.0",
+ org.eclipse.papyrus.views.modelexplorer.widgets;bundle-version="0.9.0",
+ org.eclipse.ui.views.properties.tabbed;bundle-version="3.5.300",
+ org.openmodelica.modelicaml.modelexplorer;bundle-version="1.0.0",
+ org.eclipse.papyrus.infra.emf;bundle-version="0.10.0",
+ org.eclipse.ui.ide,
+ org.eclipse.papyrus.infra.widgets;bundle-version="0.10.0",
+ org.eclipse.emf.transaction;bundle-version="1.4.0",
+ org.eclipse.gmf;bundle-version="1.7.0",
+ org.eclipse.papyrus.infra.services.edit;bundle-version="0.10.0",
+ org.eclipse.gmf.runtime.common.core;bundle-version="1.7.0",
+ org.eclipse.gmf.runtime.emf.type.core;bundle-version="1.7.0",
+ org.eclipse.papyrus.uml.tools;bundle-version="0.10.0",
+ org.eclipse.papyrus.infra.gmfdiag.commands
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: org.openmodelica.modelicaml.view.valuebindings.dialogs,
+ org.openmodelica.modelicaml.view.valuebindings.helpers,
+ org.openmodelica.modelicaml.view.valuebindings.model,
+ org.openmodelica.modelicaml.view.valuebindings.views
+

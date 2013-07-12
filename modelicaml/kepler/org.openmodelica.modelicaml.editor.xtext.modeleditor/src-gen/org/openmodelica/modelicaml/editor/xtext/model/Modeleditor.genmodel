@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen"
+    editDirectory="/org.openmodelica.modelicaml.editor.xtext.modeleditor.edit/src"
+    editorDirectory="/org.openmodelica.modelicaml.editor.xtext.modeleditor.editor/src"
+    modelPluginID="org.openmodelica.modelicaml.editor.xtext.modeleditor" forceOverwrite="true"
+    modelName="Modeleditor" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    complianceLevel="5.0" copyrightFields="false" editPluginID="org.openmodelica.modelicaml.editor.xtext.modeleditor.edit"
+    editorPluginID="org.openmodelica.modelicaml.editor.xtext.modeleditor.editor">
+  <genPackages prefix="Modeleditor" basePackage="org.openmodelica.modelicaml.editor.xtext.model"
+      disposableProviderFactory="true" ecorePackage="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#/">
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//expression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//expression/Expr"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//simple_expression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//simple_expression/Log_Exp"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//simple_expression/S_Logical_expression"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//simple_expression/L_Logical_expression"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//conditional_expr">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//conditional_expr/ifexpr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//conditional_expr/thenexpr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//conditional_expr/elseifexpr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//conditional_expr/trueexpr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//conditional_expr/falseexpr"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//logical_expression"/>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//logical_term">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//logical_term/Logical_term"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//logical_factor">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//logical_factor/Logical_factor"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//logical_factor/Relation"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//relation"/>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//arithmetic_expression">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//arithmetic_expression/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//arithmetic_expression/Arithmetic_expression"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//arithmetic_expression/opr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//arithmetic_expression/Term"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//arithmetic_expression/Oper1"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//arithmetic_expression/Term1"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//term"/>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//factor">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//factor/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//factor/Factor"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//primary">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//primary/Primary"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//primary/num"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//primary/int"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//primary/str"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//primary/Bool"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//primary/Component_reference"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//primary/output_expr_list"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//primary/Expre_list"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//primary/Expression_list"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//primary/f_arguments"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//primary/End"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//name_Function"/>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//initial_ref"/>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//ExprDer">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//ExprDer/functionArgs"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//function_call_args">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//function_call_args/f_arg"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//expression_list">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//expression_list/expr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//expression_list/Expre"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//name">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//name/Function_call_args"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//name/name_ID"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//name/nam_ID"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//component_reference">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//component_reference/ref"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//component_reference/subscripts1"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//component_reference/ref1"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//component_reference/subscripts"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//output_expression_list">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//output_expression_list/epr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//output_expression_list/Expr"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//array_subscripts">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//array_subscripts/Sub"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//array_subscripts/Subscript"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//subscript">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//subscript/expr"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//function_arguments">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//function_arguments/ArgExp"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//function_arguments/Fun_Arg_Expr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//function_arguments/Fun_Arg_For"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//function_arguments/name_arg"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//Fun_Arguments_exp">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//Fun_Arguments_exp/Args"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//Fun_Arguments_for">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//Fun_Arguments_for/For_indices"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//named_arguments"/>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//named_argument">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//named_argument/Named_arguments"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//named_argument/arg"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//named_argument/expr"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//for_indices"/>
+    <genClasses ecoreClass="platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//for_index">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//for_index/For_index"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//for_index/index"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.openmodelica.modelicaml.editor.xtext.modeleditor/src-gen/org/openmodelica/modelicaml/editor/xtext/model/Modeleditor.ecore#//for_index/expr"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

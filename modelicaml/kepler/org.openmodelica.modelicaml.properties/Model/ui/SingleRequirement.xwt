@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Composite xmlns="http://www.eclipse.org/xwt/presentation"
+	xmlns:x="http://www.eclipse.org/xwt" xmlns:ppe="clr-namespace:org.eclipse.papyrus.views.properties.widgets"
+	xmlns:j="clr-namespace:java.lang"
+	xmlns:ppel="clr-namespace:org.eclipse.papyrus.views.properties.widgets.layout"
+	xmlns:uml="clr-namespace:org.eclipse.papyrus.uml.properties.widgets">
+	<Composite.layout>
+		<ppel:PropertiesLayout></ppel:PropertiesLayout>
+	</Composite.layout>
+	<Composite>
+		<Composite.layout>
+			<ppel:PropertiesLayout numColumns="1"></ppel:PropertiesLayout>
+		</Composite.layout>
+		<ppe:StringEditor input="{Binding}" property="UML:NamedElement:name"
+			customLabel="Name"></ppe:StringEditor>
+	</Composite>
+	<Composite>
+		<Composite.layout>
+			<ppel:PropertiesLayout numColumns="1"></ppel:PropertiesLayout>
+		</Composite.layout>
+		<ppe:StringEditor input="{Binding}"
+			property="ModelicaML:ModelicaRequirementConstructs:Requirement:id"></ppe:StringEditor>
+		<ppe:StringMultiline input="{Binding}"
+			property="ModelicaML:ModelicaRequirementConstructs:Requirement:text"></ppe:StringMultiline>
+	</Composite>
+	<Group>
+		<Group.layout>
+			<ppel:PropertiesLayout numColumns="1"></ppel:PropertiesLayout>
+		</Group.layout>
+		<ppe:EnumRadio input="{Binding}"
+			property="ModelicaML:ModelicaClassConstructs:ModelicaClassDefinition:visibility"></ppe:EnumRadio>
+		<ppe:BooleanRadio input="{Binding}"
+			property="ModelicaML:ModelicaClassConstructs:ModelicaClassDefinition:partial"></ppe:BooleanRadio>
+		<ppe:BooleanRadio input="{Binding}"
+			property="ModelicaML:ModelicaClassConstructs:ModelicaClassDefinition:replaceable"></ppe:BooleanRadio>
+		<ppe:BooleanRadio input="{Binding}"
+			property="ModelicaML:ModelicaClassConstructs:ModelicaClassDefinition:final"></ppe:BooleanRadio>
+		<ppe:BooleanRadio input="{Binding}"
+			property="ModelicaML:ModelicaClassConstructs:ModelicaClassDefinition:encapsulated"></ppe:BooleanRadio>
+	</Group>
+</Composite>

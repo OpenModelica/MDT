@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.openmodelica.modelicaml.feature"
+      label="ModelicaML - Papyrus Customization, Modelica Code Generation, Simulation with OMC"
+      version="1.9.6.qualifier"
+      provider-name="OpenModelica Project">
+
+   <description url="http://www.openmodelica.org/modelicaml">
+      ModelicaML is a UML Profile for modeling and simulating of the
+system dynamic behavior. It enables engineers to formalize system
+requirements and designs, to simulate designs, and to verify designs
+against requirements.
+   </description>
+
+   <copyright url="http://www.openmodelica.org/index.php/home/license">
+      Copyright (c) 1998-CurrentYear, Linköping University,
+Department of Computer and Information Science,
+SE-58183 Linköping, Sweden.
+
+All rights reserved.
+   </copyright>
+
+   <license url="http://www.openmodelica.org/index.php/home/license">
+      THIS PROGRAM IS PROVIDED UNDER THE TERMS OF GPL VERSION 3 
+AND THIS OSMC PUBLIC LICENSE (OSMC-PL). 
+ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS PROGRAM CONSTITUTES
+RECIPIENT&apos;S ACCEPTANCE OF THE OSMC PUBLIC LICENSE.
+The OpenModelica software and the Open Source Modelica
+Consortium (OSMC) Public License (OSMC-PL) are obtained
+from Linköping University, either from the above address,
+from the URLs: http://www.ida.liu.se/projects/OpenModelica
+or  
+http://www.openmodelica.org, and in the OpenModelica distribution.
+GNU version 3 is obtained from: http://www.gnu.org/copyleft/gpl.html.
+This program is distributed WITHOUT ANY WARRANTY; without
+even the implied warranty of  MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE, EXCEPT AS EXPRESSLY SET FORTH
+IN THE BY RECIPIENT SELECTED SUBSIDIARY LICENSE CONDITIONS
+OF OSMC-PL.
+See the full OSMC Public License conditions for more details.
+   </license>
+
+   <url>
+      <update label="ModelicaML Update Site" url="http://www.ida.liu.se/~pelab/modelica/OpenModelica/MDT/ModelicaML/update"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.ui" version="3.5.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.resources" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.ecore" version="2.6.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.uml2.uml" version="3.1.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.navigator" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.filesystem" version="1.3.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.transaction" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.uml.tools.utils" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.core" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.widgets.toolbox" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.views.modelexplorer" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.views.properties.tabbed" version="3.5.300" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.common"/>
+      <import plugin="org.eclipse.xtext" version="2.0.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.editor.xtext.modeleditor" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.editor.xtext.modeleditor.ui" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.uml2.codegen.ecore" version="1.7.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.uml2.uml" version="3.2.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext.util"/>
+      <import plugin="org.antlr.runtime"/>
+      <import plugin="org.eclipse.xtext.common.types"/>
+      <import plugin="org.apache.commons.logging"/>
+      <import plugin="org.eclipse.xtext.xbase.lib"/>
+      <import feature="org.eclipse.xtext.ui" version="2.3.0.v201206120633"/>
+      <import plugin="org.eclipse.ui.editors" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext.ui.shared" version="0.8.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext.builder"/>
+      <import plugin="org.eclipse.xtext.common.types.ui"/>
+      <import plugin="org.eclipse.xtext.ui.codetemplates.ui"/>
+      <import plugin="org.eclipse.compare"/>
+      <import plugin="org.eclipse.papyrus.editor" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.common" version="1.0.1" match="greaterOrEqual"/>
+      <import plugin="fr.obeo.acceleo.gen"/>
+      <import plugin="org.eclipse.ui.ide" version="3.5.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.7.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.7.101" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.ui.resources" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.uml.diagram.common" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.ecore.xmi"/>
+      <import plugin="org.eclipse.jface"/>
+      <import plugin="org.eclipse.swt" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.openmodelica.modelicaml.view.valuebindings" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.gen.modelica" version="1.2.2" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.simulation" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.commons.lang" version="2.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.uml2.uml" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.simulation.libs.jfreechart" version="1.0.13" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.eclipse.jdt.ui"/>
+      <import plugin="org.eclipse.papyrus.uml.perspective" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.uml.diagram.wizards" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.expressions"/>
+      <import plugin="org.eclipse.papyrus.extensionpoints.editors" version="0.8.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.uml.extensionpoints" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.uml.profile" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.uml.diagram.clazz" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.uml.diagram.statemachine" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.uml.diagram.activity" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.uml.diagram.composite" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.gmfdiag.common" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gmf.runtime.notation" version="1.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gmf.runtime.diagram.core" version="1.6.0" match="greaterOrEqual"/>
+      <import plugin="fr.obeo.acceleo.template" version="2.8.0" match="greaterOrEqual"/>
+      <import plugin="fr.obeo.acceleo.chain" version="2.8.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.simulation.libs.xom" version="1.2.6" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.databinding"/>
+      <import plugin="org.eclipse.core.databinding.beans"/>
+      <import plugin="org.eclipse.core.databinding.observable"/>
+      <import plugin="org.eclipse.core.databinding.property"/>
+      <import plugin="org.eclipse.jface.databinding"/>
+      <import plugin="com.ibm.icu"/>
+      <import plugin="org.eclipse.emf.databinding"/>
+      <import plugin="org.eclipse.core.filesystem" version="1.3.1" match="greaterOrEqual"/>
+      <import plugin="org.modelica.mdt.core" version="0.7.23" match="greaterOrEqual"/>
+      <import plugin="org.modelica.mdt.omc" version="0.7.23" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.uml2.uml" version="3.1.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.browser" version="3.3.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.edit.ui" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.forms" version="3.5.2" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.tabbedproperties.editors.glue" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.editor.xtext.activitycontrolflowguardexpression" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.editor.xtext.algorithmsection" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.editor.xtext.arraysubscript" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.editor.xtext.conditionalattribute" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.editor.xtext.declaration" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.editor.xtext.equationsection" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.editor.xtext.modification" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="com.google.inject" version="2.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.uml.properties" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.views.properties" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.uml.tools" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.common" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext" version="0.8.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gmf.runtime.diagram.ui" version="1.2.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.expressions" version="3.4.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.uml2.uml" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.helper" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.editor.xtext.arraysubscript.ui" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.editor.xtext.modification.ui" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ocl.uml.edit" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.uml.modelexplorer" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.profile" version="1.2.19" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.tabbedproperties.editors" version="1.0.1" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ui" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.editor.xtext.valuebinding.provider.ui" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.views.modelexplorer.widgets" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.modelexplorer" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.6.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.views.properties.tabbed" version="3.5.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.customization.properties" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.customization.paletteconfiguration" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.customization.properties.generation" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.customization.properties.model.xwt" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.validation" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.uml2" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.uml2.uml.edit" version="3.1.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.uml2.uml.resources" version="3.1.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.validation.ui" version="1.3.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" version="3.7.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.edit.ui" version="2.7.0" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.view.componentstree" version="1.1.12" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.modelica.importer" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.8.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.intro"/>
+      <import plugin="org.eclipse.e4.ui.workbench" version="0.10.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.core.commands" version="0.10.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.core.contexts" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.core.di" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.bindings" version="0.10.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.css.core" version="0.10.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.css.swt" version="0.10.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.di" version="0.10.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.services" version="0.10.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.widgets" version="0.12.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.workbench.addons.swt" version="0.10.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.workbench.renderers.swt" version="0.10.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.workbench.swt" version="0.10.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.workbench3" version="0.12.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.core.log" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.converter" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.gmfdiag.preferences" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.core.sasheditor.di" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.ecore.editor" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.workspace.ui" version="1.3.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.expressions" version="3.4.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.services.edit" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.facet.infra.browser" version="0.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.facet.infra.browser.custom" version="0.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.facet.infra.browser.custom.core" version="0.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.facet.infra.browser.custom.ui" version="0.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.facet.infra.browser.uicore" version="0.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.facet.infra.common.core" version="0.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.facet.infra.facet" version="0.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.facet.infra.facet.core" version="0.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.facet.infra.query.ui" version="0.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.services.decoration" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gmf.runtime.common.core" version="1.4.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gmf.runtime.emf.commands.core" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gmf.runtime.emf.type.core" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.facet.infra.query.core"/>
+      <import plugin="org.eclipse.gmf.runtime.diagram.ui" version="1.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.emf" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="com.google.guava" version="10.0.1" match="greaterOrEqual"/>
+      <import feature="fr.obeo.acceleo" version="2.8.0.201102021515"/>
+      <import feature="org.eclipse.papyrus.editor.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.uml2" version="4.0.0.v20120604-0919"/>
+      <import feature="org.eclipse.xtext.runtime" version="2.3.0.v201206120633"/>
+      <import feature="org.eclipse.xtext.ui" version="2.3.0.v201206120633"/>
+      <import feature="org.modelica.mdt" version="0.7.28"/>
+      <import feature="org.eclipse.papyrus.customization.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.infra.core.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.infra.discovery.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.infra.emf.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.infra.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.infra.gmfdiag.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.infra.queries.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.infra.services.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.infra.table.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.infra.widget.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.uml.alf.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.uml.diagram.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.uml.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.uml.modelexplorer.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.uml.properties.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.uml.table.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.uml.textedit.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.uml.tools.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.views.modelexplorer.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.views.properties.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.papyrus.xwt.feature" version="0.9.0.v201206131215"/>
+      <import feature="org.eclipse.e4.rcp" version="1.1.0.v20120521-2329-8yFTIGF3GGduEYqkQB9M3DKn"/>
+      <import feature="org.eclipse.acceleo" version="3.2.2.v20120807-0831"/>
+      <import plugin="org.eclipse.uml2" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.editor" version="0.8.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.uml.tools" version="0.10.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.emf" version="0.10.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" version="3.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="fr.obeo.acceleo.template" version="2.6.1" match="greaterOrEqual"/>
+      <import plugin="fr.obeo.acceleo.chain" version="2.6.1" match="greaterOrEqual"/>
+      <import plugin="org.openmodelica.modelicaml.common" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.core" version="0.10.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.navigator" version="3.5.101" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.workbench"/>
+      <import plugin="org.eclipse.papyrus.infra.emf.diagram.common" version="0.10.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.uml.diagram.menu" version="0.10.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.uml.diagram.common" version="0.10.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.gmfdiag.commands" version="0.10.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext.ui" version="0.8.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.widgets" version="0.10.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gmf" version="1.7.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.services.edit" version="0.10.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gmf.runtime.common.core" version="1.7.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gmf.runtime.emf.type.core" version="1.7.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.navigator" version="3.5.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.services.validation" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.navigator" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.papyrus.infra.services.semantic" version="0.10.0" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="org.openmodelica.modelicaml.common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.activitycontrolflowguardexpression"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.activitycontrolflowguardexpression.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.algorithmsection"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.algorithmsection.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.arraysubscript"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.arraysubscript.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.conditionalattribute"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.conditionalattribute.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.declaration"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.declaration.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.equationsection"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.equationsection.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.modeleditor"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.modeleditor.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.modification"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.modification.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.statetransitionguardexpression.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.gen.modelica"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.helper"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.perspective"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.preferences"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.profile"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.simulation"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.tabbedproperties.editors"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.tabbedproperties.editors.glue"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.view.componentstree"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.simulation.libs.jfreechart"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openmodelica.simulation.libs.xom"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.view.valuebindings"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.client"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.client.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.provider"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.provider.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.editor.xtext.valuebinding.mediator.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.modelica.importer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.traceability"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.properties"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.validation"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.product"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.relations"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.modelexplorer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openmodelica.modelicaml.development.profile.update.helper"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.openmodelica.modelicaml.preferences.impl.ModelicaMLMainPreferencesPage"
+            id="org.openmodelica.modelicaml.preferences.mainpage"
+            name="ModelicaML">
+      </page>
+      <page
+            category="org.openmodelica.modelicaml.preferences.mainpage"
+            class="org.openmodelica.modelicaml.preferences.impl.ModelicaMLVeMGeneration"
+            id="org.openmodelica.modelicaml.preferences.vemGeneration"
+            name="Verification Models Generation">
+      </page>
+      <page
+            category="org.openmodelica.modelicaml.preferences.mainpage"
+            class="org.openmodelica.modelicaml.preferences.impl.ModelicaMLOMCPreferencePage"
+            id="org.openmodelica.modelicaml.preferences.omc"
+            name="OpenModelica Compiler Settings">
+      </page>
+      <page
+            category="org.openmodelica.modelicaml.preferences.mainpage"
+            class="org.openmodelica.modelicaml.preferences.impl.ModelicaMLSimulationPage"
+            id="org.openmodelica.modelicaml.preferences.simulation"
+            name="Simulation Settings">
+      </page>
+      <page
+            category="org.openmodelica.modelicaml.preferences.mainpage"
+            class="org.openmodelica.modelicaml.preferences.impl.ModelicaMLDesignVerificationPage"
+            id="org.openmodelica.modelicaml.preferences.designVerification"
+            name="Design Verification Settings">
+      </page>
+      <page
+            category="org.openmodelica.modelicaml.preferences.mainpage"
+            class="org.openmodelica.modelicaml.preferences.impl.ModelicaMLModelicaModelsSynchronization"
+            id="org.openmodelica.modelicaml.preferences.ModelicaMLModelicaModelsSynchronization"
+            name="Modelica Model Synchronization Settings">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.openmodelica.modelicaml.preferences.impl.PreferenceInitializer">
+      </initializer>
+   </extension>
+
+</plugin>

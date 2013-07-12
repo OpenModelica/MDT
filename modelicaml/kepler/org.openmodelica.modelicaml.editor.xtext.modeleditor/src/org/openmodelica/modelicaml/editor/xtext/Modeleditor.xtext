@@ -1,0 +1,176 @@
+grammar org.openmodelica.modelicaml.editor.xtext.Modeleditor with org.eclipse.xtext.common.Terminals
+import "http://www.eclipse.org/uml2/3.0.0/UML" as uml
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+generate modeleditor "http://www.openmodelica.org/modelicaml/editor/xtext/model/Modeleditor"
+
+////////////////////////////////////////Expressions////////////////////////
+expression:
+Expr=simple_expression|conditional_expr
+;
+simple_expression:
+Log_Exp=logical_expression ( ':' S_Logical_expression=logical_expression (':' L_Logical_expression=logical_expression)?)?
+;
+conditional_expr:
+'if' ifexpr=expression
+'then' thenexpr=expression
+( 'elseif' elseifexpr+=expression 'then' trueexpr+=expression)*
+('else' falseexpr=expression)
+;
+logical_expression :
+logical_term ( 'or' Logical_term+=logical_term)*
+;
+logical_term :
+logical_factor ('and' Logical_factor+=logical_factor )*
+;
+
+logical_factor:
+('not')? Relation=relation
+;
+relation :
+arithmetic_expression(op=(rel_op_Less_then|rel_op_Less_equal|rel_op_greater_then|rel_op_greater_equal|rel_op_assignment|rel_op_Oper) Arithmetic_expression=arithmetic_expression )?
+;
+arithmetic_expression:
+ ((opr=(add_op_plus|add_op_minus|add_op_dotplus|add_op_dotminus)))? Term=term (Oper1+=(add_op_plus|add_op_minus|add_op_dotplus|add_op_dotminus) Term1+=term)*
+;
+term :
+factor (op+=(mul_op_mul|mul_op_div|mul_op_dotmul|mul_op_dotdiv) Factor+=factor )*
+;
+factor :
+primary ( ('^' | '.^') Primary=primary )?
+;
+//////////////////////////////////////////////////Primary///////////////////////////////
+primary :
+num=UNSIGNED_NUMBER
+| int=INT
+| str=STRING
+| Bool=BOOL_VAL
+| name_Function
+| initial_ref
+| ExprDer
+| Component_reference=component_reference
+| "(" output_expr_list=output_expression_list ")"
+| '[' Expre_list=expression_list ( ';' Expression_list+=expression_list)* ']'
+| '{' f_arguments=function_arguments '}'
+| End='end'
+;
+name_Function:
+name Function_call_args=function_call_args
+;
+initial_ref:
+'initial' function_call_args
+;
+ExprDer:
+'der' functionArgs=function_call_args
+;
+function_call_args :{function_call_args}
+'(' (f_arg=function_arguments)? ')'
+;
+expression_list :
+expr=expression (',' Expre+=expression )*
+;
+
+///////////////////////////////Component Reference////////////////////////
+name :
+('.')? name_ID=IDENT ( '.' nam_ID+=IDENT )*
+;
+component_reference:
+('.')? ref=IDENT (subscripts1=array_subscripts)? ('.' ref1+=IDENT (subscripts+=array_subscripts)?)* 
+;
+output_expression_list:{output_expression_list}
+ (epr=expression)? ( ',' ( Expr+=expression)? )*
+;
+array_subscripts :
+'[' Sub=subscript ( ',' Subscript+=subscript )* ']'
+
+;
+subscript :{subscript}
+':' | expr=expression
+;
+
+function_arguments:{function_arguments}
+ArgExp+=expression(Fun_Arg_Expr=Fun_Arguments_exp|Fun_Arg_For=Fun_Arguments_for )?
+| name_arg=named_arguments
+;
+Fun_Arguments_exp:
+',' Args=function_arguments
+;
+Fun_Arguments_for:
+'for' For_indices=for_indices
+;
+named_arguments: 
+named_argument ( ',' Named_arguments=named_arguments )?
+;
+named_argument: 
+arg=IDENT '=' expr=expression
+;
+for_indices :
+for_index (',' For_index+=for_index)*
+;
+for_index:
+index=IDENT ( 'in' expr=expression)?
+;
+///////////////////////////////Operators/////////////////////////////////////////
+mul_op_mul :
+'*'
+;
+mul_op_div :
+'/'
+;
+mul_op_dotmul :
+'.*'
+;
+mul_op_dotdiv :
+'./'
+;
+add_op_plus :
+'+' 
+;
+add_op_minus :
+'-';
+add_op_dotplus :
+'.+'
+;
+add_op_dotminus :
+'.-'
+;
+rel_op_Less_then:
+'<'
+;
+rel_op_Less_equal :
+'<='
+;
+rel_op_greater_then:
+'>'
+;
+rel_op_greater_equal:
+'>='
+;
+rel_op_assignment:
+'==' 
+;
+rel_op_Oper:
+'<>'
+;
+///////////////////////////////Comments/////////////////////////////////////
+comment :
+string_comment
+;
+string_comment :
+( STRING ( '+' STRING )* )?
+;
+///////////////////////////////////////// Terminals////////////////////////
+terminal UNSIGNED_NUMBER : 
+	(('0'..'9')+ '.' ('0'..'9')* (('E'|'e') ('+'|'-')? ('0'..'9')+)? )
+	|(('0'..'9')+ ('E'|'e') ('+'|'-')? ('0'..'9')+) 
+	;
+terminal BOOL_VAL :
+	'true' | 'false'
+	;
+terminal INT returns ecore::EInt:
+	('0'..'9')+
+	;
+terminal STRING	: 
+'"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\') | !('\\'|'"') )* '"';
+
+terminal IDENT : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9'|'.')*
+;

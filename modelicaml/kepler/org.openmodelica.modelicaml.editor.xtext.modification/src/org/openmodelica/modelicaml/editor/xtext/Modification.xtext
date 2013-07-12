@@ -1,0 +1,253 @@
+grammar org.openmodelica.modelicaml.editor.xtext.modification.Modification 
+	with org.openmodelica.modelicaml.editor.xtext.Modeleditor
+
+generate modification "http://www.openmodelica.org/modelicaml/editor/xtext/modification/Modification"
+
+////////////////////////////////////Modification///////////////////////////
+modification_alternatives : // ModelicaML specific. All rules are made optional in order to not create validation error markers if nothing was entered by the user.
+(left_hand_component_reference '=' Expr=expression)? //a simple component equality assignment modification rule without "(" and ")". Added for better code completion support (see the left_hand_component_reference that returns only the subcomponents of the component being modified)
+| (Modification_Rule=modification )? // standard modelica modification rule including "(" and ")" and class extension modifications
+;   													 
+
+left_hand_component_reference : // ModelicaML specific. 
+	('.')? ref=IDENT (subscripts1=array_subscripts)? ('.' ref1+=IDENT (subscripts+=array_subscripts)?)*;
+
+modification :
+class_modification ( '=' Expr=expression )?
+| '=' Expr=expression
+| ':=' Expr=expression 
+;
+
+class_modification : {class_modification_action } 
+'(' (Arg=argument_list)? ')'
+//argument
+;
+
+argument_list :
+//argument  (',' Arg+=argument )* 	// ModelicaML specific, to allow only one entry. This is mainly needed for class components tree view.
+argument
+;
+
+argument :
+element_modification_or_replaceable
+| element_redeclaration
+;
+element_modification_or_replaceable:{element_modification_or_replaceable}
+('each')?('final')? ( Element_mod=element_modification | Element_rep=element_replaceable )
+;
+element_modification :
+Name=name (Modification=modification)? string_comment
+;
+element_replaceable:{element_replaceable}
+'replaceable' ( Class_Def=class_definition | Comp_clause2=component_clause1 ) (Constrain_Clause=constraining_clause)?
+;
+
+
+constraining_clause :
+'constrainedby' Name=name (Class_Mod=class_modification )?
+;
+////////////////////////////////////////Element Redeclaration///////////////
+// TODO:  ( Class_Def=class_definition | Comp_clause1=component_clause1) does not work! Is it an error in the Modelica spec.?
+element_redeclaration :{element_redeclaration}
+'redeclare' ('each')? ('final')?
+( ( Class_Def=class_definition | Comp_clause1=component_clause1) | Element_R=element_replaceable )
+;
+/////////////////////////////////////////component_clause///////////////////
+component_clause:
+type_prefix type_specifier (Array_Subs=array_subscripts )? Com_List=component_list
+;
+////////////////////////////////////////component_list//////////////////////
+component_list :
+component_declaration ("," component_Dec+=component_declaration )*
+;
+component_declaration :
+Dec=declaration (Conditional_Att=conditional_attribute)? comment
+;
+conditional_attribute:
+'if' Expr=expression
+;
+////////////////////////////////////////component_clause1///////////////////
+component_clause1 :
+type_prefix type_specifier Com_Dec=component_declaration1
+;
+component_declaration1 :
+declaration comment
+;
+type_specifier :
+Name=name
+;
+////////////////////////////////////////Declaration/////////////////////////
+declaration :{declaration}
+redeclaredComponentName=IDENT ( ArraySubs=array_subscripts)? ( Mod=modification )?
+;
+
+////////////////////////////////////////Class Definition////////////////////
+class_definition :
+ ('encapsulated')?
+ ('partial')?
+(
+'class'|'model'|'record'|'block'|('expandable')?'connector'|'type'|
+'package'|'function'|'operator'| 'operator' 'function'|'operator' 'record'
+)
+class_specifier
+;
+////////////////////////////////////////Class Specifier////////////////////
+class_specifier :{class_specifier}
+(IDENT string_comment Comp=composition 'end' IDENT
+| IDENT '=' base_prefix Name=name (Array_Subs=array_subscripts)?(Class_mod=class_modification)? comment
+| (var+=IDENT '=' 'enumeration' '(' ( (Enum_list=enum_list)? | ':' ) ')' comment)
+| IDENT '=' 'der' '(' Name=name ',' IDENT (',' IDENT )* ')' comment
+| 'extends' IDENT (Class_mod=class_modification)? string_comment Comp=composition
+'end' IDENT
+)
+;
+base_prefix :
+type_prefix
+;
+type_prefix :
+ ('flow' | 'stream')?
+('discrete' | 'parameter' | 'constant')?  ('input' | 'output')?
+;
+////////////////////////////////////////Enumerations///////////////////////
+enum_list : {enum_list}
+Ennum_Lit=enumeration_literal( ',' E_literal+=enumeration_literal)*
+;
+enumeration_literal : 
+IDENT comment
+;
+////////////////////////////////////////Composition////////////////////////
+composition :
+E_List_Initial=element_list
+(
+'public' E_List_Public+=element_list 
+|'protected' E_List_Protected+=element_list 
+|Eqn_section+=equation_section 
+|Alg_section+=algorithm_section
+)*
+( 'external' ( Lang_Spec=language_specification)?
+( External_F_C=external_function_call)? ( Annotation1=annotation )? ";" )?
+( Annotation2=annotation ";" )?
+;
+////////////////////////////////////////Element////////////////////////////
+element_list :{element_list}
+(Element+=element ";" )*
+;
+element :
+import_clause 
+|extends_clause 
+|( 'redeclare' )?
+( 'final')?
+('inner')? ('outer')?
+( ( Class_Def=class_definition | Comp_Clause=component_clause) 
+|'replaceable' ( Class_Def=class_definition | Comp_Clause=component_clause)
+(Constrain_Clause=constraining_clause comment)?
+)
+;
+////////////////////////////////////////Equation///////////////////////////
+equation_section:{equation_section}
+('initial')? 'equation'(Eqn+=equation';')*
+;
+equation:
+( 
+sim=simple_expression'=' expr=expression
+| IF_EQN=if_equation
+| FOR_EQN=for_equation
+| Con=connect_clause
+| WHEN_EQN=when_equation
+//| Fun_ID=IDENT fun=function_call_args
+)
+Comment=comment
+;
+//////////////////////////////////////////Conditions and Loop Section For Equation//////////////////////
+when_equation :
+'when' whenEpr=expression 'then'
+( Eqn_Then+=equation ';' )*
+ ('elsewhen' elseWhenEpr+=expression 'then'
+( Eqn_Then+=equation ';')* )*
+'end' 'when'
+;
+if_equation :
+'if' exprtrue=expression 'then'( Eqn+=equation ';')*
+('elseif' exprStilltrue+=expression 'then'( thenEqn+=equation ';' )*)*
+( 'else'( elseEqn+=equation ';' )*)?
+'end' 'if'
+;
+for_equation :
+'for' for_loop=for_indices 'loop'
+( For_Eqn+=equation ';')
+'end' 'for'
+;
+connect_clause :
+'connect' '(' connector1=component_reference ',' connector2=component_reference ')'
+;
+////////////////////////////////////////Algorithm//////////////////////////
+algorithm_section:{algorithm_clause}
+('initial')? 'algorithm'(Algorithm+=statement ';')* 
+;
+statement :{statement}
+(If_statement=if_statement
+| State_OutputExprList=state_OutputExprList
+//| Algo_M_G=Algorithm_Macros_GEN_SIGNAL
+| 'return'
+| state_Comp_Ref=state_Comp_Ref 
+| For_statement=for_statement
+| When_statement=when_statement
+| While_statement=while_statement 
+//| Algo_G_I=Algorithm_Macros_GEN_INC
+//| Algo_G_C=Algorithm_Macros_GEN_CHANGE
+| 'break'
+)
+comment
+;
+///////////////////////////////////Statements//////////////////////////////
+state_OutputExprList:
+'(' output_expression_list=output_expression_list ')' ':=' Component_ref=component_reference fun_call_args=function_call_args
+;
+
+state_Comp_Ref:
+component_reference=component_reference ( ':=' expr=expression | fun_call_args=function_call_args ) 
+;
+when_statement :
+'when' When_expr=expression 'then'
+( When_stat_true+=statement ';' )*
+( 'elsewhen' Else_When_expr+=expression 'then'
+( Then_statement+=statement ';' )* )*
+'end' 'when'
+;
+while_statement :
+'while' while_expr=expression 'loop'
+( While_stat+=while_statement ';' )*
+'end' 'while';
+
+for_statement :
+'for' For_indices=for_indices 'loop'
+( For_statement+=for_statement ';' )*
+'end' 'for'
+;
+if_statement :
+'if' exprtrue=expression 'then'( state+=statement ';')*
+('elseif' exprStilltrue+=expression 'then'( state+=statement ';' )*)*
+( 'else'( state+=statement';' )*)?
+'end' 'if'
+;
+////////////////////////////////////////Extend/////////////////////////////
+extends_clause :
+'extends' Name=name (Class_Mod=class_modification)? (Annotation=annotation)?
+;
+////////////////////////////////////////Annotation/////////////////////////
+annotation :
+'annotation' (Class_Mod=class_modification)
+;
+////////////////////////////////////////Import/////////////////////////////
+import_clause :
+'import' ( IDENT '=' Name=name | Name=name ('.' '*')? ) comment
+;
+
+////////////////////////////////////////External///////////////////////////
+language_specification :
+Str=STRING
+;
+external_function_call :{external_function_call}
+ (component_reference=component_reference "=")?
+IDENT '(' (E_List=expression_list)? ')'
+;
