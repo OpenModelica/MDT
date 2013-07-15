@@ -410,6 +410,9 @@
       <customizedFeatures customizedFeature="collapseLink">
         <defaultValue xsi:type="uicustom:StaticFeatureValue" value="false"/>
       </customizedFeatures>
+      <customizedFeatures>
+        <defaultValue xsi:type="uicustom:StaticFeatureValue" value="true"/>
+      </customizedFeatures>
     </references>
   </types>
   <availableQuerySets>PapyrusBrowserQuery</availableQuerySets>

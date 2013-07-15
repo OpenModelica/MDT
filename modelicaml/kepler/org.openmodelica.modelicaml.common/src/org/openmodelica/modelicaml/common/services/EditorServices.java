@@ -44,7 +44,10 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.papyrus.infra.core.services.ServiceException;
 import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
 import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
+//import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
+import org.eclipse.papyrus.infra.emf.utils.ServiceUtilsForResource;
+import org.eclipse.papyrus.uml.tools.model.UmlModel;
+import org.eclipse.papyrus.uml.tools.model.UmlUtils;
 import org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView;
 import org.eclipse.papyrus.views.modelexplorer.ModelExplorerView;
 import org.eclipse.ui.IViewPart;
@@ -55,17 +58,50 @@ import org.openmodelica.modelicaml.common.instantiation.TreeUtls;
 
 
 public class EditorServices {
-
+	
 	public static TransactionalEditingDomain getPapyrusEditingDomain(){
+		
 		ServicesRegistry serviceRegistry;
 		TransactionalEditingDomain editingDomain = null;
+		
 		try {
-			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
-			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+			
+			UmlModel umlModel = UmlUtils.getUmlModel();
+			
+			try {
+				EObject root = umlModel.lookupRoot();
+				
+//				The next line works only for handlers that assume that the Papyrus editor is the active Eclipse editor.
+//				serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry(); 
 
+				serviceRegistry = ServiceUtilsForResource.getInstance().getServiceRegistry(root.eResource());
+				editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+				
+			} catch (org.eclipse.papyrus.infra.core.resource.NotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				
+				// catch the fact that the ROOT element could not be be retrieved from the model
+				ModelicaMLServices.notify("ModelicaML: Papyrus Editing Domain Access", 
+						"Cannot access the ModelicaML root model element in the current editor." + 
+						"\nPlease make sure that the Papyrus editor is currently active.", 
+						2,
+						2);
+			}
+			
+		// catch the fact that the model could not be retrieved from Papyrus editor 
 		} catch (ServiceException e) {
 			e.printStackTrace();
 			
+			ModelicaMLServices.notify("ModelicaML: Papyrus Editing Domain Access", 
+					"Cannot access the ModelicaML root model in the current editor." + 
+					"\nPlease make sure that the Papyrus editor is currently active.", 
+					2,
+					2);
+		}
+
+		// notify if the editing domain could not be retrieved.
+		if (editingDomain == null) {
 			ModelicaMLServices.notify("ModelicaML: Papyrus Editing Domain Access", 
 					"Could not access the Papyrus Editing Domain." +
 					"\nPlease make sure that your model is open in editor.", 
@@ -75,6 +111,33 @@ public class EditorServices {
 		
 		return editingDomain;
 	}
+	
+	
+	/*
+	 * OLD: works only for handlers that assume that the Papyrus editor is the active Eclipse editor.
+	 * This is not always the case and this API is deprecated in Papyrus since Kepler (July 2013)
+	 */
+//	public static TransactionalEditingDomain getPapyrusEditingDomain(){
+//		ServicesRegistry serviceRegistry;
+//		TransactionalEditingDomain editingDomain = null;
+//		try {
+//			serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
+//			editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
+//
+//		} catch (ServiceException e) {
+//			e.printStackTrace();
+//			
+//			ModelicaMLServices.notify("ModelicaML: Papyrus Editing Domain Access", 
+//					"Could not access the Papyrus Editing Domain." +
+//					"\nPlease make sure that your model is open in editor.", 
+//					2,
+//					2);
+//		}
+//		
+//		return editingDomain;
+//	}
+	
+	
 	
 	public static void refreshModelExplorerView(){
 		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_MODELEXPLORER);
@@ -142,7 +205,7 @@ public class EditorServices {
 				modelExplorerView.getControl().setFocus();
 				
 				if (reselectFirst) {
-					// reset the selection so that the components tree can instantiate the selected class again
+					// Reset the selection so that the components tree can instantiate the selected class again
 					ModelExplorerView.selectReveal(new StructuredSelection(items), modelExplorerView);
 				}
 				

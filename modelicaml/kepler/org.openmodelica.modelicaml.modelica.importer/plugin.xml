@@ -31,7 +31,7 @@
       </contexts>
    </extension>
    
-      <!-- NOTE: all marker types are defined in the mml.common plugin 
+   <!-- NOTE: all marker types are defined in the  ModelicaML common plugin 
    <extension
          id="org.openmodelica.modelicaml.marker.modelicamlproxies"
          name="Modelica Model Proxies Synchronization"
@@ -67,14 +67,15 @@
       </persistent>
    </extension>
    -->
-   <extension
-         point="org.eclipse.ui.menus">
+
+   <extension point="org.eclipse.ui.menus">
+      <!--
       <menuContribution
             allPopups="false"
             locationURI="toolbar:org.eclipse.ui.main.toolbar">
          <toolbar
                id="org.openmodelica.modelicaml.modelica.toolbar"
-               label="ModelicaML Modelica Models Synchronization">
+               label="Modelica Models Synchronization">
             <separator
                   name="org.openmodelica.modelicaml.modelica.importer.separator3">
             </separator>
@@ -104,6 +105,7 @@
             </visibleWhen>
          </toolbar>
       </menuContribution>
+      -->
       
       <!-- NOTE: the menu is moved to the model explorer plugin.xml to appear at a certain position
       <menuContribution
@@ -299,5 +301,4 @@
          </activeWhen>
       </handler>
    </extension>
-
 </plugin>

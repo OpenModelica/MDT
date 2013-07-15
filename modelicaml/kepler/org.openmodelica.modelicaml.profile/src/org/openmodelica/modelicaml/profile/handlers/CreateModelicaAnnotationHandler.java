@@ -49,7 +49,6 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.papyrus.infra.emf.utils.BusinessModelResolver;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.uml2.uml.Classifier;
@@ -134,7 +133,7 @@ private EObject selectedElement = null;
 				
 				// apply ModelicaML stereotype
 				if (stereotype == null) {
-					Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+//					Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 					//MessageDialog.openError(shell, "Error:", "Cannot apply ModelicaML stereotype " + stereotyepName +" to " + ct.getName() + ". Please make sure that ModelicaML is applied to the top-level model/package.");
 				}
 				else {
@@ -163,6 +162,7 @@ private EObject selectedElement = null;
 	 * @throws ExecutionException
 	 *             the execution exception
 	 */
+	@SuppressWarnings("unchecked")
 	protected List<Object> getSelectedElements(ExecutionEvent event) throws ExecutionException {
 		
 		ISelection selection = getSelection(event);
@@ -189,6 +189,7 @@ private EObject selectedElement = null;
 	 * 
 	 * @return the current selections
 	 */
+	@SuppressWarnings("unchecked")
 	private List<Object> getCurrentSelections() {
 		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
 		if(selection instanceof IStructuredSelection) {

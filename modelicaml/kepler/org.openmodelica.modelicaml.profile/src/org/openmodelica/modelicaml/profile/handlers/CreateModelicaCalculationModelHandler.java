@@ -229,6 +229,7 @@ private Class createElement(String name){
 	 * @throws ExecutionException
 	 *             the execution exception
 	 */
+	@SuppressWarnings("unchecked")
 	protected List<Object> getSelectedElements(ExecutionEvent event) throws ExecutionException {
 		
 		ISelection selection = getSelection(event);
@@ -255,6 +256,7 @@ private Class createElement(String name){
 	 * 
 	 * @return the current selections
 	 */
+	@SuppressWarnings("unchecked")
 	private List<Object> getCurrentSelections() {
 		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
 		if(selection instanceof IStructuredSelection) {

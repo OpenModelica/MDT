@@ -583,14 +583,6 @@
          </command>
       </menuContribution>
    </extension>
-   <extension name="Locate" point="org.eclipse.ui.menus">
-      <menuContribution allPopups="false" locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
-         <separator name="org.openmodelica.modelicaml.modelexplorer.separator2" visible="true">
-         </separator>
-         <command commandId="org.openmodelica.modelicaml.modelexplorer.locate" icon="icons/editor/ModelExplorer.png" label="Locate" style="push">
-         </command>
-      </menuContribution>
-   </extension>
    <!--
    <extension
          point="org.eclipse.ui.menus">
@@ -845,11 +837,12 @@
          </separator>
       </menuContribution>
    </extension>
+   <!--
    <extension point="org.eclipse.ui.menus">
       <menuContribution allPopups="false" locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
          <separator name="org.openmodelica.modelicaml.modelica.importer.separator1" visible="true">
          </separator>
-         <menu icon="icons/code2.png" label="ModelicaML: Modelica Models Synchronization">
+         <menu icon="icons/code2.png" label="Modelica Models Synchronization">
             <command commandId="org.openmodelica.modelicaml.modelica.commands.disconnectfromcodesync" icon="icons/launch_disconnect.gif" style="push">
             </command>
             <command commandId="org.openmodelica.modelicaml.modelica.commands.connecttocodesync" icon="icons/connect_co.gif" style="push">
@@ -897,12 +890,97 @@
          </menu>
       </menuContribution>
    </extension>
+   -->
    <extension point="org.eclipse.ui.menus">
       <menuContribution locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
          <separator name="org.openmodelica.modelicaml.modelexplorer.separator42" visible="true">
          </separator>
          <menu label="Helper">
-            <command commandId="org.openmodelica.modelicaml.development.profile.update.helper.commands.applyStereotypes" icon="icons/etool16/Profile.gif" label="Apply/Unapply ModelicaML stereotypes" style="push">
+            <menu
+                  icon="icons/code2.png"
+                  label="Modelica Models Synchronization"
+                  tooltip="Modelica Models Synchronization">
+               <command
+                     commandId="org.openmodelica.modelicaml.modelica.commands.disconnectfromcodesync"
+                     icon="icons/launch_disconnect.gif"
+                     style="push">
+               </command>
+               <command
+                     commandId="org.openmodelica.modelicaml.modelica.commands.connecttocodesync"
+                     icon="icons/connect_co.gif"
+                     style="push">
+               </command>
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeWorkbenchWindow.activePerspective">
+                     <equals
+                           value="org.openmodelica.modelicaml.perspective">
+                     </equals>
+                     <and>
+                        <with
+                              variable="selection">
+                           <count
+                                 value="1">
+                           </count>
+                           <iterate>
+                              <adapt
+                                    type="org.eclipse.emf.ecore.EObject">
+                                 <and>
+                                    <or>
+                                       <test
+                                             args="ModelicaML::ModelReferences::ModelicaModelProxy"
+                                             property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                       </test>
+                                       <instanceof
+                                             value="org.eclipse.uml2.uml.Class">
+                                       </instanceof>
+                                       <instanceof
+                                             value="org.eclipse.uml2.uml.Package">
+                                       </instanceof>
+                                       <test
+                                             args="ModelicaML::ModelicaClassConstructs::Block"
+                                             property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                       </test>
+                                       <test
+                                             args="ModelicaML::ModelicaClassConstructs::Model"
+                                             property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                       </test>
+                                       <test
+                                             args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                             property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                       </test>
+                                       <test
+                                             args="ModelicaML::ModelicaClassConstructs::ModelicaPackage"
+                                             property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                       </test>
+                                       <test
+                                             args="ModelicaML::ModelicaClassConstructs::Function"
+                                             property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                       </test>
+                                       <test
+                                             args="ModelicaML::ModelicaClassConstructs::Connector"
+                                             property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                       </test>
+                                       <test
+                                             args="ModelicaML::ModelicaClassConstructs::Record"
+                                             property="org.openmodelica.modelicaml.testers.hasStereotype">
+                                       </test>
+                                    </or>
+                                 </and>
+                              </adapt>
+                           </iterate>
+                        </with>
+                     </and>
+                  </with>
+               </visibleWhen>
+            </menu>
+            <command
+                  commandId="org.openmodelica.modelicaml.development.profile.update.helper.commands.applyStereotypes"
+                  icon="icons/etool16/Profile.gif"
+                  label="Apply/Remove ModelicaML Stereotypes"
+                  style="push"
+                  tooltip="Apply/Remove ModelicaML Stereotypes">
                <visibleWhen checkEnabled="true">
                   <with variable="selection">
                      <count value="1">
@@ -941,6 +1019,24 @@
                </visibleWhen>
             </command>
          </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         name="Locate"
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">
+         <separator
+               name="org.openmodelica.modelicaml.modelexplorer.separator2"
+               visible="true">
+         </separator>
+         <command
+               commandId="org.openmodelica.modelicaml.modelexplorer.locate"
+               icon="icons/editor/ModelExplorer.png"
+               label="Locate"
+               style="push">
+         </command>
       </menuContribution>
    </extension>
     <!--  
@@ -1099,6 +1195,8 @@
      verified (isVisible and isEnabled) before any attempt to execute the command, 
      and to mask the command in case it is not supported or executable.
   -->
+  
+<!--
 <extension point="org.eclipse.ui.startup">
 	<startup class="org.eclipse.papyrus.views.modelexplorer.Activator"/>
 </extension>
@@ -1114,6 +1212,8 @@
       </editorInputEnablement>
    </linkHelper>
 </extension>
+-->
+
 
 <!-- This service listen the selection, ensures that the modelExplorer is active, and update the  
 	 deleteInModelExplorer variable according to the selection.

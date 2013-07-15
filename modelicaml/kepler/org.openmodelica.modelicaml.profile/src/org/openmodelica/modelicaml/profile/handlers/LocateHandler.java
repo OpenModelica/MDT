@@ -55,7 +55,8 @@ public class LocateHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		selectedElement = (EObject) adaptSelectedElement(getCurrentSelections().get(0));
 		if (selectedElement != null) {
-			EditorServices.locateInModelExplorer(selectedElement, true);
+//			EditorServices.locateInModelExplorer(selectedElement, true);
+			EditorServices.locateInModelExplorer(selectedElement, false);
 		}
 		return null;
 	}

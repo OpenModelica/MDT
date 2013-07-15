@@ -84,10 +84,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.papyrus.infra.core.listenerservice.IPapyrusListener;
 import org.eclipse.papyrus.infra.core.resource.NotFoundException;
-import org.eclipse.papyrus.infra.core.services.ServiceException;
 import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtils;
-import org.eclipse.papyrus.infra.core.utils.ServiceUtilsForActionHandlers;
 import org.eclipse.papyrus.infra.emf.utils.BusinessModelResolver;
 import org.eclipse.papyrus.uml.tools.model.ExtendedUmlModel;
 import org.eclipse.papyrus.uml.tools.model.UmlModel;
@@ -1663,7 +1660,8 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 		
 		// start sync
 		if (umlModel != null) {
-			if (ModelicaMLRoot != null && serviceRegistry != null && editingDomain != null) {
+//			if (ModelicaMLRoot != null && serviceRegistry != null && editingDomain != null) {
+			if (ModelicaMLRoot != null && editingDomain != null) {
 				
 				// Sync sub tree job listener
 				final JobChangeAdapter syncSubTreeJobChangeAdapter = new JobChangeAdapter() {
