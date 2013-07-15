@@ -632,7 +632,8 @@ public class ModelicaMLServices {
 			// load all .mo files that are not pacakge.mo
 			File[] files1Level = folder.listFiles();
 			for (File file : files1Level) {
-				if (file.isFile() && !file.getName().equals("package.mo")) {
+				boolean isMoFile = file.getName().endsWith(".mo");
+				if (file.isFile() && isMoFile && !file.getName().equals("package.mo")) {
 					list.add(formatPath(folderPath + "/" + file.getName()));
 				}
 			}

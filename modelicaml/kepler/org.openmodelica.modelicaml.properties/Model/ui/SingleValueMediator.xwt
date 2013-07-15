@@ -11,6 +11,8 @@
 		</Composite.layout>
 		<ppe:StringEditor input="{Binding}" property="UML:NamedElement:name"
 			customLabel="Name"></ppe:StringEditor>
+		<ppe:StringLabel property="UML:NamedElement:qualifiedName"
+			input="{Binding}"></ppe:StringLabel>
 		<ppe:ReferenceDialog input="{Binding}" property="UML:TypedElement:type"
 			customLabel="type"></ppe:ReferenceDialog>
 	</Composite>

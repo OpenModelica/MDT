@@ -566,11 +566,8 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 //					TransactionalEditingDomain editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
 					TransactionalEditingDomain editingDomain = EditorServices.getPapyrusEditingDomain();
 					
-					if (serviceRegistry != null 
-							&& editingDomain != null 
-							&& ModelicaMLRoot != null 
-							&& umlModel != null) {
-						
+//					if (serviceRegistry != null  && editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
+					if (editingDomain != null && ModelicaMLRoot != null && umlModel != null) {
 						return true;
 					}
 				}

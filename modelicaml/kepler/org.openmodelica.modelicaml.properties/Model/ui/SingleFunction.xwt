@@ -6,6 +6,8 @@
 		<ppel:PropertiesLayout></ppel:PropertiesLayout>
 	</Composite.layout>
 	<ppe:StringEditor input="{Binding}" property="UML:NamedElement:name"></ppe:StringEditor>
+	<ppe:StringLabel property="UML:NamedElement:qualifiedName"
+			input="{Binding}"></ppe:StringLabel>
 	<Composite>
 		<Composite.layout>
 			<ppel:PropertiesLayout numColumns="1"></ppel:PropertiesLayout>

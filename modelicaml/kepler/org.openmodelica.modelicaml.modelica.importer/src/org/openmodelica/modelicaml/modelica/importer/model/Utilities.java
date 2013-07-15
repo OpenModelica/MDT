@@ -112,6 +112,7 @@ public class Utilities {
 	
 	
 	public static IMarker createOMCMarker(TreeObject treeObject, String severity, String msg){
+		
 		if (!msg.trim().equals("") ) {
 			
 			String markerType = Constants.MARKERTYPE_MODELICA_MODELS_LOADING;
@@ -125,8 +126,13 @@ public class Utilities {
 					r = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
 				}
 				try {
-					String sourceID =  treeObject.getQName();
-					String location = treeObject.getQName();
+					String sourceID = "";
+					String location = "";
+
+					if (treeObject != null) {
+						sourceID = treeObject.getQName();
+						location = treeObject.getQName();
+					}
 					
 					// only create new markers if they do not exist yet
 					if (!isMarkerExists(r, markerType, msg, severity, sourceID, location)) {
@@ -141,6 +147,7 @@ public class Utilities {
 							marker.setAttribute(IMarker.SOURCE_ID, sourceID);
 							marker.setAttribute(IMarker.LOCATION, location);	
 						}
+						
 						return marker;						
 					}
 					

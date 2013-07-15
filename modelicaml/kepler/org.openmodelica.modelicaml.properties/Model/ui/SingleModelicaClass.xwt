@@ -12,6 +12,8 @@
 		</Composite.layout>
 		<ppe:StringEditor input="{Binding}" property="UML:NamedElement:name"
 			customLabel="Name"></ppe:StringEditor>
+		<ppe:StringLabel property="UML:NamedElement:qualifiedName"
+			input="{Binding}"></ppe:StringLabel>
 	</Composite>
 	<Group>
 		<Group.layout>

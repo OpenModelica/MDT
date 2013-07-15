@@ -202,6 +202,7 @@ public class OpenModelicaCompilerCommunication {
 	 * @return Reply from OMC
 	 */
 	public String loadFile(String strFile) {
+//		System.err.println("loadFile(\"" + strFile + "\")");
 		return executeCommand("loadFile(\"" + strFile + "\")");
 		
 		// TODO: this is a workaround. remove the encoding after Acceleo will encode the files with UTF-8

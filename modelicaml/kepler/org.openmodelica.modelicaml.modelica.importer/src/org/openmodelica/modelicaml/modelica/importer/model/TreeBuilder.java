@@ -146,7 +146,7 @@ public class TreeBuilder {
 			modelsToBeExcluded.addAll(excludeModels);
 		}
 
-		setMonitorTaskName("Creating class nodes in " + treeRoot.getName());
+		setMonitorTaskName("Analyzing classes in " + treeRoot.getName());
 
 		// create class nodes
 		createClassNodes(treeRoot, "", true);
@@ -157,7 +157,7 @@ public class TreeBuilder {
 			TreeObject treeObject = children[i];
 			if (treeObject instanceof ClassItem && treeObject instanceof TreeParent) {
 
-				setMonitorTaskName("Creating components of class " + treeObject.getName());
+				setMonitorTaskName("Analyzing components of class " + treeObject.getName());
 				
 				// create components and extends relation nodes
 				createClassElementNodes((TreeParent)treeObject, true);
@@ -235,6 +235,11 @@ public class TreeBuilder {
 		if (classQName != null) {
 			List<String> classes = omcc.getClassNames(classQName);
 			if (classes != null) {
+				
+				// monitor status 
+				getMonitor().beginTask("Analyzing classes in " + classQName, classes.size());
+				int worked = 0;
+				
 				for (String className : classes) {
 					
 					// exclude Modelica predefined functions defined in OMC
@@ -254,7 +259,7 @@ public class TreeBuilder {
 							// create tree item
 							ClassItem item = new ClassItem(className);
 							
-							setMonitorTaskName("Creating node for class " + className);
+							setMonitorTaskName("Analyzing class " + className);
 							
 							treeParent.addChild(item);
 							treeItems.add(item);
@@ -280,6 +285,10 @@ public class TreeBuilder {
 							}
 						}
 					}
+					
+					// monitor progress
+					worked ++;
+					getMonitor().worked(worked);
 				}
 			}
 		}
@@ -332,15 +341,21 @@ public class TreeBuilder {
 				createdItems.addAll(createEnumerationLiteralNodes(treeParent));
 			}
 			else {
+				
 				// Create Import relations nodes
 				createdItems.addAll(createImportRelationNodes(treeParent, classQName));
 				
-				// Create extends relation nodes
+				// Create Extends relation nodes
 				List<String> inheritedClasses = omcc.getInheritedClasses(classQName);
 				if (inheritedClasses.size() > 0) {
+					
+					// monitor status 
+					getMonitor().beginTask("Analyzing extends relations in " + classQName, inheritedClasses.size());
+					int worked = 0;
+					
 					for (String inheritedClassQName : inheritedClasses) {
 						
-						setMonitorTaskName("Creating extends relations in " + inheritedClassQName);
+						setMonitorTaskName("Analyzing extends relations in " + inheritedClassQName);
 						
 						// create tree item
 						ExtendsRelationItem item = new ExtendsRelationItem(inheritedClassQName);
@@ -365,6 +380,10 @@ public class TreeBuilder {
 						
 						// add to return list
 						createdItems.add(item);
+						
+						// progress monitor status
+						worked ++;
+						getMonitor().worked(worked);
 					}
 				}
 				
@@ -372,6 +391,10 @@ public class TreeBuilder {
 				
 				// create components nodes
 				if (components.size() > 0) {
+					
+					// monitor status 
+					getMonitor().beginTask("Analyzing components in " + classQName, components.size());
+					int worked = 0;
 					
 					for (int i = 0; i < components.size(); i++) {
 						
@@ -389,7 +412,7 @@ public class TreeBuilder {
 						// create tree item
 						ComponentItem item = new ComponentItem (component.name);
 
-						setMonitorTaskName("Creating component " + component.name);
+						setMonitorTaskName("Analyzing component " + component.name);
 						
 						treeParent.addChild(item);
 						treeItems.add(item);
@@ -431,6 +454,11 @@ public class TreeBuilder {
 						
 						// Add to return list
 						createdItems.add(item);
+						
+						
+						// progress monitor status
+						worked ++;
+						getMonitor().worked(worked);
 					}
 				}
 			}
@@ -456,12 +484,18 @@ public class TreeBuilder {
 
 		List<TreeObject> createdItems = new ArrayList<TreeObject>();
 		
-		setMonitorTaskName("Creating imports for the class" + classQName);
+		setMonitorTaskName("Analyzing imports for the class " + classQName);
 
 		int n = omcc.getImportCount(classQName);
 		if (n > 0) {
+			
+			// monitor status 
+			getMonitor().beginTask("Analyzing imports for class " + classQName, n);
+			int worked = 0;
+			
 			for (int i = 0; i <= n; i++) {
 				String reply = omcc.getNthImport(classQName, i);
+				
 				if (!reply.trim().equals("") && !reply.equals("Error") && !reply.equals("error") && !reply.equals("false")) {
 					ArrayList<String> items = StringHandler.unparseStrings(reply.trim());
 					if (items.size() > 2) {
@@ -494,13 +528,17 @@ public class TreeBuilder {
 						item.setAlias(alias);
 						item.setKind(kind);
 						
-						// Note, UML Dependencies cannot have ModelicaML proxies because they may not have names to be used for the identification.
+						// Note, UML Dependencies cannot have ModelicaML proxies because they may not have qualified names that can be used for the identification.
 //						item.setModelicaMLProxy(proxyQNameToElement.get(importedElementName));
 						
 						// add to return list
 						createdItems.add(item);
 					}
 				}
+				
+				// progress monitor status 
+				worked ++;
+				getMonitor().worked(worked);
 			}
 		}
 		return createdItems;
@@ -516,11 +554,16 @@ public class TreeBuilder {
 			
 			ArrayList<String> items = StringHandler.unparseStrings(reply.trim());
 			if (items.size() > 0) {
+				
+				// monitor status 
+				getMonitor().beginTask("Analyzing enumeration literals in " + classItem.getQName(), items.size());
+				int worked = 0;
+				
 				for (int i = 0; i < items.size(); i++) {
 			
 					String literalName = items.get(i);
 					ComponentItem literatItem = new ComponentItem(literalName);
-					setMonitorTaskName("Creating enumeration literal " + literalName);
+					setMonitorTaskName("Analyzing enumeration literal " + literalName);
 					
 					classItem.addChild(literatItem);
 					treeItems.add(literatItem);
@@ -538,6 +581,11 @@ public class TreeBuilder {
 					
 					// add to return list
 					createdItems.add(literatItem);
+					
+					// progress monitor status 
+					worked ++;
+					getMonitor().worked(worked);
+					
 				}
 			}
 		}
@@ -587,30 +635,27 @@ public class TreeBuilder {
 	}
 	
 	
-	private String getClassRestriction(String classQName){
-		// set class restriction
-		String classRestriction = "class"; // default restriction
-		
-		String classInfo = omcc.getClassInformation(classQName);
-		
-		if (!classInfo.trim().equals("") && !classInfo.equals("Error") && !classInfo.trim().equals("false") ) {
-
-			setMonitorTaskName("Updating information about class " + classQName);
-			
-			// get class data
-			ArrayList<String> classData = StringHandler.unparseStrings(classInfo);
-
-			if (classData.size() > 0 ) {
-				classRestriction = classData.get(0); 
-			}
-		}
-		
-		return classRestriction;
-	}
+//	private String getClassRestriction(String classQName){
+//		// set class restriction
+//		String classRestriction = "class"; // default restriction
+//		
+//		String classInfo = omcc.getClassInformation(classQName);
+//		
+//		if (!classInfo.trim().equals("") && !classInfo.equals("Error") && !classInfo.trim().equals("false") ) {
+//
+//			setMonitorTaskName("Updating information about class " + classQName);
+//			
+//			// get class data
+//			ArrayList<String> classData = StringHandler.unparseStrings(classInfo);
+//
+//			if (classData.size() > 0 ) {
+//				classRestriction = classData.get(0); 
+//			}
+//		}
+//		
+//		return classRestriction;
+//	}
 	
-	
-	
-	// isReplaceable(TwoTanksExample.Design, "SystemEnvironment")
 	
 	
 	private void setClassProperties(ClassItem item, String classQName){
@@ -632,6 +677,8 @@ public class TreeBuilder {
 		 * 		? {"writable",3,1,8,14},
 		 * 		-> array size
 		 */
+		// isReplaceable(TwoTanksExample.Design, "SystemEnvironment")
+		
 		
 		String classInfo = omcc.getClassInformation(classQName);
 		
@@ -968,22 +1015,22 @@ public class TreeBuilder {
 		if (ModelicaMLRoot instanceof Model) {
 //		if ( getModelicamlProfile() != null ) {
 			// predefined types
-			if (typeQName.equals("Real") || typeQName.equals("ModelicaReal") || typeQName.equals("TypeReal")) {
+			if (typeQName.equals("Real") || typeQName.equals(Constants.predefinedTypeName_real) || typeQName.equals("TypeReal")) {
 //				return type = element.getModel().getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_real);
 				return type = ((Model)ModelicaMLRoot).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_real);
 //				return type = ((Package) getModelicamlProfile().getOwnedMember(Constants.predefinedTypesProfileQName)).getOwnedType(Constants.predefinedTypeName_real);
 			}
-			if (typeQName.equals("Integer") || typeQName.equals("ModelicaInteger") || typeQName.equals("TypeInteger")) {
+			if (typeQName.equals("Integer") || typeQName.equals(Constants.predefinedTypeName_integer) || typeQName.equals("TypeInteger")) {
 //				return type = element.getModel().getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_integer);
 				return type = ((Model)ModelicaMLRoot).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_integer);
 //				return type = ((Package) getModelicamlProfile().getOwnedMember(Constants.predefinedTypesProfileQName)).getOwnedType(Constants.predefinedTypeName_integer);
 			}
-			if (typeQName.equals("Boolean") || typeQName.equals("ModelicaBoolean") || typeQName.equals("TypeBoolean")) {
+			if (typeQName.equals("Boolean") || typeQName.equals(Constants.predefinedTypeName_boolean) || typeQName.equals("TypeBoolean")) {
 //				return type = element.getModel().getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_boolean);
 				return type = ((Model)ModelicaMLRoot).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_boolean);
 //				return type = ((Package) getModelicamlProfile().getOwnedMember(Constants.predefinedTypesProfileQName)).getOwnedType(Constants.predefinedTypeName_boolean);
 			}
-			if (typeQName.equals("String") || typeQName.equals("ModelicaString") || typeQName.equals("TypeString")) {
+			if (typeQName.equals("String") || typeQName.equals(Constants.predefinedTypeName_string) || typeQName.equals("TypeString")) {
 //				return type = element.getModel().getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_string);
 				return type = ((Model)ModelicaMLRoot).getAppliedProfile(Constants.predefinedTypesProfileQName).getOwnedType(Constants.predefinedTypeName_string);
 //				return type = ((Package) getModelicamlProfile().getOwnedMember(Constants.predefinedTypesProfileQName)).getOwnedType(Constants.predefinedTypeName_string);
@@ -998,8 +1045,10 @@ public class TreeBuilder {
 	
 	
 	private boolean codeSyncFolderExists(){
+		
 		if (ModelicaMLModel != null && ModelicaMLModel.getResource() != null) {
 			String projectName = ModelicaMLModel.getResource().getURI().segment(1);
+		
 			if (projectName != null) {
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				IWorkspaceRoot root = workspace.getRoot();
@@ -1022,6 +1071,7 @@ public class TreeBuilder {
 	 * Loading of models **********************************************************************************************************************************************
 	 */
 	public void loadModels(){
+		
 //		UmlModel umlModel = UmlUtils.getUmlModel();
 		UmlModel umlModel = ModelicaMLModel;
 		
@@ -1033,7 +1083,7 @@ public class TreeBuilder {
 		//TODO: ask user if Modelica, with specific version, should be loaded ...
 		if (isLoadMSL() && codeSyncFolderExists()) {
 			
-			// TODO: get the MSL verion and indicate it in the monitor
+			// TODO: get the MSL version and indicate it in the monitor
 			setMonitorTaskName("Loading Modelica Standard Library...");
 
 			// Load MSL
@@ -1059,8 +1109,9 @@ public class TreeBuilder {
 				
 //				if (reply.trim().equals("Error")) {
 				if (ModelicaMLServices.containsOMCErrorMessage(reply.trim())) {
-					String errorString = omcc.getErrorString();	
-					String msg = Utilities.extractErrorMessage(errorString);
+//					String errorString = omcc.getErrorString();	
+					String errorLog = omcc.getErrorLog();	
+					String msg = Utilities.extractErrorMessage(errorLog);
 
 					// generate markers
 					Utilities.createOMCMarker(null, "error", msg);
@@ -1073,13 +1124,11 @@ public class TreeBuilder {
 //					// generate markers
 //					createOMCMarker(null, "error", msg);
 //				}
-				
 			}
 		}
 		else {
 			System.err.println("Cannot access the Papyrus UML model");
 		}
-		
 	}
 
 	/*
@@ -1106,12 +1155,12 @@ public class TreeBuilder {
 			
 			// validate
 			validateProxies(collectedProxies, modelicaModelQNames);
-	
 		}
 	}
 
 
 	private void validateProxies(HashSet<Element> proxies,  HashSet<String> modelicaModelQNames){
+		
 			for (Element element : proxies) {
 				
 				setMonitorTaskName("Validating proxy "+ ModelicaMLServices.getQualifiedName(element));

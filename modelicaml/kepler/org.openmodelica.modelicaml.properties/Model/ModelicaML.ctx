@@ -117,7 +117,7 @@
       <widget href="ui/MultipleType.xwt#/"/>
     </sections>
     <sections name="Single ModelicaConnector" sectionFile="ui/SingleModelicaConnector.xwt">
-      <widget href="ui/Single ModelicaConnector.xwt#/"/>
+      <widget href="ui/SingleModelicaConnector.xwt#/"/>
     </sections>
     <sections name="Multiple ModelicaConnector" sectionFile="ui/MultipleModelicaConnector.xwt">
       <widget href="ui/MultipleModelicaConnector.xwt#/"/>

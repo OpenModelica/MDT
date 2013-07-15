@@ -656,8 +656,11 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 							@Override
 							protected IStatus run(IProgressMonitor monitor) {
 								
+								monitor.beginTask("Loading Modelica Models from '"+Constants.folderName_code_sync+"' folder...", 3);
+								
 								treeBuilder.setMonitor(monitor);
 								
+								monitor.setTaskName("Cleaing up ...");
 								TreeObject[] children = treeRoot.getChildren();
 								for (int i = 0; i < children.length; i++) {
 									treeRoot.removeChild(children[i]);
@@ -667,7 +670,9 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 								treeBuilder.setModelicaMLModel(umlModel);
 								treeBuilder.setModelicaMLRoot(ModelicaMLRoot);
 //										treeBuilder.setModelicamlProfile();
+								monitor.worked(1);
 								
+								monitor.setTaskName("Deleting old markers ...");
 								// delete OMC markers
 								String projectName = umlModel.getResource().getURI().segment(1);
 								IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -675,9 +680,12 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 								IProject iProject = root.getProject(projectName);
 
 								Utilities.deleteOMCLoadingMarkers(iProject);
-								
+								monitor.worked(2);
+
 								// build tree
+								monitor.setTaskName("Analyzing models ...");
 								treeBuilder.buildTree(treeRoot, null);
+								monitor.worked(3);
 								
 								monitor.done();
 								done(Status.OK_STATUS);
@@ -1618,6 +1626,8 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 					
 					monitor.done();
 					done(Status.OK_STATUS);
+					monitor.setTaskName("");
+					
 					return Status.OK_STATUS;
 				}
 			};
