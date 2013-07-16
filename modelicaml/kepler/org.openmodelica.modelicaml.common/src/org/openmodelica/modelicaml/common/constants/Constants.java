@@ -335,6 +335,9 @@ public class Constants {
 	public final static String VIEW_MODELICA_CODE_SYNCHRONIZATION = "org.openmodelica.modelicaml.modelica.importer.views.ModelicaOMCCodeViewer";
 	
 	
+	public final static String MODELICAML_PERSPECTIVE_PLUGIN = "org.openmodelica.modelicaml.preferences";
+	
+	
 	/*
 	 * Encoding format for generated files
 	 */
@@ -350,6 +353,9 @@ public class Constants {
 	
 	// used for in HTML report
 	public final static String linkDelimiter = "#@#";
+		
+	// default UNDFINED string 
+	public final static String UNDEFINED = "undefined";
 	
 }
 

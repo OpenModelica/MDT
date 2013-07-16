@@ -554,7 +554,7 @@ public class StereotypeApplier {
 					property.applyStereotype(sVariable);
 				}
 			}
-			else if(type.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null){
+			else if(type != null && type.getAppliedStereotype(Constants.stereotypeQName_Requirement) != null){
 				if (sRequirementInstance !=null && !ModelicaMLServices.isModelicaMLStereotypeApplied(property)) {
 					property.applyStereotype(sRequirementInstance);
 				}

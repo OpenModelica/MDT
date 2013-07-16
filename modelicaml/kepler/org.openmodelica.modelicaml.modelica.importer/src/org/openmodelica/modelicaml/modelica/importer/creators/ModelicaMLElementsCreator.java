@@ -124,7 +124,6 @@ public class ModelicaMLElementsCreator {
 	private IProgressMonitor monitor;
 	
 	
-	
 	public ModelicaMLElementsCreator(){
 		setEditingDomain();
 		setModelicaMLRootElement();
@@ -591,7 +590,7 @@ public class ModelicaMLElementsCreator {
 								}
 								// update
 								
-								// set the component type (uml class that was just created) 
+								// set the component type (UML class that was already created as a proxy) 
 								Element type = treeBuilder.getTypeElement(component.getComponentTypeQame());
 								component.setComponentTypeProxy(type);
 								
@@ -1956,7 +1955,7 @@ public class ModelicaMLElementsCreator {
 				@Override
 				protected void doExecute() {
 					
-					// add the new element to the modelicaml tree
+					// add the new element to the ModelicaML tree
 					modelicaMLModelRoot.eResource().getContents().add(newRoot);
 					
 					// Retrieve ModelicaML profile and apply with Sub-profile

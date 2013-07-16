@@ -100,7 +100,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IGotoMarker;
@@ -338,7 +337,8 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 //		viewer.setSorter(new NameSorter());
 		viewer.setInput(getViewSite());
 
-		Boolean loadMSLBeforeSynchronizing = Platform.getPreferencesService().getBoolean("org.openmodelica.modelicaml.preferences", "syncOnlyPublicElements", true, null);
+		Boolean loadMSLBeforeSynchronizing = Platform.getPreferencesService().getBoolean(Constants.MODELICAML_PERSPECTIVE_PLUGIN, "syncOnlyPublicElements", true, null);
+		
 		if (loadMSLBeforeSynchronizing) {
 			// default filters
 			ViewerFilter[] filters = {showOnlyPublicComponentsFilter};
@@ -460,9 +460,7 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 			}
 		}
 		
-		drillDownAdapter.addNavigationActions(manager);
-		// Other plug-ins can contribute there actions here
-		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		manager.add(new Separator());
 		
 		// If it is the root (folder) or a class -> add expand/collapse action
 		if (obj instanceof ClassItem || (obj instanceof TreeParent && ((TreeParent)obj).getName().equals(Constants.folderName_code_sync) )) {
@@ -487,6 +485,13 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 			manager.add(actionExpandCollapse);
 			manager.add(new Separator());
 		}
+		
+		manager.add(new Separator());
+		
+		drillDownAdapter.addNavigationActions(manager);
+		// Other plug-ins can contribute there actions here
+//		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
@@ -685,6 +690,10 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 								// build tree
 								monitor.setTaskName("Analyzing models ...");
 								treeBuilder.buildTree(treeRoot, null);
+								
+								// check if the first level classes are all packages 
+								checkFirstLevelClasses(false);
+								
 								monitor.worked(3);
 								
 								monitor.done();
@@ -998,43 +1007,14 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 				/*
 				 * TODO: if the element that is being updated is selected in GUI (i.e. in Papyrus modeling tool)
 				 * then there will be a "SWT invalid thread exception because this job will modify it.
-				 * WORAROUND: before creating elements set Papyrus Model Explorer Selection to 
+				 * WORK AROUND: Before creating elements set Papyrus Model Explorer Selection to 
 				 * an element that will not be modified, e.g. the ModelicaML root. 
 				 */
-//				PapyrusServices.locateWithReselection(treeBuilder.getModelicaMLRoot());
 				EditorServices.locateInModelExplorer(treeBuilder.getModelicaMLRoot(), true);
 				
-				// As a job
-				TreeObject[] children = treeRoot.getChildren();
-				HashSet<TreeObject> invalidFirstLevelClasses = new HashSet<TreeObject>();
-
-				for (int i = 0; i < children.length; i++) {
-					TreeObject treeObject = children[i];
-					
-//					System.err.println(((ClassItem)treeObject).getClassRestriction());
-					if (treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("package")) {
-						// ok, do nothing
-					}
-					else {
-						invalidFirstLevelClasses.add(treeObject);
-					}
-				}
+				// check if all classes at the first level are packages.
+				checkFirstLevelClasses(false);
 				
-				if (invalidFirstLevelClasses.size() > 0) {
-					String title = "ModelicaML Proxies Synchronization Error";
-					String message = "To use the ModelicaML Modelica models synchronization feature all first level Modelica classes " +
-							"must be packages. Moreover, these packages must not have extends relations " +
-							" to other packages and not be encapsulated, partial, final or replaceable. " +
-							"The following first level classes cannot be synchronized: \n\n";
-					
-					String invalideClassesString = "";
-					for (TreeObject invalideClass : invalidFirstLevelClasses) {
-						invalideClassesString = invalideClassesString  + "             -" + invalideClass.getQName() + "\n";
-					}
-					message = message + invalideClassesString;
-					MessageDialog.openError(getSite().getShell(), title, message);
-				}
-
 				// Set all project- and model-related data
 				configureTreeBuilder();
 				
@@ -1206,8 +1186,6 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 		
 		
 		
-		
-		
 		// Option to synchronize the protected elements or not
 		actionSyncOnlyPublicElements = new Action("actionSyncOnlyPublicElements", 2) {
 			public void run() {
@@ -1237,7 +1215,6 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 		
 		
 		
-		
 		actionValidateProxies = new Action("actionValidateProxies", 2) {
 			public void run() {
 				if (actionValidateProxies.isChecked()) {
@@ -1255,7 +1232,6 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 		treeBuilder.setValidateProxies(actionValidateProxies.isChecked());
 		
 		
-
 		
 		
 		
@@ -1814,6 +1790,7 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 					"Please make sure that the ModelicaML model is open in the active editor.");
 		}
 		else {
+			
 			String projectName = umlModel.getResource().getURI().segment(1);
 			labelProvider.setProjectName(projectName);
 
@@ -1858,6 +1835,44 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 		}
 	}
 
+	
+	public void checkFirstLevelClasses(boolean openErrorDioalog){
+		TreeObject[] children = treeRoot.getChildren();
+		HashSet<TreeObject> invalidFirstLevelClasses = new HashSet<TreeObject>();
+
+		for (int i = 0; i < children.length; i++) {
+			TreeObject treeObject = children[i];
+			
+//			System.err.println(((ClassItem)treeObject).getClassRestriction());
+			if (treeObject instanceof ClassItem && ((ClassItem)treeObject).getClassRestriction().equals("package")) {
+				// ok, do nothing
+			}
+			else {
+				invalidFirstLevelClasses.add(treeObject);
+			}
+		}
+		
+		if (invalidFirstLevelClasses.size() > 0) {
+			String title = "ModelicaML Proxies Synchronization Error";
+			String message = "To use the ModelicaML Modelica models synchronization feature all first level Modelica classes " +
+					"must be packages. Moreover, these packages must not have extends relations " +
+					" to other packages and not be encapsulated, partial, final or replaceable. " +
+					"The following first level classes cannot be synchronized: \n\n";
+			
+			String invalidClassesString = "";
+			for (TreeObject invalideClass : invalidFirstLevelClasses) {
+				invalidClassesString = invalidClassesString  + "             -" + invalideClass.getQName() + "\n";
+			}
+			message = message + invalidClassesString;
+			
+			if (openErrorDioalog) {
+				MessageDialog.openError(getSite().getShell(), title, message);
+			}
+			
+			Utilities.createOMCMarker(treeRoot, "error", 
+					invalidClassesString + " cannot be synchronized because they are not packages.");
+		}
+	}
 	
 	
 	 private List<TreeObject> getTopDownPathItems(TreeObject startItem){

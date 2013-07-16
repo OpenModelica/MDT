@@ -165,6 +165,11 @@ public class ComponentItem extends TreeParent {
 
 
 	public String getVisibility() {
+		
+		if (this.visibility == null) {
+			return Constants.UNDEFINED;
+		}
+		
 		return visibility;
 	}
 

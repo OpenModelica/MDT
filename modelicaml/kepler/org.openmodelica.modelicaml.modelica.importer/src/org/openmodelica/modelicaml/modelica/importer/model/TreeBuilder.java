@@ -337,9 +337,11 @@ public class TreeBuilder {
 		
 		if (!classQName.equals("") && !ModelicaMLServices.containsOMCErrorMessage(classQName)) {
 
+			// handle an enumerations
 			if (treeParent instanceof ClassItem && ((ClassItem)treeParent).isEnumeration() ) {
 				createdItems.addAll(createEnumerationLiteralNodes(treeParent));
 			}
+			// handle a class
 			else {
 				
 				// Create Import relations nodes
@@ -1010,7 +1012,7 @@ public class TreeBuilder {
 		if (type != null) {
 			return type;
 		}
-		// if the type is predefined type -> use element to access the predefined modelicaml types in the modelicaml profile 
+		// if the type is predefined type -> use element to access the predefined MdoelicaML types in the ModelicaML profile 
 //		if (element != null) {
 		if (ModelicaMLRoot instanceof Model) {
 //		if ( getModelicamlProfile() != null ) {

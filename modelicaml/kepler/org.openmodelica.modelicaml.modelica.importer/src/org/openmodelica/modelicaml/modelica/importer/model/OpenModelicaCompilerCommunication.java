@@ -425,6 +425,13 @@ public class OpenModelicaCompilerCommunication {
 	
 	public List<String> getExtendsModifierNames(String className, String extendedClassName){
 		List<String> items = new ArrayList<String>();
+		
+		// DEBUG ONLY
+		if (className.equals(extendedClassName)) {
+			System.err.println("API ERROR: " + "getExtendsModifierNames(" + className + ", "  + extendedClassName + ")");
+			Utilities.createMarker(null, className, "error", "API ERROR: " + "getExtendsModifierNames(" + className + ", "  + extendedClassName + ")");
+		}
+		
 		String command = "getExtendsModifierNames(" + className + ", "  + extendedClassName + ")";
 		String reply = executeCommand(command);
 		
