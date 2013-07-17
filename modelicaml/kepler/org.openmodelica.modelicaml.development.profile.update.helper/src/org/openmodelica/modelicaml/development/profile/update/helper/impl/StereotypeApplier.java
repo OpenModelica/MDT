@@ -40,6 +40,7 @@ import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 public class StereotypeApplier {
 	
 	private HashSet<Class> classes = new HashSet<Class>();
+	private HashSet<PrimitiveType> types = new HashSet<PrimitiveType>();
 	private HashSet<Property> properties = new HashSet<Property>();
 	
 	private HashSet<Port> ports = new HashSet<Port>();
@@ -77,6 +78,7 @@ public class StereotypeApplier {
 
 	private void clearLists(){
 		classes.clear();
+		types.clear();
 		properties.clear();
 		ports.clear();
 		connectors.clear();
@@ -169,6 +171,11 @@ public class StereotypeApplier {
 			
 			setMonitorText(object, "Found ");
 			classes.add((Class) object);
+			numberOfElementsConsidered ++;
+		}
+		else if (object instanceof PrimitiveType) {
+			setMonitorText(object, "Found ");
+			types.add((PrimitiveType) object);
 			numberOfElementsConsidered ++;
 		}
 		else if (object instanceof StateMachine) {
@@ -277,6 +284,16 @@ public class StereotypeApplier {
 		applyStereotypesForClasses();
 //		System.err.println("worked:" + numberOfUpdatedElements);
 		progressMonitor.getProgressMonitor().worked(numberOfUpdatedElements);
+		
+		
+		// Primitive Types
+		if (progressMonitor.getProgressMonitor().isCanceled()) { return;}
+		numberOfUpdatedElements += types.size();
+		progressMonitor.getProgressMonitor().setTaskName("(" + numberOfUpdatedElements +" of " + numberOfElementsConsidered + "): Applying stereotypes to types  ...");
+		applyStereotypesForTypes();
+//		System.err.println("worked:" + numberOfUpdatedElements);
+		progressMonitor.getProgressMonitor().worked(numberOfUpdatedElements);
+		
 		
 		// Properties: variables, ports, function arguments
 		if (progressMonitor.getProgressMonitor().isCanceled()) { return;}
@@ -444,6 +461,19 @@ public class StereotypeApplier {
 			}
 			else {
 				addToUnhandledElements(clazz);
+			}
+		}
+	}
+	
+
+	private void applyStereotypesForTypes(){
+		for (PrimitiveType type : types) {
+			Stereotype s = type.getApplicableStereotype(Constants.stereotypeQName_Type);
+			if (s != null && !ModelicaMLServices.isModelicaMLStereotypeApplied(type)) {
+				type.applyStereotype(s);
+			}
+			else {
+				addToUnhandledElements(type);
 			}
 		}
 	}

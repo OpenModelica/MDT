@@ -33,21 +33,23 @@
  */
 package org.openmodelica.modelicaml.modelica.importer.handlers;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.lang.model.type.PrimitiveType;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.papyrus.infra.core.services.ServiceException;
@@ -63,12 +65,15 @@ import org.eclipse.uml2.uml.Enumeration;
 import org.eclipse.uml2.uml.FunctionBehavior;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Stereotype;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.EditorServices;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 
 public class ConnectToCodeSyncHandler extends AbstractHandler {
 	private EObject selectedElement = null;
+	private ProgressMonitorDialog progressMonitor;
 
 
 
@@ -87,7 +92,28 @@ public class ConnectToCodeSyncHandler extends AbstractHandler {
 					|| selectedElement instanceof Enumeration
 					|| selectedElement instanceof PrimitiveType) {
 				
-				applyProxyStereotype((NamedElement) selectedElement);
+				// open dialog
+				progressMonitor = new ProgressMonitorDialog(ModelicaMLServices.getShell());
+				
+				try {
+					progressMonitor.run(false, true, new IRunnableWithProgress() {
+						
+						@Override
+						public void run(IProgressMonitor monitor) throws InvocationTargetException,InterruptedException {
+							
+							applyProxyStereotype((NamedElement) selectedElement);
+							monitor.done();
+						}
+					});
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+					MessageDialog.openError(ModelicaMLServices.getShell(), "ModelicaML Stereotypes Update", "Could not invoke data collection.");
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					MessageDialog.openInformation(ModelicaMLServices.getShell(), "ModelicaML Stereotypes Update", "Service was interrupted.");		
+				}
+
+//				applyProxyStereotype((NamedElement) selectedElement);
 			}
 			else {
 				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Connect to Code Synchronization Error", "Not a valid selection.");
@@ -117,7 +143,9 @@ public class ConnectToCodeSyncHandler extends AbstractHandler {
 				
 				// get all contents, iterate and apply the proxy stereotype.
 				Iterator<EObject> i = proxy.eAllContents();
-
+				
+				progressMonitor.getProgressMonitor().beginTask("Analyzing elements ... ", IProgressMonitor.UNKNOWN);
+				
 				while (i.hasNext()) {
 					EObject object = i.next() ;
 					if (	object instanceof Package || object instanceof Model
@@ -127,10 +155,16 @@ public class ConnectToCodeSyncHandler extends AbstractHandler {
 							|| object instanceof PrimitiveType) {
 						
 						Element nestedProxy = (Element)object;
+						
+						progressMonitor.getProgressMonitor().subTask("Applying ModelicaML sync. stereotype to " + ModelicaMLServices.getName(nestedProxy));
+						
 						Stereotype s = nestedProxy.getApplicableStereotype(Constants.stereotypeQName_ModelicaModelProxy);
-
+						
 						if (s != null) {
 							nestedProxy.applyStereotype(s);
+						}
+						else {
+							System.err.println("Could not apply Proxy stereotype to " + ModelicaMLServices.getName((Element) object));
 						}
 					}
 				}
