@@ -3207,7 +3207,7 @@
       <library
             description="Modelica Standard Library 3.2"
             iconpath="resources/icons/icons16/modelicaml_logo_16x16_v02.png"
-            name="Modelica Standard Library 3.2"
+            name="Modelica Standard Library 3.2.1"
             path="pathmap://PATH_LIBRARIES/MSL/full/model.uml"
             provider="OpenModelica Project">
       </library>
@@ -3217,7 +3217,7 @@
       <library
             description="Modelica Standard Library 3.2 - Proxies (only model structure, no behavior or annotations)"
             iconpath="resources/icons/icons16/modelicaml_logo_16x16_v02.png"
-            name="Modelica Standard Library 3.2 - Proxies"
+            name="Modelica Standard Library 3.2.1 - Proxies"
             path="pathmap://PATH_LIBRARIES/MSL/proxies/model.uml"
             provider="OpenModelica Project">
       </library>

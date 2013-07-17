@@ -63,6 +63,7 @@ import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Parameter;
+import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
@@ -1226,16 +1227,23 @@ public class TreeBuilder {
 			Utilities.deleteProxyValidationMarkers(iProject, ((NamedElement)treeItem.getModelicaMLProxy()).getQualifiedName());
 		}
 		
-		// ´Collect proxies
-		setMonitorTaskName("Collecting proxies from "+ModelicaMLServices.getQualifiedName(treeItem.getModelicaMLProxy())+" ... ");
+		// Collect proxies
+		setMonitorTaskName("Collecting proxies from " + ModelicaMLServices.getQualifiedName(treeItem.getModelicaMLProxy())+" ... ");
 		HashSet<Element> proxies = new HashSet<Element>();
+		
 		Iterator<EObject> i = treeItem.getModelicaMLProxy().eAllContents();
 		while (i.hasNext()) {
 			EObject object = i.next() ;
 			
 			// collect all imported elements 
-			if ((object instanceof Class && ((Class)object).getAppliedStereotype(Constants.stereotypeQName_ModelicaModelProxy) != null) || object instanceof Property) {
+			if ((object instanceof Class && ((Class)object).getAppliedStereotype(Constants.stereotypeQName_ModelicaModelProxy) != null) 
+					|| object instanceof Property 
+					|| object instanceof PrimitiveType) {
 				proxies.add((Element) object);
+				
+				if (((NamedElement)object).getQualifiedName().startsWith("SIunits") ) {
+					System.err.println("SIUnits.Volume found");
+				}
 			}
 		}
 		

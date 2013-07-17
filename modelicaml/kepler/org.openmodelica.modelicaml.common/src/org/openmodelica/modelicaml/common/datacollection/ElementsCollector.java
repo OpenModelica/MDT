@@ -48,7 +48,7 @@ public class ElementsCollector {
 	protected String stereotypeQName;
 	
 	// all imported elements
-	private HashSet<Element> importedElements = new HashSet<Element>(); 
+	protected HashSet<Element> importedElements = new HashSet<Element>(); 
 	
 	// only the imported packages
 	protected HashSet<Element> importedPackages = new HashSet<Element>();

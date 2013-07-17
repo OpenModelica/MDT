@@ -162,6 +162,7 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 	private Action actionRefreshAndValidate;
 
 	private Action actionClear;
+	private Action actionSort;
 	
 	private Action actionCollapseAll;
 	private Action actionExpandCollapse;
@@ -498,8 +499,9 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 
 		manager.add(actionReloadView);
 		manager.add(actionClear);
+		manager.add(actionSort);
 		manager.add(new Separator());
-
+		
 		manager.add(actionCollapseAll);
 
 		manager.add(actionLinkWithEditor);
@@ -806,6 +808,25 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 		actionClear.setText("Clear");
 		actionClear.setToolTipText("Clear");
 		actionClear.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
+		
+		
+		
+		actionSort = new Action("Sort", 2) {
+			public void run() {
+				if (actionSort.isChecked()){
+					viewer.setSorter(new NameSorter());
+				}
+				else {
+					viewer.setSorter(null);
+				}
+			}
+		};
+		actionSort.setText("Sort");
+		actionSort.setToolTipText("Sort");
+		actionSort.setImageDescriptor(ImageDescriptor.createFromFile(Constants.class, "/icons/papyrus/sort.gif"));
+		// set default
+		actionSort.setChecked(viewer.getSorter() != null);
+
 		
 		
 		actionReloadView = new Action() {

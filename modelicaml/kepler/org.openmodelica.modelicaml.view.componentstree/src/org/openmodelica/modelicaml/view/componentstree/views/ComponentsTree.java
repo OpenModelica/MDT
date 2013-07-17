@@ -204,6 +204,9 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	/** The action locate. */
 	private Action actionLocate;
 	
+	/** The sort locate. */
+	private Action actionSort;
+	
 	/** The action link with editor. */
 	private Action actionLinkWithEditor;
 	
@@ -625,7 +628,9 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 	 */
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(actionReload);
+		manager.add(actionSort);
 		manager.add(new Separator());
+		
 		manager.add(actionFind);
 //		manager.add(new Separator());
 //		manager.add(actionReloadAndValidate);
@@ -707,6 +712,23 @@ public class ComponentsTree extends ViewPart implements ITabbedPropertySheetPage
 		actionAllDeleteModifications.setToolTipText("Delete all modifications");
 		actionAllDeleteModifications.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
 		
+		
+		actionSort = new Action("Sort", 2) {
+			public void run() {
+				if (actionSort.isChecked()){
+					viewer.setSorter(new NameSorter());
+				}
+				else {
+					viewer.setSorter(null);
+				}
+			}
+		};
+		actionSort.setText("Sort");
+		actionSort.setToolTipText("Sort");
+		actionSort.setImageDescriptor(ImageDescriptor.createFromFile(Constants.class, "/icons/papyrus/sort.gif"));
+		// set default
+		actionSort.setChecked(viewer.getSorter() != null);
+
 		
 		
 		actionFind = new Action("actionFind") {

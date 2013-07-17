@@ -139,6 +139,8 @@ public class RelationsView extends ViewPart {
 		private Action actionFind;
 
 		private Action actionShowRelationsFromLibs;
+
+		private Action actionSort;
 	
 
 	class ViewContentProvider implements IStructuredContentProvider, 
@@ -280,6 +282,7 @@ public class RelationsView extends ViewPart {
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(actionReload);
+		manager.add(actionSort);
 		manager.add(new Separator());
 
 		manager.add(actionFind);
@@ -314,6 +317,26 @@ public class RelationsView extends ViewPart {
 		actionReload.setText("Reload");
 		actionReload.setToolTipText("Reload");
 		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/refresh.gif"));
+		
+		
+		actionSort = new Action("Sort", 2) {
+			public void run() {
+				if (actionSort.isChecked()){
+					viewer.setSorter(new NameSorter());
+				}
+				else {
+					viewer.setSorter(null);
+				}
+			}
+		};
+		actionSort.setText("Sort");
+		actionSort.setToolTipText("Sort");
+		actionSort.setImageDescriptor(ImageDescriptor.createFromFile(Constants.class, "/icons/papyrus/sort.gif"));
+		// set default
+		actionSort.setChecked(viewer.getSorter() != null);
+
+		
+		
 		
 		actionLinkWithEditor = new Action("actionLinkWithEditor", 2) { //check box 
 			public void run() {

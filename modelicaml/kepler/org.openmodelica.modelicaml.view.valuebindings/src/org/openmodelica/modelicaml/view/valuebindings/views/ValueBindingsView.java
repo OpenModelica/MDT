@@ -174,7 +174,9 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 
 	private Action actionElementSelectedByDialog;
 
-	private Action actionClearSubTree; 
+	private Action actionClearSubTree;
+
+	private Action actionSort; 
 	
 	public final static int DEFAULT_EXPAND_LEVEL = 2;
 	public final static int DEFAULT_EXPAND_LEVEL_CLIENTS = 1;
@@ -470,6 +472,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 	private void fillLocalToolBar(IToolBarManager manager) {
 
 		manager.add(actionReload);
+		manager.add(actionSort);
 		manager.add(new Separator());
 
 		manager.add(actionFind);
@@ -731,6 +734,24 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		actionReload.setText("(Re)load and validate");
 		actionReload.setToolTipText("(Re)load and validate");
 		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/refresh.gif"));
+		
+		
+		
+		actionSort = new Action("Sort", 2) {
+			public void run() {
+				if (actionSort.isChecked()){
+					viewer.setSorter(new NameSorter());
+				}
+				else {
+					viewer.setSorter(null);
+				}
+			}
+		};
+		actionSort.setText("Sort");
+		actionSort.setToolTipText("Sort");
+		actionSort.setImageDescriptor(ImageDescriptor.createFromFile(Constants.class, "/icons/papyrus/sort.gif"));
+		// set default
+		actionSort.setChecked(viewer.getSorter() != null);
 		
 		
 		

@@ -314,6 +314,7 @@ public class TraceabilityView extends ViewPart {
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(actionReload);
+		manager.add(actionSort);
 		manager.add(new Separator());
 
 		manager.add(actionShowRequirementsView);
@@ -381,6 +382,8 @@ public class TraceabilityView extends ViewPart {
 
 	private Action actionLinkWithEditor;
 
+	private Action actionSort;
+
 
 
 	
@@ -423,6 +426,24 @@ public class TraceabilityView extends ViewPart {
 		actionReload.setText("Reload");
 		actionReload.setToolTipText("Reload");
 		actionReload.setImageDescriptor(ImageDescriptor.createFromFile(Activator.class, "/icons/refresh.gif"));
+
+		
+		actionSort = new Action("Sort", 2) {
+			public void run() {
+				if (actionSort.isChecked()){
+					viewer.setSorter(new NameSorter());
+				}
+				else {
+					viewer.setSorter(null);
+				}
+			}
+		};
+		actionSort.setText("Sort");
+		actionSort.setToolTipText("Sort");
+		actionSort.setImageDescriptor(ImageDescriptor.createFromFile(Constants.class, "/icons/papyrus/sort.gif"));
+		// set default
+		actionSort.setChecked(viewer.getSorter() != null);
+
 
 		
 		actionCreateVerificationModel = new Action() {
