@@ -1,0 +1,8 @@
+[module UML2ModelicaServices('http://www.eclipse.org/uml2/3.0.0/UML')/]
+
+[query public replaceSpecCharExceptThis(arg0 : String, arg1 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.uml2modelica.services.UML2ModelicaServices', 'replaceSpecCharExceptThis(java.lang.String, java.lang.String)', Sequence{arg0, arg1}) /]
+
+[query public replaceSpecChar(arg0 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.uml2modelica.services.UML2ModelicaServices', 'replaceSpecChar(java.lang.String)', Sequence{arg0}) /]
+

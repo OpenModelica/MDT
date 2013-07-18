@@ -1,0 +1,70 @@
+[comment encoding = UTF-8 /]
+[module _1_file_name('http://www.eclipse.org/uml2/3.0.0/UML')/]
+
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::umlservices/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::StringUtls/]
+[import org::openmodelica::modelicaml::generate::modelica::cg::helpers::cgconfigurationmanager/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::core::helper/]
+
+
+[comment]<%-- File names ############################################--%>[/comment]
+
+[template public prefix(aNamedElement : NamedElement) post(trim())]
+[getProperty('c_outputFolder')/] 
+[/template]
+
+[template public file_name(aClassifier : Classifier) post(trim())]
+[if (aClassifier.getCGNameSpace()->notEmpty())]
+[if (qualifiedName.startsWith(aClassifier.getCGNameSpace()))]
+[file_name_string()/]
+[/if][else]
+[file_name_string()/][/if]
+[/template]
+
+[template public file_name(aPackage : Package) post(trim())]
+[if (aPackage.getCGNameSpace()->notEmpty())]
+[if (qualifiedName.startsWith(aPackage.getCGNameSpace()))]
+[file_name_string()/][/if][else]
+[file_name_string()/][/if]
+[/template]
+
+[template public file_name_string(aPackage : Package) post(trim())]
+[prefix()/][qualifiedName.replaceSpecCharExceptThis('::').replaceAll('::', '\\/')/]/package.mo  [comment]CHECK THIS LATER .replaceAll('::', '\'/')[/comment]
+[/template]
+
+[template public file_name_string(aClassifier : Classifier) post(trim())]
+[if (aClassifier.ownerIsAValidPackageFolder() = true  and (aClassifier.hasStereotype(getProperty('s_package')) or aClassifier.hasStereotype(getProperty('s_operator'))))]
+[prefix()/][qualifiedName.replaceSpecCharExceptThis('::').replaceAll('::', '\\/')/]/package.mo
+[else] [comment]<%-- for a Modelica class --%>[/comment]
+[if (aClassifier.isStoredDefinition())]
+[prefix()/][qualifiedName.replaceSpecCharExceptThis('::').replaceAll('::', '\\/')/].mo
+[/if]
+[/if]
+[/template]
+
+[query public ownerIsAValidPackageFolder(aClassifier : Classifier)  : Boolean =
+if (owner.eClass().name = 'Model' or owner.eClass().name = 'Package') then true
+else if ((owner.hasStereotype(getProperty('s_package')) or owner.hasStereotype(getProperty('s_operator'))) and not (hasStereotype(getProperty('ModelicaModelProxy'))))then
+if (owner.owner.eClass().name = 'Model' or owner.owner.eClass().name = 'Package')
+then true
+else if (owner.owner.hasStereotype(getProperty('s_package')) or owner.owner.hasStereotype(getProperty('s_operator')))
+then true
+else
+false
+endif
+endif
+else
+false
+endif
+endif
+/]
+
+[query public isStoredDefinition(aClassifier : Classifier)  : Boolean =
+if (aClassifier.ownerIsAValidPackageFolder()
+and aClassifier.isModelicaRestrictedClass()
+and not aClassifier.isProtected() and not aClassifier.isRedeclare()
+and	not aClassifier.isPartialDerivativeFunction()
+and not (aClassifier.hasStereotype(getProperty('ModelicaModelProxy')))
+and	not aClassifier.isReplaceable()	)
+then true else false endif
+/]

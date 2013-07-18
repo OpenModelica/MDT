@@ -1,0 +1,129 @@
+[comment encoding = UTF-8 /]
+[module _4_behavior_getter('http://www.eclipse.org/uml2/3.0.0/UML')extends org::openmodelica::modelicaml::generate::modelica::uml2modelica::core::common/]
+
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::core::helper/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::StringUtls/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::umlservices/]
+
+[template public equation(aClassifier : Classifier) post(trim())]
+[equations_from_UML_Constraints()/][comment  NOTE: SysML specific. /]
+[equations_from_UML_OpaqueBehavior()/][comment  NOTE: ModelicaML specific. /]
+[asserts()/][comment]<%-- NOTE: ModelicaML specific, not supported by SysML4Modelica.  --%>[/comment]
+[/template]
+
+[comment]<%-- ### Equations --%>[/comment]
+
+[template public equations_from_UML_Constraints(aClassifier : Classifier) post(trim())]
+[if (ownedElement->filter(Constraint)->select(hasStereotype(getProperty('s_equation')))->notEmpty())]
+[for (ownedElement->filter(Constraint)->select(hasStereotype(getProperty('s_equation'))))]
+	[initial()/]equation
+[if (specification->filter(OpaqueExpression)->notEmpty())][specification->filter(OpaqueExpression)._body.replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/if]
+[if (specification->filter(LiteralString)->notEmpty())]
+[specification->filter(LiteralString).value.replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/if][comment  NOTE: to cover both cases ... /]
+[/for]
+[/if]
+[/template]
+
+[template public equations_from_UML_OpaqueBehavior(aClassifier : Classifier) post(trim())]
+[if (ownedElement->filter(OpaqueBehavior)->select(hasStereotype(getProperty('s_equation')))->notEmpty())]
+[for (ownedElement->filter(OpaqueBehavior)->select(hasStereotype(getProperty('s_equation'))))]
+	[initial()/]equation
+[_body.replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/for]
+[/if]	
+[/template]
+
+[template public asserts(aClassifier : Classifier) post(trim())]
+[if (getProperty('c_includeAsserts')->notEmpty() and ownedElement->filter(Constraint)->select(hasStereotype(getProperty('s_assert')))->notEmpty())]
+	equation
+[for (ownedElement->filter(Constraint)->select(hasStereotype(getProperty('s_assert'))))]
+[comment  TODO AssertionLevel.warning does not work in Dymola and MathModelica /] 
+[comment assert(<%if (specification.filter("OpaqueExpression") != null){%><%specification.filter("OpaqueExpression").body%><%}%><%if (specification.filter("LiteralString") != null){%><%specification.filter("LiteralString").value%><%}%><%getStereotypeValue(getProperty("s_assert"), getProperty("s_p_condition"))%>, "<%getStereotypeValue(getProperty("s_assert"), getProperty("s_p_message")).trim()%>");/]
+
+assert([getStereotypeValue(getProperty('s_assert'), getProperty('s_p_condition'))/], "[getStereotypeValue(getProperty('s_assert'), getProperty('s_p_message')).oclAsType(String).trim()/]");  [comment]works fine[/comment]
+[/for]
+[/if]
+[/template]
+
+[comment]<%-- ### Equations END--%>[/comment]
+
+[template public algorithm(aClassifier : Classifier) post(trim())]
+[if (ownedElement->filter(OpaqueBehavior)->select(hasStereotype(getProperty('s_algorithm'))).toString() <> '')]
+[for (ownedElement->filter(OpaqueBehavior)->select(hasStereotype(getProperty('s_algorithm'))))]
+	[initial()/]algorithm
+	[_body.replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/for]
+[/if]	
+[/template]
+
+[template public algorithm(aFunctionBehavior : FunctionBehavior) post(trim())]
+[if (_body <> '')]
+algorithm
+[_body.replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[else]	
+[/if]
+[/template]
+
+[template public initial(aNamedElement : NamedElement)]
+[if (getStereotypeValue(getProperty('s_equation'), getProperty('s_p_initial')).oclAsType(Boolean))]initial [/if]
+[if (getStereotypeValue(getProperty('s_algorithm'), getProperty('s_p_initial')).oclAsType(Boolean))]initial [/if]
+[/template]
+
+[comment]<%-- connect equations  ############################################--%>[/comment]
+
+[comment]FIX THE ORDER OF THE ELEMENTS???[/comment]
+[template public connect_equations(aClass : Class) post(trim())]
+[if (ownedElement->filter(Connector)->select(hasStereotype(getProperty('s_connect')))->notEmpty())]
+	equation
+[for (ownedElement->filter(Connector)->select(hasStereotype(getProperty('s_connect')))->asOrderedSet()->sortedBy(toString()))]
+[comment  NOTE: If explicit ends are defined take them first /]
+	[if (getStereotypeValue(getProperty('s_connect'), getProperty('s_p_connectionEnds'))->notEmpty())]
+	connect([getStereotypeValue(getProperty('s_connect'), getProperty('s_p_connectionEnds'))/]);	
+	[else]
+		[if (ownedElement->filter(ConnectorEnd)->asOrderedSet()->asOrderedSet()->first()->filter(ConnectorEnd).role.type.qualifiedName <> ownedElement->filter(ConnectorEnd)->asOrderedSet()->last()->filter(ConnectorEnd).role.type.qualifiedName)]
+	[tryToMatchConnections(ownedElement->filter(ConnectorEnd)->asOrderedSet()->first().ConnectorInstance())/] [comment]arg0 is passed but never used in template[/comment]
+		[else]
+	connect([(ownedElement->filter(ConnectorEnd))->asOrderedSet()->first().ConnectorInstance()/][ownedElement->filter(ConnectorEnd)->asOrderedSet()->first().role.name.replaceSpecChar().trim()/], [ownedElement->filter(ConnectorEnd)->asOrderedSet()->last().ConnectorInstance()/][ownedElement->filter(ConnectorEnd)->asOrderedSet()->last().role.name.replaceSpecChar().trim()/]);
+		[/if]
+	[/if]
+[/for] 
+[/if] 
+[/template]
+
+[template public tryToMatchConnections(aConnector : Connector , arg0 : OclAny) post(trim())] [comment] FIX THE sequence . sort it right. for tanksConnectedPI[/comment]
+[comment]arg0 is passed but never used in template[/comment]
+[comment]<%-- NOTE: try to match from left --%>[/comment]
+[if (ownedElement->filter(ConnectorEnd)->asOrderedSet()->first().role.type.containsAPropertyOfTheSameNameAndType(ownedElement->filter(ConnectorEnd)->asOrderedSet()->last().role.name, ownedElement->filter(ConnectorEnd)->asOrderedSet()->last().role.type.qualifiedName, ownedElement->filter(ConnectorEnd)->asOrderedSet()->first().role.name) <> '')]
+connect([ownedElement->filter(ConnectorEnd)->asSequence()->sortedBy(toString())->first().ConnectorInstance()/][ownedElement->filter(ConnectorEnd)->asSequence()->sortedBy(toString())->first().role.type.containsAPropertyOfTheSameNameAndType(ownedElement->filter(ConnectorEnd)->asOrderedSet()->last().role.name, ownedElement->filter(ConnectorEnd)->asOrderedSet()->last().role.type.qualifiedName, ownedElement->filter(ConnectorEnd)->asOrderedSet()->first().role.name)/], [ownedElement->filter(ConnectorEnd)->asOrderedSet()->last().ConnectorInstance()/][ownedElement->filter(ConnectorEnd)->asOrderedSet()->last().role.name.replaceSpecChar().trim()/]);
+[else]
+[comment]<%-- NOTE: try to match from right --%>[/comment]
+[if (ownedElement->filter(ConnectorEnd)->asOrderedSet()->last().role.type.containsAPropertyOfTheSameNameAndType(ownedElement->filter(ConnectorEnd)->asOrderedSet()->first().role.name, ownedElement->filter(ConnectorEnd)->asOrderedSet()->first().role.type.qualifiedName, ownedElement->filter(ConnectorEnd)->asOrderedSet()->last().role.name) <> '')]
+connect([ownedElement->filter(ConnectorEnd)->asOrderedSet()->last().ConnectorInstance()/][ownedElement->filter(ConnectorEnd)->asSequence()->sortedBy(toString())->last().role.type.containsAPropertyOfTheSameNameAndType(ownedElement->filter(ConnectorEnd)->asSequence()->sortedBy(toString())->first().role.name, ownedElement->filter(ConnectorEnd)->asOrderedSet()->first().role.type.qualifiedName, ownedElement->filter(ConnectorEnd)->asOrderedSet()->last().role.name)/], [ownedElement->filter(ConnectorEnd)->asOrderedSet()->first().ConnectorInstance()/][ownedElement->filter(ConnectorEnd)->asOrderedSet()->first().role.name.replaceSpecChar().trim()/]);
+[else]
+[comment]<%-- NOTE: No match -> just connect. NOTE: No further structural types check is performed! --%>[/comment]
+connect([ownedElement->filter(ConnectorEnd)->asOrderedSet()->first().ConnectorInstance()/][ownedElement->filter(ConnectorEnd)->asOrderedSet()->first().role.name.replaceSpecChar().trim()/], [ownedElement->filter(ConnectorEnd)->asOrderedSet()->last().ConnectorInstance()/][ownedElement->filter(ConnectorEnd)->asOrderedSet()->last().role.name.replaceSpecChar().trim()/]);
+[/if]
+[/if]		
+[/template]
+
+[template public containsAPropertyOfTheSameNameAndType(aType : Type , args0 : OclAny, args1 : OclAny, args2 : OclAny) post(trim())]
+[ownedElement->filter(Property).matchPropertyNameAndType(args0, args1, args2)/]
+[/template]
+
+[template public matchPropertyNameAndType(aProperty : Property , args0 : OclAny, args1 : OclAny, args2 : OclAny) post(trim())]
+[if (name = args0)]
+[if (type.qualifiedName = args1)]
+[args2.toString().replaceSpecChar()/].[name.replaceSpecChar()/] 
+[/if]
+[/if]
+[/template]
+
+[template public ConnectorInstance(aConnectorEnd : ConnectorEnd) post(trim())]
+[if (partWithPort.name->notEmpty())]
+[partWithPort.name.replaceSpecChar().trim()/].
+[/if]
+[/template]
+
+[comment]<%-- END connect equations  ############################################--%>[/comment]

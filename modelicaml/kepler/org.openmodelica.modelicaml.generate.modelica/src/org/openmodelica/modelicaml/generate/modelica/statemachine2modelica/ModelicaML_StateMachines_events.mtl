@@ -1,0 +1,225 @@
+[comment encoding = UTF-8 /]
+[module ModelicaML_StateMachines_events('http://www.eclipse.org/uml2/3.0.0/UML')/]
+ 
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::UML2ModelicaServices/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::umlservices/]
+
+[import org::openmodelica::modelicaml::generate::modelica::services::modelicamlmacros/] 
+[import org::openmodelica::modelicaml::generate::modelica::services::modelicamleventsservices/] 
+      
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::core::_0_main_uml2modelica/]
+      
+[comment]<%-- FOR TEST ONLY ###################################################################### --%>
+
+<%-- exclude also: import org.openmodelica.modelicaml.uml2modelica.core._0_ main_uml2modelica --%>
+
+<%--<%script type="uml.StateMachine" name="test" post="trim()" file="<%name%>.txt" %>
+<%singalEventsDefinitions%>
+
+<%instantiateEvents%>
+
+<%changeEventsStatements%>
+
+<%signalEventsStatements%>
+
+<%singalPropertiesStatements%>
+
+<%region.forAllTransistions%>
+
+<%script type="uml.Region" name="forAllTransistions" post="trim()"%>
+<%for (ownedElement.filter("Transition")){%>
+<%name%> Transistion condition: <%guardCode("state_stime_parth")%>	
+<%}%>
+--%>
+<%-- FOR TEST ONLY END ###################################################################### --%>
+
+
+
+
+
+<%-- GUARD (condition including triggers code ) ###################################################################### --%>[/comment]
+
+[template public guardCode(aTransition : Transition, args0 : OclAny) post(trim())]
+[triggersCode().expandTriggersMacros(args0.oclAsType(String))/] [guardCodeInc(args0)/]
+[/template]
+
+[template public guardCodeInc(aTransition : Transition, args0 : OclAny) post(trim())] [comment]WORKS[/comment]
+[if (getStereotypeValue(getProperty('s_stateDependency'), getProperty('s_p_isInState'))->notEmpty())]
+	[getStereotypeValue(getProperty('s_stateDependency'), getProperty('s_p_isInState')).oclAsType(State).isInState(redefinitionContext.qualifiedName, getStereotypeValue(getProperty('s_stateDependency'), getProperty('s_p_logicalOperator')).eGet('name')).replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0 ')/] [comment]CHECK .eGet(name) instead of .name *** isInState takes a State as parameter[/comment] 
+[/if]
+[if (not guard.specification->oclIsUndefined() and not guard.specification->filter(OpaqueExpression)._body.trim()->oclIsUndefined())]
+[comment]<%-- <%guard.specification.filter("LiteralString").value.expandGuardMacros(args(0)+".stime" )%> --%>[/comment]
+	[guard.specification->filter(OpaqueExpression)._body.expandGuardMacros(args0 + '.stime')/]
+[else]
+	true
+[/if]
+[/template]
+
+[template public isInState(aState : State, args0 : OclAny, args1 : OclAny )]
+[qualifiedName.replace(args0 + '::', '').replaceSpecCharExceptThis('::').replaceAll('::', '.')/]
+.active [args1/]
+[/template]
+
+[comment  EVENTS ###################################################################### /]
+
+[comment]<%-- Signal EVENTS ###################################################################### --%>[/comment]
+
+[template public singalEventsDefinitions(aStateMachine : StateMachine) post(trim())]
+[for (getEvents()->filter(SignalEvent))]
+/* M@ SignalEvent: [signal.name/] definition*/
+record [signal.name.replaceSpecChar()/]_Definition
+	Integer counter; // indicates how many times the the signal has occured.
+	Boolean occurrence; // indicates that signal has occured.
+[comment   Real lastSent; // TEST: represents the last time when the SignalEvent occured. /]	/* M@SignalEvent, Property set*/
+	[signal.singalProperties()/]
+end [signal.name.replaceSpecChar()/]_Definition;
+[/for]
+[/template]
+
+[template public singalProperties(aSignal : Signal) post(trim())]
+[for (ownedElement->filter(Property))]
+[component_clause()/]
+[/for]
+[/template]
+
+[template public signalEventsInstantiation(aStateMachine : StateMachine) post(trim())]
+[for (getEvents()->filter(SignalEvent))]
+[signal.name.replaceSpecChar()/]_Definition [signal.name.replaceSpecChar()/]; /* M@ SignalEvent "[signal.name/]": instantiation*/
+[/for]
+[/template]
+
+[template public singalPropertiesStatements(aStateMachine : StateMachine) post(trim())]
+[for (getEvents()->filter(SignalEvent))]
+/* M@SignalEvent "[signal.name/]": default statements for the contained properties */
+[comment /* M@INFO: These are default statements for all signal properties for the case they are not used (set) in the actions of the state machine. */
+/][signal.singalPropertiesStatements()/]
+[/for]
+[/template]
+
+[template public singalPropertiesStatements(aSignal : Signal) post(trim())]
+[for (ownedElement->filter(Property))]
+[owner->filter(Signal).name.replaceSpecChar()/].[name.replaceSpecChar()/] := [owner->filter(Signal).name.replaceSpecChar()/].[name.replaceSpecChar()/]; 
+[/for]
+[/template]
+
+[template public signalEventsStatements(aStateMachine : StateMachine) post(trim())]
+[for (getEvents()->filter(SignalEvent))]
+[comment]<%--/* M@SignalEvent "<%signal.name.%>" processing */  --%>
+<%-- if <%signal.name.replaceSpecChar()%>.occurrence then --%>  
+<%--  if <%signal.name.replaceSpecChar()%>.occurrence and time > <%signal.name.replaceSpecChar()%>.lastSent then  --%>
+<%-- // TEST: A SignalEvent is consumed after time has advanced (i.e., it is present in event iterations) --%>
+<%--	<%signal.name.replaceSpecChar()%>.occurrence := false;
+end if;
+--%>[/comment]
+[/for]
+[for (owner->filter(Class).ownedElement->filter(Signal))]
+if [name/].occurrence then 
+	[name/].counter := pre([name/].counter) + 1;
+end if;
+[name/].occurrence := false;
+[/for]
+[/template]
+
+[comment]<%-- Change EVENTS ###################################################################### --%>[/comment]
+
+[template public changeEventsInstantiation(aClassifier : Classifier) post(trim())]
+[for (ownedElement->filter(StateMachine)->select(hasStereotype(getProperty('s_modelicaStateMachine'))).getEventsFromAllStateMachines()->filter(ChangeEvent))]
+Boolean [name.replaceSpecChar()/]; /* M@ChangeEvent instantiation*/
+[/for]
+[/template]
+
+[template public changeEventsStatements(aClassifier : Classifier) post(trim())]
+algorithm
+[for (ownedElement->filter(StateMachine)->select(hasStereotype(getProperty('s_modelicaStateMachine'))).getEventsFromAllStateMachines()->filter(ChangeEvent))]
+	[name.replaceSpecChar()/] := [changeExpression->filter(LiteralString).value/]; /* M@ChangeEvent statement */
+[/for]
+[/template]
+
+[comment]<%-- Absolute Time EVENTS ###################################################################### --%>[/comment]
+
+[template public absoluteTimeEventsInstantiation(aClassifier : Classifier) post(trim())]
+[for (ownedElement->filter(StateMachine)->select(hasStereotype(getProperty('s_modelicaStateMachine'))).getEventsFromAllStateMachines()->filter(TimeEvent)->select(not (isRelative)))]
+Boolean [name.replaceSpecChar()/]; /* M@ TimeEvent (absolute) instantiation*/
+[/for]
+[/template]
+
+[template public absoluteTimeEventsTimeStatements(aClassifier : Classifier) post(trim())]
+algorithm
+[for (ownedElement->filter(StateMachine)->select(hasStereotype(getProperty('s_modelicaStateMachine'))).getEventsFromAllStateMachines()->filter(TimeEvent)->select(not (isRelative)))]
+	[name.replaceSpecChar()/] := time > [when->filter(TimeExpression).name/]; /* M@ TimeEvent (absolute) statement */
+[/for]
+[/template]
+
+[comment]<%-- Relative Time EVENTS ###################################################################### --%>[/comment]
+
+[template public relativeTimeEventsInstantiation(aStateMachine : StateMachine) post(trim())]
+[region.getRelativeTimeEventsForRegion(name.replaceSpecChar(), 'instantiation')/]
+[/template]
+
+[template public getRelativeTimeEventsForRegion(aRegion : Region, args0 : OclAny, args1 : OclAny) post(trim())]
+[for (ownedElement->filter(State))]
+[getRelativeTimeEventFromState(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar(), args1)/]
+[/for]
+
+[for (ownedElement->filter(State)->select(isComposite))]
+/* M@ start composite [name/] */
+[for (region->filter(Region))]
+[getRelativeTimeEventsForRegion(args0 + '.' + owner->filter(State).container.name.replaceSpecChar() + '.' + owner->filter(State).name.replaceSpecChar(), args1).replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/for]
+/* M@ end composite [name/] */
+[/for]
+
+[for (ownedElement->filter(State)->select(isSubmachineState))]
+/* M@ start submachine composite [name/] */
+[submachine.subMachineRegionGetRelativeTimeEvents(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar(), args1)/]
+/* M@ end submachine composite [name/] */
+[/for]
+[/template]
+
+[template public subMachineRegionGetRelativeTimeEvents(aStateMachine : StateMachine, args0 : OclAny, args1 : OclAny)]
+[for (region->filter(Region))]
+[getRelativeTimeEventsForRegion(args0, args1).replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/for]
+[/template]
+
+[template public getRelativeTimeEventFromState(aState : State, args0 : String, args1 : OclAny) post(trim())]
+[if (args1 = 'instantiation')]
+[for (getRelativeTimeEvents()->filter(TimeEvent))]
+Boolean [args0.replaceAll('.', '_')/]_[name.replaceSpecChar()/]; /* M@ TimeEvent (relative to state machine state) instantiation*/
+[/for]
+[/if]
+[if (args1 = 'statements')]
+[for (getRelativeTimeEvents()->filter(TimeEvent))]
+[args0.replaceAll('.', '_')/]_[name.replaceSpecChar()/] := [args0/].stime > [when->filter(TimeExpression).name/]; /* M@ TimeEvent (relative) statement */
+[/for]
+[/if]
+[/template]
+
+[template public relativeTimeEventsStatements(aStateMachine : StateMachine) post(trim())]
+[region.getRelativeTimeEventsForRegion(name.replaceSpecChar(), 'statements')/]
+[/template]
+
+[comment]<%-- Triggers EVENTS ###################################################################### --%>[/comment]
+
+[template public triggersCode(aTransition : Transition) post(trim())]
+[if (trigger.eventCode()->notEmpty())]([trigger.eventCode()->sep(' or ')/]) and [/if]
+[/template]
+
+[template public eventCode(aTrigger : Trigger) post(trim())]
+[if (event.eClass().name = 'SignalEvent')]
+change([event->filter(SignalEvent).signal.name.replaceSpecChar()/].counter) [comment  change() functions is not necessary for SignaEvents. However, without it Dymola returns wrong results. /]
+[else]
+[if (event.eClass().name = 'ChangeEvent')]
+edge([event.name.replaceSpecChar()/])
+[else]
+[if (event.eClass().name = 'TimeEvent' and not (event->filter(TimeEvent).isRelative->notEmpty()))]
+edge([event.name.replaceSpecChar()/])
+[else]
+[if (event.eClass().name = 'TimeEvent' and event->filter(TimeEvent).isRelative->notEmpty())]
+edge(LOCAL_TIMER_PATH_PREFIX_[event.name.replaceSpecChar()/])
+[/if]
+[/if]
+[/if]
+[/if]
+[/template]
+

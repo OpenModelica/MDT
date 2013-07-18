@@ -1,0 +1,14 @@
+[module cgconfigurationmanager('http://www.eclipse.org/uml2/3.0.0/UML')/]
+
+[query public setCGNameSpace(arg0 : String) : OclVoid
+	= invoke('org.openmodelica.modelicaml.generate.modelica.cg.helpers.CGConfigurationManager', 'setCGNameSpace(java.lang.String)', Sequence{arg0}) /]
+
+[query public setCGNameSpaceList(arg0 : Sequence(OclAny)) : OclVoid
+	= invoke('org.openmodelica.modelicaml.generate.modelica.cg.helpers.CGConfigurationManager', 'setCGNameSpaceList(java.util.List)', Sequence{arg0}) /]
+
+[query public getCGNameSpace(arg0 : Element) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.cg.helpers.CGConfigurationManager', 'getCGNameSpace(org.eclipse.uml2.uml.Element)', Sequence{arg0}) /]
+
+[query public getCGNameSpaceList(arg0 : Element) : Sequence(OclAny)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.cg.helpers.CGConfigurationManager', 'getCGNameSpaceList(org.eclipse.uml2.uml.Element)', Sequence{arg0}) /]
+

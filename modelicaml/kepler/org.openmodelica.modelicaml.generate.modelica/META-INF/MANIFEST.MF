@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Acceleo Modelica Module Runtime Plug-in
+Bundle-SymbolicName: org.openmodelica.modelicaml.generate.modelica;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.openmodelica.modelicaml.generate.modelica.Activator
+Bundle-Vendor: Eclipse Modeling Project
+Require-Bundle: org.eclipse.core.runtime, 
+ org.eclipse.uml2.uml,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.ecore.xmi,
+ org.eclipse.ocl,
+ org.eclipse.ocl.ecore,
+ org.eclipse.acceleo.model,
+ org.eclipse.acceleo.engine
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Eclipse-LazyStart: true
+Export-Package: org.openmodelica.modelicaml.generate.modelica.cg.helpers,
+ org.openmodelica.modelicaml.generate.modelica.listeners,
+ org.openmodelica.modelicaml.generate.modelica.main,
+ org.openmodelica.modelicaml.generate.modelica.services,
+ org.openmodelica.modelicaml.generate.modelica.services.validation,
+ org.openmodelica.modelicaml.generate.modelica.uml2modelica.services
+Import-Package: org.eclipse.core.resources,
+ org.eclipse.jface.dialogs,
+ org.eclipse.swt.widgets,
+ org.eclipse.ui

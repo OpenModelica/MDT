@@ -1,0 +1,25 @@
+[comment encoding = UTF-8 /]
+[module umlservices('http://www.eclipse.org/uml2/3.0.0/UML')/]
+
+[query public getBody(arg0 : OpaqueBehavior, arg1 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.uml2modelica.services.UmlServices', 'getBody(org.eclipse.uml2.uml.OpaqueBehavior, java.lang.String)', Sequence{arg0, arg1}) /]
+
+[query public isBehavior(arg0 : Class) : Boolean
+	= invoke('org.openmodelica.modelicaml.generate.modelica.uml2modelica.services.UmlServices', 'isBehavior(org.eclipse.uml2.uml.Class)', Sequence{arg0}) /]
+
+[query public getStereotype(arg0 : Element, arg1 : String) : Stereotype
+	= invoke('org.openmodelica.modelicaml.generate.modelica.uml2modelica.services.UmlServices', 'getStereotype(org.eclipse.uml2.uml.Element, java.lang.String)', Sequence{arg0, arg1}) /]
+
+[query public filterStereotype(arg0 : Sequence(Transition)) : Sequence(OclAny)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.uml2modelica.services.UmlServices', 'filterStereotype(java.util.ArrayList)', Sequence{arg0}) /]
+
+[query public getStereotypeValue(arg0 : Element, arg1 : String, arg2 : String) : OclAny
+	= invoke('org.openmodelica.modelicaml.generate.modelica.uml2modelica.services.UmlServices', 'getStereotypeValue(org.eclipse.uml2.uml.Element, java.lang.String, java.lang.String)', Sequence{arg0, arg1, arg2}) /]
+
+[comment]WHEN getStereotypeValue returns a collection[/comment]
+[query public getStereotypeValues(arg0 : Element, arg1 : String, arg2 : String) : Collection(OclAny)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.uml2modelica.services.UmlServices', 'getStereotypeValue(org.eclipse.uml2.uml.Element, java.lang.String, java.lang.String)', Sequence{arg0, arg1, arg2}) /]
+
+[query public hasStereotype(arg0 : Element, arg1 : String) : Boolean
+	= invoke('org.openmodelica.modelicaml.generate.modelica.uml2modelica.services.UmlServices', 'hasStereotype(org.eclipse.uml2.uml.Element, java.lang.String)', Sequence{arg0, arg1}) /]
+

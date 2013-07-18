@@ -1,0 +1,163 @@
+[comment encoding = UTF-8 /]
+[module ModelicaML2Modelica_v04('http://www.eclipse.org/uml2/3.0.0/UML') extends org::openmodelica::modelicaml::generate::modelica::uml2modelica::core::_4_behavior_getter/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::core::_0_main_uml2modelica/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::core::_4_behavior_getter/] 
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::UML2ModelicaServices/] 
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::umlservices/]
+
+[import org::openmodelica::modelicaml::generate::modelica::additional::ModelicaML_additional/]
+[import org::openmodelica::modelicaml::generate::modelica::annotation::ModelicaML_annotations/]
+
+[import org::openmodelica::modelicaml::generate::modelica::statemachine2modelica::ModelicaML_StateMachine2Modelica_v04/]
+[import org::openmodelica::modelicaml::generate::modelica::activity2modelica::ModelicaML_ActivityDiagram2Modelica/]
+
+[import org::openmodelica::modelicaml::generate::modelica::services::modelicamlservices/]
+[import org::openmodelica::modelicaml::generate::modelica::services::modelicamlmacros/]
+
+[import org::openmodelica::modelicaml::generate::modelica::statemachine2modelica::ModelicaML_StateMachinesInstantiation_v04/]
+[import org::openmodelica::modelicaml::generate::modelica::statemachine2modelica::ModelicaML_StateMachines_events/]
+ 
+
+[comment]
+		#############################################################
+ 		This templates imports the definitions from the org.openmodelica.modelicaml.uml2modelica.core 
+		and overrides some of them in order to include ModelicaML specific features. 																			
+		#############################################################
+[/comment]
+
+ 
+[comment]############## Overriden: Behavior (equation and algorithm)[/comment]
+
+[comment @Override _4_behavior_getter.equation /]
+[template public equation(aClassifier : Classifier) overrides equation  post(trim())]
+[equations_from_UML_OpaqueBehavior()/][comment  NOTE: ModelicaML specific./]
+[asserts()/][comment]<%-- NOTE: ModelicaML specific, not supported by SysML4Modelica.  --%>[/comment]
+[/template]
+
+[comment @Override _4_behavior_getter.equations_from_UML_OpaqueBehavior /]
+[template public equations_from_UML_OpaqueBehavior(aClassifier : Classifier) overrides equations_from_UML_OpaqueBehavior  post(trim())]
+[if (ownedElement->filter(OpaqueBehavior)->select(hasStereotype(getProperty('s_equation')))->notEmpty())]
+	[for (ownedElement->filter(OpaqueBehavior)->select(hasStereotype(getProperty('s_equation'))))]
+	[initial()/]equation
+		[if (not getStereotypeValue(getProperty('s_equation'), getProperty('s_p_loopKind')).oclIsUndefined())]
+			[if (getStereotypeValue(getProperty('s_equation'), getProperty('s_p_loopKind')).eGet('name') = 'for')]
+				[if (not getStereotypeValue(getProperty('s_equation'), getProperty('s_p_forIndices')).oclIsUndefined())]
+	for [getStereotypeValue(getProperty('s_equation'), getProperty('s_p_forIndices'))/] loop
+	[_body.expandGENCodeMacros().replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+	end for;
+				[else]
+				ERROR: No for-indices are defined for OpaqueBehavior [qualifiedName/].
+				[/if]
+			[/if]
+		[else]
+	[_body.expandGENCodeMacros().replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+		[/if]
+	[/for]
+[/if]
+[/template] 
+
+[comment @Override _4_behavior_getter.algorithm /]
+[template public algorithm(aClassifier : Classifier) overrides algorithm  post(trim())]
+[if (ownedElement->filter(OpaqueBehavior)->select(hasStereotype(getProperty('s_algorithm')))->notEmpty())]
+	[for (ownedElement->filter(OpaqueBehavior)->select(hasStereotype(getProperty('s_algorithm'))))]
+	[initial()/]algorithm
+		[if (not getStereotypeValue(getProperty('s_algorithm'), getProperty('s_p_loopKind')).oclIsUndefined())]    
+			[if (getStereotypeValue(getProperty('s_algorithm'), getProperty('s_p_loopKind')).eGet('name') = 'for')]
+				[if (not getStereotypeValue(getProperty('s_algorithm'), getProperty('s_p_forIndices')).oclIsUndefined())]
+	for [getStereotypeValue(getProperty('s_algorithm'), getProperty('s_p_forIndices'))/] loop
+	[_body.expandGENCodeMacros().replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+	end for;
+			[else]
+				ERROR: No for-indices are defined for OpaqueBehavior [qualifiedName/].
+			[/if]
+		[else] 
+			[if (getStereotypeValue(getProperty('s_algorithm'), getProperty('s_p_loopKind')).eGet('name') = 'while')]
+				[if (not getStereotypeValue(getProperty('s_algorithm'), getProperty('s_p_whileExpression')).oclIsUndefined())]
+	while [getStereotypeValue(getProperty('s_algorithm'), getProperty('s_p_whileExpression'))/] loop
+	[_body.expandGENCodeMacros().replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+	end while;	
+					[else]
+					ERROR: No while-expression is defined for OpaqueBehavior [qualifiedName/].
+					[/if]
+				[/if]
+			[/if] 
+		[else]
+	[_body.expandGENCodeMacros().replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+		[/if]
+	[/for]
+[/if]
+[/template]
+
+[comment @Override _4_behavior_getter.algorithm /]
+[template public algorithm(aFunctionBehavior : FunctionBehavior) overrides algorithm  post(trim())]
+[if (_body <> '')]
+algorithm
+	[_body.replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/][/if]
+[/template]
+
+[comment  ############## Overriden: Behavior (equation and algorithm) END /]
+
+[comment @Override common.add_inc_structure /]
+[template public add_inc_structure(aClassifier : Classifier) overrides add_inc_structure post(trim())]
+[ownedElement->filter(StateMachine)->select(submachineState->isEmpty() and hasStereotype(getProperty('s_modelicaStateMachine'))).StateMachinesModelicaClass()/]
+[ownedElement->filter(StateMachine)->select(submachineState->isEmpty() and hasStereotype(getProperty('s_modelicaStateMachine'))).StateMachineInstances()/]
+[comment][ownedElement->filter(StateMachine)->select(submachineState->isEmpty()).StateMachinesModelicaClass()/]
+[ownedElement->filter(StateMachine)->select(submachineState->isEmpty()).StateMachineInstances()/][/comment]
+[changeEventsInstantiation().replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[absoluteTimeEventsInstantiation().replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/template]
+
+[comment @Override common.add_inc_behavior /]
+[template public add_inc_behavior(aClassifier : Classifier) overrides add_inc_behavior post(trim())]
+[if (ownedElement->filter(StateMachine)->select(submachineState->isEmpty() and hasStereotype(getProperty('s_modelicaStateMachine')))->notEmpty())]
+[comment][if (ownedElement->filter(StateMachine)->select(submachineState->isEmpty())->notEmpty())][/comment]
+[changeEventsStatements()/]
+[absoluteTimeEventsTimeStatements()/] 
+
+[ownedElement->filter(StateMachine).stateMachineBehaviorCode()/]
+[/if]
+[if (ownedElement->filter(Activity)->select(hasStereotype(getProperty('s_conditionalAlgorithm')))->notEmpty() and not(getStereotypeValue(getProperty('s_conditionalAlgorithm'), getProperty('s_p_isSubActivity')).oclAsType(Boolean)))]
+algorithm
+[ownedElement->filter(Activity)->select(hasStereotype(getProperty('s_conditionalAlgorithm'))->notEmpty() and (getStereotypeValue(getProperty('s_conditionalAlgorithm'), getProperty('s_p_isSubActivity')).toString() = '')).Activity2ModelicaCode()/]
+[/if]
+[if (ownedElement->filter(Activity)->select(hasStereotype(getProperty('s_conditionalEquation')))->notEmpty() and not (getStereotypeValue(getProperty('s_conditionalEquation'), getProperty('s_p_isSubActivity')).oclAsType(Boolean)))]
+equation
+[ownedElement->filter(Activity)->select(hasStereotype(getProperty('s_conditionalEquation')) and not (getStereotypeValue(getProperty('s_conditionalEquation'), getProperty('s_p_isSubActivity')).toString() <> '')).Activity2ModelicaCode()/]
+[/if]
+[/template]
+
+[comment @Override common.add_inc_top_file /]
+[template public add_inc_top_file(aClassifier : Classifier) overrides add_inc_top_file ]
+//This code is generated from a ModelicaML model.
+[/template]
+[comment]<%--<%copyright%>--%>
+
+<%--<%script type="uml.Package" name="add_inc_validation" post="trim()"%>--%><%-- overriden--%>
+<%--<%validation%>--%>
+<%--<%script type="uml.Classifier" name="add_inc_validation" post="trim()"%>--%><%-- overriden--%>
+<%--<%validation%>--%>[/comment]
+
+[comment @Override common.add_inc_top_file /]
+[template public add_inc_top_file(aPackage : Package) overrides add_inc_top_file ]
+//This code is generated from a ModelicaML model.
+[/template]
+
+[comment @Override common.add_inc_top_annotation /]
+[template public add_inc_top_annotation(aPackage : Package) overrides add_inc_top_annotation ]
+annotation([g_annotation()/]);
+[/template]
+
+[comment  ############## Overriden: Additional includes END /]
+
+[comment @Override common.annotation /]
+[template public annotation(aClass : Class) overrides annotation  post(trim())]
+[if (ownedComment->select(hasStereotype(getProperty('s_annotation')))->notEmpty())]annotation([g_annotation()/])[/if]
+[/template]
+[comment]<%script type="uml.Class" name="annotation" post="trim()"%><%-- overriden--%>
+<%if (ownedComment[hasStereotype(getProperty("s_annotation"))] != null){%>
+annotation(<%if (g_annotation != "" ){%><%g_annotation%>, <%}%>
+<%ownedComment[hasStereotype(getProperty("s_annotation"))].body.sepStr(", ")%>)
+<%}
+else{%>annotation(<%g_annotation%>)
+<%}%>[/comment]
+

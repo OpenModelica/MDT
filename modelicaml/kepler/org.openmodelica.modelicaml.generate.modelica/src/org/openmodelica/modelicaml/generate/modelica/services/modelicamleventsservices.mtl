@@ -1,0 +1,14 @@
+[module modelicamleventsservices('http://www.eclipse.org/uml2/3.0.0/UML')/]
+
+[query public getEventsFromAllStateMachines(arg0 : Element) : Set(OclAny)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLEventsServices', 'getEventsFromAllStateMachines(org.eclipse.emf.common.util.EList)', Sequence{arg0}) /]
+
+[query public getEvents(arg0 : StateMachine) : Set(OclAny)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLEventsServices', 'getEvents(org.eclipse.uml2.uml.StateMachine)', Sequence{arg0}) /]
+
+[query public getTriggersFromRegion(arg0 : Region) : Set(OclAny)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLEventsServices', 'getTriggersFromRegion(org.eclipse.uml2.uml.Region)', Sequence{arg0}) /]
+
+[query public getRelativeTimeEvents(arg0 : State) : Set(OclAny)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLEventsServices', 'getRelativeTimeEvents(org.eclipse.uml2.uml.State)', Sequence{arg0}) /]
+

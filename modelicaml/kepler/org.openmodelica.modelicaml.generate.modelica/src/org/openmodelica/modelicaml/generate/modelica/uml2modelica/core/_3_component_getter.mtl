@@ -1,0 +1,122 @@
+[comment encoding = UTF-8 /]
+[module _3_component_getter('http://www.eclipse.org/uml2/3.0.0/UML')/]
+
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::core::helper/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::umlservices/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::StringUtls/]
+[comment]
+<%-- 	############################################################# 	--%>
+<%-- 							Components Getter						--%>
+<%-- 	############################################################# 	--%>
+[/comment]
+
+
+[template public final(aTypedElement : TypedElement)]
+[if (aTypedElement->filter(Property).isLeaf = true or isSetModelicaComponentStereotypeValueBoolean('s_p_final') = true )]final [/if]		
+[/template]
+
+[template public public_protected(aTypedElement : TypedElement)]
+[comment]<%--<%if ( visibility == "protected" || getModelicaComponentStereotypeValueEnum("s_p_visibility") == "protected" ){%>protected <%}%>--%>[/comment]
+[if (visibility = 'protected')]protected [/if]
+[/template]
+
+[template public innerouter(aTypedElement : TypedElement)]
+[comment]<%-- ISSUE: TODO: inner/outer for components/ports, etc.? <%if (getStereotypeValue(getProperty("s_component"), getProperty("s_p_innerouter"))){%><%getStereotypeValue(getProperty("s_component"), getProperty("s_p_innerouter")).name%> <%}%>--%>[/comment]
+[if (getStereotypeValue(getProperty('s_variable'), getProperty('s_p_innerouter'))->notEmpty())][getStereotypeValue(getProperty('s_variable'), getProperty('s_p_innerouter')).eGet('name')/][/if]
+[/template]
+
+[template public replaceable(aTypedElement : TypedElement)]
+[if (isSetModelicaComponentStereotypeValueBoolean('s_p_replaceable'))]replaceable [/if]
+[/template]
+
+[template public flowFlag(aTypedElement : TypedElement)]
+[if (getStereotypeValue(getProperty('s_variable'), getProperty('s_p_flowFlag'))->notEmpty())][getStereotypeValue(getProperty('s_variable'), getProperty('s_p_flowFlag')).eGet('name')/] [/if]
+[/template]
+
+[template public variability(aTypedElement : TypedElement)]
+[if (getStereotypeValue(getProperty('s_variable'), getProperty('s_p_variability'))->notEmpty())][if (getStereotypeValue(getProperty('s_variable'), getProperty('s_p_variability')).eGet('name') <> 'continuous')][getStereotypeValue(getProperty('s_variable'), getProperty('s_p_variability')).eGet('name')/] [/if][/if]
+[if (getStereotypeValue(getProperty('s_functionArgument'), getProperty('s_p_variability'))->notEmpty())][if (getStereotypeValue(getProperty('s_functionArgument'), getProperty('s_p_variability')).eGet('name') <> 'continuous')][getStereotypeValue(getProperty('s_functionArgument'), getProperty('s_p_variability')).eGet('name')/][/if][/if]
+[/template]
+
+
+[template public causality(aTypedElement : TypedElement)]
+[if (getStereotypeValue(getProperty('s_variable'), getProperty('s_p_causality'))->notEmpty())][getStereotypeValue(getProperty('s_variable'), getProperty('s_p_causality')).eGet('name') /] [/if]
+[if (getStereotypeValue(getProperty('s_port'), getProperty('s_p_causality'))->notEmpty())][getStereotypeValue(getProperty('s_port'), getProperty('s_p_causality')).eGet('name') /] [/if]
+[if (getStereotypeValue(getProperty('s_functionArgument'), getProperty('s_p_causality'))->notEmpty())][getStereotypeValue(getProperty('s_functionArgument'), getProperty('s_p_causality')).eGet('name') /] [/if]
+[/template]
+
+[template public conditional_attribute(aTypedElement : TypedElement) post(trim())]
+[if (getStereotypeValue(getProperty('s_component'), getProperty('s_p_conditionalAttribute')).toString() <> '')]
+if [getStereotypeValue(getProperty('s_component'), getProperty('s_p_conditionalAttribute'))/]
+[/if]
+[if (getStereotypeValue(getProperty('s_variable'), getProperty('s_p_conditionalAttribute')).toString() <> '')]
+if [getStereotypeValue(getProperty('s_variable'), getProperty('s_p_conditionalAttribute'))/]
+[/if]
+[if (getStereotypeValue(getProperty('s_port'), getProperty('s_p_conditionalAttribute')).toString() <> '')]
+if [getStereotypeValue(getProperty('s_port'), getProperty('s_p_conditionalAttribute'))/]
+[/if][comment  NOTE: ModelicaML specific. /]
+[if (getStereotypeValue(getProperty('s_requirementInstance'), getProperty('s_p_conditionalAttribute')).toString() <> '')]
+if [getStereotypeValue(getProperty('s_component'), getProperty('s_requirementInstance'))/]
+[/if]
+[if (getStereotypeValue(getProperty('s_calculatedProperty'), getProperty('s_p_conditionalAttribute')).toString() <> '')]
+if [getStereotypeValue(getProperty('s_calculatedProperty'), getProperty('s_p_conditionalAttribute'))/]
+[/if]
+[/template]
+
+[template public declaration_equation(aTypedElement : TypedElement) post(trim())]
+[if (getStereotypeValue(getProperty('s_variable'), getProperty('s_p_declarationEquation'))->notEmpty())][getStereotypeValue(getProperty('s_variable'), getProperty('s_p_declarationEquation'))/][/if]
+[if (getStereotypeValue(getProperty('s_functionArgument'), getProperty('s_p_declarationEquation'))->notEmpty())][getStereotypeValue(getProperty('s_functionArgument'), getProperty('s_p_declarationEquation'))/][/if]
+[/template]
+
+[comment]CALLED[/comment][comment]FIX THIS .toString()->excluding('') everywhere needed[/comment]
+[template public modification(aTypedElement : TypedElement) post(trim())][comment] WHY IT IS USED?  .nGet(0, length()) ====  ->subSequence(0 + 1, aClassifier->size() + 1) [/comment]
+[if (getStereotypeValue(getProperty('s_component'), getProperty('s_p_modification')).toString() <> '' )]
+([getStereotypeValues(getProperty('s_component'), getProperty('s_p_modification')).toString()->excluding('').removeOutterBraces()->sep(', ')/])
+[/if]
+[if (getStereotypeValue(getProperty('s_variable'), getProperty('s_p_modification')).toString() <> '')]
+([getStereotypeValues(getProperty('s_variable'), getProperty('s_p_modification')).toString()->excluding('').removeOutterBraces()->sep(', ')/])
+[/if]
+[if (getStereotypeValue(getProperty('s_port'), getProperty('s_p_modification')).toString() <> '')]
+([getStereotypeValues(getProperty('s_port'), getProperty('s_p_modification')).toString()->excluding('').removeOutterBraces()->sep(', ')/])
+[/if]
+[if (getStereotypeValue(getProperty('s_functionArgument'), getProperty('s_p_modification')).toString() <> '')]
+([getStereotypeValues(getProperty('s_functionArgument'), getProperty('s_p_modification')).toString()->excluding('').removeOutterBraces()->sep(', ')/])
+[/if][comment  NOTE: ModelicaML specific. /]
+[if (getStereotypeValue(getProperty('s_requirementInstance'), getProperty('s_p_modification')).toString() <> '')]
+([getStereotypeValues(getProperty('s_requirementInstance'), getProperty('s_p_modification')).toString()->excluding('').removeOutterBraces()->sep(', ')/])
+[/if]
+[if (getStereotypeValue(getProperty('s_calculatedProperty'), getProperty('s_p_modification')).toString() <> '')]
+([getStereotypeValues(getProperty('s_calculatedProperty'), getProperty('s_p_modification')).toString()->excluding('').removeOutterBraces()->sep(', ')/])
+[/if]
+[/template]
+
+[template public array_subscripts(aTypedElement : TypedElement) post(trim())]
+[if (getStereotypeValue(getProperty('s_component'), getProperty('s_p_arraySubscripts')).toString() <> '')]
+['['/][getStereotypeValues(getProperty('s_component'), getProperty('s_p_arraySubscripts'))->sep(', ')/][']'/]
+[/if]
+[if (getStereotypeValue(getProperty('s_variable'), getProperty('s_p_arraySubscripts')).toString() <> '')]
+['['/][getStereotypeValues(getProperty('s_variable'), getProperty('s_p_arraySubscripts'))->sep(', ')/][']'/]
+[/if]
+[if (getStereotypeValue(getProperty('s_port'), getProperty('s_p_arraySubscripts')).toString() <> '')]
+['['/][getStereotypeValues(getProperty('s_port'), getProperty('s_p_arraySubscripts'))->sep(', ')/][']'/]
+[/if]
+[if (getStereotypeValue(getProperty('s_functionArgument'), getProperty('s_p_arraySubscripts')).toString() <> '')]
+['['/][getStereotypeValues(getProperty('s_functionArgument'), getProperty('s_p_arraySubscripts'))->sep(', ')/][']'/]
+[/if][comment  NOTE: ModelicaML specific. /]
+[if (getStereotypeValue(getProperty('s_requirementInstance'), getProperty('s_p_arraySubscripts')).toString() <> '')]
+['['/][getStereotypeValues(getProperty('s_requirementInstance'), getProperty('s_p_arraySubscripts'))->sep(', ')/][']'/]
+[/if]
+[if (getStereotypeValue(getProperty('s_calculatedProperty'), getProperty('s_p_arraySubscripts')).toString() <> '')]
+['['/][getStereotypeValues(getProperty('s_calculatedProperty'), getProperty('s_p_arraySubscripts'))->sep(', ')/][']'/]
+[/if]
+[/template]
+
+[template public type_path(aType : Type) post(trim())]
+[if (name = 'ModelicaReal' or name = 'ModelicaInteger' or name = 'ModelicaString' or name = 'ModelicaBoolean')][name.replaceAll('Modelica', '').replaceSpecChar()/] 
+	[else]
+		[if (hasStereotype(getProperty('s_ModelicaModelReference')))]
+		[if (getStereotypeValue(getProperty('s_ModelicaModelReference'), getProperty('s_p_modelPath'))->notEmpty())]
+		[getStereotypeValue(getProperty('s_ModelicaModelReference'), getProperty('s_p_modelPath'))/]
+		[else]ERROR: Missing reference to Modelica model. [/if]
+		[else][qualifiedName.replaceSpecCharExceptThis('::').replaceAll('::', '.')/] [/if][/if]	
+[/template]

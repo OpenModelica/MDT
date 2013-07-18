@@ -1,0 +1,44 @@
+[module modelicamlmacros('http://www.eclipse.org/uml2/3.0.0/UML')/]
+
+[query public expandLOCAL_TIMER_PATH_PREFIXMacro(arg0 : String, arg1 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLMacros', 'expandLOCAL_TIMER_PATH_PREFIXMacro(java.lang.String, java.lang.String)', Sequence{arg0, arg1}) /]
+
+[query public expandTriggersMacros(arg0 : String, arg1 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLMacros', 'expandTriggersMacros(java.lang.String, java.lang.String)', Sequence{arg0, arg1}) /]
+
+[query public expandGuardMacros(arg0 : String, arg1 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLMacros', 'expandGuardMacros(java.lang.String, java.lang.String)', Sequence{arg0, arg1}) /]
+
+[query public expandAFTERMacro(arg0 : String, arg1 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLMacros', 'expandAFTERMacro(java.lang.String, java.lang.String)', Sequence{arg0, arg1}) /]
+
+[query public expandSIGNALMacro(arg0 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLMacros', 'expandSIGNALMacro(java.lang.String)', Sequence{arg0}) /]
+
+[query public expandCHANGEMacro(arg0 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLMacros', 'expandCHANGEMacro(java.lang.String)', Sequence{arg0}) /]
+
+[query public expandSTIMEMacro(arg0 : String, arg1 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLMacros', 'expandSTIMEMacro(java.lang.String, java.lang.String)', Sequence{arg0, arg1}) /]
+
+[query public expandABSOLUTE_VALUE_OFMacro(arg0 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLMacros', 'expandABSOLUTE_VALUE_OFMacro(java.lang.String)', Sequence{arg0}) /]
+
+[query public expandEVENTMacro(arg0 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLMacros', 'expandEVENTMacro(java.lang.String)', Sequence{arg0}) /]
+
+[query public expandGENCodeMacros(arg0 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLMacros', 'expandGENCodeMacros(java.lang.String)', Sequence{arg0}) /]
+
+[query public expandGEN_CHANGEMacro(arg0 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLMacros', 'expandGEN_CHANGEMacro(java.lang.String)', Sequence{arg0}) /]
+
+[query public expandGEN_SIGNALMacro(arg0 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLMacros', 'expandGEN_SIGNALMacro(java.lang.String)', Sequence{arg0}) /]
+
+[query public expandGEN_INCMacro(arg0 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLMacros', 'expandGEN_INCMacro(java.lang.String)', Sequence{arg0}) /]
+
+[query public expandGEN_EVENTMacro(arg0 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLMacros', 'expandGEN_EVENTMacro(java.lang.String)', Sequence{arg0}) /]
+

@@ -1,0 +1,83 @@
+[module modelicamlservices('http://www.eclipse.org/uml2/3.0.0/UML')/]
+
+[query public sortRegions(arg0 : Sequence(Region)) : Sequence(Region)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'sortRegions(java.util.List)', Sequence{arg0}) /]
+
+[query public sortRegion(arg0 : Sequence(OclAny)) : Sequence(OclAny)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'sortRegion(java.util.List)', Sequence{arg0}) /]
+
+[query public lCAName(arg0 : Transition, arg1 : State) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'lCAName(org.eclipse.uml2.uml.Transition, org.eclipse.uml2.uml.State)', Sequence{arg0, arg1}) /]
+
+[query public isForkEntry(arg0 : OclAny) : Boolean
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'isForkEntry(org.eclipse.uml2.uml.Class)', Sequence{arg0}) /]
+
+[query public lowestCommonAncestorQualifiedNameforPseudostates(arg0 : OclAny, arg1 : OclAny) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'lowestCommonAncestorQualifiedNameforPseudostates(org.eclipse.uml2.uml.Transition, org.eclipse.uml2.uml.State)', Sequence{arg0, arg1}) /]
+
+[query public getXMIID(arg0 : OclAny) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'getXMIID(org.eclipse.emf.ecore.EObject)', Sequence{arg0}) /]
+
+[query public lowestCommonAncestorNameforPseudostates(arg0 : Transition, arg1 : State) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'lowestCommonAncestorNameforPseudostates(org.eclipse.uml2.uml.Transition, org.eclipse.uml2.uml.State)', Sequence{arg0, arg1}) /]
+
+[query public lowestCommonAncestorQualifiedName(arg0 : Transition) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'lowestCommonAncestorQualifiedName(org.eclipse.uml2.uml.Transition)', Sequence{arg0}) /]
+
+[query public getConnectionPointReference(arg0 : Pseudostate, arg1 : State) : ConnectionPointReference
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'getConnectionPointReference(org.eclipse.uml2.uml.Pseudostate, org.eclipse.uml2.uml.State)', Sequence{arg0, arg1}) /]
+
+[query public getQualifiedDotName2(arg0 : NamedElement) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'getQualifiedDotName2(org.eclipse.uml2.uml.NamedElement)', Sequence{arg0}) /]
+
+[query public filterJoinTargetsOut(arg0 : Sequence(Transition)) : OrderedSet(Transition)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'filterJoinTargetsOut(java.util.List)', Sequence{arg0}) /]
+
+[query public addSubMachienStatetoList(arg0 : State, arg1 : OclAny) : Sequence(OclAny)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'addSubMachienStatetoList(org.eclipse.uml2.uml.State, org.eclipse.uml2.uml.Class)', Sequence{arg0, arg1}) /]
+
+[query public sortControlFlows(arg0 : OclAny) : Sequence(ControlFlow)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'sortControlFlows(org.eclipse.uml2.uml.Class)', Sequence{arg0}) /]
+
+[query public lowestCommonAncestorName(arg0 : Transition) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'lowestCommonAncestorName(org.eclipse.uml2.uml.Transition)', Sequence{arg0}) /]
+
+[query public getMissingForkRegion(arg0 : Pseudostate, arg1 : OclAny) : Sequence(Region)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'getMissingForkRegion(org.eclipse.uml2.uml.Pseudostate, org.eclipse.uml2.uml.State)', Sequence{arg0, arg1}) /]
+
+[query public getOtherJoinRegions(arg0 : OclAny, arg1 : OclAny) : Sequence(OclAny)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'getOtherJoinRegions(org.eclipse.uml2.uml.Class, org.eclipse.uml2.uml.Pseudostate)', Sequence{arg0, arg1}) /]
+
+[query public getQualifiedDotPart(arg0 : NamedElement) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'getQualifiedDotPart(org.eclipse.uml2.uml.NamedElement)', Sequence{arg0}) /]
+
+[query public lCAQualifiedName(arg0 : Transition, arg1 : State) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'lCAQualifiedName(org.eclipse.uml2.uml.Transition, org.eclipse.uml2.uml.State)', Sequence{arg0, arg1}) /]
+
+[query public sortTransitions(arg0 : Sequence(Transition)) : Sequence(Transition)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'sortTransitions(java.util.List)', Sequence{arg0}) /]
+
+[query public getOtherRegions(arg0 : OclAny, arg1 : OclAny) : Sequence(OclAny)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'getOtherRegions(org.eclipse.uml2.uml.Class, org.eclipse.uml2.uml.Region)', Sequence{arg0, arg1}) /]
+
+[query public getQualifiedDotName(arg0 : OclAny, arg1 : OclAny) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'getQualifiedDotName(org.eclipse.uml2.uml.Vertex, java.lang.String)', Sequence{arg0, arg1}) /]
+
+[query public getFullQualifiedDotName(arg0 : OclAny, arg1 : OclAny) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'getFullQualifiedDotName(org.eclipse.uml2.uml.Vertex, java.lang.String)', Sequence{arg0, arg1}) /]
+
+[query public getHighestRegionforEntry(arg0 : Region) : Region
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'getHighestRegionforEntry(org.eclipse.uml2.uml.Region)', Sequence{arg0}) /]
+
+[query public getInterlevelEntryList(arg0 : State, arg1 : OclAny) : Sequence(OclAny)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'getInterlevelEntryList(org.eclipse.uml2.uml.State, java.lang.String)', Sequence{arg0, arg1}) /]
+
+[query public getMissingRegions(arg0 : OclAny) : Sequence(OclAny)
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'getMissingRegions(org.eclipse.uml2.uml.Class)', Sequence{arg0}) /]
+
+[query public getContainerName(arg0 : Region, arg1 : OclAny, arg2 : OclAny) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'getContainerName(org.eclipse.uml2.uml.Region, java.lang.String, java.lang.String)', Sequence{arg0, arg1, arg2}) /]
+
+[query public getModelicaTypeDefaultValue(arg0 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.services.ModelicaMLServices', 'getModelicaTypeDefaultValue(java.lang.String)', Sequence{arg0}) /]
+

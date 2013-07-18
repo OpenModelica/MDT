@@ -1,0 +1,79 @@
+[comment encoding = UTF-8 /]
+[module _2_class_getter('http://www.eclipse.org/uml2/3.0.0/UML')/]
+
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::core::helper/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::StringUtls/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::umlservices/]
+
+[comment]
+<%-- 	############################################################# 	--%>
+<%-- 							Class Getter							--%>
+<%-- 	############################################################# 	--%>
+[/comment]
+
+[template public within(aNamedElement : NamedElement)][comment]XDONE[/comment]
+[if (qualifiedName <> name)]
+within [qualifiedName.substring(0 + 1 , qualifiedName.size()- name.size() - 2 ).replaceSpecCharExceptThis('::').replaceAll('::','.')/];
+[/if]
+[/template]
+[comment]<%-- ISSUE: should we use fully qulaified names for within? --%><%--ALTERNATIVE: <%if (owner.filter("Class") != null){%>within <%owner.filter("Class").name.replaceAll("::","." )%>;<%}%>--%>[/comment]	
+
+[template public IDENT(aNamedElement : NamedElement , arg0 : String) post(trim())]
+[if (clientDependency->select(hasStereotype(getProperty('s_redeclare')))->notEmpty())]
+[if (arg0 <> 'end')]extends [/if][clientDependency->select(hasStereotype(getProperty('s_redeclare'))).target->filter(NamedElement).name.replaceSpecChar()/][if (arg0 <> 'end')][clientDependency.redeclare_class_modification()/][/if]
+[else][name.replaceSpecChar()/][/if]
+[/template]
+
+[template public final(aNamedElement : NamedElement)]
+[if (isSetModelicaClassStereotypeValueBoolean('s_p_final'))]final [/if]
+[/template]
+
+[template public partial(aNamedElement : NamedElement)][comment]DONE[/comment]
+[if (isSetModelicaClassStereotypeValueBoolean('s_p_partial'))]partial [/if]
+[/template]
+
+[template public encapsulated(aNamedElement : NamedElement)]
+[if (isSetModelicaClassStereotypeValueBoolean('s_p_encapsulated'))]encapsulated [/if]
+[/template]
+
+[template public public_protected(aClassifier : Classifier)]
+[if (isProtected() = true)]protected [/if] [comment]<%-- NOTE: 'public' is default. --%>[/comment]
+[/template]
+
+[template public redeclare(aNameElement : NamedElement)]
+[if (clientDependency->select(hasStereotype(getProperty('s_redeclare')))->notEmpty())]redeclare [/if]
+[/template]
+
+[template public redeclare_class_modification(aNamedElement : NamedElement) post(trim())]
+[if (getStereotypeValue(getProperty('s_redeclare'), getProperty('s_p_modification')).oclAsType(Boolean))]
+([getStereotypeValue(getProperty('s_redeclare'), getProperty('s_p_modification')).oclAsType(String).removeFirstChar('(').removeLastChar(')')->sep(', ')/])
+[/if]
+[/template]
+
+[template public partialDerivativeFunctionArguments(aNamedElement : NamedElement) post(trim())]
+[if (getStereotypeValue(getProperty('s_partialDerivativeFunction'), getProperty('s_p_partialDerivativeFunctionArguments')).oclAsType(Boolean))]
+[getStereotypeValues(getProperty('s_partialDerivativeFunction'), getProperty('s_p_partialDerivativeFunctionArguments'))->sep(', ')/]
+[/if]
+[/template]
+
+[template public replaceable(aNamedElement : NamedElement)]
+[if (isSetModelicaClassStereotypeValueBoolean('s_p_replaceable') = true)] replaceable [/if]
+[/template]
+
+[template public innerouter(aNamedElement : NamedElement)]
+[getModelicaClassStereotypeValueEnum('s_p_innerouter')/]
+[/template]
+
+[template public external(aNamedElement : NamedElement) post(trim())]
+[if (getStereotypeValue(getProperty('s_function'), getProperty('s_p_externalLanguageSpecification'))->notEmpty())]
+external "[getStereotypeValue(getProperty('s_function'), getProperty('s_p_externalLanguageSpecification'))/]
+"[/if]
+[if (getStereotypeValue(getProperty('s_function'), getProperty('s_p_externalFunctionCall'))->notEmpty())]
+[getStereotypeValue(getProperty('s_function'), getProperty('s_p_externalFunctionCall'))/]
+[/if]
+[if (getStereotypeValue(getProperty('s_function'), getProperty('s_p_externalAnnotation'))->notEmpty())]
+ annotation([getStereotypeValue(getProperty('s_function'), getProperty('s_p_externalAnnotation'))/])
+[/if]
+[if (getStereotypeValue(getProperty('s_function'), getProperty('s_p_externalFunctionCall'))->notEmpty())]
+;[/if]
+[/template]

@@ -1,0 +1,97 @@
+[comment encoding = UTF-8 /]
+[module ModelicaML_StateMachines_entry_do_exit('http://www.eclipse.org/uml2/3.0.0/UML')/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::StringUtls/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::umlservices/]
+[import org::openmodelica::modelicaml::generate::modelica::services::modelicamlservices/]
+[import org::openmodelica::modelicaml::generate::modelica::services::modelicamlmacros/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::core::_4_behavior_getter/]
+
+[import org::openmodelica::modelicaml::generate::modelica::activity2modelica::ModelicaML_ActivityDiagram2Modelica/]
+[import org::openmodelica::modelicaml::generate::modelica::annotation::ModelicaML_annotations/]
+
+[template public Entry(aVertex : Vertex, args0 : OclAny) post(trim())]
+[if (aVertex->filter(State).entry->notEmpty())]
+	//state "[args0/]": entry behavior
+[if ((aVertex->filter(State).entry.eClass().name = 'OpaqueBehavior')->notEmpty())]
+	[aVertex->filter(State).entry->filter(OpaqueBehavior)._body.expandGENCodeMacros()/]
+[else]
+[if ((aVertex->filter(State).entry.eClass().name = 'Activity')->notEmpty())]
+			[aVertex->filter(State).entry->filter(Activity).Activity2ModelicaCode()/]
+[else]
+[if ((aVertex->filter(State).entry.eClass().name = 'StateMachine')->notEmpty())]
+			ERROR: StateMachines are not supported as entry/exit/do behavior
+[/if]
+[/if]
+[/if]
+[/if]
+[/template]
+
+[template public DoCode(aVertex : Vertex, args0 : OclAny) post(trim())]
+[if (aVertex->filter(State).doActivity->notEmpty())]
+if [args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active then
+	[Do(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+end if;
+[/if]
+[/template]
+
+[template public Do(aVertex : Vertex, args0 : OclAny) post(trim())][comment]CHECK <> null[/comment]
+//state "[args0/]": do behavior
+[if ((aVertex->filter(State).doActivity.eClass().name = 'OpaqueBehavior')->notEmpty())]
+[aVertex->filter(State).doActivity->filter(OpaqueBehavior)._body.expandGENCodeMacros()/]
+[else]
+[if ((aVertex->filter(State).doActivity.eClass().name = 'Activity')->notEmpty())]
+		[aVertex->filter(State).doActivity->filter(Activity).Activity2ModelicaCode()/]
+[else]
+[if ((aVertex->filter(State).doActivity.eClass().name = 'StateMachine')->notEmpty())]
+		ERROR: StateMachines are not supported as entry/exit/do behavior
+[/if]
+[/if]
+[/if]
+[/template]
+
+[template public Exit(aVertex : Vertex, args0 : OclAny) post(trim())][comment]CHECK <> null[/comment]
+[if (aVertex->filter(State).exit->notEmpty())]
+	//state "[args0/]": exit behavior
+[if ((aVertex->filter(State).exit.eClass().name = 'OpaqueBehavior')->notEmpty())]
+	[aVertex->filter(State).exit->filter(OpaqueBehavior)._body.expandGENCodeMacros()/]
+[else]
+[if ((aVertex->filter(State).exit.eClass().name = 'Activity')->notEmpty())]
+			[aVertex->filter(State).exit->filter(Activity).Activity2ModelicaCode()/]
+[else]
+[if ((aVertex->filter(State).exit.eClass().name = 'StateMachine')->notEmpty())]
+			ERROR: StateMachines are not supported as entry/exit/do behavior
+[/if]
+[/if]
+[/if]
+[/if]
+[/template]
+
+[template public Effect(aTransition : Transition)]
+[if (effect->notEmpty())]
+	//transition "[name/]": effect behavior 
+[if (effect.eClass().name = 'OpaqueBehavior')]
+	[effect->filter(OpaqueBehavior)._body.expandGENCodeMacros()/]
+[else]
+[if (effect.eClass().name = 'Activity')]
+			[effect->filter(Activity).Activity2ModelicaCode()/]
+[else]
+[if (effect.eClass().name = 'StateMachine')]
+			ERROR: StateMachines are not supported as entry/exit/do or effect behavior.
+[/if]
+[/if]
+[/if]
+[/if]
+[/template]
+
+[template public AssertsInStates(aVertex : Vertex) post(trim())]
+[if (getProperty('c_includeAsserts')->notEmpty() and ownedElement->filter(Constraint)->select(hasStereotype(getProperty('s_assert')))->notEmpty())]
+[for (ownedElement->filter(Constraint)->select(hasStereotype(getProperty('s_assert'))))]
+	[if (getStereotypeValue(getProperty('s_assert'), getProperty('s_p_condition'))->notEmpty() and getStereotypeValue(getProperty('s_assert'), getProperty('s_p_message'))->notEmpty())]
+	assert([getStereotypeValue(getProperty('s_assert'), getProperty('s_p_condition'))/], "[getStereotypeValue(getProperty('s_assert'), getProperty('s_p_message')).oclAsType(String).trim()/]");
+	[/if]
+[/for]
+[/if]
+[/template]
+
+
+

@@ -1,0 +1,96 @@
+[comment encoding = UTF-8 /]
+[module ModelicaML_StateMachines_debug('http://www.eclipse.org/uml2/3.0.0/UML')/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::StringUtls/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::umlservices/]
+[import org::openmodelica::modelicaml::generate::modelica::services::modelicamlservices/]
+
+[import org::openmodelica::modelicaml::generate::modelica::services::modelicamlmacros/] 
+[import org::openmodelica::modelicaml::generate::modelica::services::modelicamleventsservices/]
+
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::core::_0_main_uml2modelica/]
+  
+[comment]<%-- FOR TEST ONLY ###################################################################### --%>
+
+<%-- exclude also: import org.openmodelica.modelicaml.uml2modelica.core._0_ main_uml2modelica --%>
+<%--<%script type="uml.StateMachine" name="test" post="trim()" file="<%name%>.txt" %>
+<%if (getProperty("c_debugMode")){%>
+<%region.regionDebugCode(name.replaceSpecChar())%>
+<%}%>
+--%>
+<%-- FOR TEST ONLY END ###################################################################### --%>[/comment]
+
+[template public regionDebugVariables(aRegion : Region) post(trim())]
+[if (getProperty('c_debugMode')->notEmpty())] 
+/* M@ debug variables */
+Integer numberOfActiveStates(start=0, fixed=true); 
+[/if]
+[/template]  
+
+[template public regionDebugCode(aRegion : Region, args0 : OclAny) post(trim())]
+/* M@ reset debug variabels */
+[args0/].[name.replaceSpecChar()/].numberOfActiveStates := 0; 
+
+/* M@ start debug code of region "----[args0/]" ***/
+[for (ownedElement->filter(State))]
+if [args0/].[container.name.replaceSpecChar()/].[name.replaceSpecChar()/].active then 
+	[args0/].[container.name.replaceSpecChar()/].numberOfActiveStates := [args0/].[container.name.replaceSpecChar()/].numberOfActiveStates + 1; 
+end if;
+[/for]
+[for (ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory'))]
+if [args0/].[container.name.replaceSpecChar()/].[name.replaceSpecChar()/].active then 
+	[args0/].[container.name.replaceSpecChar()/].numberOfActiveStates := [args0/].[container.name.replaceSpecChar()/].numberOfActiveStates + 1; 
+end if;
+[/for]
+
+/* M@ validation code start*/
+
+if [args0/].active then 
+	assert(not ([args0/].[name.replaceSpecChar()/].numberOfActiveStates < 1), "[args0/].[name.replaceSpecChar()/] has no active states although the parent state is active!");
+	assert(not ([args0/].[name.replaceSpecChar()/].numberOfActiveStates > 1), "[args0/].[name.replaceSpecChar()/] has multiple active states which are mutually exclusive!");
+end if;
+
+if not [args0/].active then
+	assert([args0/].[name.replaceSpecChar()/].numberOfActiveStates == 0, "[args0/].[name.replaceSpecChar()/] has active states although the parent state is not active!");
+end if;
+
+[comment  Terminate() is not yet supported by MathModelica. Using terminate() the compiler will return true (i.e. a successful simulation termintated at cretain time. 
+This is not the purpose of this validation code. It should report an error. That is the reason why assert is used.)
+if (<%args(0)%>.active) and (<%args(0)%>.<%name.replaceSpecChar()%>.numberOfActiveStates < 1) then 
+	//terminate("<%args(0)%>.<%name.replaceSpecChar()%> has no active states!");
+end if;
+if (<%args(0)%>.active) and (<%args(0)%>.<%name.replaceSpecChar()%>.numberOfActiveStates > 1) then 
+	//terminate("<%args(0)%>.<%name.replaceSpecChar()%> has multiple active states which are mutually exclusive!");
+end if;
+if (not <%args(0)%>.active) and (<%args(0)%>.<%name.replaceSpecChar()%>.numberOfActiveStates > 0) then 
+	//terminate("<%args(0)%>.<%name.replaceSpecChar()%> has active states although the parent state is not active!");
+end if;
+/]/* M@ validation code start*/
+
+[for (ownedElement->filter(State)->select(isComposite))]
+/* M@ start composite [name/] */
+[let var : Sequence(Region) = region->asSequence()]
+[for (sortRegions(var))]
+	[regionDebugCode(args0 + '.' + owner->filter(State).container.name.replaceSpecChar() + '.' + owner->filter(State).name.replaceSpecChar()).replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/for]
+[/let]
+/* M@ end composite [name/] */
+[/for]
+
+[for (ownedElement->filter(State)->select(isSubmachineState))]
+/* M@ start submachine composite [name/] */
+	[submachine.subMachineRegionDebugCode(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+/* M@ end submachine composite [name/] */
+[/for]
+
+/* M@ end debug code of region "[name/]" ***/
+[/template]
+
+[template public subMachineRegionDebugCode(aStateMachine : StateMachine, args0 : OclAny)]
+[let var : Sequence(Region) = region->asSequence()]
+[for (sortRegions(var))]
+[regionDebugCode(args0).replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/for]
+[/let]
+[/template]
+
+

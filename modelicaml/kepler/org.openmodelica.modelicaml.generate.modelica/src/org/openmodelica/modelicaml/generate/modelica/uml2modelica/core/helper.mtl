@@ -1,0 +1,199 @@
+[comment encoding = UTF-8 /]
+[module helper('http://www.eclipse.org/uml2/3.0.0/UML')/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::umlservices/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::StringUtls/]
+[comment]
+<%-- 	############################################################# 	--%>
+<%-- 				Helper for Modelica classes 						--%>
+<%-- 	############################################################# 	--%>
+[/comment]
+
+
+[template public restricted_class_name(aNamedElement : NamedElement)]
+[if (aNamedElement.hasStereotype(getProperty('s_class')))]class [/if][if (aNamedElement.hasStereotype(getProperty('s_package')))]package [/if][if (aNamedElement.hasStereotype(getProperty('s_operator')))]operator [/if][if (aNamedElement.hasStereotype(getProperty('s_model')))]model [/if][if (aNamedElement.hasStereotype(getProperty('s_block')))]block [/if][if (aNamedElement.hasStereotype(getProperty('s_connector')))][expandable()/]connector [/if][if (aNamedElement.hasStereotype(getProperty('s_record')))]record [/if][if (aNamedElement.hasStereotype(getProperty('s_type')))]type [/if][if (aNamedElement.hasStereotype(getProperty('s_function')))]function [/if][if (aNamedElement.hasStereotype(getProperty('s_enumeration')))]enumeration [/if][comment  NOTE: ModelicaML specific. /][if (aNamedElement.hasStereotype(getProperty('s_calculationModel')))]model [/if][if (aNamedElement.hasStereotype(getProperty('s_requirement')))]model [/if][if (aNamedElement.hasStereotype(getProperty('s_requirementRepresentative')))]model [/if][if (aNamedElement.hasStereotype(getProperty('s_measureOfEffectiveness')))]model [/if][comment]<%-- NOTE: ModelicaML specific. END--%>[/comment]
+[/template]
+
+[template public expandable(aNamedElement : NamedElement)]
+[if (aNamedElement.getStereotypeValue(getProperty('s_connector'), getProperty('s_p_expandable')).oclAsType(Boolean))]
+expandable [/if]
+[/template]
+
+
+[query public isModelicaRestrictedClass(aNamedElement : NamedElement) : Boolean =
+if (aNamedElement.hasStereotype(getProperty('s_package')) 
+or aNamedElement.hasStereotype(getProperty('s_operator')) 
+or aNamedElement.hasStereotype(getProperty('s_class')) 
+or aNamedElement.hasStereotype(getProperty('s_model')) 
+or aNamedElement.hasStereotype(getProperty('s_block')) 
+or aNamedElement.hasStereotype(getProperty('s_record')) 
+or aNamedElement.hasStereotype(getProperty('s_connector')) 
+or aNamedElement.hasStereotype(getProperty('s_type')) 
+or aNamedElement.hasStereotype(getProperty('s_function')) 
+or aNamedElement.hasStereotype(getProperty('s_enumeration')) 
+or aNamedElement.hasStereotype(getProperty('s_calculationModel')) 
+or aNamedElement.hasStereotype(getProperty('s_requirement')) 
+or aNamedElement.hasStereotype(getProperty('s_requirementRepresentative')) 
+or aNamedElement.hasStereotype(getProperty('s_measureOfEffectiveness'))) 
+then true
+else 
+false
+endif
+/]
+
+[query public isPartialDerivativeFunction(aNamedElement : NamedElement)  : Boolean =
+if (aNamedElement.clientDependency->asSequence()->first().hasStereotype(getProperty('s_partialDerivativeFunction')) = true)
+ then true 
+ else false 
+ endif
+/]
+
+[query public isProtected(aClassifier : Classifier) : Boolean =
+if (aClassifier->filter(Class).visibility.toString() = 'protected') 
+then true 
+else false 
+endif
+/]
+
+[query public isRedeclare(namedElement : NamedElement) : Boolean =
+if (namedElement.clientDependency->select(hasStereotype(getProperty('s_redeclare')))->notEmpty())
+then true 
+else false 
+endif
+/]
+
+[query public isReplaceable(namedElement : NamedElement)  : Boolean =
+if (namedElement.isSetModelicaClassStereotypeValueBoolean('s_p_replaceable'))
+then true 
+else false 
+endif
+/]
+
+[query public isSetModelicaClassStereotypeValueBoolean(aNamedElement : NamedElement , args0 : String)  : Boolean =  
+ if (aNamedElement.getStereotypeValue(getProperty('s_package'), getProperty(args0)) = true
+or aNamedElement.getStereotypeValue(getProperty('s_operator'), getProperty(args0)) = true
+or aNamedElement.getStereotypeValue(getProperty('s_class'), getProperty(args0)) = true
+or aNamedElement.getStereotypeValue(getProperty('s_model'), getProperty(args0)) = true
+or aNamedElement.getStereotypeValue(getProperty('s_block'), getProperty(args0)) = true
+or aNamedElement.getStereotypeValue(getProperty('s_connector'), getProperty(args0)) = true
+or aNamedElement.getStereotypeValue(getProperty('s_record'), getProperty(args0)) = true
+or aNamedElement.getStereotypeValue(getProperty('s_type'), getProperty(args0)) = true
+or aNamedElement.getStereotypeValue(getProperty('s_function'), getProperty(args0)) = true
+or aNamedElement.getStereotypeValue(getProperty('s_enumeration'), getProperty(args0)) = true
+or aNamedElement.getStereotypeValue(getProperty('s_calculationModel'), getProperty(args0)) = true
+or aNamedElement.getStereotypeValue(getProperty('s_requirement'), getProperty(args0)) = true
+or aNamedElement.getStereotypeValue(getProperty('s_requirementRepresentative'), getProperty(args0)) = true
+or aNamedElement.getStereotypeValue(getProperty('s_measureOfEffectiveness'), getProperty(args0)) = true  )
+then 
+true
+else
+false
+endif
+/]
+
+[template public getModelicaClassStereotypeValueEnum(namedElement : NamedElement, args0 : String) post(trim())]
+[if (namedElement.getStereotypeValue(getProperty('s_package'), getProperty(args0)).oclAsType(Boolean))]
+[namedElement.getStereotypeValue(getProperty('s_package'), getProperty(args0)).eGet('name')/][/if]
+[if (namedElement.getStereotypeValue(getProperty('s_operator'), getProperty(args0)).oclAsType(Boolean))]
+[namedElement.getStereotypeValue(getProperty('s_operator'), getProperty(args0)).eGet('name')/][/if]
+[if (namedElement.getStereotypeValue(getProperty('s_class'), getProperty(args0)).oclAsType(Boolean))]
+[namedElement.getStereotypeValue(getProperty('s_class'), getProperty(args0)).eGet('name')/][/if]
+[if (namedElement.getStereotypeValue(getProperty('s_model'), getProperty(args0)).oclAsType(Boolean))]
+[namedElement.getStereotypeValue(getProperty('s_model'), getProperty(args0)).eGet('name')/][/if]
+[if (namedElement.getStereotypeValue(getProperty('s_block'), getProperty(args0)).oclAsType(Boolean))]
+[namedElement.getStereotypeValue(getProperty('s_block'), getProperty(args0)).eGet('name')/][/if]
+[if (namedElement.getStereotypeValue(getProperty('s_connector'), getProperty(args0)).oclAsType(Boolean))]
+[namedElement.getStereotypeValue(getProperty('s_connector'), getProperty(args0)).eGet('name')/][/if]
+[if (namedElement.getStereotypeValue(getProperty('s_record'), getProperty(args0)).oclAsType(Boolean))]
+[namedElement.getStereotypeValue(getProperty('s_record'), getProperty(args0)).eGet('name')/][/if]
+[if (namedElement.getStereotypeValue(getProperty('s_type'), getProperty(args0)).oclAsType(Boolean))]
+[namedElement.getStereotypeValue(getProperty('s_type'), getProperty(args0)).eGet('name')/][/if]
+[if (namedElement.getStereotypeValue(getProperty('s_function'), getProperty(args0)).oclAsType(Boolean))]
+[namedElement.getStereotypeValue(getProperty('s_function'), getProperty(args0)).eGet('name')/][/if]
+[if (namedElement.getStereotypeValue(getProperty('s_enumeration'), getProperty(args0)).oclAsType(Boolean))]
+[namedElement.getStereotypeValue(getProperty('s_enumeration'), getProperty(args0)).eGet('name')/][/if][comment  NOTE: ModelicaML specific. /]
+[if (namedElement.getStereotypeValue(getProperty('s_calculationModel'), getProperty(args0)).oclAsType(Boolean))]
+[namedElement.getStereotypeValue(getProperty('s_calculationModel'), getProperty(args0)).eGet('name')/][/if]
+[if (namedElement.getStereotypeValue(getProperty('s_requirement'), getProperty(args0)).oclAsType(Boolean))]
+[namedElement.getStereotypeValue(getProperty('s_requirement'), getProperty(args0)).eGet('name')/][/if]
+[if (namedElement.getStereotypeValue(getProperty('s_requirementRepresentative'), getProperty(args0)).oclAsType(Boolean))]
+[namedElement.getStereotypeValue(getProperty('s_requirementRepresentative'), getProperty(args0)).eGet('name')/][/if]
+[if (namedElement.getStereotypeValue(getProperty('s_measureOfEffectiveness'), getProperty(args0)).oclAsType(Boolean))]
+[namedElement.getStereotypeValue(getProperty('s_measureOfEffectiveness'), getProperty(args0)).eGet('name')/][/if]
+[/template]
+		
+[comment]
+<%-- 	############################################################# 	--%>
+<%-- 				Helper for Modelica components 						--%>
+<%-- 	############################################################# 	--%>
+[/comment]
+
+[query public isModelicaComponent(typedElement : TypedElement)  : Boolean =
+if (typedElement.hasStereotype(getProperty('s_component')) 
+or typedElement.hasStereotype(getProperty('s_variable')) 
+or typedElement.hasStereotype(getProperty('s_port')) 
+or typedElement.hasStereotype(getProperty('s_functionArgument')) 
+or typedElement.hasStereotype(getProperty('s_requirementInstance')) 
+or typedElement.hasStereotype(getProperty('s_calculatedProperty')))
+then true 
+else false 
+endif
+/]
+
+[query public isSetModelicaComponentStereotypeValueBoolean(aTypedElement : TypedElement , args0 : String) : Boolean =
+	if ( aTypedElement.getStereotypeValue(getProperty('s_component'), getProperty(args0)) = true
+		or aTypedElement.getStereotypeValue(getProperty('s_variable'), getProperty(args0)) = true
+		or aTypedElement.getStereotypeValue(getProperty('s_port'), getProperty(args0)) = true
+		or aTypedElement.getStereotypeValue(getProperty('s_functionArgument'), getProperty(args0)) = true
+
+		or aTypedElement.getStereotypeValue(getProperty('s_requirementInstance'), getProperty(args0)) = true
+		or aTypedElement.getStereotypeValue(getProperty('s_calculatedProperty'), getProperty(args0)) = true)
+		then
+		true
+		else
+		false	
+		endif
+/]
+
+[query public isSetModelicaComponentStereotypeValueEnum(typedElement : TypedElement, args0 : String)  : Boolean =
+if (typedElement.getStereotypeValue(getProperty('s_component'), getProperty(args0)) = true
+or typedElement.getStereotypeValue(getProperty('s_variable'), getProperty(args0)) = true
+or typedElement.getStereotypeValue(getProperty('s_port'), getProperty(args0)) = true
+or typedElement.getStereotypeValue(getProperty('s_functionArgument'), getProperty(args0)) = true
+or typedElement.getStereotypeValue(getProperty('s_requirementInstance'), getProperty(args0)) = true
+or typedElement.getStereotypeValue(getProperty('s_calculatedProperty'), getProperty(args0)) = true) 
+then true 
+else false 
+endif
+/]
+
+[template public getModelicaComponentStereotypeValueEnum(typedElement : uml::TypedElement, args0 : String) post(trim())]
+[if (typedElement.getStereotypeValue(getProperty('s_component'), getProperty(args0)).oclAsType(Boolean))]
+[typedElement.getStereotypeValue(getProperty('s_component'), getProperty(args0)).eGet('name')/][/if]
+[if (typedElement.getStereotypeValue(getProperty('s_variable'), getProperty(args0)).oclAsType(Boolean))]
+[typedElement.getStereotypeValue(getProperty('s_variable'), getProperty(args0)).eGet('name')/][/if]
+[if (typedElement.getStereotypeValue(getProperty('s_port'), getProperty(args0)).oclAsType(Boolean))]
+[typedElement.getStereotypeValue(getProperty('s_port'), getProperty(args0)).eGet('name')/][/if]
+[if (typedElement.getStereotypeValue(getProperty('s_functionArgument'), getProperty(args0)).oclAsType(Boolean))]
+[typedElement.getStereotypeValue(getProperty('s_functionArgument'), getProperty(args0)).eGet('name')/][/if][comment  NOTE: ModelicaML specific. /]
+[if (typedElement.getStereotypeValue(getProperty('s_requirementInstance'), getProperty(args0)).oclAsType(Boolean))]
+[typedElement.getStereotypeValue(getProperty('s_requirementInstance'), getProperty(args0)).eGet('name')/][/if]
+[if (typedElement.getStereotypeValue(getProperty('s_calculatedProperty'), getProperty(args0)).oclAsType(Boolean))]
+[typedElement.getStereotypeValue(getProperty('s_calculatedProperty'), getProperty(args0)).eGet('name')/][/if]
+[/template]
+
+[comment]
+<%-- 	############################################################# 	--%>
+<%-- 				Helper for Modelica Behavior 						--%>
+<%-- 	############################################################# 	--%>
+[/comment]
+
+[query public isModelicaBehavior(aBehavior : Behavior) : Boolean =
+if (aBehavior.hasStereotype(getProperty('s_equation')) 
+or aBehavior.hasStereotype(getProperty('s_algorithm')) 
+or aBehavior.hasStereotype(getProperty('s_modelicaStateMachine')) 
+or aBehavior.hasStereotype(getProperty('s_conditionalEquation')) 
+or aBehavior.hasStereotype(getProperty('s_conditionalAlgorithm'))) 
+then true 
+else false 
+endif
+/]

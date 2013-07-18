@@ -1,0 +1,42 @@
+[comment encoding = UTF-8 /]
+[module ModelicaML_StateMachines_terminate('http://www.eclipse.org/uml2/3.0.0/UML')/]
+ 
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::UML2ModelicaServices/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::umlservices/]
+[import org::openmodelica::modelicaml::generate::modelica::services::modelicamlservices/]
+[import org::openmodelica::modelicaml::generate::modelica::services::modelicamlmacros/] 
+[import org::openmodelica::modelicaml::generate::modelica::services::modelicamleventsservices/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::core::_0_main_uml2modelica/]
+                
+[template public regionTerminateCode(aRegion : Region, args0 : OclAny) post(trim())]
+/* M@ start terminate code of region "[args0/]" ***/
+[for (ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory'))]
+[args0/].[container.name.replaceSpecChar()/].[name.replaceSpecChar()/].active := false;
+[/for]
+[for (ownedElement->filter(State))]
+[args0/].[container.name.replaceSpecChar()/].[name.replaceSpecChar()/].active := false; 
+[/for]
+[for (ownedElement->filter(State)->select(isComposite))]
+/* M@ start composite [name/] */
+[let var : Sequence(Region) = region->asSequence()]
+[for (sortRegions(var))]
+[regionTerminateCode(args0 + '.' + owner->filter(State).container.name + '.' + (owner->filter(State).name)->asSequence()->first().replaceSpecChar())/]
+[/for]
+[/let]
+/* M@ end composite [name/] */
+[/for]
+[for (ownedElement->filter(State)->select(isSubmachineState))]
+/* M@ start submachine composite [name/] */
+[submachine.subMachineRegionTerminateCode(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+/* M@ end submachine composite [name/] */
+[/for]
+/* M@ end terminate code of region "[name/]" ***/
+[/template]
+
+[template public subMachineRegionTerminateCode(aStateMachine : StateMachine, args0 : OclAny) post(trim())]
+[let var : Sequence(Region) = region->asSequence()]
+[for (sortRegions(var)->filter(Region))]
+[regionTerminateCode(args0)/]
+[/for]
+[/let]
+[/template]

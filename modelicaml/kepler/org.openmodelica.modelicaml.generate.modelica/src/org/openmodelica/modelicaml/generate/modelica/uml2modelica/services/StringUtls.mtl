@@ -1,0 +1,17 @@
+[module StringUtls('http://www.eclipse.org/uml2/3.0.0/UML')/]
+
+[query public removeOutterBraces(arg0 : OclAny) : String 
+	= invoke('org.openmodelica.modelicaml.generate.modelica.uml2modelica.services.StringUtls', 'removeOutterBraces(java.lang.String)', Sequence{arg0}) /]
+
+[query public removeFirstChar(arg0 : String, arg1 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.uml2modelica.services.StringUtls', 'removeFirstChar(java.lang.String, java.lang.String)', Sequence{arg0, arg1}) /]
+
+[query public removeLastChar(arg0 : String, arg1 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.uml2modelica.services.StringUtls', 'removeLastChar(java.lang.String, java.lang.String)', Sequence{arg0, arg1}) /]
+
+[query public replaceSpecCharExceptThis(arg0 : String, arg1 : String) : String
+	= invoke('org.openmodelica.modelicaml.generate.modelica.uml2modelica.services.StringUtls', 'replaceSpecCharExceptThis(java.lang.String, java.lang.String)', Sequence{arg0, arg1}) /]
+
+[query public replaceSpecChar(arg0 : String) : String 
+	= invoke('org.openmodelica.modelicaml.generate.modelica.uml2modelica.services.StringUtls', 'replaceSpecChar(java.lang.String)', Sequence{arg0}) /]
+

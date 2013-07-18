@@ -1,0 +1,14 @@
+[comment encoding = UTF-8 /]
+[module main('http://www.eclipse.org/uml2/3.0.0/UML')]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::core::_0_main_uml2modelica/]
+
+[template public mainPackage(aPackage : Package)]
+	
+[comment @main /]
+[aPackage.ownedElement->filter(Classifier).stored_definition()/]
+
+[aPackage.package_code()/]	
+
+[/template]
+
+

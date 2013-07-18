@@ -1,0 +1,36 @@
+[comment encoding = UTF-8 /]
+[module ModelicaML_StateMachines_sampling('http://www.eclipse.org/uml2/3.0.0/UML')/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::umlservices/]
+ 
+
+[template public startSamplingTag(aStateMachine : StateMachine) post(trim())]
+[if (isSetSampling())]
+/* M@ sampling expression start */ 
+when [getStereotypeValue(getProperty('s_modelicaStateMachine'), getProperty('s_p_samplingExpression'))/] then [/if]
+[/template]
+
+[template public endSamplingTag(aStateMachine : StateMachine) post(trim())]
+[if (isSetSampling())]
+/* M@ sampling expression end */
+end when;[/if]
+[/template]
+
+
+[comment]<%-- Helper ############################## --%>[/comment]
+
+[query public isSetSampling(aStateMachine : StateMachine)  : Boolean =
+if (getStereotypeValue(getProperty('s_modelicaStateMachine'), getProperty('s_p_samplingExpression'))->notEmpty()) then true else false endif /]
+
+[comment]
+<%-- FOR TESTING ONLY ############################## --%>
+
+<%--<%script type="uml.StateMachine" name="test" post="trim()" file="<%name%>.txt" %>
+<%startSamplingTag%>
+
+<%endSamplingTag%>
+--%>
+<%-- FOR TESTING ONLY END ############################## --%>
+[/comment]
+
+
+

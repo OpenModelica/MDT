@@ -1,0 +1,20 @@
+[comment encoding = UTF-8 /]
+[module ModelicaML_StateMachines_preemption('http://www.eclipse.org/uml2/3.0.0/UML')/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::umlservices/]
+
+
+[template public suppressExitActions(aTransition : Transition) post(trim())][comment]CHECK <> null ->notEmpty()[/comment] [comment]<%-- NOT IMPLEMENTED YET--%>[/comment]
+[if (getStereotypeValue(getProperty('s_StateTransitionSpecification'), getProperty('s_p_suppressExitActions'))->notEmpty())]suppressExitActions[else][/if]
+[/template]
+
+[template public suppressEntryActions(aTransition : Transition) post(trim())][comment]CHECK <> null ->notEmpty() <> ''[/comment]
+[if (getStereotypeValue(getProperty('s_StateTransitionSpecification'), getProperty('s_p_suppressEntryActions'))->notEmpty())]suppressEntryActions[else][/if]
+[/template]
+
+[template public freezeExpression(aState : State) post(trim())][comment]CHECK <> null ->notEmpty()[/comment]
+[if (getStereotypeValue(getProperty('s_StateSpecification'), getProperty('s_p_freezeExpression'))->notEmpty())] and (not ([getStereotypeValue(getProperty('s_StateSpecification'), getProperty('s_p_freezeExpression'))/])) [/if]
+[/template]
+
+[template public freezeExpression(aStateMachine : StateMachine) post(trim())][comment]CHECK <> null ->notEmpty()[/comment]
+[if (getStereotypeValue(getProperty('s_StateSpecification'), getProperty('s_p_freezeExpression'))->notEmpty())] and (not ([getStereotypeValue(getProperty('s_StateSpecification'), getProperty('s_p_freezeExpression'))/])) [/if]
+[/template]

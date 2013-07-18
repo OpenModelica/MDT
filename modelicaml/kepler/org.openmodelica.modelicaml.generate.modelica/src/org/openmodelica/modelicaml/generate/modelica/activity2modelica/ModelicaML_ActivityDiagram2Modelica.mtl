@@ -1,0 +1,185 @@
+[comment encoding = UTF-8 /]
+[module ModelicaML_ActivityDiagram2Modelica('http://www.eclipse.org/uml2/3.0.0/UML')/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::StringUtls/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::umlservices/]
+[import org::openmodelica::modelicaml::generate::modelica::services::modelicamlservices/]
+[import org::openmodelica::modelicaml::generate::modelica::services::modelicamlmacros/]
+
+[template public Activity2ModelicaCode(anActivity : Activity)]
+
+// code generated from the Activity "[name/]" ([getAppliedStereotypes().name/])
+
+[if (hasStereotype(getProperty('s_conditionalAlgorithm')))]
+	[if (getStereotypeValue(getProperty('s_conditionalAlgorithm'), getProperty('s_p_loopKind')).oclAsType(Boolean))]
+		[if (getStereotypeValue(getProperty('s_conditionalAlgorithm'), getProperty('s_p_loopKind')).eGet('name') = 'for')]
+			[if (getStereotypeValue(getProperty('s_conditionalAlgorithm'), getProperty('s_p_forIndices'))->notEmpty())]
+		for [getStereotypeValue(getProperty('s_conditionalAlgorithm'), getProperty('s_p_forIndices'))/] 
+		loop
+		[ConditionalActivity().trim()/]
+		end for;
+			[else]
+			ERROR: No for-indices are defined for the Activity "[name/]".
+			[/if]
+		[else]
+			[if (getStereotypeValue(getProperty('s_conditionalAlgorithm'), getProperty('s_p_loopKind')).eGet('name') = 'while')]
+				[if (getStereotypeValue(getProperty('s_conditionalAlgorithm'), getProperty('s_p_whileExpression')).oclAsType(Boolean))]
+			while [getStereotypeValue(getProperty('s_conditionalAlgorithm'), getProperty('s_p_whileExpression'))/] 
+			loop
+			[ConditionalActivity().trim()/]
+			end while;	
+				[else]
+				ERROR: No while-expression is defined for the Activity "[name/]".
+				[/if]
+			[/if]
+		[/if]
+	[else]
+[ConditionalActivity().trim()/]
+	[/if]
+[/if]
+[if (hasStereotype(getProperty('s_conditionalEquation')))]
+	[if (getStereotypeValue(getProperty('s_conditionalEquation'), getProperty('s_p_loopKind')).oclAsType(Boolean))]
+		[if (getStereotypeValue(getProperty('s_conditionalEquation'), getProperty('s_p_loopKind')).eGet('name') = 'for')]
+			[if (getStereotypeValue(getProperty('s_conditionalEquation'), getProperty('s_p_forIndices')).oclAsType(Boolean))]
+		for [getStereotypeValue(getProperty('s_conditionalEquation'), getProperty('s_p_forIndices'))/] loop
+		[ConditionalEquations().trim()/]
+		end for;
+			[else]
+			ERROR: No for-indices are defined for the Activity "[name/]".
+			[/if]
+		[/if]
+	[else]
+[ConditionalEquations().trim()/]
+	[/if]
+[/if]
+[/template]
+
+[template public ConditionalActivity(anActivity : Activity)]
+[if (ownedElement->filter(InitialNode).outgoing->size() = 1)]
+[ownedElement->filter(InitialNode).outgoing->filter(ControlFlow).target->filter(ActivityNode).determineControlNodeType().trim()/]
+[else]
+ERROR(e0): Invalid InitialNode. Only one InitialNode with excatly one outgoing Transition (without guard) is allowed.
+[/if]
+[/template]
+
+[template public OpaqueActionCode(anOpaqueAction : OpaqueAction)]
+// OpaqueAction: "[activity.name/].[name/]"
+[_body.expandGENCodeMacros()/] 
+[if (outgoing->filter(ControlFlow)->size() > 1)]
+ERROR(e1): Excactly one outgoing ControlFlow is allowed for OpaqueActions. ("[name/]")
+[else]
+[for (outgoing->filter(ControlFlow))]
+[target->filter(ActivityNode).determineControlNodeType().trim()/]
+[/for]
+[/if]
+[/template]
+
+[template public determineControlNodeType(anActivityNode : ActivityNode)]
+[if (eClass().name = 'OpaqueAction')]
+[anActivityNode->filter(OpaqueAction).OpaqueActionCode().trim()/]
+[/if]
+[if (eClass().name = 'DecisionNode')]
+[anActivityNode->filter(DecisionNode).DecisionNodeCode().trim()/]
+[/if]
+[if (eClass().name = 'MergeNode')]
+[anActivityNode->filter(MergeNode).MergeNodeCode().trim()/]
+[/if]
+[if (eClass().name = 'CallBehaviorAction')]
+[if (anActivityNode->filter(CallBehaviorAction).behavior.hasStereotype(getProperty('s_conditionalAlgorithm')) = true and anActivityNode->filter(CallBehaviorAction).behavior.eClass().name = 'Activity')]
+[anActivityNode->filter(CallBehaviorAction).behavior->filter(Activity).ConditionalActivity().trim()/]
+[else]
+ERROR: Only Activities with the stereotype "ConditionalAlgorithm(Diagram)" are allowed as behavior of this CallBehaviorAction.
+[/if]
+[/if]
+[/template]
+
+[template public DecisionNodeCode(aDecisionNode : DecisionNode)]
+[if (outgoing->select(guard->filter(LiteralString).value.trim() = 'else')->notEmpty())]
+	// if/when-else code
+[DecisionNodeCode_if_when_else().trim()/]
+[else]
+	// if/when code
+[DecisionNodeCode_if_when().trim()/]
+[/if]
+[/template]
+
+[template public DecisionNodeCode_if_when_else(aDecisionNode : DecisionNode)]
+[for (aControlFlow : ControlFlow | outgoing->select(guard->filter(LiteralString).value.trim() <> 'else')->filter(ControlFlow)->sortControlFlows()->at(0))]
+	[if (source->filter(DecisionNode).hasStereotype(getProperty('s_if'))->notEmpty())]if[/if]
+	[if (source->filter(DecisionNode).hasStereotype(getProperty('s_when'))->notEmpty())]when[/if]
+	[Guards().trim()/] then
+		[target->filter(ActivityNode).determineControlNodeType().trim()/]
+[/for]
+[for (aControlFlow : ControlFlow | outgoing->select(guard->filter(LiteralString).value.trim() <> 'else')->filter(ControlFlow)->sortControlFlows()->subSequence(1 + 1, outgoing->select(guard->filter(LiteralString).value.trim() <> 'else')->size() + 1))]
+	else[if (source->filter(DecisionNode).hasStereotype(getProperty('s_if'))->notEmpty())]if[/if]
+	[if (source->filter(DecisionNode).hasStereotype(getProperty('s_when'))->notEmpty())]when[/if] 
+	[Guards().trim()/] then
+		[target->filter(ActivityNode).determineControlNodeType().trim()/]
+[/for]
+[for (outgoing->select(guard->filter(LiteralString).value.trim() = 'else'))]
+	else
+		[target->filter(ActivityNode).determineControlNodeType().trim()/]
+[/for]
+end [if (hasStereotype(getProperty('s_if')))]if[/if]
+[if (hasStereotype(getProperty('s_when')))]when[/if];
+[/template]
+
+[template public DecisionNodeCode_if_when(aDecisionNode : DecisionNode)]
+[for (aControlFlow : ControlFlow | outgoing->select(guard->filter(LiteralString).value.trim() <> 'else')->filter(ControlFlow)->sortControlFlows()->at(0))]
+	[if (source->filter(DecisionNode).hasStereotype(getProperty('s_if'))->notEmpty())]if[/if]
+	[if (source->filter(DecisionNode).hasStereotype(getProperty('s_when'))->notEmpty())]when[/if] 
+	[Guards().trim()/] then
+		[target->filter(ActivityNode).determineControlNodeType().trim()/]
+[/for]
+[for (aControlFlow : ControlFlow | outgoing->select(guard->filter(LiteralString).value.trim() <> 'else')->filter(ControlFlow)->sortControlFlows()->subSequence(1 + 1, outgoing->select(guard->filter(LiteralString).value.trim() <> 'else')->size() + 1))]
+	else[if (source->filter(DecisionNode).hasStereotype(getProperty('s_if'))->notEmpty())]if[/if]
+	[if (source->filter(DecisionNode).hasStereotype(getProperty('s_when'))->notEmpty())]when[/if]
+	[Guards().trim()/] then
+		[target->filter(ActivityNode).determineControlNodeType().trim()/]
+[/for]
+end [if (hasStereotype(getProperty('s_if')))]if[/if]
+[if (hasStereotype(getProperty('s_when')))]when[/if];
+[/template]
+
+[template public MergeNodeCode(aMergeNode : MergeNode)]
+[if (outgoing->filter(ControlFlow)->size() > 1)]
+ERROR(e2): Exactly one outgoing ControlFlow is allowed for a MergeNode.
+[else]
+[outgoing->filter(ControlFlow).target->filter(ActivityNode).determineControlNodeType().trim()/]
+[/if]
+[/template]
+
+[template public ConditionalEquations(anActivity : Activity)]
+[for (ownedElement->filter(OpaqueAction)->select(outgoing->filter(ControlFlow)->size() = 0 and incoming->filter(ControlFlow)->size() = 0))]
+// OpaqueAction: "[activity.name/].[name/]"
+[_body.expandGENCodeMacros()/]
+[/for]
+[for (ownedElement->filter(CallBehaviorAction))]
+[if (behavior.hasStereotype(getProperty('s_conditionalEquation')) and behavior.eClass().name = 'Activity')]
+[anActivity->filter(CallBehaviorAction).behavior->filter(Activity).ConditionalEquations().trim()/]
+[else]
+ERROR: Only Activities with the stereotype "ConditionalEquations(Diagram)" are allowed as behavior of this CallBehaviorAction.
+[/if]
+[/for]
+[if (ownedElement->filter(InitialNode)->size() > 0)]
+[ConditionalActivity().trim()/]
+[/if]
+[/template]
+
+[template public Guards(aControlFlow : ControlFlow)]
+[GuardsInc().trim().replaceAll('or  true', '').replaceAll('or true', '').replaceAll('and  true', '').replaceAll('and true', '')/]
+[/template]
+
+[template public GuardsInc(aControlFlow : ControlFlow)]
+[if (getStereotypeValue(getProperty('s_stateDependency'), getProperty('s_p_isInState'))->notEmpty())]	
+[getStereotypeValue(getProperty('s_stateDependency'), getProperty('s_p_isInState')).oclAsType(State).isInState(activity._context.qualifiedName, getStereotypeValue(getProperty('s_stateDependency'), getProperty('s_p_logicalOperator')).eGet('name'))/]
+[/if]
+[if (guard->filter(LiteralString).value->notEmpty())]
+[guard->filter(LiteralString).value/]
+[else]
+true
+[/if]
+[/template]
+
+[template public isInState(aState : State, args0 : OclAny, args1 : OclAny)]
+[qualifiedName.replace(args0 + '::', '').replaceSpecCharExceptThis('::').replaceAll('::', '.').concat('.active ' + args1)/]
+[/template]

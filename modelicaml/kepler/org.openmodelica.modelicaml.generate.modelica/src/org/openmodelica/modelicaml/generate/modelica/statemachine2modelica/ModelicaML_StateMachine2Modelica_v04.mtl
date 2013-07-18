@@ -1,0 +1,1173 @@
+[comment encoding = UTF-8 /]
+[module ModelicaML_StateMachine2Modelica_v04('http://www.eclipse.org/uml2/3.0.0/UML')/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::StringUtls/]
+[import org::openmodelica::modelicaml::generate::modelica::services::modelicamlservices/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::umlservices/]
+[import org::openmodelica::modelicaml::generate::modelica::activity2modelica::ModelicaML_ActivityDiagram2Modelica/]
+[import org::openmodelica::modelicaml::generate::modelica::annotation::ModelicaML_annotations/]
+[import org::openmodelica::modelicaml::generate::modelica::statemachine2modelica::ModelicaML_StateMachinesInstantiation_v04/]
+[import org::openmodelica::modelicaml::generate::modelica::statemachine2modelica::ModelicaML_StateMachines_entry_do_exit/]
+[import org::openmodelica::modelicaml::generate::modelica::statemachine2modelica::ModelicaML_StateMachines_events/]
+[import org::openmodelica::modelicaml::generate::modelica::statemachine2modelica::ModelicaML_StateMachines_debug/]
+[import org::openmodelica::modelicaml::generate::modelica::statemachine2modelica::ModelicaML_StateMachines_terminate/]
+[import org::openmodelica::modelicaml::generate::modelica::statemachine2modelica::ModelicaML_StateMachines_preemption/]
+[import org::openmodelica::modelicaml::generate::modelica::statemachine2modelica::ModelicaML_StateMachines_sampling/]
+
+ 
+[template public stateMachineBehaviorCode(aStateMachine : StateMachine) post(trim())]
+[if (submachineState->isEmpty())]
+/*** start behaviour code of state machine "[name.replaceSpecChar()/]" ***/
+algorithm [comment]-- START: UPDATED 23.01.2013 --[/comment]
+
+[if (getStereotypeValue(getProperty('s_modelicaStateMachine'), getProperty('s_p_additionalCode'))->notEmpty())]
+	/* Additional code */
+	[getStereotypeValue(getProperty('s_modelicaStateMachine'), getProperty('s_p_additionalCode'))/]
+[/if]
+
+	[signalEventsStatements()/]
+	[singalPropertiesStatements()/]
+	[relativeTimeEventsStatements()/]
+
+	/* initial state machine "[name.replaceSpecChar()/]" activation */
+	[name.replaceSpecChar()/].startBehaviour:=true; 
+[comment]-- Not correct according the Modelica spec. Improved version see below.--	
+	when [name.replaceSpecChar()/].startBehaviour then
+	[name.replaceSpecChar()/].active:=true; 
+[for (aRegion : Region | ownedElement->filter(Region)->asSequence()->oclAsSet().sortRegions()->filter(Region))]
+		[owner->filter(StateMachine).name.replaceSpecChar() + '.' + name.replaceSpecChar()/][setInitalActive(owner->filter(StateMachine).name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+[/for] 
+	end when;[/comment]	
+	/* activate all initial states during initialization phase */
+	when initial() then
+		if [name.replaceSpecChar()/].startBehaviour then 
+			[name.replaceSpecChar()/].active:=true;
+			[let var : Sequence(Region) = ownedElement->filter(Region)->asSequence()]
+			[for (anRegion : Region | sortRegions(var))]
+	[let x : String = owner->filter(StateMachine).name.replaceSpecChar()+'.'+name.replaceSpecChar()]
+			[setInitalActive(x)/]
+	[/let]	
+	[/for]
+			[/let]	
+		end if;			
+	end when;
+	/* aux. variable for calculating the timer of the state machine '[name.replaceSpecChar()/]' */
+	[setTimeAtActivationToTime(name.replaceSpecChar())/]
+	/* timer for the state machine '[name.replaceSpecChar()/]' */
+	[setStime(name.replaceSpecChar())/][comment]-- END: UPDATED 23.01.2013 --[/comment]
+[comment 	<%setTimeAtActivationToNull(name.replaceSpecChar())%>	/]	
+[let var : Sequence(Region) = ownedElement->filter(Region)->asSequence()]
+[for (anRegion : Region | sortRegions(var))]
+[regionBehaviorCode()/]
+[/for]
+[/let]
+	/*start terminate code for state machine "[name.replaceSpecChar()/]"*/
+	if (not [name.replaceSpecChar()/].active) then
+	[region.regionTerminateCode(name.replaceSpecChar())/]
+	end if;
+	/*end terminate code for state machine "[name.replaceSpecChar()/]"*/
+/*** end behaviour code of state machine "[name.replaceSpecChar()/]" ***/	
+[/if]
+[if (submachineState->isEmpty())]
+[region.regionDebugCode(name.replaceSpecChar())/]
+[/if]
+[/template]
+
+[template public setInitalActive(aRegion : Region, args0 : String) post(trim())]
+[for (ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asOrderedSet()->first())]
+[args0.toString() + '.' + name.replaceSpecChar()/].active:=true;
+[/for]
+[/template]
+
+[template public setTimeAtActivationToTime(aNamedElement : NamedElement, args0 : OclAny) post(trim())]
+[comment]<%--args(0) is the complete element dot name--%>[/comment]
+	when {[args0/].active, [args0/].selfTransitionActivated} then
+		[args0/].timeAtActivation := time;
+		[args0/].selfTransitionActivated := false;
+	end when;
+[/template]
+
+[template public setTimeAtActivationToNull(aNamedElement : NamedElement, args0 : OclAny)]
+[comment]<%--args(0) is the complete element dot name--%>[/comment]
+[comment directly after the transition that activates the target state /]
+[comment if not active for source state /]
+	if not [args0/].active then 
+		[args0/].timeAtActivation := 0;
+	end if;
+[/template]
+
+[template public setStime(aNamedElement : NamedElement, args0 : OclAny)]
+[comment]<%--if active for target state --%>[/comment]
+	if [args0/].active then 
+		[args0/].stime := time - [args0/].timeAtActivation;
+	end if;
+	if not [args0/].active then
+		[args0/].stime := 0;
+	end if;
+[/template]
+
+[template public regionBehaviorCode (aRegion : Region) post(trim())
+{
+args0 : OclAny = aRegion.owner->filter(StateMachine).name.replaceSpecChar();
+args1 : OclAny = aRegion;
+args2 : OclAny = aRegion->filter(Region).stateMachine;
+}
+]
+[comment]<%--args(2) == StateMachine--%>[/comment]
+	/*** start behaviour code of region "[args0.toString()/]" ***/
+[for (ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory'))]
+	[setTimeAtActivationToTime(args0.toString() + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+[/for]
+[for (ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory'))]
+	[setStime(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+[/for]
+[for (ownedElement->filter(State)->asOrderedSet())]
+	[setTimeAtActivationToTime(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+[/for]
+[for (ownedElement->filter(State)->asOrderedSet())]
+	[setStime(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+[/for]
+
+[comment  lastActive code /]
+[if (ownedElement->filter(Pseudostate)->select(kind.toString() = 'shallowHistory')->notEmpty())]
+/*set lastActive */
+[for (ownedElement->filter(State))]
+if ([getQualifiedDotName(args0)/].active) then 
+	[container.ownedElement->filter(Pseudostate)->select(kind.toString() = 'shallowHistory').getQualifiedDotName(args0)/].lastActive := ([container.ownedElement->filter(Pseudostate)->select(kind.toString() = 'shallowHistory').getQualifiedDotName(args0)/].HistoryStateT.[name.replaceSpecChar()/]);
+end if;
+[/for]
+[/if]
+[comment  transition code /]
+/*start transition code*/
+[args2->filter(StateMachine).startSamplingTag()/]
+[initialBehaviorCode(args0, args1->filter(State))/]	
+[if (ownedElement->filter(Pseudostate)->select(kind.toString() = 'shallowHistory')->size() > 0)]
+[shallowHistoryBehaviorCode(args0)/]	
+[/if][comment first State/]
+[if (owner->filter(StateMachine)->notEmpty() or owner->filter(State)->select(isComposite or isSubmachineState)->notEmpty())][comment]TODO : ADD SUSPENSION ???[/comment]
+/*test the composite state is still active*/
+if([args0/].active [owner->filter(State).freezeExpression()/] [owner->filter(StateMachine).freezeExpression()/]) then 
+[/if]
+[if (ownedElement->filter(State)->select(outgoing->notEmpty())->size() > 0)]
+[for (ownedElement->filter(State)->select(outgoing->notEmpty())->asSequence()->first())]
+	if pre([args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active) then
+	[transitionCode(args0, args1->filter(State)).replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/] 
+[/for]
+
+[for (ownedElement->filter(State)->select(outgoing->notEmpty())->asSequence()->subSequence(2,ownedElement->filter(State)->select(outgoing->notEmpty())->size()))]
+elseif pre([args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active) then
+	[transitionCode(args0, args1->filter(State)).replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/for]
+end if;
+[/if]
+[if (owner->filter(StateMachine)->notEmpty() or owner->filter(State)->select(isComposite or isSubmachineState)->notEmpty())]
+end if; 
+[/if]
+/*end transition code*/
+/*start do Code*/
+[for (ownedElement->filter(State))]
+[if (doActivity->notEmpty())]
+[DoCode(args0)/]
+[/if]
+[AssertsInStates()/]
+[/for]
+/*end do Code*/
+
+[comment join code/]
+[for (ownedElement->filter(State)->select(incoming->notEmpty()))]
+[let var : Sequence(Transition) = incoming->asSequence()]
+[for (aPseudostate : Pseudostate | sortTransitions(var).source->filter(Pseudostate)->select(kind.toString() = 'join'))] 
+[aPseudostate.joinTargetCode(args0)/]
+[/for]
+[/let]
+[/for]
+[comment end join code/]
+[args2->filter(StateMachine).endSamplingTag()/]
+[for (ownedElement->filter(State)->select(isComposite))]
+/*start composite [name/] */
+
+[let var : Sequence(Region) = region->asSequence()]
+[for (sortRegions(var))]
+	[regionBehaviorCode2(args0 + '.' + owner->filter(State).container.name.replaceSpecChar() + '.' + owner->filter(State).name.replaceSpecChar(), args1->filter(State), args2->filter(StateMachine)).replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/for]
+[/let]
+/*end composite [name/] */
+[/for]
+[for (ownedElement->filter(State)->select(isSubmachineState))]
+/*start submachine composite [name/] */
+[comment this was commented out in the original code
+	<%for (submachine.region->asSequence()->oclAsSet().sortRegions().filter("Region")){%>
+	<%regionBehaviorCode(args(0)+"."+owner.filter("StateMachine").submachineState.container.name.replaceSpecChar()+"."+owner.filter("StateMachine").submachineState.name.replaceSpecChar()).indentTab()%>
+	<%}%>/]
+[submachine.subMachineRegionCode(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar(), addSubMachienStatetoList(args1->filter(State))->filter(State), args2->filter(StateMachine)).replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+/*end submachine composite [name/] */
+[/for]
+/*** end behaviour code of region "[name/]" ***/
+[/template]
+
+[template public regionBehaviorCode2 (aRegion : Region, args0 : OclAny, args1 : OclAny , args2 : OclAny) ]
+/*** start behaviour code of region "[args0.toString()/]" ***/
+[for (ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory'))]
+	[setTimeAtActivationToTime(args0.toString() + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+[/for]
+[for (ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory'))]
+	[setStime(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+[/for]
+[for (ownedElement->filter(State))]
+	[setTimeAtActivationToTime(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+[/for]
+[for (ownedElement->filter(State))]
+	[setStime(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+[/for]
+
+[comment  lastActive code /]
+[if (ownedElement->filter(Pseudostate)->select(kind.toString() = 'shallowHistory')->notEmpty())]
+/*set lastActive */
+[for (ownedElement->filter(State))]
+if ([getQualifiedDotName(args0)/].active) then 
+	[container.ownedElement->filter(Pseudostate)->select(kind.toString() = 'shallowHistory').getQualifiedDotName(args0)/].lastActive := ([container.ownedElement->filter(Pseudostate)->select(kind.toString() = 'shallowHistory').getQualifiedDotName(args0)/].HistoryStateT.[name.replaceSpecChar()/]);
+end if;
+[/for]
+[/if]
+[comment  transition code /]
+/*start transition code*/
+[args2->filter(StateMachine).startSamplingTag()/]
+[initialBehaviorCode(args0, args1->filter(State))/]	
+[if (ownedElement->filter(Pseudostate)->select(kind.toString() = 'shallowHistory')->size() > 0)]
+[shallowHistoryBehaviorCode(args0)/]	
+[/if]
+
+[comment first State/]
+[if (owner->filter(StateMachine)->notEmpty() or owner->filter(State)->select(isComposite or isSubmachineState)->notEmpty())]
+
+[comment]TODO : ADD SUSPENSION ???[/comment]
+/*test the composite state is still active*/
+if([args0/].active [owner->filter(State).freezeExpression()/] [owner->filter(StateMachine).freezeExpression()/]) then 
+[/if]
+[if (ownedElement->filter(State)->select(outgoing->notEmpty())->size() > 0)]
+[for (ownedElement->filter(State)->select(outgoing->notEmpty())->asSequence()->asOrderedSet()->first())]
+	if pre([args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active) then
+	[transitionCode(args0, args1->filter(State)).replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/] 
+[/for]
+
+[for (ownedElement->filter(State)->select(outgoing->notEmpty())->asOrderedSet()->asSequence()->subSequence(2,ownedElement->filter(State)->select(outgoing->notEmpty())->size()))]
+	elseif pre([args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active) then
+	[transitionCode(args0, args1->filter(State)).replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/for]
+end if;
+[/if]
+[if (owner->filter(StateMachine)->notEmpty() or owner->filter(State)->select(isComposite or isSubmachineState)->notEmpty())]
+end if; 
+[/if]
+/*end transition code*/
+/*start do Code*/
+[for (ownedElement->filter(State))]
+[if (doActivity->notEmpty())]
+[DoCode(args0)/]
+[/if]
+[AssertsInStates()/]
+[/for]
+/*end do Code*/
+
+[comment join code/]
+[for (ownedElement->filter(State)->select(incoming->notEmpty()))]
+[let var : Sequence(Transition) = incoming->asSequence()]
+[for (aPseudostate : Pseudostate | sortTransitions(var).source->filter(Pseudostate)->select(kind.toString() = 'join'))] [comment]??? FIX THE JAVA SERVICE sortTransitions[/comment]
+[aPseudostate.joinTargetCode(args0)/]
+[/for]
+[/let]
+[/for]
+[comment end join code/]
+[args2->filter(StateMachine).endSamplingTag()/]
+[for (ownedElement->filter(State)->select(isComposite))]
+/*start composite [name/] */
+
+[let var : Sequence(Region) = region->asSequence()]
+[for (sortRegions(var))] [comment]CHEEEECKKKKKK???????? FIXED 26.06.2013 - REMOVED THE ->filter at the end[/comment]
+	[regionBehaviorCode2(args0 + '.' + owner->filter(State).container.name.replaceSpecChar() + '.' + owner->filter(State).name.replaceSpecChar(), args1->filter(State), args2->filter(StateMachine)).replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/for]
+[/let]
+/*end composite [name/] */
+[/for]
+[for (ownedElement->filter(State)->select(isSubmachineState))]
+/*start submachine composite [name/] */
+[comment this was commented out in the original code
+	<%for (submachine.region->asSequence()->oclAsSet().sortRegions().filter("Region")){%>
+	<%regionBehaviorCode(args(0)+"."+owner.filter("StateMachine").submachineState.container.name.replaceSpecChar()+"."+owner.filter("StateMachine").submachineState.name.replaceSpecChar()).indentTab()%>
+	<%}%>/]
+[submachine.subMachineRegionCode(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar(), addSubMachienStatetoList(args1->filter(State))->filter(State), args2->filter(StateMachine)).replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+/*end submachine composite [name/] */
+[/for]
+/*** end behaviour code of region "[name/]" ***/
+[/template]
+
+[template public subMachineRegionCode(aStateMachine : StateMachine, args0 : OclAny, args1 : OclAny, args2 : OclAny)]
+[let var : Sequence(Region) = region->asSequence()]
+[for (aRegion : Region | sortRegions(var))] 
+	[regionBehaviorCode2(args0, args1->filter(State), args2->filter(StateMachine)).replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/for]
+[/let]
+[/template]
+
+[template public shallowHistoryBehaviorCode(aRegion : Region, args0 : OclAny) post(trim())]
+[for (ownedElement->filter(Pseudostate)->select(kind.toString() = 'shallowHistory'))]
+/*start activate lastActive state*/
+if /*pre*/([args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active) then	
+	[args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active := false;
+	[if (outgoing->asOrderedSet()->first().effect->notEmpty())] [comment]??? <> null CHECK![/comment]
+	[outgoing-->asOrderedSet()->first().Effect()/][/if]	
+	[shallowHistoryLastActive(args0, name.replaceSpecChar())/]
+end if;
+/*end activate lastActive state*/
+[/for]
+[/template]
+
+[template public shallowHistoryLastActive(aPseudostate : Pseudostate, args0 : OclAny, args1 : OclAny) post(trim())]
+/*shallowHistoryLastActive: [args0/]*/
+[for (owner->filter(Region).ownedElement->filter(State)->asOrderedSet()->at(0))]
+if([args0 + '.' + container.name.replaceSpecChar() + '.' + args1/].lastActive == [args0 + '.' + container.name.replaceSpecChar() + '.' + owner.ownedElement->filter(Pseudostate)->select(kind.toString() = 'shallowHistory').name.replaceSpecChar()/].['HistoryStateT.' + name.replaceSpecChar()/]) then
+		[args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active := true;	
+		[if (entry->notEmpty())]
+		[Entry(args0 + '.' + container.name.replaceSpecChar() + '.' + name)/]
+		[/if]
+		[if (isComposite)]
+		[let var : Sequence(Region) = ownedElement->filter(Region)->asSequence()]
+		[for (aRegion : Region | sortRegions(var))]
+		[aRegion.ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asOrderedSet()->first().setInitialHistoryActive(args0 + '.' + owner->filter(State).container.name.replaceSpecChar() + '.' + owner->filter(State).name.replaceSpecChar())/]
+		[/for]
+		[/let]
+		[/if]
+	[if (isSubmachineState)]
+		[submachine.submachineTargetStateMachine(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+	[/if]
+[/for]
+
+[for (owner->filter(Region).ownedElement->filter(State)->asSequence()->subSequence(1 + 1, owner->filter(Region).ownedElement->filter(State)->size()))]
+	elseif([args0 + '.' + container.name.replaceSpecChar() + '.' + args1/].lastActive == [args0 + '.' + container.name.replaceSpecChar() + '.' + owner.ownedElement->filter(Pseudostate)->select(kind.toString() = 'shallowHistory').name.replaceSpecChar()/].['HistoryStateT.' + name.replaceSpecChar()/]) then
+		[args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active := true;	
+		[if (entry->notEmpty())]
+		[Entry(args0 + '.' + container.name.replaceSpecChar() + '.' + name)/]
+		[/if]
+		[if (isComposite)]
+		[let var : Sequence(Region) = ownedElement->filter(Region)->asSequence()]
+		[for (sortRegions(var))]
+		[ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asOrderedSet()->first().setInitialHistoryActive(args0 + '.' + owner->filter(State).container.name.replaceSpecChar() + '.' + owner->filter(State).name.replaceSpecChar())/]
+		[/for]
+		[/let]
+		[/if]
+		[if (isSubmachineState)]
+		[submachine.submachineTargetStateMachine(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+		[/if]
+[/for]
+	else
+		[args0 + '.' + container.name.replaceSpecChar() + '.' + outgoing.target.name.replaceSpecChar()/].active := true;	
+		[if (outgoing->asOrderedSet()->at(0).suppressEntryActions() <> 'suppressEntryActions')]
+		[outgoing->asOrderedSet()->at(0).target.Entry(args0 + '.' + container.name.replaceSpecChar() + '.' + outgoing->asOrderedSet()->at(0).target.name.replaceSpecChar())/]
+		[/if]
+		[if (outgoing->asOrderedSet()->at(0).target->filter(State)->select(isComposite)->notEmpty())]
+			[let var : Sequence(Region) = outgoing->asOrderedSet()->at(0).target.ownedElement->filter(Region)->asSequence()]
+			[for (sortRegions(var))]
+			[ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asOrderedSet()->first().setInitialHistoryActive(args0 + '.' + owner->filter(State).container.name.replaceSpecChar() + '.' + owner->filter(State).name.replaceSpecChar())/]
+			[/for]
+			[/let]
+		[/if]
+[for (outgoing->asOrderedSet()->at(0).target->filter(State)->select(isSubmachineState))]
+[submachine.submachineTargetStateMachine(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/] 
+[/for]
+	end if;
+[/template]
+
+[template public compositeTarget(aVertex : Vertex, args0 : OclAny)]
+[if (outgoing->asOrderedSet()->at(0).target->filter(State)->select(isComposite)->notEmpty())]
+	[let var : Sequence(Region) = outgoing->asOrderedSet()->at(0).target.ownedElement->filter(Region)->asSequence()]
+	[for (sortRegions(var))]
+	[ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asOrderedSet()->first().setInitialHistoryActive(args0 + '.' + owner->filter(State).container.name.replaceSpecChar() + '.' + owner->filter(State).name.replaceSpecChar())/]
+	[/for]
+	[/let]
+[/if]
+[for (outgoing->asOrderedSet()->at(0).target->filter(State)->select(isSubmachineState))]
+[submachine.submachineTargetStateMachine(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/] 
+[/for]
+[/template]
+
+[template public initialBehaviorCode(aRegion : Region, args0 : OclAny, args1 : Set(OclAny)) post(trim())]
+[for (ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial'))]
+	[for (aTransition : Transition | outgoing->filter(Transition)->asOrderedSet())] 
+		[if (target.eClass().name = 'State' or eClass().name = 'FinalState')]
+if ([args0 + '.' + container.name.replaceSpecChar() + '.' + source.name.replaceSpecChar()/].active) then	
+	[args0 + '.' + container.name.replaceSpecChar() + '.' + source.name.replaceSpecChar()/].active := false;
+	[if (effect->notEmpty())]
+	[Effect()/][/if]
+	[args0 + '.' + container.name.replaceSpecChar() + '.' + target.name.replaceSpecChar()/].active := true;
+	[if (suppressEntryActions() <> 'suppressEntryActions')]  [comment]????FIXED 25.06.2013[/comment]
+	[target.Entry(args0 + '.' + container.name.replaceSpecChar() + '.' + target.name.replaceSpecChar())/]
+	[/if]
+
+[if (target->filter(State)->select(isComposite)->notEmpty())]
+[let var : Sequence(Region) = target.ownedElement->filter(Region)->asSequence()]
+[for (sortRegions(var))][comment]FIXED 25.06.2013[/comment]
+[let expression : String = args0 + '.' + owner->filter(State).container.name.replaceSpecChar() +'.' + owner->filter(State).name.replaceSpecChar()]
+[ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asSequence()->first().setInitialHistoryActive(expression)/]
+[/let]
+[/for]
+[/let]
+[/if]
+[if (target->filter(State)->select(isSubmachineState)->notEmpty())]
+[target->filter(State).submachine.submachineTargetStateMachine(args0 + '.' + target.container.name.replaceSpecChar() + '.' + target.name.replaceSpecChar())/]
+[/if]
+end if;
+[else]
+if([args0 + '.' + container.name.replaceSpecChar() + '.' + source.name.replaceSpecChar()/].active) then	
+ 	if [pseudostateTargetTransitionCode(args0, args1)/]
+	end if;
+end if;
+[/if]
+[/for]
+[/for]
+[/template]
+
+[template public setInitialHistoryActive(aPseudostate : Pseudostate, args0 : OclAny)]
+[args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active := true; 
+[/template]
+
+[comment]<%script type="uml.Pseudostate" name="setInitialHistoryActive"%>
+<%args(0)+"."+container.name.replaceSpecChar()+"."+name.replaceSpecChar()%>.active := true;[/comment] 
+
+[template public submachineTargetStateMachine(aStateMachine : StateMachine, args0 : OclAny)]
+[let var : Sequence(Region) = ownedElement->filter(Region)->asSequence()]
+[for (sortRegions(var))]
+[ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asOrderedSet()->first().setInitialHistoryActive(args0)/] 
+[/for]
+[/let]
+[/template]
+
+
+[template public transitionCode(aState : State, args0 : OclAny, args1 : OclAny) post(trim())] [comment]NOT FIXED 25.06.2013 - transitionS' order changes even after they are sorted[/comment]
+[comment]<%--args(1) == submachineStateList--%>[/comment]
+[let var : Sequence(Transition) = outgoing->filter(Transition)->asSequence()->oclAsSet().filterJoinTargetsOut()->filter(Transition)->asSequence()]	
+
+[for (aTransition : Transition | sortTransitions(var)->first())]
+    	if [if (source.container.qualifiedName = target.container.qualifiedName)]
+		[if (source.eClass().name = 'State' and (target.eClass().name = 'State' or target.eClass().name = 'FinalState'))]
+   		[simpleTransitionCode(args0)/]
+		[else]
+    	[pseudostateTargetTransitionCode(args0, args1->filter(State))/]
+		[/if]
+		[else]
+	[comment]<%--    /*start interlevel transition <%args(0)%>*/ --%>[/comment]
+     	[if (source.eClass().name = 'State' and (target.eClass().name = 'State' or target.eClass().name = 'FinalState'))]
+		[interLevelTransition(args0)/]		
+		[else]
+		[pseudostateTargetTransitionCode(args0, args1->filter(State))/]
+		[/if]
+      /*end interlevel transition*/
+	[/if]
+[/for]
+[for (aTransition : Transition | sortTransitions(var)->asSequence()->subSequence(1 + 1, outgoing->filter(Transition)->asSequence()->oclAsSet().filterJoinTargetsOut()->filter(Transition)->size()))]
+		
+		elseif	[if (source.container.qualifiedName = target.container.qualifiedName)]
+				[if (source.eClass().name = 'State' and (target.eClass().name = 'State' or target.eClass().name = 'FinalState'))]
+		 		[simpleTransitionCode(args0)/]
+				[else]
+				[pseudostateTargetTransitionCode(args0, args1->filter(State))/]
+				[/if]
+		[else]
+		/*start interleveltransition*/
+				[if (source.eClass().name = 'State' and (target.eClass().name = 'State' or target.eClass().name = 'FinalState'))]
+		[interLevelTransition(args0)/]		
+		[else]
+[pseudostateTargetTransitionCode(args0, args1->filter(State))/]
+		[/if]
+		/*end interleveltransition*/
+		[/if]	
+[/for]
+[/let]
+
+[if (outgoing->filter(Transition).target->filter(State)->size() > 0)]
+end if;
+[else]
+[if (outgoing->filter(Transition).target->filter(Pseudostate)->select(not ((kind.toString() = 'join')))->size() > 0)]
+end if; 
+[/if]
+[/if]
+[/template]
+
+[template public pseudostateTargetTransitionCode(aTransition : Transition, args0 : OclAny, args1 : OclAny) post(trim())]
+[if (target->filter(Pseudostate)->select(kind.toString() = 'terminate')->notEmpty())]
+[guardCode(source.getQualifiedDotName(args0))/] then
+[args0.oclAsType(String).substring(0 + 1, args0.oclAsType(String).index('.'))/].active := false; 
+end if;
+[/if]
+[if (target->filter(ConnectionPointReference).entry->filter(Pseudostate)->select(kind.toString() = 'entryPoint')->asOrderedSet()->first()->notEmpty())]
+[guardCode(source.getQualifiedDotName(args0))/] then
+[deactivateActiveSubstate(args0)/]
+[source.container.lowestCommonAncestorExit(args0, lowestCommonAncestorQualifiedName())/]
+[if (suppressEntryActions() <> 'suppressEntryActions')]
+[target->filter(ConnectionPointReference).entry->filter(Pseudostate)->select(kind.toString() = 'entryPoint')->asOrderedSet()->first().entryTargetCodeBehaviour(source.container.getContainerName(args0, target->filter(ConnectionPointReference).state.container.qualifiedName), target->filter(ConnectionPointReference).state->filter(State), Effect(), '')/]
+[else]
+[target->filter(ConnectionPointReference).entry->filter(Pseudostate)->select(kind.toString() = 'entryPoint')->asOrderedSet()->first().entryTargetCodeBehaviour(source.container.getContainerName(args0, target->filter(ConnectionPointReference).state.container.qualifiedName), target->filter(ConnectionPointReference).state->filter(State), Effect(), 'suppressEntryActions')/]
+[/if]
+end if;
+/*end entryPoint behaviour*/
+[/if]
+[comment EXITPOINT/]
+[if (target->filter(Pseudostate)->select(kind.toString() = 'exitPoint')->notEmpty() and target->filter(Pseudostate)->select(kind.toString() = 'exitPoint').incoming->size() = 1)]
+[guardCode(source.getQualifiedDotName(args0))/] then
+/*ExitPoint*/ 
+[deactivateActiveSubstate(args0)/]
+[source.container.lowestCommonAncestorExit(args0, lowestCommonAncestorQualifiedName())/]
+[target->filter(Pseudostate).getConnectionPointReference(args1->filter(State)->asOrderedSet()->at(0))->filter(ConnectionPointReference).exitTargetCode(args0, source, args1->filter(State), Effect())/]
+[comment  TODO: this "end if;" seemts to be too much ... test it /]
+[comment end if;/]
+[/if]
+
+[if (target->filter(Pseudostate)->select(kind.toString() = 'choice')->notEmpty())]
+[guardCode(args0 + '.' + source.container.name.replaceSpecChar() + '.' + source.name.replaceSpecChar())/] then
+[deactivateActiveSubstate(args0)/]
+[if (effect->notEmpty())]
+	[Effect()/]
+[/if]
+[target->filter(Pseudostate)->select(kind.toString() = 'choice').choiceTargetCode(args0, source)/]
+[/if]
+[if (target->filter(Pseudostate)->select(kind = 'fork')->notEmpty())]
+[guardCode(source.getQualifiedDotName(args0))/] then
+[deactivateActiveSubstate(args0)/]
+[if (effect->notEmpty())]
+	[Effect()/]
+[/if]
+[target->filter(Pseudostate).forkTargetCode(args0, source)/]
+[/if]
+[if (target->filter(Pseudostate)->select(kind.toString() = 'junction')->notEmpty())]
+[guardCode(source.getQualifiedDotName(args0))/] then
+[if (suppressExitActions() = 'suppressExitActions')]
+[target->filter(Pseudostate).junctionTargetCode(args0, source, Effect(), 'suppressExitActions')/]
+[else]
+[target->filter(Pseudostate).junctionTargetCode(args0, source, Effect(), '')/]
+[/if]
+[/if]
+[/template]
+
+[template public deactivateActiveSubstate(aTransition : Transition, args0 : OclAny) post(trim())]
+[if (suppressExitActions() = 'suppressExitActions')]
+[if (source->filter(State)->select(isComposite)->notEmpty())]
+/*start composite highlevel transition deactivate active substate*/
+[source->filter(State).highlevelTransition(args0 + '.' + source.container.name.replaceSpecChar() + '.' + source.name.replaceSpecChar(), 'suppressExitActions')/]
+/*end composite highlevel transition deactivate active substate*/
+[/if]
+[if (source->filter(State)->select(isSubmachineState)->notEmpty())]
+/*start submachine highlevel transition deactivate active substate*/
+[source->filter(State).submachine->filter(StateMachine).highlevelTransition(args0 + '.' + source.container.name.replaceSpecChar() + '.' + source.name.replaceSpecChar(), 'suppressExitActions')/]
+/*end submachine highlevel transition deactivate active substate*/
+[/if]
+[args0 + '.' + source.container.name.replaceSpecChar() + '.' + source.name.replaceSpecChar()/].active := false; 
+[/if]
+
+[if (source->filter(State)->select(isComposite)->notEmpty())]
+/*start composite highlevel transition deactivate active substate*/
+[source->filter(State).highlevelTransition(args0 + '.' + source.container.name.replaceSpecChar() + '.' + source.name.replaceSpecChar(), '')/]
+/*end composite highlevel transition deactivate active substate*/
+[/if]
+[if (source->filter(State)->select(isSubmachineState)->notEmpty())]
+/*start submachine highlevel transition deactivate active substate*/
+[source->filter(State).submachine->filter(StateMachine).highlevelTransition(args0 + '.' + source.container.name.replaceSpecChar() + '.' + source.name.replaceSpecChar(), '')/]
+/*end submachine highlevel transition deactivate active substate*/
+[/if]
+[if (source.oclAsType(State).exit.oclAsType(Boolean))] [comment]CHECK THIS??? ->filter ???[/comment]
+[source->filter(State).Exit(args0 + '.' + source.container.name.replaceSpecChar() + '.' + source.name.replaceSpecChar())/]
+[/if]
+[args0 + '.' + source.container.name.replaceSpecChar() + '.' + source.name.replaceSpecChar()/].active := false; 
+[/template]
+
+[template public choiceTargetCode(aPseudostate : Pseudostate, args0 : OclAny, args1 : OclAny) post(trim())] [comment]CHECK THIS???[/comment]
+[let var : Sequence(Transition) = outgoing->select(guardCode(args1->filter(State).getQualifiedDotName(args0)).trim() <> 'else')->asSequence()]	
+[for (aTransition : Transition | sortTransitions(var)->asOrderedSet()->first())]
+if [aTransition.guardCode(args1->filter(State).getQualifiedDotName(args0)+'')/] then   [comment]REMEMBER THIS FIXXXX[/comment]
+[aTransition.determineTransitionTarget(args0, args1)/]
+[/for]
+[/let]
+[let var : Sequence(Transition) = outgoing->select(guardCode(args1->filter(State).getQualifiedDotName(args0)).trim() <> 'else')->asSequence()]
+[for (aTransition : Transition | sortTransitions(var)->asOrderedSet()->asSequence()->subSequence(2, outgoing->select(guardCode(args1->filter(State).getQualifiedDotName(args0)).trim() <> 'else')->size()))][comment]CHECK size+1 ?[/comment]
+elseif [guardCode(args1->filter(State).getQualifiedDotName(args0))/] then
+[aTransition.determineTransitionTarget(args0, args1)/]
+[/for]
+[/let]
+[for (aTransition : Transition | outgoing->select(guardCode(args1->filter(State).getQualifiedDotName(args0)).trim() = 'else'))]
+else
+[aTransition.determineTransitionTarget(args0, args1)/]
+[/for]
+end if;
+[/template]
+
+[template public forkTargetCode(aPseudostate : Pseudostate, args0 : OclAny, args1 : OclAny) post(trim())]
+/*start fork code*/
+[let var : Sequence(Transition) = outgoing->select(target->filter(State)->notEmpty())->asSequence()]
+[for (aTransition : Transition | sortTransitions(var)->asOrderedSet()->at(0))] 
+[if (effect->notEmpty())]
+	[Effect()/]
+[/if]
+
+[target->filter(State).lowestCommonAncestorEntryForkStart(args0, lowestCommonAncestorQualifiedNameforPseudostates(args1->filter(State)), source)/]
+[/for]
+[/let]
+[let var : Sequence(Transition) = outgoing->select(target->filter(State)->notEmpty())->asSequence()]
+ [for (aTransition : Transition | sortTransitions(var)->asSequence()->subSequence(1 + 1, outgoing->select(target->filter(State)<> null)->size() + 1))]
+[if (effect->notEmpty())]
+	[Effect()/]
+[/if]
+		[target->filter(State).getFullQualifiedDotName(args0)/].active := true;
+[if (suppressEntryActions() <> 'suppressEntryActions')]
+[if (target->filter(State).entry->notEmpty())]
+	[target->filter(State).Entry(target->filter(State).getFullQualifiedDotName(args0))/]
+[/if]
+[/if]
+[if (target->filter(State)->select(isComposite)->notEmpty())]
+[let var2 : Sequence(Region) = target.ownedElement->filter(Region)->asSequence()]
+[for (sortRegions(var2))]
+[ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asOrderedSet()->first().setInitialHistoryActive(owner->filter(State).getFullQualifiedDotName(args0))/]
+[/for]
+[/let]
+[/if]
+[if (target->filter(State)->select(isSubmachineState)->notEmpty())]
+[target->filter(State).submachine.submachineTargetStateMachine(target->filter(State).getFullQualifiedDotName(args0))/]
+[/if]
+[/for]
+[/let]
+[let var : Sequence(Transition) = outgoing->select(target->filter(State)->notEmpty())->asSequence()]
+[for (aTransition : Transition | sortTransitions(var)->asOrderedSet()->at(0))]
+[comment]activate missing region[/comment]
+[for (aRegion : Region | source->filter(Pseudostate).getMissingForkRegion(target->filter(State).container.owner->filter(State)))]
+[ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asOrderedSet()->first().getFullQualifiedDotName(args0)/].active := true;
+[/for]
+[comment activate parallel states/]
+[for (target->filter(State).getInterlevelEntryList(args1)->asSequence()->subSequence(0 + 1, target->filter(State).getInterlevelEntryList(args1)->size() - 1 + 1)->filter(State).getMissingRegions()->filter(Region))]
+[ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asOrderedSet()->first().getFullQualifiedDotName(args0)/].active := true;
+[/for]
+[/for]
+[/let]
+[/template]
+
+[template public junctionTargetCode(aPseudostate : Pseudostate, args0 : OclAny, args1 : OclAny, args2 : OclAny, args3 : OclAny) post(trim())]
+[let var : Sequence(Transition) = outgoing->select(guardCode(args1->filter(State).getQualifiedDotName(args0)).trim() <> 'else')->asSequence()]
+[for (aTransition : Transition | sortTransitions(var)->asOrderedSet()->at(0))]
+if [guardCode(args1->filter(State).getQualifiedDotName(args0))/] then
+[if (target->filter(Pseudostate)->select(kind.toString() = 'junction')->notEmpty())]
+[target->filter(Pseudostate).junctionTargetCode(args0, args1->filter(State), args2 + Effect(), args3)/]
+[else]
+[if (args1->filter(State)->select(isComposite)->notEmpty())]
+/*start highlevel transition deactivate active substate*/
+[args1->filter(State).highlevelTransition(args0 + '.' + args1->filter(State).container.name.replaceSpecChar() + '.' + args1->filter(State).name.replaceSpecChar(), args3)/]
+/*end highlevel transition deactivate active substate*/
+[/if]
+[if (args1->filter(State)->select(isSubmachineState)->notEmpty())]
+/*start highlevel transition deactivate active substate*/
+[args1->filter(State).submachine->filter(StateMachine).highlevelTransition(args0 + '.' + args1->filter(State).container.name.replaceSpecChar() + '.' + args1->filter(State).name.replaceSpecChar(), args3)/]
+/*end highlevel transition deactivate active substate*/
+[/if]
+[if (args3 <> 'suppressExitActions')]
+[if (args1->filter(State).exit->notEmpty())]
+[args1->filter(State).Exit(args1.getQualifiedDotName(args0))/]
+[/if]
+[/if]
+[args0 + '.' + args1->filter(State).container.name.replaceSpecChar() + '.' + args1->filter(State).name.replaceSpecChar()/].active := false;
+[comment args(2) = Effects
+/][args2/]
+[determineTransitionTarget(args0, args1->filter(State))/]
+[/if]
+[/for]
+[/let]
+[let var : Sequence(Transition) = outgoing->select(guardCode(args1->filter(State).getQualifiedDotName(args0)).trim() <> 'else')->asSequence()]
+[for (aTransition : Transition | sortTransitions(var)->asSequence()->subSequence(1 + 1, outgoing->select(guardCode(args1->filter(State).getQualifiedDotName(args0)).trim() <> 'else')->size() + 1)->filter(Transition))]
+elseif [guardCode(args1->filter(State).getQualifiedDotName(args0))/] then
+[if (target->filter(Pseudostate)->select(kind.toString() = 'junction')->notEmpty())]
+[target->filter(Pseudostate).junctionTargetCode(args0, args1, args2 + Effect(), args3)/]
+[else]
+[if (args1->filter(State)->select(isComposite)->notEmpty())]
+/*start highlevel transition deactivate active substate*/
+[args1->filter(State).highlevelTransition(args0 + '.' + args1->filter(State).container.name.replaceSpecChar() + '.' + args1->filter(State).name.replaceSpecChar(), args3)/]
+/*end highlevel transition deactivate active substate*/
+[/if]
+[if (args1->filter(State)->select(isSubmachineState)->notEmpty())]
+/*start highlevel transition deactivate active substate*/
+[args1->filter(State).submachine->filter(StateMachine).highlevelTransition(args0 + '.' + args1->filter(State).container.name.replaceSpecChar() + '.' + args1->filter(State).name.replaceSpecChar(), args3)/]
+/*end highlevel transition deactivate active substate*/
+[/if]
+[if (args3 <> 'suppressExitActions')]
+[if (args1->filter(State).exit->notEmpty())]
+[args1->filter(State).Exit(args1.getQualifiedDotName(args0))/]
+[/if]
+[/if]
+[args1->filter(State).getQualifiedDotName(args0)/].active := false;
+[args2/]
+[determineTransitionTarget(args0, args1->filter(State))/]
+[/if]
+[/for]
+[/let]
+[for (aTransition : Transition | outgoing->select(guardCode(args1->filter(State).getQualifiedDotName(args0)).trim() = 'else'))]
+else
+[if (target->filter(Pseudostate)->select(kind.toString() = 'junction')->notEmpty())]
+[target->filter(Pseudostate).junctionTargetCode(aTransition,args0, args1, args2 + Effect())/] [comment]****FIX junctionTargetCode Pseudostate****[/comment]
+[else]
+[if (args1->filter(State)->select(isComposite)->notEmpty())]
+/*start highlevel transition deactivate active substate*/
+[args1->filter(State).highlevelTransition(args0 + '.' + args1->filter(State).container.name.replaceSpecChar() + '.' + args1->filter(State).name.replaceSpecChar(), args3)/]
+/*end highlevel transition deactivate active substate*/
+[/if]
+[if (args1->filter(State)->select(isSubmachineState)->notEmpty())]
+/*start highlevel transition deactivate active substate*/
+[args1->filter(State).submachine->filter(StateMachine).highlevelTransition(args0 + '.' + args1->filter(State).container.name.replaceSpecChar() + '.' + args1->filter(State).name.replaceSpecChar(), args3)/]
+/*end highlevel transition deactivate active substate*/
+[/if]
+[if (args3 <> 'suppressExitActions')]
+[if (args1->filter(State).exit->notEmpty())]
+[args1->filter(State).Exit(args0 + '.' + args1->filter(State).container.name.replaceSpecChar() + '.' + args1->filter(State).name.replaceSpecChar())/]
+[/if]
+[/if]
+[args0 + '.' + args1->filter(State).container.name.replaceSpecChar() + '.' + args1->filter(State).name.replaceSpecChar()/].active := false;
+[args2/]
+[determineTransitionTarget(args0, args1->filter(State))/]
+[/if]
+[/for]
+end if;
+[/template]
+
+[template public entryTargetCodeBehaviour(aPseudostate : Pseudostate, args0 : OclAny, args1 : OclAny, args2 : OclAny, args3 : OclAny) post(trim())]
+//test5[args3/]
+[if (args3 <> 'suppressEntryActions')]
+[if (args1->asOrderedSet()->first()->filter(State).entry->notEmpty())]
+[args1->asOrderedSet()->first()->filter(State).Entry(args0 + '.' + args1->asOrderedSet()->first()->filter(State).container.name.replaceSpecChar() + '.' + args1->asOrderedSet()->first()->filter(State).name.replaceSpecChar())/]
+[/if]
+[/if]
+[args0 + '.' + args1->asOrderedSet()->first()->filter(State).container.name.replaceSpecChar() + '.' + args1->asOrderedSet()->first()->filter(State).name.replaceSpecChar()/].active := true;
+[if (aPseudostate.isForkEntry()->notEmpty())] 
+[let var : Sequence(Transition) = outgoing->select(guardCode(args0 + '.' + args1->asOrderedSet()->first()->filter(State).container.name.replaceSpecChar() + '.' + args1->asOrderedSet()->first()->filter(State).name.replaceSpecChar()).trim() <> 'else')->asSequence()]
+[for (aTransition : Transition | sortTransitions(var)->asOrderedSet()->at(0))]
+if [guardCode(args0 + '.' + args1->asOrderedSet()->first()->filter(State).container.name.replaceSpecChar() + '.' + args1->asOrderedSet()->first()->filter(State).name.replaceSpecChar())/] then
+[entryTargetOutgoingCode(args0 + '.' + args1->asOrderedSet()->first()->filter(State).container.name.replaceSpecChar() + '.' + args1->asOrderedSet()->first()->filter(State).name.replaceSpecChar(), args2 + Effect(), args1)/]
+[/for]
+[/let]
+[let var : Sequence(Transition) = outgoing->select(guardCode(args0 + '.' + args1->asOrderedSet()->first()->filter(State).container.name.replaceSpecChar() + '.' + args1->asOrderedSet()->first()->filter(State).name.replaceSpecChar()).trim() <> 'else')->asSequence()]
+[for (aTransition : Transition | sortTransitions(var)->asSequence()->subSequence(1 + 1, outgoing->select(guardCode(args1->asOrderedSet()->first()->filter(State).getQualifiedDotName(args0)).trim() <> 'else')->size() + 1))]
+elseif [guardCode(args0 + '.' + args1->asOrderedSet()->first()->filter(State).container.name.replaceSpecChar() + '.' + args1->asOrderedSet()->first()->filter(State).name.replaceSpecChar())/] then
+[entryTargetOutgoingCode(args0 + '.' + args1->asOrderedSet()->first()->filter(State).container.name.replaceSpecChar() + '.' + args1->asOrderedSet()->first()->filter(State).name.replaceSpecChar(), args2 + Effect(), args1)/]
+[/for]
+[/let]
+[for (aTransition : Transition | outgoing->select(guardCode(args0 + '.' + args1->asOrderedSet()->first()->filter(State).container.name.replaceSpecChar() + '.' + args1->asOrderedSet()->first()->filter(State).name.replaceSpecChar()).trim() = 'else'))]
+else
+[guardCode(args0 + '.' + args1->asOrderedSet()->first()->filter(State).container.name.replaceSpecChar() + '.' + args1->asOrderedSet()->first()->filter(State).name.replaceSpecChar())/] then
+[entryTargetOutgoingCode(args0 + '.' + args1->asOrderedSet()->first()->filter(State).container.name.replaceSpecChar() + '.' + args1->asOrderedSet()->first()->filter(State).name.replaceSpecChar(), args2 + Effect(), args1)/]
+[/for]
+end if;
+[else]
+//fork
+[entryforkTargetCode(args0 + '.' + args1->asOrderedSet()->first()->filter(State).container.name.replaceSpecChar() + '.' + args1->asOrderedSet()->first()->filter(State).name.replaceSpecChar(), args2, args1)/]
+[/if]
+[/template]
+
+[template public entryforkTargetCode(aPseudostate : Pseudostate, args0 : OclAny, args1 : OclAny, args2 : OclAny)]
+//Effect 
+[args1/]
+[for (outgoing->asOrderedSet()->first())]
+[target->filter(State).lowestCommonAncestorEntryFork(args0, source->filter(Pseudostate)->select(kind.toString() = 'entryPoint').stateMachine.qualifiedName)/]
+[/for]
+//TODO test if target is composite 
+[comment <%for (container.owner.filter("StateMachine").region.getOtherRegions(container).filter("Region")){%>
+<%ownedElement->filter("Pseudostate")->select(kind == "initial" || kind == "shallowHistory").nFirst().getFullQualifiedDotName(args(0))%>.active := true;
+<%}%> /]
+[for (getMissingForkRegion(outgoing->asOrderedSet()->first().target->filter(State).container.owner->filter(State)))]
+[aPseudostate.ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asOrderedSet()->first().getFullQualifiedDotName(args0)/].active := true; //test3
+[/for]
+
+[args2->asOrderedSet()->at(0).oclAsType(State).entryTargetOutgoingCodeParallelActivate(args0.oclAsType(String).substring(0 + 1, args0.oclAsType(String).lastIndex('.' + args2->asOrderedSet()->first()->filter(State).container.name.replaceSpecChar()+'.'+args2->asOrderedSet()->at(0)->filter(State).name.replaceSpecChar())), args1, args2->asSequence()->subSequence(0 + 1, args2->size() - 1 + 1))/]
+[/template]
+
+[template public exitTargetCode(aConnectionPointReference : ConnectionPointReference, args0 : OclAny, args1 : OclAny, args2 : OclAny, args3 : OclAny) post(trim())]
+[exitTargetCodeBehaviour(args0.oclAsType(String).substring(0 + 1, args0.oclAsType(String).lastIndex('.' + state.container.name.replaceSpecChar()+ '.'+state.name.replaceSpecChar())), args1, args2, args3)/]
+[/template]
+
+[template public exitTargetCodeBehaviour(aConnectionPointReference : ConnectionPointReference, args0 : OclAny, args1 : OclAny, args2 : OclAny, args3 : OclAny) post(trim())]
+[if (state.exit->notEmpty())] [comment]CHECK THIS EXIT BEHAVIOUR[/comment]
+[state.Exit(args0 + '.' + state.container.name.replaceSpecChar() + '.' + state.name.replaceSpecChar())/]
+[/if]
+[args0 + '.' + state.container.name.replaceSpecChar() + '.' + state.name.replaceSpecChar()/].active := false;
+[let var : Sequence(Transition) = outgoing->select(guardCode(args1->filter(State).getQualifiedDotName(args0)).trim() <> 'else')->asSequence()]
+[for (aTransition : Transition | sortTransitions(var)->asOrderedSet()->at(0))]
+if [guardCode(args1->filter(State).getQualifiedDotName(args0))/] then
+[exitTargetOutgoingCode(args0, args1, args2, args3 + Effect())/]
+[/for]
+[/let]
+[let var : Sequence(Transition) = outgoing->select(guardCode(args1->filter(State).getQualifiedDotName(args0)).trim() <> 'else')->asSequence()]
+[for (aTransition : Transition | sortTransitions(var)->asSequence()->subSequence(1 + 1, outgoing->select(guardCode(args1->filter(State).getQualifiedDotName(args0)).trim() <> 'else')->size() + 1))]
+elseif [guardCode(args1->filter(State).getQualifiedDotName(args0))/] then
+[exitTargetOutgoingCode(args0, args1, args2, args3 + Effect())/]
+[/for]
+[/let]
+[for (aTransition : Transition | outgoing->select(guardCode(args1->filter(State).getQualifiedDotName(args0)).trim() = 'else'))]
+else
+[exitTargetOutgoingCode(args0, args1, args2, args3 + Effect())/]
+[/for]
+end if;
+[/template]
+
+[template public entryTargetOutgoingCode(aTransition : Transition, args0 : OclAny, args1 : OclAny, args2 : OclAny) post(trim())]
+[comment]<%--args(1) == effect args(2) == statelist--%>[/comment]
+//test6 [args0/]
+[if (target->filter(State)->notEmpty())]
+//Effect
+[args1/]
+[target->filter(State).lowestCommonAncestorEntry(args0, source->filter(Pseudostate)->select(kind.toString() = 'entryPoint').stateMachine.qualifiedName)/]
+[for (container.owner->filter(StateMachine).region.getOtherRegions(target.container.getHighestRegionforEntry())->filter(Region))]
+[ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asOrderedSet()->first().getFullQualifiedDotName(args0)/].active := true;
+[/for]
+
+[args2->asOrderedSet()->at(0).oclAsType(State).entryTargetOutgoingCodeParallelActivate(args0.oclAsType(String).substring(0 + 1, args0.oclAsType(String).lastIndex('.' + args2->asOrderedSet()->at(0)->filter(State).container.name.replaceSpecChar() + '.' + args2->asOrderedSet()->at(0)->filter(State).name.replaceSpecChar())), args1, args2->asSequence()->subSequence(0 + 1, args2->size() - 1 + 1))/]
+[else]
+[if (target->filter(ConnectionPointReference)->notEmpty())]
+[if (suppressEntryActions() <> 'suppressEntryActions')]
+[target->filter(ConnectionPointReference).entry->filter(Pseudostate)->select(kind.toString() = 'entryPoint')->asOrderedSet()->first().entryTargetCodeBehaviour(args0, target->filter(ConnectionPointReference).state.addSubMachienStatetoList(args2), args1 + Effect(), '')/]
+[else]
+[target->filter(ConnectionPointReference).entry->filter(Pseudostate)->select(kind.toString() = 'entryPoint')->asOrderedSet()->first().entryTargetCodeBehaviour(args0, target->filter(ConnectionPointReference).state.addSubMachienStatetoList(args2), args1 + Effect(), 'suppressEntryActions')/]
+[/if]
+[/if]
+[/if]
+[/template]
+
+[template public entryTargetOutgoingCodeParallelActivate(aState : State, args0 : OclAny, args1 : OclAny, args2 : OclAny) post(trim())]
+[for (container.owner->filter(StateMachine).region.getOtherRegions(container)->filter(Region))]
+[ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asOrderedSet()->first().getFullQualifiedDotName(args0)/].active := true;
+[/for]
+[args2->asOrderedSet()->at(1)->filter(State).entryTargetOutgoingCodeParallelActivate(args0.oclAsType(String).substring(0 + 1, args0.oclAsType(String).lastIndex('.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())), args1, args2->asSequence()->subSequence(1 + 1, args2->size() + 1))/]
+[/template]
+
+[template public exitTargetOutgoingCode(aTransition : Transition, args0 : OclAny, args1 : OclAny, args2 : OclAny, args3 : OclAny) post(trim())]
+[if (target->filter(State)->notEmpty())]
+//Effect
+[args3/]
+[target->filter(State).lowestCommonAncestorEntry(args0.oclAsType(String).substring(0 + 1, args0.oclAsType(String).lastIndex('.' + args2->filter(State)->asOrderedSet()->at(0).container.name.replaceSpecChar() + '.' + args2->filter(State)->asOrderedSet()->at(0).name.replaceSpecChar())), args2->filter(State)->asOrderedSet()->at(0).container.qualifiedName)/]
+[else]
+[if (target->filter(Pseudostate)->select(kind.toString() = 'exitPoint')->notEmpty())]
+[let var : Sequence(Region) = target->filter(Pseudostate).owner->filter(StateMachine).region->filter(Region).getOtherRegions(source->filter(ConnectionPointReference).state.container)->filter(Region)->asSequence()]
+[for (sortRegions(var))]
+[lowestCommonAncestorExitOtherRegion(args0)/]
+[/for]
+[/let]
+[target->filter(Pseudostate).exitPointTarget(args0.oclAsType(String).substring(0 + 1, args0.oclAsType(String).lastIndex('.' + args2->filter(State)->asOrderedSet()->at(0).container.name.replaceSpecChar() + '.' + args2->filter(State)->asOrderedSet()->at(0).name.replaceSpecChar())), args1, args2->filter(State)->asSequence()->subSequence(1 + 1, args2->filter(State)->size() + 1), args3)/]
+[/if]
+[/if]
+[/template]
+
+[template public exitPointTarget(aPseudostate : Pseudostate, args0 : OclAny, args1 : OclAny, args2 : OclAny, args3 : OclAny)]
+[getConnectionPointReference(args2->filter(State)->asOrderedSet()->at(0))->filter(ConnectionPointReference).exitTargetCode(args0, args1, args2, args3)/]
+[/template]
+
+[template public joinTargetCode(aPseudostate : Pseudostate, args0 : OclAny)]
+/*start join Code*/
+[let var : Sequence(Transition) = incoming->asSequence()]
+if ([for (aTransition : Transition | sortTransitions(var)->filter(Transition)->sep(' and ')->filter(Transition))]
+pre([source->filter(State).getFullQualifiedDotName(args0)/].active)
+[/for][/let]
+)	 then
+[let var : Sequence(Transition) = incoming->asSequence()]
+[for (aTransition : Transition | sortTransitions(var))]
+[if (source->filter(State).isComposite()->notEmpty())]
+/*start highlevel transition deactivate active substate [source->filter(State).name/]*/
+[if (suppressExitActions() = 'suppressExitActions')]
+[source->filter(State).highlevelTransition(getFullQualifiedDotName(args0).replaceSpecChar(), 'suppressExitActions')/]
+[else]
+[source->filter(State).highlevelTransition(getFullQualifiedDotName(args0).replaceSpecChar(), '')/]
+[/if]
+/*end highlevel transition deactivate active substate*/
+[/if]
+[if (source->filter(State).isSubmachineState()->notEmpty())] 
+/*start highlevel transition deactivate active substate */
+[if (suppressExitActions() = 'suppressExitActions')]
+[source->filter(State).submachine->filter(StateMachine).highlevelTransition(getFullQualifiedDotName(args0).replaceSpecChar(), 'suppressExitActions')/]
+[else]
+[source->filter(State).submachine->filter(StateMachine).highlevelTransition(getFullQualifiedDotName(args0).replaceSpecChar(), '')/]
+[/if]
+/*end highlevel transition deactivate active substate*/
+[/if]
+[if (suppressExitActions() <> 'suppressExitActions')]
+[if (source->filter(State).exit)->notEmpty()]
+	[source->filter(State).Exit(source->filter(State).getFullQualifiedDotName(args0))/]	
+[/if]
+[/if]
+[source->filter(State).getFullQualifiedDotName(args0)/].active := false; 
+[/for]
+[/let]
+[comment exit orthogonal owners
+/]
+[let var : Sequence(Transition) = incoming->asSequence()]
+[sortTransitions(var)->asOrderedSet()->last().source.container.lowestCommonAncestorExitJoin(sortTransitions(var)->filter(Transition)->asOrderedSet()->last().source.container.owner.getFullQualifiedDotName(args0), sortTransitions(var)->filter(Transition)->asOrderedSet()->last().lowestCommonAncestorQualifiedName(), self->filter(Pseudostate))/]
+[/let]
+[let var : Sequence(Transition) = incoming->asSequence()]
+[for (aTransition : Transition | sortTransitions(var))]
+[if (effect->notEmpty())]
+	[Effect()/]
+[/if]
+[/for]
+[/let]
+[if (outgoing.effect->notEmpty())]
+[outgoing->asSequence()->at(0).Effect()/]
+[/if]
+  [outgoing->asOrderedSet()->at(0).target->filter(State).getFullQualifiedDotName(args0)/].active := true;
+[if (outgoing->asOrderedSet()->at(0).suppressEntryActions() <> 'suppressEntryActions')]
+[if (outgoing->asOrderedSet()->at(0).target->filter(State).entry)->notEmpty()]
+	[outgoing->asOrderedSet()->at(0).target->filter(State).Entry(outgoing.target->filter(State).getFullQualifiedDotName(args0))/]
+[/if]
+[/if]
+[if (outgoing->asOrderedSet()->at(0).target->filter(State)->select(isComposite)->notEmpty())]
+[let var : Sequence(Region) = outgoing->asOrderedSet()->at(0).target->filter(State)->asOrderedSet()->at(0).ownedElement->filter(Region)->asSequence()]
+[for (sortRegions(var))]
+[ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asOrderedSet()->first().setInitialHistoryActive(args0 + '.' + owner->filter(State).container.name.replaceSpecChar() + '.' + owner->filter(State).name.replaceSpecChar())/]
+[/for]
+[/let]
+[/if]
+[if (outgoing->asOrderedSet()->at(0).target->filter(State)->select(isSubmachineState)->notEmpty())][comment]CHECK WHAT IT RETURNS[/comment]
+[outgoing->asOrderedSet()->at(0).target->filter(State)->asOrderedSet()->at(0).submachine.submachineTargetStateMachine(args0 + '.' + outgoing->asOrderedSet()->at(0).target->filter(State).container.name.replaceSpecChar() + '.' + outgoing->asOrderedSet()->at(0).target->filter(State).name.replaceSpecChar())/]
+[/if]
+end if;
+/*end join Code*/
+[/template]
+
+[template public determineTransitionTarget(aTransition : Transition, args0 : OclAny, args1 : OclAny) post(trim())]
+[if (target->filter(Pseudostate)->select(kind.toString() = 'choice')->notEmpty())]
+[if (effect->notEmpty())]
+	[Effect()/]
+[/if]
+[target->filter(Pseudostate)->select(kind.toString() = 'choice').choiceTargetCode(args0, args1)/]
+[/if]
+[if (target->filter(Pseudostate)->select(kind.toString() = 'fork')->notEmpty())]
+[if (effect->notEmpty())]
+	[Effect()/]
+[/if]
+[target->filter(Pseudostate).forkTargetCode(args0, args1)/]
+[/if]
+[if (target->filter(Pseudostate)->select(kind.toString() = 'junction')->notEmpty())]
+[target->filter(Pseudostate).junctionTargetCode(args0, source, null, null)/] [comment]FIX junctiontargetcode[/comment]
+[/if]
+[if (target->filter(State)->notEmpty())]
+[if (effect->notEmpty() )]
+	[Effect()/]
+[/if]
+[target->filter(State).targetIsState(args0, args1, self)/]
+[/if]
+[if (target->filter(Pseudostate)->select(kind.toString() = 'terminate')->notEmpty())]
+[args0.oclAsType(String).substring(0 + 1, args0.oclAsType(String).index('.'))/].active := false;
+[/if]
+[/template]
+
+[template public targetIsState(aState : State, args0 : OclAny, args1 : OclAny , args2 : OclAny) post(trim())]
+[comment]<%--args(1)== source, args(2)== transition--%>[/comment]
+[if (args1.oclAsType(State).container.qualifiedName = container.qualifiedName)]
+[comment]<%--  kein interlevel--%>[/comment] 
+[getQualifiedDotName(args0)/].active := true;
+[if (entry->notEmpty())] 
+	[Entry(getQualifiedDotName(args0))/]
+[/if]
+[else]
+  [args1->filter(State).container.lowestCommonAncestorExit(args0, args2.lowestCommonAncestorQualifiedNameforPseudostates(args1->filter(State)))/]
+[lowestCommonAncestorEntryStart(args0, args2.lowestCommonAncestorQualifiedNameforPseudostates(args1->filter(State)), args1->filter(State))/]
+[/if]
+[/template]
+
+[template public interLevelTransition(aTransition : Transition, args0 : OclAny) post(trim())]
+[guardCode(args0 + '.' + source.container.name.replaceSpecChar() + '.' + source.name.replaceSpecChar())/] then
+/*start interlevel transition [args0/]*/ 
+[deactivateActiveSubstate(args0)/]
+[if (effect->notEmpty())]
+	[Effect()/]
+[/if]
+[source.container.lowestCommonAncestorExit(args0, lowestCommonAncestorQualifiedName())/]
+[target->filter(State).lowestCommonAncestorEntryStart(args0, lowestCommonAncestorQualifiedName(), source)/]
+[/template]
+
+[template public highlevelTransition(aState : State, args0 : OclAny, args1 : OclAny) post(trim())]
+[let var : Sequence(Region) = ownedElement->filter(Region)->asSequence()]
+[for (sortRegions(var))]
+[for (ownedElement->filter(State))]
+[if (isComposite)]
+[highlevelTransition(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar(), args1)/]
+[/if]
+[if (isSubmachineState)]
+[submachine->filter(StateMachine).highlevelTransition(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar(), args1)/]
+[/if]
+if ([args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active) then
+[if (args1 <> 'suppressExitActions')]
+[if (exit->notEmpty())]
+	[Exit(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+[/if]
+[/if]
+	[args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active:=false;
+end if;
+[/for]
+[/for]
+[/let]
+[/template]
+
+[template public highlevelTransition(aStateMachine : StateMachine, args0 : OclAny, args1 : OclAny) post(trim())]
+//HIGHLEVEL
+[let var : Sequence(Region) = ownedElement->filter(Region)->asSequence()]
+[for (sortRegions(var))]
+[for (ownedElement->filter(State))]
+[if (isComposite)]
+[highlevelTransition(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar(), args1)/]
+[/if]
+[if (isSubmachineState)]
+[submachine->filter(StateMachine).highlevelTransition(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar(), args1)/]
+[/if]
+if ([getQualifiedDotName(args0)/].active) then
+[if (exit->notEmpty())]
+	[Exit(getQualifiedDotName(args0))/]
+[/if]
+	[getQualifiedDotName(args0)/].active:=false;
+end if;
+[/for]
+[/for]
+[/let]
+[/template]
+
+[template public lowestCommonAncestorExit(aRegion : Region, args0 : OclAny, args1 : OclAny) post(trim())]
+/*lowestCommonAncestorExit*/
+[comment not tested todo
+/]
+[let var : Sequence(Region) = owner->filter(State).region->filter(Region).getOtherRegions(self)->filter(Region)->asSequence()]
+[for (sortRegions(var))]
+[lowestCommonAncestorExitOtherRegion(args0)/]
+[/for]
+[/let]
+[let var : Sequence(Region) = owner->filter(StateMachine).region->filter(Region).getOtherRegions(self)->filter(Region)->asSequence()]
+[for (sortRegions(var))]
+[lowestCommonAncestorExitOtherRegion(args0)/]
+[/for]
+[if (args1 <> qualifiedName)]
+[if (owner->filter(State).exit->notEmpty())]
+[owner->filter(Vertex).Exit(args0)/]
+[/if]
+[args0/].active := false;
+[owner->filter(State).container.lowestCommonAncestorExit(args0.oclAsType(String).substring(0 + 1, args0.oclAsType(String).lastIndex('.' + owner->filter(State).container->filter(Region).name + '.' + owner->filter(State).name)), args1)/]
+[/if]
+[/let]
+[/template]
+
+[template public lowestCommonAncestorExitOtherRegion(aRegion : Region, args0 : OclAny) post(trim())]
+[for (ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory'))]
+if([getQualifiedDotName(args0)/].active) then
+[getQualifiedDotName(args0)/].active := false; /*tes*/
+end if;
+[/for]
+[for (ownedElement->filter(State))]
+if([getQualifiedDotName(args0)/].active) then
+[if (isComposite)]
+[highlevelTransition(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar(), '').replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/if]
+[if (isSubmachineState)]
+[submachine->filter(StateMachine).highlevelTransition(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar(), '').replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/if]
+[if (exit->notEmpty())]
+	[Exit(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+[/if]
+	[args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active := false;
+end if;
+[/for]
+[/template]
+
+[template public lowestCommonAncestorExitJoin(aRegion : Region, args0 : String, args1 : OclAny, args2 : OclAny) post(trim())]
+[if (args1 <> qualifiedName)]
+[let var : Sequence(Region) = owner->filter(State).region->filter(Region).getOtherJoinRegions(args2)->filter(Region)->asSequence()]
+[for (sortRegions(var))]
+[for (ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory'))]
+if([args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active) then
+[args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active := false; /*tes*/
+end if;
+[/for]
+[for (ownedElement->filter(State))]
+if([args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active) then
+[if (isComposite)]
+[highlevelTransition(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar(), '').replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/if]
+[if (isSubmachineState)]
+[submachine->filter(StateMachine).highlevelTransition(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar(), '').replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/]
+[/if]
+[if (exit->notEmpty())]
+	[Exit(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+[/if]
+	[args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar()/].active := false;
+end if;
+[/for]
+[/for]
+[if (owner->filter(State).exit)->notEmpty()]
+[owner->filter(Vertex).Exit(args0)/]
+[/if]
+[args0/].active := false;
+[owner->filter(State).container.lowestCommonAncestorExit(args0.substring(0 + 1, args0.lastIndex('.' + owner->filter(State).container->filter(Region).name + '.' + owner->filter(State).name)), args1)/]
+[/let]
+[/if]
+[/template]
+
+[template public lowestCommonAncestorEntryStart(aState : State, args0 : OclAny, args1 : OclAny, args2 : OclAny) post(trim())]
+[lowestCommonAncestorEntry(args2->filter(State).container.getContainerName(args0, args1), args1)/]
+[/template]
+
+[template public lowestCommonAncestorEntryForkStart(state : uml::State, args0 : OclAny, args1 : OclAny, args2 : OclAny) post(trim())]
+[lowestCommonAncestorEntryFork(args2->filter(Vertex).container.getContainerName(args0, args1), args1)/]
+[/template]
+
+[template public lowestCommonAncestorEntry(aState : State, args0 : OclAny, args1 : OclAny) post(trim())]
+[for (getInterlevelEntryList(args1)->filter(State))]
+[getFullQualifiedDotName(args0)/].active := true; 
+[if (entry)->notEmpty()]
+[Entry(getFullQualifiedDotName(args0))/]
+[/if]
+[/for]
+[comment activate composite/][if (isComposite)]
+[let var : Sequence(Region) = ownedElement->filter(Region)->asSequence()]
+[for (sortRegions(var))]
+[ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asOrderedSet()->first().setInitialHistoryActive(args0 + '.' + owner->filter(State).container.name.replaceSpecChar() + '.' + owner->filter(State).name.replaceSpecChar())/]
+[/for]
+[/let]
+[/if]
+[if (isSubmachineState)]
+		[submachine.submachineTargetStateMachine(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+[/if]
+[for (getInterlevelEntryList(args1)->filter(State).getMissingRegions()->filter(Region))]
+[ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asOrderedSet()->first().getFullQualifiedDotName(args0)/].active := true;
+[/for]
+[/template]
+
+[template public lowestCommonAncestorEntryFork(aState : State, args0 : OclAny, args1 : OclAny) post(trim())]
+[for (getInterlevelEntryList(args1)->filter(State))]
+[getFullQualifiedDotName(args0)/].active := true;
+[if (entry->notEmpty())]
+[Entry(getFullQualifiedDotName(args0))/]
+[/if]
+[/for]
+[/template]
+
+[template public simpleTransitionCode(aTransition : Transition, args0 : OclAny) post(trim())]
+	[guardCode(args0 + '.' + container.name.replaceSpecChar() + '.' + source.name.replaceSpecChar())/] then
+[deactivateActiveSubstate(args0)/]
+[if (effect.oclAsType(Boolean))]
+	[Effect()/]
+[/if]
+	[args0 + '.' + container.name.replaceSpecChar() + '.' + target.name.replaceSpecChar()/].active := true; 
+	[if (source.qualifiedName = target.qualifiedName)]
+	[args0 + '.' + container.name.replaceSpecChar() + '.' + target.name.replaceSpecChar()/].selfTransitionActivated := true;
+	[/if]
+	[if (suppressEntryActions() <> 'suppressEntryActions')]
+	[if (target.oclAsType(State).entry->notEmpty())]
+	[target.Entry(args0 + '.' + container.name.replaceSpecChar() + '.' + target.name.replaceSpecChar())/]
+	[/if]
+	[/if]
+[comment test if target is composite. when it is composite activate inital or history
+/]
+[let var : Sequence(Region) = target->filter(State)->select(isComposite).ownedElement->filter(Region)->asSequence()]
+[for (aRegion : Region | sortRegions(var))]
+[let hop : OclAny = args0 + '.' + owner->filter(State).container.name.replaceSpecChar() + '.' + owner->filter(State).name.replaceSpecChar()]
+	[ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial' or kind.toString() = 'shallowHistory')->asOrderedSet()->first().setInitialHistoryActive(hop)/]
+[/let]
+[/for]
+[/let]
+[for (target->filter(State)->select(isSubmachineState))]
+[submachine.submachineTargetStateMachine(args0 + '.' + container.name.replaceSpecChar() + '.' + name.replaceSpecChar())/]
+[/for]
+[/template]
+

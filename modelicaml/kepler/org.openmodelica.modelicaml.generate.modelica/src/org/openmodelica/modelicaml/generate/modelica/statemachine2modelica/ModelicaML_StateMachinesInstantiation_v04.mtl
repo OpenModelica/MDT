@@ -1,0 +1,161 @@
+[comment encoding = UTF-8 /]
+[module ModelicaML_StateMachinesInstantiation_v04('http://www.eclipse.org/uml2/3.0.0/UML')/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::StringUtls/]
+[import org::openmodelica::modelicaml::generate::modelica::uml2modelica::services::umlservices/]
+[import org::openmodelica::modelicaml::generate::modelica::services::modelicamlservices/]
+[import org::openmodelica::modelicaml::generate::modelica::activity2modelica::ModelicaML_ActivityDiagram2Modelica/]
+[import org::openmodelica::modelicaml::generate::modelica::annotation::ModelicaML_annotations/]
+[import org::openmodelica::modelicaml::generate::modelica::statemachine2modelica::ModelicaML_StateMachines_events/]
+[import org::openmodelica::modelicaml::generate::modelica::statemachine2modelica::ModelicaML_StateMachines_debug/]
+
+
+[template public ModelicaClassType(aNamedElement : NamedElement) post(trim())]
+record
+[/template]
+
+[template public LibClassProperties(aNamedElement : NamedElement, args0 : OclAny)][comment]-- START: UPDATED 23.01.2013 --[/comment]
+	// lib properties [args0/]
+	Boolean active(start=false, fixed=true); // indicates if the state is active.  
+	Real timeAtActivation(start=0); // time when the state is entered.
+	Real stime(start=0, fixed=true); // stime means "state time". It is a local timer. It starts when the state is entered and is equal to zero if the state is not active. 
+	Boolean selfTransitionActivated(start=false, fixed=true);[comment]-- END: UPDATED 23.01.2013 --[/comment]
+[/template]
+
+[template public StateMachinesModelicaClass(aStateMachine : StateMachine)]
+[ModelicaClassType()/] [_context.name.replaceSpecChar()/]_StateMachine_[name.replaceSpecChar()/]
+annotation([g_annotation()/]);
+	[LibClassProperties('STATE MACHINE').trim()/]
+	[comment]-- START: UPDATED 23.01.2013 --[/comment]
+	Boolean startBehaviour(start=false, fixed=true);[comment]-- END: UPDATED 23.01.2013 --[/comment]
+	// REGIONS instantiation
+[for (ownedElement->filter(Region))]
+	[stateMachine.name.replaceSpecChar()/]_[name.replaceSpecChar()/] [name.replaceSpecChar()/];
+[/for]
+
+	// REGIONS classes
+	[ownedElement->filter(Region).RegionModelicaClasses(name.replaceSpecChar())/]
+	
+	// library: SIMPLE STATE
+	[ModelicaClassType()/] SimpleState
+		annotation([g_annotation_state()/]);
+		[LibClassProperties('SIMPLE STATE').trim()/]
+	end SimpleState;
+		
+		// library: INITIAL STATE
+	[ModelicaClassType()/] InitialState
+		annotation([g_annotation_initialstate()/]);
+		[LibClassProperties('INITIAL STATE').trim()/]
+	end InitialState;	
+	
+			// library: FINAL STATE
+	[ModelicaClassType()/] FinalState
+		annotation([g_annotation_finalstate()/]);
+		[LibClassProperties('FINAL STATE').trim()/]
+	end FinalState;	
+end [_context.name.replaceSpecChar()/]_StateMachine_[name.replaceSpecChar()/];
+
+[singalEventsDefinitions()/]
+[/template]
+
+[template public RegionModelicaClasses(aRegion : Region, args0 : OclAny) post(trim())]
+[ModelicaClassType().trim()/] [args0/]_[name.replaceSpecChar()/]
+	annotation([g_annotation()/]);
+	// SIMPLE STATES instantiation
+[comment  TODO:  || metamodel::isSubmachineState is added -> validate! /]
+[for (ownedElement->filter(State)->select(isSimple and eClass().name <> 'FinalState'))]
+	SimpleState [name.replaceSpecChar()/];
+[/for]
+[for (ownedElement->filter(FinalState))]
+	FinalState [name.replaceSpecChar()/];
+[/for]
+[for (ownedElement->filter(Pseudostate)->select(kind.toString() = 'initial'))]
+	InitialState [name.replaceSpecChar()/];
+[/for]
+[for (ownedElement->filter(Pseudostate)->select(kind.toString() = 'shallowHistory'))]
+	[owner->filter(Region).name.replaceSpecChar()/]_HistoryState [name.replaceSpecChar()/];
+[/for]
+[if (ownedElement->filter(State)->select(isComposite)->notEmpty())]
+	// COMPOSITE STATES instantiation
+[for (ownedElement->filter(State)->select(isComposite))]
+	[container.name.replaceSpecChar()/]_[name.replaceSpecChar()/] [name.replaceSpecChar()/];
+[/for]
+[/if]
+[if (ownedElement->filter(State)->select(isComposite)->notEmpty())]
+	// COMPOSITE STATES classes
+[for (ownedElement->filter(State)->select(isComposite))]
+	[ModelicaClassType().trim()/] [container.name/]_[name.replaceSpecChar()/]
+		annotation([g_annotation_state()/]);
+		[LibClassProperties('COMPOSITE STATE').trim()/]
+		// REGIONS instantiation
+[for (ownedElement->filter(Region))]
+		[StateOrStateMahchineName().trim()/]_[name.replaceSpecChar()/] [name.replaceSpecChar()/];
+[/for]
+		[ownedElement->filter(Region).RegionModelicaClasses(name.replaceSpecChar())/]
+	end [container.name/]_[name.replaceSpecChar()/];
+[/for]
+[/if]
+[if (ownedElement->filter(State)->select(isSubmachineState)->notEmpty())]
+	// Submachine STATES instantiation
+[for (ownedElement->filter(State)->select(isSubmachineState))]
+	[container.name.replaceSpecChar()/]_[name.replaceSpecChar()/] [name.replaceSpecChar()/];
+[/for]
+[/if]
+[if (ownedElement->filter(State)->select(isSubmachineState)->notEmpty())]
+	// Submachine STATES classes
+[for (ownedElement->filter(State)->select(isSubmachineState))]
+	[ModelicaClassType().trim()/] [container.name/]_[name.replaceSpecChar()/]
+		annotation([g_annotation_state()/]);
+		[LibClassProperties('SUBMACHINE STATE').trim()/]
+		// Submachine REGIONS instantiation
+		[submachine.submachineInstantiation(name.replaceSpecChar())/]
+		[submachine.ownedElement->filter(Region).RegionModelicaClasses(name.replaceSpecChar())/] //test	
+	end [container.name/]_[name.replaceSpecChar()/];
+[/for]
+[/if]
+[if (ownedElement->filter(Pseudostate)->select(kind.toString() = 'shallowHistory')->notEmpty())]
+		[HistoryModelicaClasses()/]
+[/if]
+	
+	[regionDebugVariables()/]
+	
+end [args0/]_[name.replaceSpecChar()/];
+[/template]
+
+[template public submachineInstantiation(aStateMachine : StateMachine, args0 : OclAny)]
+[for (ownedElement->filter(Region))]
+		[args0/]_[name.replaceSpecChar()/] [name.replaceSpecChar()/];
+[/for]
+[/template]
+
+[template public HistoryModelicaClasses(aRegion : Region) post(trim())]
+
+	[ModelicaClassType()/] [name.replaceSpecChar()/]_HistoryState
+		annotation([g_annotation_historystate()/]);
+		[LibClassProperties('HISTORY STATE').trim()/]
+		type HistoryStateT=enumeration( 
+		[ownedElement->filter(State).name.replaceSpecChar()->sep(', ')/]);
+		HistoryStateT lastActive[comment (start="<%ownedElement->filter("Pseudostate")->select(kind = "shallowHistory").outgoing.target.name%>")/];
+	end [name.replaceSpecChar()/]_HistoryState;
+[/template]
+
+[template public StateOrStateMahchineName(aRegion : Region) post(trim())]
+[if (stateMachine->notEmpty() and stateMachine.submachineState->notEmpty())]
+[stateMachine.submachineState.name.replaceSpecChar()/] //TEST
+[else]
+[if (stateMachine = null)][state.name.replaceSpecChar()/]
+[else][stateMachine.name.replaceSpecChar()/]
+[/if]
+[/if]
+[/template]
+
+[comment]<%-- STATE MACHNES instantiation ########################################################################################### --%>[/comment]
+
+[template public StateMachineInstances(aStateMachine : StateMachine)]
+// STATE MACHNE instantiation 
+	[_context.name.replaceSpecChar()/]_StateMachine_[name.replaceSpecChar()/] [name.replaceSpecChar()/];
+	[signalEventsInstantiation().replaceAll('(?!<\r)\n|\r\n|\r(?!\n)', '$0\t')/] [comment]CHECK THIS indentTab()[/comment]
+	[relativeTimeEventsInstantiation()/]	
+[/template]
+
+
+
