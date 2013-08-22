@@ -117,6 +117,17 @@ public class ClassInstantiation {
 	}
 	
 
+	
+	/*
+	 * TEMP: This constructor is only used for algorithm validation
+	 */
+	public ClassInstantiation(String name, HashSet<Element> preCollectedMediators){
+		invisibleRoot = new TreeParent("", null, null, "", false, false, new HashSet<String>(), null, false);
+		treeRoot = invisibleRoot;
+		this.setAllMediators(preCollectedMediators);
+	}
+	
+	
 	/*
 	 * This constructor is used for instantiations that 
 	 * get added sub graphs and will not create their own graph
@@ -688,7 +699,7 @@ public class ClassInstantiation {
 	
 	// Value Clients or Providers handling ************************************************************************
 	
-	private void setValueClientOrProviderIndicator(TreeParent item){
+	public void setValueClientOrProviderIndicator(TreeParent item){
 		TreeObject[] children = item.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			TreeObject treeObject = children[i];
@@ -737,6 +748,34 @@ public class ClassInstantiation {
 		}
 
 	}
+	
+	public HashSet<TreeObject> getAllClients(){
+		HashSet<TreeObject> clients = new HashSet<TreeObject>();
+		
+		for (TreeObject treeItem : getAllTreeObjects()) {
+			if (treeItem.isValueClient()) {
+				clients.add(treeItem);
+			}
+			if (treeItem.isValueClient_required()) {
+				clients.add(treeItem);
+			}
+		}
+		
+		return clients;
+	}
+	
+	public HashSet<TreeObject> getAllMandatoryClients(){
+		HashSet<TreeObject> clients = new HashSet<TreeObject>();
+		
+		for (TreeObject treeItem : getAllTreeObjects()) {
+			if (treeItem.isValueClient_required()) {
+				clients.add(treeItem);
+			}
+		}
+		
+		return clients;
+	}
+	
 	
 	private void addClientPredefinedProperties(TreeObject upperClientTeeItem){
 

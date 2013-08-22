@@ -77,6 +77,7 @@ import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.helper.generators.GeneratorVeMRequirementsBased;
 import org.openmodelica.modelicaml.helper.generators.GeneratorVeMScenariosBased;
+import org.openmodelica.modelicaml.helper.generators.TEST_GenerateVerificationModels;
 
 public class VeMGenerationOptionsDialog extends Dialog {
 
@@ -648,7 +649,21 @@ public class VeMGenerationOptionsDialog extends Dialog {
 //				ServicesRegistry  serviceRegistry = ServiceUtilsForActionHandlers.getInstance().getServiceRegistry();
 //				TransactionalEditingDomain  editingDomain = ServiceUtils.getInstance().getTransactionalEditingDomain(serviceRegistry);
 				TransactionalEditingDomain  editingDomain = EditorServices.getPapyrusEditingDomain();
-									
+				
+				
+				// -----------------------------------------------------
+				// TEST: this is only for the validation of the algorithm. 
+				// REMOVE after testing.
+//				TEST_GenerateVerificationModels g = new TEST_GenerateVerificationModels(
+//						getSystemModel(), 
+//						getScenariosPackage(), 
+//						getRequirementsPackage(), 
+//						getBindingsPackage(), rootPackage, rootPackage);
+//				
+//				g.generateVeMs();
+				// -----------------------------------------------------
+				
+				
 				smg = new GeneratorVeMScenariosBased(
 						rootPackage,
 						systemModels, 
