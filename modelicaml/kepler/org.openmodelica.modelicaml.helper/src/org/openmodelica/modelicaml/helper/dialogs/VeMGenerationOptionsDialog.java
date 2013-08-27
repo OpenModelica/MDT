@@ -77,7 +77,7 @@ import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.common.utls.SWTResourceManager;
 import org.openmodelica.modelicaml.helper.generators.GeneratorVeMRequirementsBased;
 import org.openmodelica.modelicaml.helper.generators.GeneratorVeMScenariosBased;
-import org.openmodelica.modelicaml.helper.generators.TEST_GenerateVerificationModels;
+import org.openmodelica.modelicaml.helper.generators.example.GenerateVerificationModels;
 
 public class VeMGenerationOptionsDialog extends Dialog {
 
@@ -654,7 +654,7 @@ public class VeMGenerationOptionsDialog extends Dialog {
 				// -----------------------------------------------------
 				// TEST: this is only for the validation of the algorithm. 
 				// REMOVE after testing.
-//				TEST_GenerateVerificationModels g = new TEST_GenerateVerificationModels(
+//				GenerateVerificationModels g = new GenerateVerificationModels(
 //						getSystemModel(), 
 //						getScenariosPackage(), 
 //						getRequirementsPackage(), 

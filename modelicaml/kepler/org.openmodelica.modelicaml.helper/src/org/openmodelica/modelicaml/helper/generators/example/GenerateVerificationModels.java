@@ -1,4 +1,4 @@
-package org.openmodelica.modelicaml.helper.generators;
+package org.openmodelica.modelicaml.helper.generators.example;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,12 +13,11 @@ import org.openmodelica.modelicaml.common.instantiation.ClassInstantiation;
 import org.openmodelica.modelicaml.common.instantiation.TreeObject;
 import org.openmodelica.modelicaml.common.instantiation.TreeParent;
 import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
-import org.openmodelica.modelicaml.common.services.StringUtls;
 import org.openmodelica.modelicaml.helper.datacollection.VerificationScenariosCollector;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeHelper;
 import org.openmodelica.modelicaml.view.valuebindings.helpers.DeriveValueBindingCodeUtls;
 
-public class TEST_GenerateVerificationModels {
+public class GenerateVerificationModels {
 	
 	// input
 	private Element dm;
@@ -37,16 +36,16 @@ public class TEST_GenerateVerificationModels {
 	
 	// data
 	private List<Element> S_L = new ArrayList<Element>(); // List of found scenarios
-	private List<Element> R_L = new ArrayList<Element>(); // List of found requirements
+//	private List<Element> R_L = new ArrayList<Element>(); // List of found requirements
 	private List<Element> M_L = new ArrayList<Element>(); // List of found mediators
-//	private List<Element> A_L = new ArrayList<Element>(); // List of found additional models
+//	private List<Element> A_L = new ArrayList<Element>(); // List of found additional models. 
 	private HashMap<Element, ClassInstantiation> I_M = new HashMap<Element, ClassInstantiation>();
-	private HashMap<TreeObject,TEST_GenerateVerificationModels.BindingData> B_M;
+	private HashMap<TreeObject,BindingData> B_M;
 	
 	private DeriveValueBindingCodeHelper deriveCodeHelper = new DeriveValueBindingCodeHelper();
 		
 	// constructor
-	public TEST_GenerateVerificationModels(
+	public GenerateVerificationModels(
 			Element dm, 
 			Element LS_S,
 			Element LR_S,
@@ -77,17 +76,15 @@ public class TEST_GenerateVerificationModels {
 		cd.collectAll(true);
 		
 		S_L = ModelicaMLServices.getSortedByName(cd.getAllScenarios());
-		R_L = ModelicaMLServices.getSortedByName(cd.getAllRequirements());
+//		R_L = ModelicaMLServices.getSortedByName(cd.getAllRequirements()); // Not needed because cd has requirements sorted for sceanrios.
 		M_L = ModelicaMLServices.getSortedByName(cd.getAllMediators());
-		
-		// TODO: not needed because in cd we already have the additional models sorted
-//		A_L = ModelicaMLServices.getSortedByName(cd.getAllMediators()); 
+//		A_L = ModelicaMLServices.getSortedByName(cd.getAllMediators()); // Not needed because in cd we already have the additional models sorted 
 		
 		deriveCodeHelper = new DeriveValueBindingCodeHelper();
 		
 		for (Element  sk : S_L) {
 			
-			B_M = new HashMap<TreeObject, TEST_GenerateVerificationModels.BindingData>();
+			B_M = new HashMap<TreeObject,BindingData>();
 			
 			log("Combining '" + ModelicaMLServices.getName(dm) +  "' with '" + ModelicaMLServices.getName(sk) + "'");
 			
@@ -95,29 +92,18 @@ public class TEST_GenerateVerificationModels {
 			V.collectBindingsDataFromUmlModel();
 			
 			instantiate(newHashSet(dm), V); // Create explicit model structure and add to map
-			TreeObject dmi = I_M.get(dm).getTreeRoot(); // Get instantiation from the map
-//			addChildren(V, newTOSet(dmi)); // Attach instantiation to the root node V
 			
 			HashSet<Element> AD_S = cd.getModelToItsAdditionalModels().get(dm); // Find additional models
 			instantiate(AD_S, V); // Set of instantiations
-//			HashSet<TreeObject> adis = getInstantiation(AD_S); 	// {adi0 … adin} = getInstantiation(AD_S) // Set of instantiations
-//			addChildren(V, adis); // Attach each instantiation to root node V
 			
 			instantiate(newHashSet(sk), V); 
 			TreeObject sik = I_M.get(sk).getTreeRoot(); 
-//			addChildren(V, newTOSet(ski)); // Attach instantiation to the root node V
 			
 			HashSet<Element> AS_S = cd.getModelToItsAdditionalModels().get(sk); // Additional models for sk
 			instantiate(AS_S, V);
-//			HashSet<TreeObject> asis = getInstantiation(AS_S);
-//			addChildren(V, asis);
-			
-			// initialize the helper in order to collect and sort the data from the model and the instantiated class.
-//			deriveCodeHelper.initialize( (Package) LM_S, V, V.getTreeRoot(), cd.getAllMediators(), false); 
 			
 			inferBindings(V, V.getAllClients());
 			
-//			if (allMadatoryClientsSatisfied(V) && usesAtLeastOneProviderFrom(dmi, sik)) {
 			if (allMadatoryClientsSatisfied(V) && useAtLeastOneProviderFrom(I_M.get(dm).getAllMandatoryClients(), sik)) {
 //				log("	allMadatoryClients are satisfied in '" +ModelicaMLServices.getName(dmi.getSelectedClass())+ "' and some providers are used from '"  + ModelicaMLServices.getName(sik.getSelectedClass()) + "'");
 				
@@ -180,7 +166,6 @@ public class TEST_GenerateVerificationModels {
 					
 					for (Element am : AMI_S) {
 						TreeObject aik = I_M.get(am).getTreeRoot();
-//						if (!usesAtLeastOneProviderFrom(V.getTreeRoot(), aik)) {
 						if (!useAtLeastOneProviderFrom(V.getAllMandatoryClients(), aik)) {
 							TreeParent parent = aik.getParent();
 							parent.removeChild(aik);
@@ -215,7 +200,7 @@ public class TEST_GenerateVerificationModels {
 				ClassInstantiation instantiation = new ClassInstantiation((Class) model, new HashSet<Element>(M_L), false);
 				instantiation.createTree();
 
-				// TODO: improve it
+				// TODO: improve it. It is not neccesary to re-collect the bindings data every time.
 				instantiation.collectBindingsDataFromUmlModel();
 				instantiation.setValueClientOrProviderIndicator(instantiation.getTreeRoot());
 				
@@ -234,10 +219,8 @@ public class TEST_GenerateVerificationModels {
 		// re-initialize the helper because V has changed.
 		deriveCodeHelper.initialize( (Package) LM_S, V, V.getTreeRoot(), cd.getAllMediators(), false); 
 		
-		// recollect bindings TODO: Improve it ...
+		// TODO: improve it. It is not neccesary to re-collect the bindings data every time.
 		V.collectBindingsDataFromUmlModel();
-
-		// mark which components are clients TODO: Improve it ...
 		V.setValueClientOrProviderIndicator(V.getTreeRoot());
 		
 		for (TreeObject c : clients) {
@@ -258,9 +241,7 @@ public class TEST_GenerateVerificationModels {
 	}
 	
 	private BindingData inferBinding(TreeObject c, ClassInstantiation V) {
-		
 //		System.err.println("Inferring binding for " + c.getDotPath());
-		
 		BindingData bd = new BindingData();
 		
 		deriveCodeHelper.deriveBindingCodeForClient(c, false, true);
@@ -278,7 +259,6 @@ public class TEST_GenerateVerificationModels {
 	
 	
 	private boolean allMadatoryClientsSatisfied(ClassInstantiation V){
-		
 		// if there are no clients at all -> no satisfaction
 		if (V.getAllMandatoryClients().size() == 0) {
 			return false;
@@ -306,21 +286,6 @@ public class TEST_GenerateVerificationModels {
 		}
 		return false;
 	}
-	
-	
-//	private boolean usesAtLeastOneProviderFrom(TreeObject cik, TreeObject cip){
-//		// note there is no need to mark clients because it was done before in inferBindings
-//		for (TreeObject ck : I_M.get(cik.getSelectedClass()).getAllClients() ) {
-//			BindingData binding = B_M.get(ck);
-//			if (isDefined(binding) && binding.isBindingPossible) {
-//				HashSet<TreeObject> providers = binding.getAllPossibleProviders();
-//				if (!clientIsFrom(ck,cip) && atLeastOneProviderIsFrom(cip, providers)) {
-//					return true;
-//				}
-//			}
-//		}
-//		return false;
-//	}
 	
 	
 	private boolean clientIsFrom(TreeObject ck, TreeObject cip){
@@ -386,38 +351,6 @@ public class TEST_GenerateVerificationModels {
 		return null;
 	}
 	
-	// Bidnings data -------------------------------------------------------------------------------
-	
-	private class BindingData {
-		String bindingExpression = null; // (binding expression, i.e., the right-hand expression of the assignment), 
-		boolean isBindingPossible = false; //is possible to infer binding including manual decisions?  
-		Element cia = null; // (actual client used, i.e., ci or one of its parents in I) 
-		Element ma; // actual mediator used 
-		HashSet<TreeObject> providers = new HashSet<TreeObject>(); // {po … pn} set of providers referenced by mc and contained in I 
-		HashSet<TreeObject> providersForSelection = new HashSet<TreeObject>(); // {po … pn} set of providers referenced by mc and contained in I for manual decision
-		
-		public HashSet<TreeObject> getProvidersForSelection(){
-			return providersForSelection;
-		}
-		
-		public HashSet<TreeObject> getProviders(){
-			return providers;
-		}
-		
-		public Element getMediator(){
-			return ma;
-		}
-		
-		public HashSet<TreeObject> getAllPossibleProviders(){
-			HashSet<TreeObject> ppSet = new HashSet<TreeObject>();
-			ppSet.addAll(providers);
-			ppSet.addAll(providersForSelection);
-			
-			return ppSet;
-		}
-	}
-	
-	
 	
 	// Utls ---------------------------------------
 	private void log(String message){
@@ -428,29 +361,6 @@ public class TEST_GenerateVerificationModels {
 		// add a new message
 		this.log += message + "\n";
 		System.err.println(message);
-	}
-
-	
-	private List<Element> toList(HashSet<Element> elements) {
-		List<Element> list = new ArrayList<Element>();
-		
-		for (Element element : elements) {
-			list.add(element);
-		}
-		
-		return list;
-	}
-	
-	private HashSet<TreeObject> newTOSet(TreeObject element) {
-		HashSet<TreeObject> newList = new HashSet<TreeObject>();
-		newList.add(element);
-		return newList;
-	}
-	
-	private List<Element> newList(Element element) {
-		List<Element> newList = new ArrayList<Element>();
-		newList.add(element);
-		return newList;
 	}
 	
 	private HashSet<Element> newHashSet(Element element) {
@@ -469,27 +379,4 @@ public class TEST_GenerateVerificationModels {
 	public void setVM_L(List<Element> vM_L) {
 		VM_L = vM_L;
 	}
-	
-	
-	
-	
-	
-//	private void addChildren(ClassInstantiation V, HashSet<TreeObject> children){
-//	for (TreeObject treeObject : children) {
-//		V.getTreeRoot().addChild(treeObject);
-//	}
-//}
-
-//private HashSet<TreeObject> getInstantiation(HashSet<Element> models) {
-//	HashSet<TreeObject> set = new HashSet<TreeObject>();
-//	if (models != null ) {
-//		for (Element model : models) {
-//			TreeObject to = I_M.get(model);
-//			if (to != null) {
-//				set.add(to);
-//			}
-//		}
-//	}
-//	return set;
-//}
 }
