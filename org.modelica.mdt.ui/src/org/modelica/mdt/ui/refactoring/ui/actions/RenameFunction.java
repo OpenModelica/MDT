@@ -19,109 +19,111 @@ import org.modelica.mdt.ui.refactoring.ui.UITexts;
 import org.modelica.mdt.ui.refactoring.ui.wizards.RenameFunctionWizard;
 
 /** <p>action that is triggered from the editor context menu.</p>
-  * 
-  * <p>This action is declared in the <code>plugin.xml</code>.</p>
-  * 
-  * @author Leif Frenzel
-  */
+ * 
+ * <p>This action is declared in the <code>plugin.xml</code>.</p>
+ * 
+ * @author Leif Frenzel
+ */
 public class RenameFunction implements IEditorActionDelegate {
 
-  private static final String EXT_MO = "mo"; //$NON-NLS-1$
-  
-  private ISelection selection;
-  private IEditorPart targetEditor;
-  private boolean onPropertiesFile;
+	private static final String EXT_MO = "mo"; //$NON-NLS-1$
 
-  private RenameFunctionInfo info = new RenameFunctionInfo();
-  
-  
-  // interface methods of IEditorActionDelegate
-  /////////////////////////////////////////////
+	private ISelection selection;
+	private IEditorPart targetEditor;
+	private boolean onPropertiesFile;
 
-  public void setActiveEditor( final IAction action, 
-                               final IEditorPart targetEditor ) {
-    this.targetEditor = targetEditor;
-    onPropertiesFile = false;
-    IFile file = getFile();
-    if(    file != null 
-        && file.getFileExtension().equals( EXT_MO ) ) {
-      onPropertiesFile = true;
-    }                           
-  }
+	private RenameFunctionInfo info = new RenameFunctionInfo();
 
-  public void run( final IAction action ) {
-    if( !onPropertiesFile ) {
-      refuse();
-    } else {
-      if( selection != null && selection instanceof ITextSelection ) {
-        applySelection( ( ITextSelection )selection );
-        if( saveAll() ) {
-          openWizard();
-        }
-      }
-    }
-  }
 
-  public void selectionChanged( final IAction action, 
-                                final ISelection selection ) {
-    this.selection = selection;
-  }
-  
-  
-  // helping methods
-  //////////////////
+	// interface methods of IEditorActionDelegate
+	/////////////////////////////////////////////
 
-  private void applySelection( final ITextSelection textSelection ) {
-    info.setOldName( textSelection.getText() );
-    info.setNewName( textSelection.getText() );
-    info.setOffset( textSelection.getOffset() );
-    info.setSourceFile( getFile() );
-  }
+	public void setActiveEditor(final IAction action, final IEditorPart targetEditor) {
+		this.targetEditor = targetEditor;
+		onPropertiesFile = false;
+		IFile file = getFile();
+		if (file != null) {
+			String fileExtension = file.getFileExtension();
+			if (fileExtension != null && fileExtension.equals(EXT_MO)) {
+				onPropertiesFile = true;
+			}
+		}                           
+	}
 
-  private void refuse() {
-    String title = UITexts.renameFunction_refuseDlg_title;
-    String message = UITexts.renameFunction_refuseDlg_message;
-    MessageDialog.openInformation( getShell(), title, message );
-  }
+	public void run(final IAction action) {
+		if (!onPropertiesFile) {
+			refuse();
+		} 
+		else {
+			if (selection != null && selection instanceof ITextSelection) {
+				applySelection((ITextSelection)selection);
+				if (saveAll()) {
+					openWizard();
+				}
+			}
+		}
+	}
 
-  private static boolean saveAll() {
-    IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-    return IDE.saveAllEditors( new IResource[] { workspaceRoot }, false );
-  }
-  
-  private void openWizard() {
-    RefactoringProcessor processor = new RenameFunctionProcessor( info );
-    RenameFunctionRefactoring ref = new RenameFunctionRefactoring( processor );
-    RenameFunctionWizard wizard = new RenameFunctionWizard( ref, info );
-    RefactoringWizardOpenOperation op 
-      = new RefactoringWizardOpenOperation( wizard );
-    try {
-      String titleForFailedChecks = ""; //$NON-NLS-1$
-      op.run( getShell(), titleForFailedChecks );
-    } catch( final InterruptedException irex ) {
-      // operation was cancelled
-    }
-  }
+	public void selectionChanged(final IAction action, final ISelection selection) {
+		this.selection = selection;
+	}
 
-  private Shell getShell() {
-    Shell result = null;
-    if( targetEditor != null ) {
-      result = targetEditor.getSite().getShell();
-    } else {
-      result = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-    }
-    return result;
-  }
-  
-  private final IFile getFile() {
-    IFile result = null;
-    if( targetEditor instanceof ITextEditor )  {
-      ITextEditor editor = ( ITextEditor )targetEditor;
-      IEditorInput input = editor.getEditorInput();
-      if( input instanceof IFileEditorInput ) {
-        result = ( ( IFileEditorInput )input ).getFile();
-      }
-    }
-    return result;
-  }
+
+	// helper methods
+	//////////////////
+
+	private void applySelection(final ITextSelection textSelection) {
+		info.setOldName(textSelection.getText());
+		info.setNewName(textSelection.getText());
+		info.setOffset(textSelection.getOffset());
+		info.setSourceFile(getFile());
+	}
+
+	private void refuse() {
+		String title = UITexts.renameFunction_refuseDlg_title;
+		String message = UITexts.renameFunction_refuseDlg_message;
+		MessageDialog.openInformation(getShell(), title, message);
+	}
+
+	private static boolean saveAll() {
+		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		return IDE.saveAllEditors(new IResource[] { workspaceRoot }, false);
+	}
+
+	private void openWizard() {
+		RefactoringProcessor processor = new RenameFunctionProcessor(info);
+		RenameFunctionRefactoring ref = new RenameFunctionRefactoring(processor);
+		RenameFunctionWizard wizard = new RenameFunctionWizard(ref, info);
+		RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation(wizard);
+		try {
+			String titleForFailedChecks = ""; //$NON-NLS-1$
+			op.run( getShell(), titleForFailedChecks );
+		} 
+		catch (final InterruptedException irex) {
+			// operation was cancelled
+		}
+	}
+
+	private Shell getShell() {
+		Shell result = null;
+		if (targetEditor != null) {
+			result = targetEditor.getSite().getShell();
+		} 
+		else {
+			result = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		}
+		return result;
+	}
+
+	private final IFile getFile() {
+		IFile result = null;
+		if (targetEditor instanceof ITextEditor)  {
+			ITextEditor editor = (ITextEditor)targetEditor;
+			IEditorInput input = editor.getEditorInput();
+			if (input instanceof IFileEditorInput) {
+				result = ((IFileEditorInput)input).getFile();
+			}
+		}
+		return result;
+	}
 }
