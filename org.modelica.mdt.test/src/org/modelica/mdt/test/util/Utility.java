@@ -41,6 +41,9 @@
 
 package org.modelica.mdt.test.util;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -48,8 +51,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.concurrent.Semaphore;
-
-import junit.framework.Assert;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -71,10 +72,10 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
 import org.eclipse.ui.wizards.IWizardRegistry;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
-import org.modelica.mdt.core.IModelicaRoot;
-import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
 import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.IModelicaRoot;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IStandardLibrary;
 import org.modelica.mdt.core.ModelicaCore;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
@@ -105,17 +106,17 @@ public class Utility {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWizardRegistry wizardRegistry = workbench.getNewWizardRegistry();
 		IWizardDescriptor wizDesc = wizardRegistry.findWizard(wizardID);
-		Assert.assertNotNull("wizard " + wizardID + " not found", wizDesc);
+		assertNotNull("wizard " + wizardID + " not found", wizDesc);
 
 		IWorkbenchWizard wizard = null;
 		try {
 			wizard = wizDesc.createWizard();
 		}
 		catch (CoreException e) {
-			Assert.fail("Could not create " + wizardID +
-					" wizard, CoreException thrown\n" + e.getMessage());
+			fail("Could not create " + wizardID + " wizard, CoreException thrown\n" + e.getMessage());
 		}
-		Assert.assertNotNull(wizard);
+
+		assertNotNull(wizard);
 
 		wizard.init(workbench, selection);
 		IWorkbenchWindow activeWorkbenchWindow = workbench.getActiveWorkbenchWindow();
@@ -126,6 +127,7 @@ public class Utility {
 		final Semaphore sem = new Semaphore(0);
 
 		dialog.getShell().getDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				dialog.setBlockOnOpen(false);
 				dialog.open();
@@ -137,7 +139,7 @@ public class Utility {
 			sem.acquire();
 		}
 		catch (InterruptedException e) {
-			Assert.fail("interruped while waiting for dialog to open");
+			fail("interruped while waiting for dialog to open");
 		}
 
 		return wizard;
@@ -163,16 +165,16 @@ public class Utility {
 				new BasicFinder(new TestHierarchy(PlatformUI.getWorkbench().getDisplay()));
 
 		try {
-			return (Button) finder.find(new TextMatcher(buttonText));
+			return (Button)finder.find(new TextMatcher(buttonText));
 		}
 		catch (WidgetNotFoundException e) {
-			Assert.fail("Finish button not found.");
+			fail("Finish button not found.");
 		}
 		catch (MultipleWidgetsFoundException e) {
-			Assert.fail("Multiple finish buttons found.");
+			fail("Multiple finish buttons found.");
 		}
 
-		Assert.fail("this is not happening");
+		fail("this is not happening");
 		return null;
 	}
 
@@ -210,7 +212,7 @@ public class Utility {
 			}
 		}
 
-		Assert.fail("No modelica project named '" + name + "' found.");
+		fail("No modelica project named '" + name + "' found.");
 		return null; /* this is not happening */
 	}
 
@@ -224,6 +226,7 @@ public class Utility {
 
 		try {
 			widget = finder.find(new Matcher() {
+				@Override
 				public boolean matches(Widget w) {
 					Object widgetTag = w.getData("name");
 
@@ -290,7 +293,7 @@ public class Utility {
 			fileContent = file.getContents();
 		}
 		catch (CoreException e) {
-			Assert.fail("could not fetch contents of the created class");
+			fail("could not fetch contents of the created class");
 		}
 
 		byte[] buf = new byte[expectedContent.length()];
@@ -300,11 +303,11 @@ public class Utility {
 			int i = fileContent.read();
 
 			if (-1 != i) {
-				Assert.fail("file is to longer than expected");
+				fail("file is longer than expected");
 			}
 		}
 		catch (IOException e) {
-			Assert.fail("could not read contents of the file");
+			fail("could not read contents of the file");
 		}
 
 		return expectedContent.equals(new String(buf));
@@ -345,8 +348,7 @@ public class Utility {
 			}
 		}
 
-		Assert.fail("No modelica file named '" + fileName +
-				"' found in folder '" + folder.getElementName() + "'");
+		fail("No modelica file named '" + fileName + "' found in folder '" + folder.getElementName() + "'");
 		return null; /* this is not happening */
 	}
 
@@ -393,6 +395,11 @@ public class Utility {
 			catch (CompilerInstantiationException e) {
 				e.printStackTrace();
 			}
+		}
+
+		if (aList == null) {
+			System.err.println("Utility.goThroughStdlib(): stdlib.getPackages() returned null.");
+			return;
 		}
 
 		for (IModelicaElement elem : aList) {
