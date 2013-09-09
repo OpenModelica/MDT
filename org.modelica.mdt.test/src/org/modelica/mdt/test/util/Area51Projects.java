@@ -41,9 +41,10 @@
 
 package org.modelica.mdt.test.util;
 
-import java.io.InputStream;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
-import junit.framework.Assert;
+import java.io.InputStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -129,9 +130,7 @@ public class Area51Projects {
 				createModelicaProject();
 			}
 			catch (CoreException e) {
-				Assert.fail("error while creating modelica project '" +
-						MODELICA_PROJECT_NAME + "'\n" +						
-						e.getMessage());
+				fail("error while creating modelica project '" + MODELICA_PROJECT_NAME + "'\n" + e.getMessage());
 			}
 		}
 
@@ -140,9 +139,7 @@ public class Area51Projects {
 				createSimpleProject();
 			}
 			catch (CoreException e) {
-				Assert.fail("error while creating simple project '" +
-						SIMPLE_PROJECT_NAME + "'\n" +
-						e.getMessage());
+				fail("error while creating simple project '" + SIMPLE_PROJECT_NAME + "'\n" + e.getMessage());
 			}
 		}
 	}
@@ -201,7 +198,7 @@ public class Area51Projects {
 		IProject project = root.getProject(MODELICA_PROJECT_NAME);
 		IModelicaRoot modelicaRoot = ModelicaCore.getModelicaRoot();
 		IModelicaProject mproj = modelicaRoot.createProject(project);
-		Assert.assertNotNull("failed to create project", mproj);
+		assertNotNull("failed to create project", mproj);
 
 		modelica_project = mproj.getWrappedProject();
 
