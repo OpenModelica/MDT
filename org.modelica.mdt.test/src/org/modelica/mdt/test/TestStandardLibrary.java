@@ -240,7 +240,7 @@ public class TestStandardLibrary {
 		String d2rFilePath = D2R.getFilePath();
 		boolean d2rFilePathEmpty = d2rFilePath.equals("");
 		assertFalse("Empty path to the source file.", d2rFilePathEmpty);
-		sanityCheckRegion(pi.getLocation().getSourceRegion());
+		sanityCheckRegion(D2R.getLocation().getSourceRegion());
 
 		// check Modelica.Constants imports
 		foundSIimport = false;
