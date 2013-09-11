@@ -38,8 +38,8 @@ package org.modelica.mdt.core;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * Presents information on some elements definiton location in a source 
- * code file. More specificly this class provides the location of the beginning 
+ * Presents information on some elements definition location in a source 
+ * code file. More specifically this class provides the location of the beginning 
  * of the definition of the element in some file.
  * 
  * @author Adrian Pop
