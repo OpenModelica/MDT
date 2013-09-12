@@ -49,39 +49,37 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 import org.modelica.mdt.core.IModelicaClass;
+import org.modelica.mdt.core.IModelicaClass.Restriction;
 import org.modelica.mdt.core.IModelicaComponent;
 import org.modelica.mdt.core.IModelicaExtends;
 import org.modelica.mdt.core.IModelicaFile;
-import org.modelica.mdt.core.IModelicaImport;
-import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IModelicaFolder;
+import org.modelica.mdt.core.IModelicaImport;
 import org.modelica.mdt.core.IModelicaProject;
+import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.IStandardLibrary;
-import org.modelica.mdt.core.IModelicaClass.Restriction;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.internal.core.ErrorManager;
 
 /**
- * Implements ordering of modelica elements suitable for displaying 'em in the
+ * Implements ordering of modelica elements suitable for displaying them in the
  * tree view.
  * @author Adrian Pop
  * @author Homer Simpson
  */
-@SuppressWarnings("unchecked")
-public class ModelicaElementComparator extends ResourceComparator
-{
-	private static int PROJECT_ORDER 				= 1;
-	private static int FOLDER_ORDER 				= 2;
-	private static int EXTENDS_ORDER 				= 4;	
-	private static int PACKAGE_ORDER 				= 5;
-	private static int PUBLIC_COMPONENT_ORDER   	= 7;
-	private static int PROTECTED_COMPONENT_ORDER   	= 8;
-	private static int CLASS_ORDER 					= 6;
-	private static int MODELICA_FILE_ORDER			= 9;
-	private static int PLAIN_FILE_ORDER 			= 10;
-	private static int IMPORT_ORDER 				= 11;	
-	private static int STANDARD_LIBRARY_ORDER 		= 12;
-	private static int UNKOWN_TYPE_ORDER 			= Integer.MAX_VALUE;
+public class ModelicaElementComparator extends ResourceComparator {
+	private static final int PROJECT_ORDER = 1;
+	private static final int FOLDER_ORDER = 2;
+	private static final int EXTENDS_ORDER = 4;	
+	private static final int PACKAGE_ORDER = 5;
+	private static final int PUBLIC_COMPONENT_ORDER = 7;
+	private static final int PROTECTED_COMPONENT_ORDER = 8;
+	private static final int CLASS_ORDER = 6;
+	private static final int MODELICA_FILE_ORDER = 9;
+	private static final int PLAIN_FILE_ORDER = 10;
+	private static final int IMPORT_ORDER = 11;	
+	private static final int STANDARD_LIBRARY_ORDER = 12;
+	private static final int UNKOWN_TYPE_ORDER = Integer.MAX_VALUE;
 	
     /**
      * Constructor argument value that indicates to sort items by name.
@@ -94,7 +92,8 @@ public class ModelicaElementComparator extends ResourceComparator
     public final static int TYPE = 2;
 	
     /**
-     * Constructor argument value that indicates to sort items by extension.
+     * Constructor argument value that indicates to sort by our compare method
+     * and not use org.eclipse.ui.views.navigator.ResourceComparator.compare().
      */
     public final static int MODELICA = 3;
 
@@ -107,49 +106,38 @@ public class ModelicaElementComparator extends ResourceComparator
      * @param criteria the sort criterion to use: one of <code>NAME</code> or 
      *   <code>TYPE</code>
      */
-    public ModelicaElementComparator(int criteria) 
-    {
+    public ModelicaElementComparator(int criteria) {
         super(criteria);
         this.criteria = criteria;
     }
 	
 	@Override
-	public int category(Object element)
-	{
-		if (element instanceof IModelicaFolder)
-		{
+	public int category(Object element) {
+		if (element instanceof IModelicaFolder) {
 			return FOLDER_ORDER;
 		}
-		else if (element instanceof IModelicaClass)
-		{
-			/*
-			 * a class can be a package, sort package in their own category
-			 */
-			try
-			{
-				if (((IModelicaClass)element).getRestriction() == Restriction.PACKAGE)
-				{
+		else if (element instanceof IModelicaClass) {
+			// a class can be a package, sort package in their own category
+			try {
+				if (((IModelicaClass)element).getRestriction() == Restriction.PACKAGE) {
 					return PACKAGE_ORDER;
 				}
 			}			
-			catch (CompilerException e)
-			{
+			catch (CompilerException e) {
 				ErrorManager.showCompilerError(e);
-				/* we don't realy know what catagory this element is in */
+				// we don't really know what category this element is in
 				return UNKOWN_TYPE_ORDER;
 			}
 			catch (CoreException e)
 			{
 				ErrorManager.showCoreError(e);
-				/* we don't realy know what catagory this element is in */
+				// we don't really know what category this element is in
 				return UNKOWN_TYPE_ORDER;
 			}
 			return CLASS_ORDER;
 		}
-		else if (element instanceof IModelicaComponent)
-		{
-			switch (((IModelicaComponent)element).getVisibility())
-			{
+		else if (element instanceof IModelicaComponent) {
+			switch (((IModelicaComponent)element).getVisibility()) {
 			case PUBLIC:
 				return PUBLIC_COMPONENT_ORDER;
 			case PROTECTED:
@@ -158,37 +146,29 @@ public class ModelicaElementComparator extends ResourceComparator
 				return CLASS_ORDER;
 			}
 		}
-		else if (element instanceof IModelicaImport)
-		{
+		else if (element instanceof IModelicaImport) {
 			return IMPORT_ORDER;
 		}
-		else if (element instanceof IModelicaExtends)
-		{
+		else if (element instanceof IModelicaExtends) {
 			return EXTENDS_ORDER;			
 		}
-		else if (element instanceof IModelicaSourceFile)
-		{
+		else if (element instanceof IModelicaSourceFile) {
 			return MODELICA_FILE_ORDER;
 		}
-		else if (element instanceof IModelicaFile)
-		{
+		else if (element instanceof IModelicaFile) {
 			return PLAIN_FILE_ORDER;
 		}
-		else if (element instanceof IStandardLibrary)
-		{
+		else if (element instanceof IStandardLibrary) {
 			return STANDARD_LIBRARY_ORDER;
 		}
-		else if (element instanceof IModelicaProject)
-		{
+		else if (element instanceof IModelicaProject) {
 			return PROJECT_ORDER;
 		}
-		else if (element instanceof IResource)
-		{
+		else if (element instanceof IResource) {
 			return PLAIN_FILE_ORDER;
 		}
 
-		ErrorManager.logBug(UIPlugin.getSymbolicName(),
-				"element of unknow type encountered");
+		ErrorManager.logBug(UIPlugin.getSymbolicName(), "element of unknown type encountered");
 		return UNKOWN_TYPE_ORDER;
 	}
 	
@@ -213,10 +193,10 @@ public class ModelicaElementComparator extends ResourceComparator
      *  equal to the second element; and a positive number if the first
      *  element is greater than the second element
      */
-    public int compare(Viewer viewer, Object e1, Object e2) 
-    {
-    	if (criteria != MODELICA)
-    	{
+    @SuppressWarnings("unchecked")
+	@Override
+	public int compare(Viewer viewer, Object e1, Object e2) {
+    	if (criteria != MODELICA) {
     		return super.compare(viewer, e1, e2);
     	}
         int cat1 = category(e1);
@@ -232,14 +212,15 @@ public class ModelicaElementComparator extends ResourceComparator
         if (viewer == null || !(viewer instanceof ContentViewer)) {
             name1 = e1.toString();
             name2 = e2.toString();
-        } else {
-            IBaseLabelProvider prov = ((ContentViewer) viewer)
-                    .getLabelProvider();
+        } 
+        else {
+            IBaseLabelProvider prov = ((ContentViewer)viewer).getLabelProvider();
             if (prov instanceof ILabelProvider) {
-                ILabelProvider lprov = (ILabelProvider) prov;
+                ILabelProvider lprov = (ILabelProvider)prov;
                 name1 = lprov.getText(e1);
                 name2 = lprov.getText(e2);
-            } else {
+            } 
+            else {
                 name1 = e1.toString();
                 name2 = e2.toString();
             }
@@ -254,5 +235,4 @@ public class ModelicaElementComparator extends ResourceComparator
         // use the comparator to compare the strings
         return getComparator().compare(name1, name2);
     }
-	
 }
