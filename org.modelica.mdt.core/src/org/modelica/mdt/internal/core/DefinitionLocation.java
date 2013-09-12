@@ -41,15 +41,8 @@
 
 package org.modelica.mdt.internal.core;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.Region;
 import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.ISourceRegion;
 
@@ -64,9 +57,9 @@ public class DefinitionLocation implements IDefinitionLocation {
 	public DefinitionLocation(String path, int startLine, int startColumn, int endLine, int endColumn) {
 		this.path = new File(path);
 
-		//if (!this.path.exists()) {
-			//// TODO: this should not be, throw an exception
-		//}
+		if (!this.path.exists()) {
+			throw new RuntimeException(String.format("The path '%s' does not exist!", path));
+		}
 
 		this.sourceRegion = new DefinitionSourceRegion(startLine, startColumn, endLine, endColumn);
 	}
@@ -82,15 +75,14 @@ public class DefinitionLocation implements IDefinitionLocation {
 	}
 	
 	@Override
-	public String toString() {
-		String ret = "";
-		
+	public String toString() {		
 		int startLine = sourceRegion.getStartLine();
 		int startColumn = sourceRegion.getStartColumn();
 		int endLine = sourceRegion.getEndLine();
 		int endColumn = sourceRegion.getEndColumn();
 		
-		ret = "startLine = " + startLine + ", startColumn = " + startColumn + ", endLine = " + endLine + ", endColumn = " + endColumn;
+		String ret = String.format("startLine = %d, startColumn = %d, endLine = %d, endColumn = %d",
+				startLine, startColumn, endLine, endColumn);
 		
 		return ret;
 	}
