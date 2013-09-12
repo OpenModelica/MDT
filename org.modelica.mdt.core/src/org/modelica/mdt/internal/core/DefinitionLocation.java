@@ -49,7 +49,6 @@ import java.io.IOException;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.ISourceRegion;
@@ -95,20 +94,6 @@ public class DefinitionLocation implements IDefinitionLocation {
 		ret = "startLine = " + startLine + ", startColumn = " + startColumn + ", endLine = " + endLine + ", endColumn = " + endColumn;
 		
 		return ret;
-	}
-
-	/**
-	 * @author Adrian Pop
-	 * @deprecated
-	 */
-	@Deprecated
-	@Override
-	public IRegion getRegion() {
-		if (region == null) { 
-			computeRegion();
-		}
-
-		return region;
 	}
 
 	/**
