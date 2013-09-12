@@ -60,7 +60,6 @@ public class DefinitionLocation implements IDefinitionLocation {
 	private File path;
 	private ISourceRegion sourceRegion;
 
-	private Region region = null;
 
 	public DefinitionLocation(String path, int startLine, int startColumn, int endLine, int endColumn) {
 		this.path = new File(path);
@@ -95,65 +94,4 @@ public class DefinitionLocation implements IDefinitionLocation {
 		
 		return ret;
 	}
-
-	/**
-	 * @author Adrian Pop
-	 * @deprecated
-	 */	
-	@Deprecated
-	private void computeRegion() {
-		BufferedInputStream bis = null;
-
-		try {
-			bis = new BufferedInputStream(new FileInputStream(path));
-		}
-		catch (FileNotFoundException e) {
-			/*
-			 * we already checked in the constructor that path exists,
-			 * this this is not happening
-			 */
-			//TODO bug location
-		}
-
-		String contents = "";
-		boolean shouldBreak = false;
-		while (!shouldBreak) { // Read in contents of the file.
-			try {
-				int avail = bis.available();
-
-				if (avail == 0) {
-					shouldBreak = true;
-				}
-				else {
-					byte[] buf = new byte[avail];
-					bis.read(buf, 0, avail);
-
-					contents += new String(buf);
-				}
-			}
-			catch(IOException e) {
-				e.printStackTrace();
-				shouldBreak = true;
-			}
-		}
-
-		// Convert contents of the file to a document.
-		Document doc = new Document(contents);
-
-		/*
-		 * the default values that are used if exception is 
-		 * thrown in the code below 
-		 */
-		int startChar = 1;
-		int endChar = 1;
-		try {
-			startChar = doc.getLineOffset(sourceRegion.getStartLine() - 1) + sourceRegion.getStartColumn() - 1;
-			endChar = doc.getLineOffset(sourceRegion.getEndLine() - 1) + sourceRegion.getEndColumn();
-		}
-		catch (BadLocationException e) {
-			ErrorManager.logError(e);
-		}
-
-		region = new Region(startChar, endChar - startChar);
-	}	
 }
