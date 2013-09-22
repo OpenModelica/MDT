@@ -217,6 +217,10 @@ public class TestInnerClass {
 				case TYPE:
 					a_type = cls;
 					break;
+				case EXPANDABLE_CONNECTOR:
+					break;
+				case UNIONTYPE:
+					break;
 				}
 			}
 		}
