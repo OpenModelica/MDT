@@ -374,7 +374,7 @@
         </command>
       </toolbar>
     </menuContribution>
-    <menuContribution locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+    <menuContribution locationURI="popup:org.modelica.mdt.ui.view.ModelicaProjectsView">
       <command commandId="org.modelica.mdt.ui.actions.commandgraphopener"
                icon="icons/obj16/mo_file.gif"
                label="Generate Graph View"
@@ -383,12 +383,21 @@
     </menuContribution>
     <menuContribution locationURI="popup:org.modelica.mdt.ui.view.ModelicaProjectsView">
       <command commandId="org.modelica.mdt.ui.actions.commandsimulate"
+        icon="icons/obj16/mo_file.gif"
         label="Simulate"
         style="push">
       </command>
     </menuContribution>
-    <menuContribution locationURI="popup:popup:#TextEditorContext?after=additions">
+    <menuContribution locationURI="popup:org.modelica.mdt.ui.editor.EditorContext?after=additions">
+      <command commandId="org.modelica.mdt.ui.actions.commandgraphopener"
+      	       icon="icons/obj16/mo_file.gif"  
+               label="Generate Graph View"
+               style="push">
+      </command>
+    </menuContribution>
+    <menuContribution locationURI="popup:org.modelica.mdt.ui.editor.EditorContext?after=additions">
       <command commandId="org.modelica.mdt.ui.actions.commandsimulate"
+               icon="icons/obj16/mo_file.gif"
                label="Simulate"
                style="push">
       </command>
