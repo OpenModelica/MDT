@@ -56,6 +56,10 @@ public class GDBCoreValue extends GDBValue {
 		if (getGDBVariable().getVoidPointer() != null) {
 			setValue(ValueHelper.getAnyString(getGDBVariable().getVoidPointer(), getGDBVariable().getNewReferenceTypeName(),
 					getGDBVariable().getGDBStackFrame()));
+			if (getValue().equals("$$error$$"))
+			{
+				setValue(getGDBVariable().getVoidPointer());
+			}
 		} else {
 			if (getGDBVariable().getNewReferenceTypeName().equals(GDBHelper.STRING)) {
 				setValue(ValueHelper.getAnyString(getGDBVariable().getOriginalName(), getGDBVariable().getNewReferenceTypeName(),

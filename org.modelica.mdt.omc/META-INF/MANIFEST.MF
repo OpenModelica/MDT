@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Modelica Development Tooling OMC proxy
 Bundle-SymbolicName: org.modelica.mdt.omc; singleton:=true
-Bundle-Version: 0.7.29
+Bundle-Version: 0.7.30
 Bundle-Vendor: Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,

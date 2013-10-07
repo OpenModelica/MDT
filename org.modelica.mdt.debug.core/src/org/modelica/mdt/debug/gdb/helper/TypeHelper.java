@@ -80,10 +80,12 @@ public class TypeHelper {
 		} catch (MIException e) {
 			// TODO Auto-generated catch block
 			MDTDebugCorePlugin.log(null, e);
+			return GDBHelper.STRING;
 		} catch (Exception e) {
 			// TODO: handle exception
+			return GDBHelper.STRING;
 		}
-		return GDBHelper.REPLACEABLE_TYPE_ANY;
+		// return GDBHelper.REPLACEABLE_TYPE_ANY;
 	}
 
 }

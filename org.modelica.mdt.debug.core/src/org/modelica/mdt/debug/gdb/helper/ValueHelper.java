@@ -72,10 +72,12 @@ public class ValueHelper {
 			}
 		} catch (MIException e) {
 			MDTDebugCorePlugin.log(null, e);
+			return "$$error$$";
 		} catch (Exception e) {
 			// TODO: handle exception
+			return "$$error$$";
 		}
-		return "";
+		//return "";
 	}
 
 	/**
@@ -169,6 +171,7 @@ public class ValueHelper {
 	 */
 	public static String getListItem(String variableName, int item,
 			GDBStackFrame gdbStackFrame) {
+		String result = "";
 		// TODO Auto-generated method stub
 		try {
 			GDBDebugTarget gdbDebugTarget = gdbStackFrame.getGDBDebugTarget();
@@ -177,13 +180,15 @@ public class ValueHelper {
 			MIDataEvaluateExpression getListItemCmd = factory.createMIGetListItem(variableName, item);
 			getListItemCmd.setQuiet(true);
 			miSession.postCommand(getListItemCmd, gdbStackFrame);
-			return getListItemCmd.getMIDataEvaluateExpressionInfo().getExpression();
+			result = getListItemCmd.getMIDataEvaluateExpressionInfo().getExpression();
 		} catch (MIException e) {
 			MDTDebugCorePlugin.log(null, e);
+			result = "GDB ERROR:" + e.getMessage();
 		} catch (Exception e) {
 			// TODO: handle exception
+			result = "GDB ERROR:" + e.getMessage();
 		}
-		return "";
+		return result;
 	}
 	
 	/**
@@ -224,6 +229,7 @@ public class ValueHelper {
 	public static String getArrayElement(String variableName, int element,
 			GDBStackFrame gdbStackFrame) throws MIException {
 		// TODO Auto-generated method stub
+		String result;
 		try {
 			GDBDebugTarget gdbDebugTarget = gdbStackFrame.getGDBDebugTarget();
 			MISession miSession = gdbDebugTarget.getMISession();
@@ -231,13 +237,15 @@ public class ValueHelper {
 			MIDataEvaluateExpression getArrayElementCmd = factory.createMIGetArrayElement(variableName, element);
 			getArrayElementCmd.setQuiet(true);
 			miSession.postCommand(getArrayElementCmd, gdbStackFrame);
-			return getArrayElementCmd.getMIDataEvaluateExpressionInfo().getExpression();
+			result = getArrayElementCmd.getMIDataEvaluateExpressionInfo().getExpression();
 		} catch (MIException e) {
 			MDTDebugCorePlugin.log(null, e);
+			result = "GDB ERROR:" + e.getMessage();
 		} catch (Exception e) {
 			// TODO: handle exception
+			result = "GDB ERROR:" + e.getMessage();
 		}
-		return "";
+		return result;
 	}
 
 	/**

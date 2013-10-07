@@ -44,8 +44,11 @@ public class RenameFunction implements IEditorActionDelegate {
 		IFile file = getFile();
 		if (file != null) {
 			String fileExtension = file.getFileExtension();
-			if (fileExtension != null && fileExtension.equals(EXT_MO)) {
-				onPropertiesFile = true;
+			if (fileExtension != null)
+			{
+				if (fileExtension.equals(EXT_MO)) {
+					onPropertiesFile = true;
+				}
 			}
 		}                           
 	}
