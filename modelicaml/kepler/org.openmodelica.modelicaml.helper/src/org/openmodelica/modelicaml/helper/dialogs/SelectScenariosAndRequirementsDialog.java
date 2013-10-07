@@ -432,7 +432,6 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 			public void mouseDown(MouseEvent e) {
 				for (TreeItem treeItem : treeItems) {
 					
-					
 					// remove from to maps.
 					TreeItemData data = (TreeItemData) treeItem.getData();
 					if (data.isRequirement) {
@@ -442,7 +441,6 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 							treeItem.setChecked(false);
 							
 							// remove from lists
-							
 							if (data.getTestScenarioElement() != null) {
 								if (mode == Constants.MODE_VEM_GENERATION) {
 									removeFromTestScenarioToRequirementsMap(data.getTestScenarioElement(), data.getRequirementElement());
@@ -454,7 +452,6 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 								selectedRequirements.remove(data.getRequirementElement());
 							}
 						}
-						
 					}
 					else if (data.isTestScenario) {
 						
@@ -569,9 +566,14 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 			
 			// sort requirements by requirement id
 			List<Element> allReqSorted= ModelicaMLServices.getSortedByRequirementId(this.requirements);
+			boolean areAllPreselected = true; // indicates wheather all requirements are preselected
 			for (Element req : allReqSorted) {
-				createRequirementTreeItem(allReqRoot, req);
+				boolean isChecked = createRequirementTreeItem(allReqRoot, req);
+				if (!isChecked) {
+					areAllPreselected = false;
+				}
 			}
+			allReqRoot.setChecked(areAllPreselected);
 		}
 	}
 	
@@ -819,8 +821,8 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 	 * RELATIONS DISCOVERY MODE
 	 */
 
-	private void createRequirementTreeItem(TreeItem parentItem, Element req){
-		
+	private boolean createRequirementTreeItem(TreeItem parentItem, Element req){
+		boolean isChecked = false;
 		if (mode == Constants.MODE_SCENARIOS_TO_REQUIREMENTS_RELATION_DISCOVERY || mode == Constants.MODE_AUTOMATIC_SCENARIO_BASED_VERIFICATION) {
 		
 			String prefix = requirementNamePrefix;
@@ -853,7 +855,11 @@ public class SelectScenariosAndRequirementsDialog extends TitleAreaDialog {
 			prefix = prefix + ModelicaMLServices.getRequirementID(req) + " - ";
 			reqItem.setText(prefix + ((NamedElement)req).getName()  + "  ("+((NamedElement)req.getOwner()).getQualifiedName()+")");
 			reqItem.setData(reqData);
+			
+			isChecked = reqItem.getChecked();
 		}
+		
+		return isChecked;
 	}
 	
 	
