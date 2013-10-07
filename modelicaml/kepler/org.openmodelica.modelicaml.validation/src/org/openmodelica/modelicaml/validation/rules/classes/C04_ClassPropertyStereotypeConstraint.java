@@ -94,9 +94,16 @@ public class C04_ClassPropertyStereotypeConstraint extends AbstractModelConstrai
 					/*
 					 * Check if type is defined
 					 */
-					if(propertyType == null){
+//					if(propertyType == null){
+//						return ctx.createFailureStatus(new Object[] { Constants.validationKeyWord_MISSING + ": Type for '" +((NamedElement)eObj).getName()+"'." });
+//					}
+					if(propertyType != null && propertyType.getName() != null){
+						// ok
+					}
+					else {
 						return ctx.createFailureStatus(new Object[] { Constants.validationKeyWord_MISSING + ": Type for '" +((NamedElement)eObj).getName()+"'." });
 					}
+
 					
 					/*
 					 * Check the type stereotype compliance

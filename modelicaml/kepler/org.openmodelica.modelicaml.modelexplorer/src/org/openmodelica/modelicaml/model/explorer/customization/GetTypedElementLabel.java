@@ -41,6 +41,7 @@ import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.TypedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
+import org.openmodelica.modelicaml.common.validation.services.ModelicaMLMarkerSupport;
 import org.openmodelica.modelicaml.common.valuebindings.helpers.BindingsData;
 
 // TODO: Auto-generated Javadoc
@@ -86,21 +87,21 @@ public class GetTypedElementLabel implements IJavaModelQuery<TypedElement, Strin
 			
 			String prefixString = "";
 			
-			Object visibility = context.getValue(stereotype, "visibility");
+			Object visibility = context.getValue(stereotype, Constants.propertyName_visibility);
 			if (visibility instanceof EnumerationLiteral && !((EnumerationLiteral)visibility).getName().equals("public")) {
 //				prefixString = prefixString + ( (EnumerationLiteral)visibility).getName() + " "; 
 				prefixString = prefixString + "# "; 
 			}
 			
-			Object flowFlag = context.getValue(stereotype, "flowFlag");
+			Object flowFlag = context.getValue(stereotype, Constants.propertyName_flowFlag);
 			if (flowFlag instanceof EnumerationLiteral && !((EnumerationLiteral)flowFlag).getName().equals(UNDEFINED)) {
 				prefixString = prefixString + ( (EnumerationLiteral)flowFlag).getName() + " "; //.substring(0,1) + "/ ";
 			}
-			Object variability = context.getValue(stereotype, "variability");
+			Object variability = context.getValue(stereotype, Constants.propertyName_variability);
 			if (variability != null && !((EnumerationLiteral)variability).getName().equals("continuous")) {
 				prefixString = prefixString + ((EnumerationLiteral)variability).getName() + " "; //.substring(0,1) + "/ ";
 			}
-			Object causality = context.getValue(stereotype, "causality");
+			Object causality = context.getValue(stereotype, Constants.propertyName_causality);
 			if (causality instanceof EnumerationLiteral && !((EnumerationLiteral)causality).getName().equals(UNDEFINED)) {
 				prefixString = prefixString + ( (EnumerationLiteral)causality).getName() + " "; //.substring(0,1) + "/ ";
 			}
@@ -111,11 +112,13 @@ public class GetTypedElementLabel implements IJavaModelQuery<TypedElement, Strin
 			}
 			
 			Type type = context.getType();
-			if (type != null) {
+			if (type != null && type.getName()!=null) {
 				//name = type.getName().replaceFirst("Modelica", "") + " " + name;
 				name = prefixString + type.getName().replaceFirst("Modelica", "") + arraySizeString + " " + name;
 			}
 			else {
+				// generate marker
+				ModelicaMLMarkerSupport.generateMarker(Constants.validationKeyWord_NOT_VALID + ": type reference", "error", context, Constants.MARKERTYPE_VALIDATION_PROBLEM);
 				name = prefixString + arraySizeString + " " + name;
 			}
 			
@@ -141,7 +144,7 @@ public class GetTypedElementLabel implements IJavaModelQuery<TypedElement, Strin
 			if (stereotype != null) {
 				String prefixString = "";
 				
-				Object visibility = context.getValue(stereotype, "visibility");
+				Object visibility = context.getValue(stereotype, Constants.propertyName_visibility);
 				if (visibility instanceof EnumerationLiteral && !((EnumerationLiteral)visibility).getName().equals("public")) {
 //					prefixString = prefixString + ( (EnumerationLiteral)visibility).getName() + " "; 
 					prefixString = prefixString + "# "; 
@@ -155,7 +158,7 @@ public class GetTypedElementLabel implements IJavaModelQuery<TypedElement, Strin
 //				if (variability != null && !((EnumerationLiteral)variability).getName().equals("continuous")) {
 //					prefixString = prefixString + ((EnumerationLiteral)variability).getName() + " "; //.substring(0,1) + "/ ";
 //				}
-				Object causality = context.getValue(stereotype, "causality");
+				Object causality = context.getValue(stereotype, Constants.propertyName_causality);
 				if (causality instanceof EnumerationLiteral && !((EnumerationLiteral)causality).getName().equals(UNDEFINED)) {
 					prefixString = prefixString + ( (EnumerationLiteral)causality).getName() + " "; //.substring(0,1) + "/ ";
 				}
@@ -194,7 +197,7 @@ public class GetTypedElementLabel implements IJavaModelQuery<TypedElement, Strin
 			if (stereotype != null) {
 				
 				String prefixString = "";
-				Object visibility = context.getValue(stereotype, "visibility");
+				Object visibility = context.getValue(stereotype, Constants.propertyName_visibility);
 				if (visibility instanceof EnumerationLiteral && !((EnumerationLiteral)visibility).getName().equals("public")) {
 //					prefixString = prefixString + ( (EnumerationLiteral)visibility).getName() + " "; 
 					prefixString = prefixString + "# "; 
@@ -263,7 +266,7 @@ public class GetTypedElementLabel implements IJavaModelQuery<TypedElement, Strin
 	 * @return the boolean
 	 */
 	private Boolean hasArraySize(TypedElement element, Stereotype stereotype){
-		EList<String> modList = (EList<String>) element.getValue(stereotype, "arraySize");
+		EList<String> modList = (EList<String>) element.getValue(stereotype, Constants.propertyName_arraySize);
 		if (modList != null && modList.size() > 0) {
 			for (String string : modList) {
 				if (!string.trim().equals("")) {
