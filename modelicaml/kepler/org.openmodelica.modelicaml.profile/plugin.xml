@@ -3212,6 +3212,7 @@
             provider="OpenModelica Project">
       </library>
    </extension>
+   <!--
    <extension
          point="org.eclipse.papyrus.uml.extensionpoints.UMLLibrary">
       <library
@@ -3222,6 +3223,7 @@
             provider="OpenModelica Project">
       </library>
    </extension>
+   -->
    <extension
          point="org.eclipse.papyrus.uml.extensionpoints.UMLLibrary">
       <library
