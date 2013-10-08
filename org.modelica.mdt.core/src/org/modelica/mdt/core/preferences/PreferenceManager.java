@@ -85,6 +85,7 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	public static final String OMC_COMMAND_LINE_PARAMETERS = "OMCCommandLineParameters";
 	public static final String OMC_LIBRARIES = "OMCLibraries";
 	public static final String PREVENT_DUPLICATE_CLASS_NAMES = "PreventDuplicateClassNames";
+	public static final String GDB_MAX_STACK_DEPTH = "OMCGDBMaxStackDepth";
 	
 	protected final static String EDITOR_MATCHING_BRACKETS="matchingBrackets";
 	protected final static String EDITOR_MATCHING_BRACKETS_COLOR="matchingBracketsColor";
@@ -137,6 +138,7 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 		
 		store.setDefault(OMC_COMMAND_LINE_PARAMETERS, "");
 		store.setDefault(OMC_LIBRARIES, "Modelica");
+		store.setDefault(GDB_MAX_STACK_DEPTH, "-1");
 		
 		store.setDefault(EDITOR_MATCHING_BRACKETS, true);
 		PreferenceConverter.setDefault(store, EDITOR_MATCHING_BRACKETS_COLOR, new RGB(192, 192, 192));		
@@ -287,4 +289,12 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	 public static boolean getPreventDuplicateClassNames() {
 		 return getStore().getBoolean(PREVENT_DUPLICATE_CLASS_NAMES);
 	 }
+	 
+     /**
+	  * @return current setting for
+	  */
+	 public static String getOMCGDBMaxStackDepth() {
+		 return getStore().getString(GDB_MAX_STACK_DEPTH);
+	 }
+
 }

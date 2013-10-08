@@ -77,6 +77,7 @@ public class ModelicaPreferencePage	extends PreferencePage
 	private Text omcIgnoreDirectoriesAndFiles;
 	private Text omcCommandLineParameters;
 	private Text omcLibraries;
+	private Text omcGDBMaxStakDepth;
 	
 	private Button browseButton;
 	
@@ -328,6 +329,21 @@ public class ModelicaPreferencePage	extends PreferencePage
 		data.grabExcessHorizontalSpace = true;
 		preventDuplicateClassNames.setLayoutData(data);
 		preventDuplicateClassNames.setSelection(PreferenceManager.getPreventDuplicateClassNames());
+
+		// 'MDT GDB Max Stack Depth' group
+		/* dummy label for space */
+		new Label(parent, SWT.NONE);
+		group = new Group(parent, SWT.SHADOW_ETCHED_IN);
+		group.setText("MDT GDB Max Stack Depth (default -1 [no limit])");
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.grabExcessHorizontalSpace = true;
+		group.setLayoutData(data);
+		layout = new GridLayout();
+		group.setLayout(layout);
+		omcGDBMaxStakDepth = new Text(group, SWT.SINGLE | SWT.BORDER | SWT.LEFT);
+		omcGDBMaxStakDepth.setText(PreferenceManager.getOMCGDBMaxStackDepth());		
+		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+		omcGDBMaxStakDepth.setLayoutData(data);
 		
 		return parent;
 	}

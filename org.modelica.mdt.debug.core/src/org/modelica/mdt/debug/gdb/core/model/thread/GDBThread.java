@@ -44,6 +44,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
+import org.modelica.mdt.core.preferences.PreferenceManager;
 import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.core.launcher.IMDTConstants;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
@@ -105,7 +106,9 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 */
 	public List<GDBStackFrame> fGDBStackFrames = null;
 	private GDBStackFrame fCurrentGDBStackFrame = null;
-	private final static int MAX_STACK_DEPTH = 100;
+    /* get it from preferences and if is -1 assign it inside getStackInfoDepth! */
+	private static int MAX_STACK_DEPTH = 
+			Integer.parseInt(PreferenceManager.getOMCGDBMaxStackDepth());
 	private Boolean fRefreshStackFrames = true;
 	public enum ExecuteCommand {
 		EXECNEXT,
@@ -201,7 +204,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 					try {
 						// get the stack depth
 						int depth = getStackInfoDepth();
-						if (depth >= getMaxStackDepth())
+						if (depth > getMaxStackDepth())
 							depth = getMaxStackDepth() - 1;
 						// get the stack frames from GDB
 						MIFrame[] frames = getStackFrames(0, depth - 1);
@@ -383,7 +386,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	/**
 	 * @return
 	 */
-	public int getStackInfoDepth() {
+	public int getStackInfoDepth() { 
 		// TODO Auto-generated method stub
 		int stackDepth = 0;
 		try {
@@ -418,11 +421,14 @@ public class GDBThread extends GDBDebugElement implements IThread {
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				MDTDebugCorePlugin.log(null, e);
+				stackDepth = 1;
 			}
 		} catch (MIException e) {
 			// 1 is safe to return
-			return 1;
+			stackDepth = 1;
 		}
+		if (MAX_STACK_DEPTH < 0)
+			MAX_STACK_DEPTH = stackDepth;
 		return stackDepth;
 	}
 
