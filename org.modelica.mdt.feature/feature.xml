@@ -2,7 +2,7 @@
 <feature
       id="org.modelica.mdt"
       label="Modelica Development Tooling"
-      version="0.7.31"
+      version="0.7.32"
       provider-name="Open Source Modelica Consortium (OpenModelica@ida.liu.se)">
 
    <description url="http://www.OpenModelica.org">
@@ -22,7 +22,7 @@ this software and other related projects.
    </description>
 
    <copyright url="http://www.OpenModelica.org">
-      Copyright (c) 2005-2011, 
+      Copyright (c) 2005-2013, 
 Open Source Modelica Consortium (OSMC),
 Programming Environments Laboratory (PELAB),
 Department of Computer and Information Science (IDA), 
@@ -31,7 +31,7 @@ Linköpings University (LiU).
 
    <license url="http://www.ida.liu.se/~pelab/modelica/OpenModelica/MDT/COPYING.html">
       The Modelica Development Tooling (MDT) software is distributed under the conditions specified below.
-Copyright (c) 2005-2011, 
+Copyright (c) 2005-2013, 
 The MDT Team (Authors): 
 Adrian Pop [Adrian.Pop@liu.se],
 Adeel Asghar [Adeel.Asghar@liu.se] 
@@ -74,42 +74,42 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
          id="org.modelica.mdt.core"
          download-size="0"
          install-size="0"
-         version="0.7.31"
+         version="0.7.32"
          unpack="false"/>
 
    <plugin
          id="org.modelica.mdt.ui"
          download-size="0"
          install-size="0"
-         version="0.7.31"
+         version="0.7.32"
          unpack="false"/>
 
    <plugin
          id="org.modelica.mdt.omc"
          download-size="0"
          install-size="0"
-         version="0.7.31"
+         version="0.7.32"
          unpack="false"/>
 
    <plugin
          id="org.modelica.mdt.debug.core"
          download-size="0"
          install-size="0"
-         version="0.7.31"
+         version="0.7.32"
          unpack="false"/>
 
    <plugin
          id="org.modelica.mdt.debug.ui"
          download-size="0"
          install-size="0"
-         version="0.7.31"
+         version="0.7.32"
          unpack="false"/>
 
    <plugin
          id="org.modelica.mdt.breakpoint"
          download-size="0"
          install-size="0"
-         version="0.7.31"
+         version="0.7.32"
          unpack="false"/>
 
 </feature>

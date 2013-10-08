@@ -106,7 +106,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 */
 	public List<GDBStackFrame> fGDBStackFrames = null;
 	private GDBStackFrame fCurrentGDBStackFrame = null;
-    /* get it from preferences and if is -1 assign it inside getStackInfoDepth! */
+    /* get it from preferences and if is -1 use getStackInfoDepth! */
 	private static int MAX_STACK_DEPTH = 
 			Integer.parseInt(PreferenceManager.getOMCGDBMaxStackDepth());
 	private Boolean fRefreshStackFrames = true;
@@ -204,7 +204,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 					try {
 						// get the stack depth
 						int depth = getStackInfoDepth();
-						if (depth > getMaxStackDepth())
+						if (getMaxStackDepth() > 0 && depth > getMaxStackDepth())
 							depth = getMaxStackDepth() - 1;
 						// get the stack frames from GDB
 						MIFrame[] frames = getStackFrames(0, depth - 1);
@@ -427,8 +427,6 @@ public class GDBThread extends GDBDebugElement implements IThread {
 			// 1 is safe to return
 			stackDepth = 1;
 		}
-		if (MAX_STACK_DEPTH < 0)
-			MAX_STACK_DEPTH = stackDepth;
 		return stackDepth;
 	}
 
