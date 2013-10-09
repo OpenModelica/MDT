@@ -332,7 +332,7 @@ public class CommandFactory {
 	 * @return MIDataEvaluateExpression
 	 */
 	public MIDataEvaluateExpression createMIGetListItem(String expression, int index) {
-		return new MIDataEvaluateExpression("((long (*) (long, long, long)) mmc_gdb_listGet)(threadData, " + expression + ", " + index + ")");
+		return new MIDataEvaluateExpression("((long (*) (long, long, long)) mmc_gdb_listGet)(0, " + expression + ", " + index + ")");
 	}
 	
 	/* Record Manipulation Commands */
@@ -352,7 +352,7 @@ public class CommandFactory {
 	 * @return MIDataEvaluateExpression
 	 */
 	public MIDataEvaluateExpression createMIGetArrayElement(String expression, int index) {
-		return new MIDataEvaluateExpression("((long (*) (long, long, long)) mmc_gdb_arrayGet)(threadData, " + expression + ", " + index + ")");
+		return new MIDataEvaluateExpression("((long (*) (long, long, long)) mmc_gdb_arrayGet)(0, " + expression + ", " + index + ")");
 	}
 	
 	/**

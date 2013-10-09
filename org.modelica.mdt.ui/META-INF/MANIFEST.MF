@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Modelica Development Tooling UI
 Bundle-SymbolicName: org.modelica.mdt.ui; singleton:=true
-Bundle-Version: 0.7.32
+Bundle-Version: 0.7.33
 Bundle-Activator: org.modelica.mdt.ui.UIPlugin
 Require-Bundle: org.modelica.mdt.core,
  org.eclipse.ui,
