@@ -251,6 +251,8 @@ public class TraceabilityView extends ViewPart {
 		hookDoubleClickAction();
 		contributeToActionBars();
 		
+		// add a selection provider.
+		getSite().setSelectionProvider(viewer);
 		
 		// double click for opening/closing the sub tree
 		viewer.addOpenListener(new IOpenListener() {

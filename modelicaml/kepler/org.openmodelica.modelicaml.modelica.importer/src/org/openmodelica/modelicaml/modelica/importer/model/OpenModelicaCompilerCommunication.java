@@ -457,7 +457,7 @@ public class OpenModelicaCompilerCommunication {
 		String reply = executeCommand("getInheritanceCount(" + className + ")");
 		reply = getCountValue(reply);
 		
-		if (reply != null && !ModelicaMLServices.containsOMCErrorMessage(reply)) {
+		if (reply != null && !reply.isEmpty() && !ModelicaMLServices.containsOMCErrorMessage(reply)) {
 			Integer count = Integer.valueOf(reply.trim());
 			if ( count != null ) {
 				return count;

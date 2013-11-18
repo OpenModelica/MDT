@@ -113,6 +113,7 @@ import org.eclipse.uml2.uml.Property;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.EditorServices;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.common.utls.ResourceManager;
 import org.openmodelica.modelicaml.modelexplorer.ModelExplorerPage;
 import org.openmodelica.modelicaml.modelica.importer.Activator;
@@ -316,8 +317,6 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 	}
 	
 	
-	
-	
 	/**
 	 * The constructor.
 	 */
@@ -353,6 +352,8 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 		hookDoubleClickAction();
 		contributeToActionBars();
 		
+		// add a selection provider.
+		getSite().setSelectionProvider(viewer);
 
 //		// get Papyrus Model Explorer
 //		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(Constants.VIEW_PAPYRUS_MODELEXPLORER);
@@ -487,12 +488,12 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 			manager.add(new Separator());
 		}
 		
-		manager.add(new Separator());
+//		manager.add(new Separator());
 		
-		drillDownAdapter.addNavigationActions(manager);
+//		drillDownAdapter.addNavigationActions(manager);
+		
 		// Other plug-ins can contribute there actions here
 //		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
@@ -585,7 +586,7 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 		        				message = message + "Number of loaded extends relations: " + loadedExtendsRelationsNumber + "\n";
 		        				
 		        				boolean isError = loadedClassesNumber == 0;
-		        				DialogMessage dialog = new DialogMessage(getSite().getShell(), "Modelica Model Loading Report", null, message, isError);
+		        				DialogMessage dialog = new DialogMessage(new Shell(), "Modelica Models Synchronization Report", null, message, isError);
 		        				dialog.open();
 	        				}
 	        			}
@@ -952,7 +953,7 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 	        					message = message + logEntry + "\n"; 
 	        				}
 	        				
-	        				DialogMessage dialog = new DialogMessage(getSite().getShell(), "Modelica Model Proxies Synchronization Report", null, message, false);
+	        				DialogMessage dialog = new DialogMessage(new Shell(), "Modelica Model Proxies Synchronization Report", null, message, false);
 	        				dialog.open();
 	        			}
 	        		});
@@ -1013,7 +1014,7 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 			public void run() {
 				
 				if (!EditorServices.isVisiblePapyrusModelExplorerView()) {
-					MessageDialog.openError(getSite().getShell(), "Modelica Model Proxies Synchronization Error", 
+					MessageDialog.openError(ModelicaMLServices.getShell(), "Modelica Model Proxies Synchronization Error", 
 							"When synchronizing proxies the Model Explorer View must be visible " +
 							"so that the viewer selection can be reset in order to avoid parallel access to " +
 							"proxies that are displayed in Properties View and are modified by " +
@@ -1198,8 +1199,8 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 				}
 			}
 		};
-		actionGenerateOMCMarkers.setText("Show OMC Errors");
-		actionGenerateOMCMarkers.setToolTipText("Show OMC Errors");
+		actionGenerateOMCMarkers.setText("Show OMC errors");
+		actionGenerateOMCMarkers.setToolTipText("Show OMC errors");
 		// set default 
 		actionGenerateOMCMarkers.setChecked(true);
 		treeBuilder.setCreateOMCMarker(actionGenerateOMCMarkers.isChecked());
@@ -1234,8 +1235,6 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 		
 		
 		
-		
-		
 		actionValidateProxies = new Action("actionValidateProxies", 2) {
 			public void run() {
 				if (actionValidateProxies.isChecked()) {
@@ -1246,15 +1245,14 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 				}
 			}
 		};
-		actionValidateProxies.setText("Mark Inconsistent ModelicaML Proxies");
-		actionValidateProxies.setToolTipText("Mark Redundant Proxies");
+		actionValidateProxies.setText("Mark inconsistent ModelicaML proxies");
+		actionValidateProxies.setToolTipText("Mark inconsistent ModelicaML proxies");
 		// set default 
 		actionValidateProxies.setChecked(true);
 		treeBuilder.setValidateProxies(actionValidateProxies.isChecked());
 		
 		
-		
-		
+				
 		
 		actionDecorateTreeItems = new Action("actionDecorateTreeItems", 2) {
 			public void run() {
@@ -1266,8 +1264,8 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 				}
 			}
 		};
-		actionDecorateTreeItems.setText("Decorate Items (disable it for large models)");
-		actionDecorateTreeItems.setToolTipText("Decorate Items (disable it for large models)");
+		actionDecorateTreeItems.setText("Decorate items (disable it for large models)");
+		actionDecorateTreeItems.setToolTipText("Decorate items (disable it for large models)");
 		// set default 
 		actionDecorateTreeItems.setChecked(true);
 		labelProvider.setDecorateItem(true);
@@ -1290,7 +1288,7 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 	            	Display.getDefault().asyncExec(new Runnable() {
 	        			public void run() {
 	        				
-	        				MessageDialog.openError(getSite().getShell(), "ModelicaML <-> Modelica Models Synchronization Error", "Could not complete the loading of ModelicaML Proxies.");
+	        				MessageDialog.openError(ModelicaMLServices.getShell(), "ModelicaML <-> Modelica Models Synchronization Error", "Could not complete the loading of ModelicaML proxies.");
 	        			}
 	        		});
 	            	}
@@ -1311,7 +1309,7 @@ public class ModelicaOMCCodeViewer extends ViewPart implements IGotoMarker {
 					 * NOTE: The very first time the user double clicks on the root tree item: 
 					 * - configure the tree builder 
 					 * - clear compiler, load models
-					 * * TODO: check if it is safe to rely on the fact that the ModelicaML model is set or not set in the tree builder?!  
+					 * TODO: check if it is safe to rely on the fact that the ModelicaML model is set or not set in the tree builder?!  
 					 * TODO: now if the root node is expanded we clear and load omc each time ... how to make it better? 
 					 */
 					if (treeBuilder.getModelicaMLModel() == null || obj == treeRoot) {

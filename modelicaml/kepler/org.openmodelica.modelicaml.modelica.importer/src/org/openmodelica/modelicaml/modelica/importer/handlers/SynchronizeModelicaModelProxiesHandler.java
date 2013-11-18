@@ -59,12 +59,14 @@ import org.eclipse.papyrus.infra.core.services.ServicesRegistry;
 import org.eclipse.papyrus.uml.tools.model.UmlModel;
 import org.eclipse.papyrus.uml.tools.model.UmlUtils;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.NamedElement;
 import org.openmodelica.modelicaml.common.constants.Constants;
 import org.openmodelica.modelicaml.common.dialogs.DialogMessage;
 import org.openmodelica.modelicaml.common.services.EditorServices;
+import org.openmodelica.modelicaml.common.services.ModelicaMLServices;
 import org.openmodelica.modelicaml.modelica.importer.creators.ModelicaMLElementsCreator;
 import org.openmodelica.modelicaml.modelica.importer.dialogs.SynchronizeOptionsDialog;
 import org.openmodelica.modelicaml.modelica.importer.model.ClassItem;
@@ -151,7 +153,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 	        				message = message + "Number of loaded extends relations: " + loadedExtendsRelationsNumber + "\n";
 	        				
 	        				boolean isError = loadedClassesNumber == 0;
-	        				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Modelica Model Loading Report", null, message, isError);
+	        				DialogMessage dialog = new DialogMessage(new Shell(), "Modelica Models Synchronization Report", null, message, isError);
 	        				dialog.open();
         				}
         			}
@@ -358,13 +360,12 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
         					message = message + logEntry + "\n"; 
         				}
         				
-        				DialogMessage dialog = new DialogMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Modelica Model Proxies Synchronization Report", null, message, false);
+        				DialogMessage dialog = new DialogMessage(new Shell(), "Modelica Model Proxies Synchronization Report", null, message, false);
         				dialog.open();
         				
         				
         				// start the proxies validation job.
         				actionValidateProxies();
-        				
         			}
         		});
             }
@@ -464,7 +465,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
 						invalideClassesString = invalideClassesString  + "             -" + invalideClass.getQName() + "\n";
 					}
 					message = message + invalideClassesString;
-					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message);
+					MessageDialog.openError(ModelicaMLServices.getShell(), title, message);
 				}
 			}
 			
@@ -514,7 +515,7 @@ public class SynchronizeModelicaModelProxiesHandler implements IHandler {
     					treeBuilder.validateProxies(iProject);
     				}
     				else {
-    					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
+    					MessageDialog.openError(ModelicaMLServices.getShell(), 
     						"ModelicaML Model Access Error", 
     						"Cannot acceess the ModelicaML model. " +
     						"Please make sure that the ModelicaML model is open in editor.");

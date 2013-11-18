@@ -113,13 +113,39 @@ public class ModelExplorerView extends org.eclipse.papyrus.views.modelexplorer.M
 				}
 			}
 			
-			// now register all other
+			// now register all other required
 			for (MetamodelView metamodelView : registryDefaultCustomizations) {
 				if (!metamodelView.getName().startsWith("ModelicaML")) {
 					Activator.getDefault().getCustomizationManager().registerCustomization(metamodelView);
-//					System.err.println("ModelExplorerView: " + metamodelView.getName());
 				}
 			}
+			
+			/*
+			 * In addition add some Papyrus default customizations. 
+			 * However, some slow down the UML::Property type selection dialog. TBD
+			 */
+//			for (MetamodelView metamodelView : registryDefaultCustomizations) {
+////				System.err.println("ModelExplorerView: " + metamodelView.getName());
+//				
+//				if (	!metamodelView.getName().startsWith("ModelicaML") && 
+//						(
+//						metamodelView.getName().startsWith("UMLPapyrusDefault") 
+//						|| metamodelView.getName().startsWith("SimpleUML")
+//						|| metamodelView.getName().startsWith("UMLFacetDefaultBrowser")
+//						|| metamodelView.getName().startsWith("Notation")
+//						|| metamodelView.getName().startsWith("PapyrusNotation")
+////						|| metamodelView.getName().startsWith("PapyrusPages")
+////						|| metamodelView.getName().startsWith("PapyrusEcoreBrowser")
+////						|| metamodelView.getName().startsWith("constraints")
+////						|| metamodelView.getName().startsWith("ui")
+////						|| metamodelView.getName().startsWith("environment")
+////						|| metamodelView.getName().startsWith("context")
+//						)
+//						) {
+////					System.err.println("ACTIVATED: " + metamodelView.getName());
+//					Activator.getDefault().getCustomizationManager().registerCustomization(metamodelView);
+//				}
+//			}
 			
 //			System.err.println("\nLoading customizations");
 			
