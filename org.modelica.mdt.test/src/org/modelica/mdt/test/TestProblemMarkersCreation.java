@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linkï¿½pings universitet, Department of
+ * Copyright (c) 2005, Linköpings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linkï¿½pings universitet nor the names of its
+ * * Neither the name of Linköpings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -41,206 +41,79 @@
 
 package org.modelica.mdt.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.InputStream;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaRoot;
 import org.modelica.mdt.core.ModelicaCore;
-import org.modelica.mdt.test.util.Utility;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
 
 /**
- * This test that problem markers are created when 
+ * This test that problem markers are created when
  * files with syntax errors are saved to the workspace.
- * 
- * @author Elmir Jagudin
+ *
  */
 public class TestProblemMarkersCreation {
 
-	/**
-	 * This resource visitor traverses the complete resource delta.
-	 * It if find any of files that we are interested, it runs the
-	 * appropriate tests and sets the flag that the test were run. 
-	 */
-	public class MarkerChecker implements IResourceDeltaVisitor {
+	private static final String PROJECT_NAME = TestProblemMarkersCreation.class.getName() + "1";
+	private static final String UNPROBLEMATIC_FILE = "unproblematic_model.mo";
+	private static final String PROBLEMATIC_FILE_1 = "problematic_model_1.mo";
 
-		public boolean visit(IResourceDelta delta) throws CoreException {
-			IResource res = delta.getResource();
+	private static IProject project;
 
-			if (res.equals(problematicModel)) {
-				checkProblematicModel();
-				problematicModelChecked = true;
-			}
-			else if (res.equals(unProblematicModel)) {
-				checkUnProblematicModel();
-				unProblematicModelChecked = true;
-			}
-
-			return true;
-		}
-
-		/**
-		 * check that there is no problems markers set on the unProblematicModel
-		 * @throws CoreException
-		 */
-		private void checkUnProblematicModel() throws CoreException {
-			IMarker[] markers = 
-					unProblematicModel.findMarkers(IMarker.PROBLEM, true, 
-							IResource.DEPTH_ONE);
-
-			assertEquals("unexpected problem markers found on " +
-					unProblematicModel.getName(),
-					markers.length, 0);
-		}
-
-		/** 
-		 * check that there is a problem marker starting
-		 * on char 24 end ending on char 54 (line 2)
-		 */
-		private void checkProblematicModel() throws CoreException {
-			boolean foundMarker = false;
-			
-			IMarker[] markers = problematicModel.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ONE);
-
-			for (IMarker marker : markers) {
-				Object charStart = marker.getAttribute(IMarker.CHAR_START);
-				Object charEnd = marker.getAttribute(IMarker.CHAR_END);
-				
-				if (charStart == null || !(charStart instanceof Integer) || charEnd == null || !(charEnd instanceof Integer)) {
-					fail("Getting marker attributes failed.");
-				}
-				
-				int start = (Integer)charStart;
-				int end = (Integer)charEnd;
-
-				if (start == 24 && end == 74) {
-					/* this is the marker we are looking for */
-					foundMarker = true;
-
-					/*
-					 * make same sanity checks on the marker
-					 */
-					assertEquals(marker.getAttribute(IMarker.SEVERITY),
-							IMarker.SEVERITY_ERROR);
-					assertEquals(marker.getAttribute(IMarker.LINE_NUMBER),
-							2);
-					break;
-				}
-			}
-			
-			if (!foundMarker) {
-				String problematicModelName = problematicModel.getName();
-				String message = "Problem marker not found on " + problematicModelName;
-				fail(message);
-			}
-		}
-	}
-
-	private static final String PROJECT_NAME_1 = 
-			TestProblemMarkersCreation.class.getName() + "1";
-
-	private static IFile problematicModel;
-	private static IFile unProblematicModel;
-
-	/* 
-	 * flags that tell that a resource change event have been
-	 * received for the respective file and checks have been made on them 
-	 */
-	public boolean problematicModelChecked = false;
-	public boolean unProblematicModelChecked = false;
-
-	private IWorkspace workspace = null;
-	private IProject project = null;
-
-	@org.junit.Before
-	public void setUp() throws CoreException {
-		/*
-		 * setup project
-		 */
-		workspace = ResourcesPlugin.getWorkspace();
-
-		/*
-		 * Turn off automatic builds if it's on.
-		 */
-		//Utility.setAutobuilding(false);
-
-		IWorkspaceRoot root = workspace.getRoot();
-		IProject iproj = root.getProject(PROJECT_NAME_1);
+	@BeforeClass
+	public static void init() throws CoreException, InterruptedException {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot workspaceRoot = workspace.getRoot();
+		IProject proj = workspaceRoot.getProject(PROJECT_NAME);
 		IModelicaRoot modelicaRoot = ModelicaCore.getModelicaRoot();
-		IModelicaProject mproj = modelicaRoot.createProject(iproj);
-		assertNotNull("failed to create project", mproj);
-
+		IModelicaProject mproj = modelicaRoot.createProject(proj);
 		project = mproj.getWrappedProject();
+		createFile(UNPROBLEMATIC_FILE);
+		createFile(PROBLEMATIC_FILE_1);
+		// Give time for marker creation. FIXME: Find a way to simply wait for building to be finished.
+		Thread.sleep(5000);
 	}
 
-	// This test stalls, disable it for now...
-	//@org.junit.Test
-	public void testProblemMarkers() throws CoreException {
-		IResourceChangeListener resListener = new IResourceChangeListener() {
-			public void resourceChanged(IResourceChangeEvent event) {
-				try {
-					event.getDelta().accept(new MarkerChecker());
-				} 
-				catch (CoreException e) {
-					fail("exception thrown while processing resource change " + e);
-				}
-			}
-		};
+	@Test
+	public void testUnproblematicFile() throws CoreException {
+		IFile file = project.getFile(UNPROBLEMATIC_FILE);
+		IMarker[] markers = file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ONE);
+		assertTrue(markers.length == 0);
+	}
 
-		workspace.addResourceChangeListener(resListener, IResourceChangeEvent.POST_BUILD);
+	@Test
+	public void testProblematicFile_1() throws CoreException {
+		IFile file = project.getFile(PROBLEMATIC_FILE_1);
+		IMarker[] markers = file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ONE);
+		assertTrue(markers.length == 1);
+		IMarker marker = markers[0];
+		assertTrue(marker.exists());
+		Integer actualLineNo = (Integer)marker.getAttribute(IMarker.LINE_NUMBER);
+		assertEquals(new Integer(2), actualLineNo);
+		String actualMessage = (String)marker.getAttribute(IMarker.MESSAGE);
+		assertEquals("aj_em_en_un_expected_tooken", actualMessage);
+		Integer actualSeverity = (Integer)marker.getAttribute(IMarker.SEVERITY);
+		assertEquals(new Integer(IMarker.SEVERITY_ERROR), actualSeverity);
+	}
 
-		/* create a model without any errors */
-		unProblematicModel = project.getFile("unproblematic_model.mo");
-		String contents = 
-				"model unproblematic_model\n" +
-						"\n" + 
-						"end unproblematic_model;\n";
-		unProblematicModel.create(Utility.getByteStream(contents), true, null);
-
-		/* create a model without any errors */
-		problematicModel = project.getFile("problematic_model.mo");
-		contents = 
-				"model problematic_model\n" +
-						"aj_em_en_un_expected_tooken\n" +
-						"\n" + 
-						"end problematic_model;\n";
-		problematicModel.create(Utility.getByteStream(contents), true, null);
-		
-		long msWaitTime = 100;
-		int rounds = 0;
-
-		/*
-		 * here we assume that resource change events are processed in some
-		 * other thread than this
-		 * this assumption is out of thin air (only empirically checked)
-		 * so there is possibility that the below loop hangs, if it is
-		 * meant to process resource events on this thread
-		 */
-		while ((!problematicModelChecked && !unProblematicModelChecked) || rounds++ >= 100) {
-			/*
-			 * wait for builder to pick up our two new files
-			 * and wait for the sanity check to be run in these two files
-			 */
-			Utility.sleep(this, msWaitTime);
-		}
-
-		workspace.removeResourceChangeListener(resListener);
-		
-		if (rounds >= 100) {
-			fail("Test timed out.");
-		}
+	private static void createFile(String path) throws CoreException {
+		IFile file = project.getFile(path);
+		InputStream is = TestProblemMarkersCreation.class.getResourceAsStream("/resources/testproblemmarkerscreation/" + path);
+		assertNotNull(is);
+		file.create(is,  true,  null);
 	}
 }
