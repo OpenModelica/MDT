@@ -3207,7 +3207,7 @@
       <library
             description="Modelica Standard Library 3.2"
             iconpath="resources/icons/icons16/modelicaml_logo_16x16_v02.png"
-            name="Modelica Standard Library 3.2.1"
+            name="Modelica Standard Library 3.2.1 (without Media, Fluid and MultiBody)"
             path="pathmap://PATH_LIBRARIES/MSL/full/model.uml"
             provider="OpenModelica Project">
       </library>
