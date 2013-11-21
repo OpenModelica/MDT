@@ -374,6 +374,9 @@ public class ExecuteTestsAction implements
  	            	OpenTestExecutionReportAction openReport = new OpenTestExecutionReportAction();
  	            	openReport.setReportFilePath(pathToSession + "report-gen/report.html");
  	            	openReport.run(null);
+ 	            	
+ 	            	// reset the path; the OpenTestExecutionReportAction can be called from Eclipse popup.
+ 	            	openReport.setReportFilePath(null); 
 				}
  			}
  		});
