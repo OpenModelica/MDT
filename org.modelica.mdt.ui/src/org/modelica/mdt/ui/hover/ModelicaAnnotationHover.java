@@ -1,7 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2002-2007 
+ * Copyright (c) 2002-2007
  * @author Adrian Pop [adrpo@ida.liu.se]
- * All rights reserved. 
+ * All rights reserved.
  *******************************************************************************/
 package org.modelica.mdt.ui.hover;
 
@@ -25,7 +25,7 @@ import org.modelica.mdt.internal.core.ErrorManager;
  */
 
 public class ModelicaAnnotationHover extends DefaultAnnotationHover {
-	
+
 //	/*
 //	 * Formats a message as HTML text.
 //	 */
@@ -82,20 +82,22 @@ public class ModelicaAnnotationHover extends DefaultAnnotationHover {
 			}
 			else {
 				List<String> messages = new ArrayList<String>();
-				
+
 				for (IMarker marker : markers) {
 					String message = marker.getAttribute(IMarker.MESSAGE, (String) null);
-					String trimmedMessage = message.trim();
-					
-					if (message != null && trimmedMessage.length() > 0) {
-						messages.add(trimmedMessage);
+					if (message != null) {
+						String trimmedMessage = message.trim();
+
+						if (trimmedMessage.length() > 0) {
+							messages.add(trimmedMessage);
+						}
 					}
-				}
-				if (messages.size() == 1) {
-					return this.formatSingleMessage(messages.get(0));
-				}
-				if (messages.size() > 1) {
-					return this.formatMultipleMessages(messages);
+					if (messages.size() == 1) {
+						return this.formatSingleMessage(messages.get(0));
+					}
+					if (messages.size() > 1) {
+						return this.formatMultipleMessages(messages);
+					}
 				}
 			}
 		}
