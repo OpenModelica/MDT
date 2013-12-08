@@ -89,16 +89,16 @@ import org.modelica.mdt.internal.core.FolderPackage;
 
 /**
  * This builder loads all changed files into OMC in order to check for
- * parse errors. If a loaded file have any parse error, then a problem 
+ * parse errors. If a loaded file have any parse error, then a problem
  * marker is set to communicate the problem to the user.
- * 
+ *
  * @author Andreas Remar
  */
 public class SyntaxChecker extends IncrementalProjectBuilder
 {
 
 	public static boolean DEBUG = false;
-	
+
 	public static final String BUILDER_ID = "org.modelica.mdt.core.syntaxChecker";
 
 	@Override
@@ -109,7 +109,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		case IncrementalProjectBuilder.FULL_BUILD:
 			fullBuild(monitor);
 			break;
-		
+
 		default:
 			IResourceDelta delta = getDelta(getProject());
 			if(delta == null)
@@ -125,7 +125,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 
 		return null;
 	}
-	
+
 	/*
 	 * Performs a full build on the project.
 	 */
@@ -156,7 +156,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 			ErrorManager.showCoreError(e);
 		}
 	}
-	
+
 	/**
 	 * Adds this builder to the project
 	 * @param project the project to add this builder to
@@ -167,7 +167,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		{
 			return;
 		}
-		
+
 		IProjectDescription description;
 		try
 		{
@@ -178,7 +178,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 			ErrorManager.logError(e);
 			return;
 		}
-		
+
 		/*
 		 * Check if builder is already associated with this
 		 * project.
@@ -191,7 +191,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 				return;
 			}
 		}
-		
+
 		/*
 		 * Associate builder with project.
 		 */
@@ -212,9 +212,9 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 			ErrorManager.logError(e);
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param project the project to remove this builder from
 	 */
 	public static void removeBuilderFromProject(IProject project)
@@ -223,7 +223,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		{
 			return;
 		}
-		
+
 		IProjectDescription description;
 		try
 		{
@@ -234,7 +234,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 			ErrorManager.logError(e);
 			return;
 		}
-		
+
 		int index = -1;
 		ICommand[] cmds = description.getBuildSpec();
 		for(int j = 0;j < cmds.length;j++)
@@ -245,12 +245,12 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 				break;
 			}
 		}
-		
+
 		if(index == -1)
 		{
 			return;
 		}
-		
+
 		List<ICommand> newCmds = new ArrayList<ICommand>();
 		newCmds.addAll(Arrays.asList(cmds));
 		newCmds.remove(index);
@@ -265,9 +265,9 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 			ErrorManager.logError(e);
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param file the file where the marker should be added
 	 * @param lineno where in the file this marker should be set
 	 * @param msg a message indicating the problem
@@ -279,7 +279,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 							   error.getEndLine(), error.getEndColumn(),
 							   error.getErrorDescription(), IMarker.PROBLEM);
 	}
-	
+
 	protected static void reportNamespaceProblem(IFile file, String className)
 	{
 		createMarkerAtLocation(file, 1, 1, 1, 1,
@@ -292,12 +292,12 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	 *  @deprecated
 	 * @param filePath the full path to the file where to look for lines
 	 * @param lineno line number to find
-	 * @return region which line occupies or null if the does not 
+	 * @return region which line occupies or null if the does not
 	 * have such a line number
-	 * @throws CoreException if there were errors reading file contents 
-	 * @throws FileNotFoundException if the filePath does not exists 
+	 * @throws CoreException if there were errors reading file contents
+	 * @throws FileNotFoundException if the filePath does not exists
 	 */
-	
+
 	public static IRegion getLineRegion(String filePath, int lineno)
 		throws CoreException, FileNotFoundException
 	{
@@ -316,7 +316,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		 */
 		return getLineRegion(new FileInputStream(new File(filePath)), lineno);
 	}
-	
+
 	/**
 	 * Wrapper function to get the region given an IFile and a line number
 	 * @deprecated
@@ -326,13 +326,13 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	 * line was found in the file
 	 * @throws CoreException
 	 */
-	public static IRegion getLineRegion(IFile file, int lineno) 
+	public static IRegion getLineRegion(IFile file, int lineno)
 		throws CoreException
 	{
 		return getLineRegion(file.getContents(), lineno);
 	}
 
-	
+
 	/**
 	 * Tries to calculate a region for a given file and line number.
 	 * @deprecated
@@ -373,7 +373,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		 * Convert contents of the file to a document.
 		 */
 		Document d = new Document(contents);
-		
+
 		/*
 		 * Try to find the region where the line is.
 		 */
@@ -385,12 +385,12 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		{
 			ErrorManager.logError(e);
 		}
-		
+
 		return null;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param file the file where this marker should be set
 	 * @param startLineNumber the line number where this marker should start
 	 * @param startColumnNumber the column number where this marker should start
@@ -421,10 +421,10 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 					}
 					catch(FileNotFoundException e)
 					{
-						throw 
+						throw
 							new CoreException(
 									new Status(IStatus.ERROR, "org.modelica.mdt.core", IStatus.OK, "File Not Found", (Throwable)e));
-					}						
+					}
 
 					int start = startLineReg.getOffset() + startColumnNumber - 1;
 					int end = endLineReg.getOffset() + endColumnNumber - 1;
@@ -436,7 +436,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 
 
 
-					marker.setAttribute(IMarker.CHAR_START, start);					
+					marker.setAttribute(IMarker.CHAR_START, start);
 					marker.setAttribute(IMarker.CHAR_END, end);
 					*/
 					marker.setAttribute(IMarker.LINE_NUMBER, startLineNumber);
@@ -446,17 +446,17 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 					marker.setAttribute(IMarker.LOCATION, Integer.toString(startLineNumber));
 				}
 			};
-			
+
 		try
-		{			
-			run(getMarkerRule(resource), runnable);		
-		}		
+		{
+			run(getMarkerRule(resource), runnable);
+		}
 		catch(CoreException e)
 		{
 			ErrorManager.logError(e);
-		}				
+		}
 	}
-		
+
     protected static ISchedulingRule getMarkerRule(IResource resource) {
         ISchedulingRule rule = null;
         if (resource != null) {
@@ -468,7 +468,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 
     /**
 	 * Execute the given workspace runnable with the scheduling rule to use when running the operation.
-	 * 
+	 *
 	 * @param rule the rule to use when running the operation
      * @param wr the runnable operation
      * @throws DebugException If a core exception occurs performing the operation
@@ -488,27 +488,27 @@ public class SyntaxChecker extends IncrementalProjectBuilder
     		}
     	};
     	t.start();
-    }  
-    
+    }
+
 	protected void startupOnInitialization()
 	{
 		/* NOP */
 	}
-	
+
 	protected void clean(IProgressMonitor monitor)
 	{
 		/* NOP */
 	}
 
 	/**
-	 * 
+	 *
 	 * @param file the file we should load into OMC to check for errors
 	 * @throws ConnectException
 	 * @throws UnexpectedReplyException
-	 * @throws CompilerInstantiationException 
+	 * @throws CompilerInstantiationException
 	 */
 	public static IParseResults loadFileAndReportErrors(final IFile file, boolean checkForNamespaceProblems)
-		throws ConnectException, UnexpectedReplyException, 
+		throws ConnectException, UnexpectedReplyException,
 				CompilerInstantiationException
 	{
 		/* schedule a marker delete */
@@ -518,18 +518,18 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 				file.deleteMarkers(CorePlugin.UNEXPECTED_NAMESPACE_MARKER_ID, false, IResource.DEPTH_INFINITE);
 			}
 		};
-		
+
 		try
-		{			
-			run(getMarkerRule(file), runnable);		
-		}		
+		{
+			run(getMarkerRule(file), runnable);
+		}
 		catch(CoreException e)
 		{
 			ErrorManager.logError(e);
-		}				
-		
-		IParseResults res = null;		
-		
+		}
+
+		IParseResults res = null;
+
 		// if is not on the ban list, load it!
 		if (!PreferenceManager.isAnIgnoredDirectoryOrFile(file.getFullPath().toString()))
 		{
@@ -537,7 +537,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 			 * Try loading the file into OMC and get the results.
 			 */
 			res = CompilerProxy.loadSourceFile(file);
-			
+
 			if (res == null) return res;
 			/*
 			 * If there were any compile errors, report them as problems.
@@ -545,15 +545,15 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 			for (ICompileError error : res.getCompileErrors())
 			{
 				reportProblem(file, error);
-			}		
+			}
 		}
-		
+
 		/*
 		 * Make sure that everything was defined in the correct namespace.
 		 */
 		if (checkForNamespaceProblems)
 			checkForNamespaceProblems(file, res);
-		
+
 		return res;
 	}
 
@@ -561,7 +561,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 	 * Check a file for missing or malformed 'within' statements by comparing
 	 * where in the file hierarchy a file is defined and the actual contents
 	 * returned from OMC.
-	 * 
+	 *
 	 * @param file the file that has been loaded into OMC
 	 * @param res the compilation result from having loaded the file
 	 * @throws ConnectException
@@ -575,25 +575,25 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 		IModelicaProject project = ModelicaCore.getModelicaRoot().getProject(file.getProject().getName());
 
 		IModelicaElement element = null;
-		try 
+		try
 		{
 			element = project.findElement(file.getProjectRelativePath());
 		}
-		catch (InvocationError e) 
+		catch (InvocationError e)
 		{
 			ErrorManager.logError(e);
 		}
-		catch (CoreException e) 
+		catch (CoreException e)
 		{
 			ErrorManager.logError(e);
 		}
 
 		IModelicaElement parent = element.getParent();
 		String ppName = parent.getFullName();
-		
+
 		/*
 		 * If the parent is a package, the elements inside should be defined
-		 * as being children of the parent. 
+		 * as being children of the parent.
 		 */
 		if(parent instanceof FolderPackage)
 		{
@@ -614,7 +614,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 				for(String name : res.getClasses())
 				{
 					/* get the prefix of the class, eg.
-					 * Modelica.Math.sin has prefix Modelica.Math */	
+					 * Modelica.Math.sin has prefix Modelica.Math */
 					String prefix = null;
 					int lastIndex = name.lastIndexOf('.');
 					if(lastIndex != -1)
@@ -625,12 +625,12 @@ public class SyntaxChecker extends IncrementalProjectBuilder
 					{
 						prefix = null;
 					}
-		
+
 					/*
 					 * If the prefix doesn't match the parent packages name,
-					 * then the 'within' statement is bad. 
+					 * then the 'within' statement is bad.
 					 */
-					if (DEBUG) System.out.println("prefix:"+prefix+" ppname:"+ppName);					
+					if (DEBUG) System.out.println("prefix:"+prefix+" ppname:"+ppName);
 					if(prefix != null && prefix.equals(ppName) == false)
 					{
 						reportNamespaceProblem(file, name);
