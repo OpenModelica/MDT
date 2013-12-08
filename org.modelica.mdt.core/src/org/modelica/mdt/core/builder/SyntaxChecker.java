@@ -196,7 +196,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
         newCmds.addAll(Arrays.asList(cmds));
         newCmds.add(newCmd);
         description.setBuildSpec(
-                (ICommand[])newCmds.toArray(
+                newCmds.toArray(
                         new ICommand[newCmds.size()]));
         try
         {
@@ -250,7 +250,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
         newCmds.addAll(Arrays.asList(cmds));
         newCmds.remove(index);
         description.setBuildSpec(
-                (ICommand[])newCmds.toArray(new ICommand[newCmds.size()]));
+                newCmds.toArray(new ICommand[newCmds.size()]));
         try
         {
             project.setDescription(description, null);
@@ -293,6 +293,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
      * @throws FileNotFoundException if the filePath does not exists
      */
 
+    @Deprecated
     public static IRegion getLineRegion(String filePath, int lineno) throws CoreException, FileNotFoundException {
         // TODO this probably should be moved into ModelicaFile class,
         // however that would require that IFile -> IModelicaFile mapping
@@ -319,6 +320,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
      * line was found in the file
      * @throws CoreException
      */
+    @Deprecated
     public static IRegion getLineRegion(IFile file, int lineno) throws CoreException {
         return getLineRegion(file.getContents(), lineno);
     }
@@ -332,6 +334,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
      * @return region that this line occupies, or <code>null</code> if no such
      * line was found in the file
      */
+    @Deprecated
     private static IRegion getLineRegion(InputStream fileContents, int lineno)
     {
         BufferedInputStream bis = new BufferedInputStream(fileContents);
@@ -398,6 +401,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
             final String message, final String type)
     {
         IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+            @Override
             public void run(IProgressMonitor monitor) throws CoreException {
                 IMarker marker = null;
                 marker = resource.createMarker(type);
@@ -487,6 +491,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
         /* NOP */
     }
 
+    @Override
     protected void clean(IProgressMonitor monitor)
     {
         /* NOP */
@@ -503,6 +508,7 @@ public class SyntaxChecker extends IncrementalProjectBuilder
             throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
         /* schedule a marker delete */
         IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+            @Override
             public void run(IProgressMonitor monitor) throws CoreException {
                 file.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_INFINITE);
                 file.deleteMarkers(CorePlugin.UNEXPECTED_NAMESPACE_MARKER_ID, false, IResource.DEPTH_INFINITE);
