@@ -163,6 +163,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 		/*
 		 * @see org.eclipse.jface.text.IInformationControl#setInformation(java.lang.String)
 		 */
+		@Override
 		public void setInformation(String information) {
 			//replaced by IInformationControlExtension2#setInput
 		}
@@ -170,6 +171,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 		/*
 		 * @see org.eclipse.jface.text.IInformationControlExtension2#setInput(java.lang.Object)
 		 */
+		@Override
 		public void setInput(Object input) {
 			Assert.isLegal(input instanceof AnnotationInfo);
 			fInput= (AnnotationInfo)input;
@@ -180,6 +182,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 		/*
 		 * @see org.eclipse.jface.text.IInformationControlExtension#hasContents()
 		 */
+		@Override
 		public boolean hasContents() {
 			return fInput != null;
 		}
@@ -191,6 +194,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 		/*
 		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractAnnotationHover.AbstractInformationControl#setFocus()
 		 */
+		@Override
 		public void setFocus() {
 			super.setFocus();
 			if (fFocusControl != null)
@@ -200,6 +204,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 		/*
 		 * @see org.eclipse.jface.text.AbstractInformationControl#setVisible(boolean)
 		 */
+		@Override
 		public final void setVisible(boolean visible) {
 			if (!visible)
 				disposeDeferredCreatedContent();
@@ -219,6 +224,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 		/*
 		 * @see org.eclipse.jface.text.AbstractInformationControl#createContent(org.eclipse.swt.widgets.Composite)
 		 */
+		@Override
 		protected void createContent(Composite parent) {
 			fParent= parent;
 			GridLayout layout= new GridLayout(1, false);
@@ -231,6 +237,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 		/*
 		 * @see org.eclipse.jface.text.AbstractInformationControl#computeSizeHint()
 		 */
+		@Override
 		public Point computeSizeHint() {
 			Point preferedSize= getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 
@@ -303,6 +310,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 			gridData.heightHint= 16;
 			canvas.setLayoutData(gridData);
 			canvas.addPaintListener(new PaintListener() {
+				@Override
 				public void paintControl(PaintEvent e) {
 					e.gc.setFont(null);
 					fMarkerAnnotationAccess.paint(annotation, e.gc, canvas, new Rectangle(0, 0, 16, 16));
@@ -392,6 +400,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 				final int index= i;
 				final Link link= links[index];
 				link.addKeyListener(new KeyListener() {
+					@Override
 					public void keyPressed(KeyEvent e) {
 						switch (e.keyCode) {
 							case SWT.ARROW_DOWN:
@@ -409,11 +418,13 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 						}
 					}
 
+					@Override
 					public void keyReleased(KeyEvent e) {
 					}
 				});
 
 				link.addFocusListener(new FocusListener() {
+					@Override
 					public void focusGained(FocusEvent e) {
 						int currentPosition= scrolledComposite.getOrigin().y;
 						int hight= scrolledComposite.getSize().y;
@@ -429,6 +440,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 						}
 					}
 
+					@Override
 					public void focusLost(FocusEvent e) {
 					}
 				});
@@ -444,12 +456,15 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 
 				proposalImage.addMouseListener(new MouseListener() {
 
+					@Override
 					public void mouseDoubleClick(MouseEvent e) {
 					}
 
+					@Override
 					public void mouseDown(MouseEvent e) {
 					}
 
+					@Override
 					public void mouseUp(MouseEvent e) {
 						if (e.button == 1) {
 							apply(proposal, fInput.viewer, fInput.position.offset);
@@ -466,6 +481,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 				/*
 				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 				 */
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					apply(proposal, fInput.viewer, fInput.position.offset);
 				}
@@ -521,6 +537,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 		/*
 		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 		 */
+		@Override
 		public IInformationControl doCreateInformationControl(Shell parent) {
 			return new AnnotationInformationControl(parent, new ToolBarManager(SWT.FLAT));
 		}
@@ -542,11 +559,13 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 		/*
 		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 		 */
+		@Override
 		public IInformationControl doCreateInformationControl(Shell parent) {
 			return new AnnotationInformationControl(parent, EditorsUI.getTooltipAffordanceString()) {
 				/*
 				 * @see org.eclipse.jface.text.IInformationControlExtension5#getInformationPresenterControlCreator()
 				 */
+				@Override
 				public IInformationControlCreator getInformationPresenterControlCreator() {
 					return fPresenterControlCreator;
 				}
@@ -556,6 +575,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 		/*
 		 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#canReuse(org.eclipse.jface.text.IInformationControl)
 		 */
+		@Override
 		public boolean canReuse(IInformationControl control) {
 			if (!super.canReuse(control))
 				return false;
@@ -589,6 +609,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 		/*
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
+		@Override
 		public void run() {
 			Shell shell= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
@@ -627,6 +648,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 	/*
 	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		return null;
 	}
@@ -635,6 +657,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 	 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractModelicaEditorTextHover#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 * @since 3.4
 	 */
+	@Override
 	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
 		IPath path;
 		IAnnotationModel model;
@@ -705,6 +728,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 	 * @see ITextHoverExtension#getHoverControlCreator()
 	 * @since 3.4
 	 */
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		if (fHoverControlCreator == null)
 			fHoverControlCreator= new HoverControlCreator(getInformationPresenterControlCreator());
@@ -715,6 +739,7 @@ public abstract class AbstractAnnotationHover extends AbstractModelicaEditorText
 	 * @see org.eclipse.jface.text.ITextHoverExtension2#getInformationPresenterControlCreator()
 	 * @since 3.4
 	 */
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		if (fPresenterControlCreator == null)
 			fPresenterControlCreator= new PresenterControlCreator();
