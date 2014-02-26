@@ -11,15 +11,15 @@
             target="platform:/plugin/org.openmodelica.modelicaml.profile/libraries/">
       </mapping>
    </extension>
-
+<!--
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup">
-<!--		<menuContribution
+		<menuContribution
             allPopups="false"
-            locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup"> -->
+            locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup"> 
      <separator
            name="org.openmodelica.modelicaml.profile.separator1"
            visible="true">
@@ -397,13 +397,23 @@
                            operator="or">
                         <adapt
                               type="org.eclipse.emf.ecore.EObject">
-                           <not>
+                           <or>
                               <test
-                                    args="ModelicaML::ValueBinding::ValueMediatorsContainer"
+                                    args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
                                     forcePluginActivation="true"
                                     property="org.openmodelica.modelicaml.testers.hasStereotype">
                               </test>
-                           </not>
+                              <test
+                                    args="ModelicaML::ModelicaClassConstructs::Model"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                              <test
+                                    args="ModelicaML::ModelicaClassConstructs::Block"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                           </or>
                         </adapt>
                      </iterate>
                      <count
@@ -561,26 +571,7 @@
                   tooltip="Equation Section">
                <visibleWhen
                      checkEnabled="true">
-                  <with
-                        variable="selection">
-                     <iterate
-                           ifEmpty="false"
-                           operator="or">
-                        <adapt
-                              type="org.eclipse.emf.ecore.EObject">
-                           <not>
-                              <test
-                                    args="ModelicaML::ValueBinding::ValueMediatorsContainer"
-                                    forcePluginActivation="true"
-                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
-                              </test>
-                           </not>
-                        </adapt>
-                     </iterate>
-                     <count
-                           value="1">
-                     </count>
-                  </with>
+                  
                </visibleWhen>
             </command>
             <command
@@ -1003,15 +994,12 @@
             </visibleWhen>
          </command>
       </menuContribution>
-   </extension>
-   <extension
+   </extension>-->
+   <!--<extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup">
-<!--      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">-->
          <separator
                name="org.openmodelica.modelicaml.profile.separator2"
                visible="true">
@@ -1020,26 +1008,6 @@
                icon="resources/icons/icons16/invocation.gif"
                id="modelicaml.helpers"
                label="ModelicaML: Helper">
-            <!--
-            <command
-                  commandId="org.openmodelica.modelicaml.helper.commands.instantiaterequirements"
-                  icon="resources/icons/list-accept.png"
-                  label="Instantiate Requirements"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="true">
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="org.openmodelica.modelicaml.helper.commands.updateTestOracleElements"
-                  icon="resources/icons/icons16/update.png"
-                  label="Update Requirements Test Oracle Elements"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="true">
-               </visibleWhen>
-            </command>
-            -->
             <visibleWhen
                   checkEnabled="false">
                <with
@@ -1067,29 +1035,14 @@
                   name="org.openmodelica.modelicaml.helper.separator2"
                   visible="true">
             </separator>
-            <!--
-            <command
-                  commandId="org.openmodelica.modelicaml.helper.commands.runtests"
-                  icon="resources/icons/icons16/tscriptrun.gif"
-                  label="Run Design Verification Models"
-                  style="push"
-                  tooltip="Run Design Verification Models">
-               <visibleWhen
-                     checkEnabled="true">
-               </visibleWhen>
-            </command>
-            -->
          </menu>
       </menuContribution>
-   </extension>
+   </extension>-->
    <extension
          point="org.eclipse.ui.menus">
-     <menuContribution
+     <!--<menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup">
- <!--      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">-->
          <separator
                name="org.openmodelica.modelicaml.profile.separator3"
                visible="true">
@@ -1098,37 +1051,7 @@
          <menu
                icon="resources/icons/icons16/generate_code.gif"
                label="ModelicaML: Validation and Code Generation">
-            <!--
-            <command
-                  commandId="org.openmodelica.modelicaml.gen.modelica.commands.ValidateModelicaMLModel"
-                  icon="resources/icons/icons16/validate.gif"
-                  label="(DEPRECATED) Validate ModelicaML Model"
-                  style="push"
-                  tooltip="Validate ModelicaML model (entire model)">
-               <visibleWhen
-                     checkEnabled="true">
-                  <with
-                        variable="selection">
-                     <count
-                           value="1">
-                     </count>
-                     <iterate>
-                        <adapt
-                              type="org.eclipse.emf.ecore.EObject">
-                           <or>
-                              <instanceof
-                                    value="org.eclipse.uml2.uml.Package">
-                              </instanceof>
-                              <instanceof
-                                    value="org.eclipse.uml2.uml.Class">
-                              </instanceof>
-                           </or>
-                        </adapt>
-                     </iterate>
-                  </with>
-               </visibleWhen>
-            </command>
-            -->
+           
             <command
                   commandId="org.eclipse.papyrus.validation.ValidateDelMarkersFromModelCommand"
                   icon="resources/icons/icons16/errorwarning_tab.gif"
@@ -1205,7 +1128,7 @@
                </with>
             </visibleWhen>
          </menu>
-      </menuContribution>
+      </menuContribution>-->
       <menuContribution
             allPopups="false"
             locationURI="toolbar:org.eclipse.ui.main.toolbar">
@@ -1227,23 +1150,6 @@
                   </with>
                </visibleWhen>
             </command>
-            <!--
-            <command
-                  commandId="org.openmodelica.modelicaml.gen.modelica.commands.ValidateModelicaMLModel"
-                  icon="resources/icons/icons16/validate.gif"
-                  label="(DEPRECATED) Validate ModelicaML Model"
-                  style="push"
-                  tooltip="Validate ModelicaML Model (entire model)">
-               <visibleWhen>
-                  <with
-                        variable="activeEditorId">
-                     <equals
-                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
-                     </equals>
-                  </with>
-               </visibleWhen>
-            </command>
-            -->
             <visibleWhen
                   checkEnabled="false">
                <with
@@ -1257,102 +1163,15 @@
                   name="org.openmodelica.modelicaml.profile.separator1"
                   visible="true">
             </separator>
-            <!--
-            <command
-                  commandId="org.openmodelica.modelicaml.helper.commands.toolbar.automaticScenarioBasedVerification"
-                  icon="resources/icons/icons16/automaticScenarioBasedVerification.gif"
-                  label="Automatic Scenario-Based Verification"
-                  style="push"
-                  tooltip="Automatic Scenario-Based Verification">
-               <visibleWhen>
-                  <with
-                        variable="activeEditorId">
-                     <equals
-                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
-                     </equals>
-                  </with>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="org.openmodelica.modelicaml.helper.commands.toolbar.analyzesimulationresults"
-                  icon="resources/icons/icons16/runanalysis.gif"
-                  label="Analyze Verification Results"
-                  style="push"
-                  tooltip="Analyze Verification Results">
-               <visibleWhen>
-                  <with
-                        variable="activeEditorId">
-                     <equals
-                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
-                     </equals>
-                  </with>
-               </visibleWhen>
-            </command>
-            <separator
-                  name="org.openmodelica.modelicaml.profile.separator2"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="org.openmodelica.modelicaml.helper.commands.toolbar.discoverScenToReqRelations"
-                  icon="resources/icons/icons16/correlationset.gif"
-                  label="Discover Relations Between Scenarios and Requirements"
-                  style="push"
-                  tooltip="Discover Relations Between Scenarios and Requirements">
-               <visibleWhen>
-                  <with
-                        variable="activeEditorId">
-                     <equals
-                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
-                     </equals>
-                  </with>
-               </visibleWhen>
-            </command>
-            <separator
-                  name="org.openmodelica.modelicaml.profile.separator3"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="org.openmodelica.modelicaml.helper.commands.toolbar.generatesimmodels"
-                  icon="resources/icons/icons16/new_testsuite.gif"
-                  label="Create Design Verification Models"
-                  style="push"
-                  tooltip="Create Design Verification Models">
-               <visibleWhen>
-                  <with
-                        variable="activeEditorId">
-                     <equals
-                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
-                     </equals>
-                  </with>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="org.openmodelica.modelicaml.helper.commands.runtests"
-                  icon="resources/icons/icons16/tscriptrun.gif"
-                  label="Run Design Verification Models"
-                  style="push"
-                  tooltip="Run Design Verification Models">
-               <visibleWhen>
-                  <with
-                        variable="activeEditorId">
-                     <equals
-                           value="org.eclipse.papyrus.infra.core.papyrusEditor">
-                     </equals>
-                  </with>
-               </visibleWhen>
-            </command>
-            -->
+            
          </toolbar>
       </menuContribution>
    </extension>
-   <extension
+   <!--<extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.papyrus.views.modelexplorer.modelexplorer.popup">
-<!--      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.openmodelica.modelicaml.modelexplorer.popup">-->
          <separator
                name="org.openmodelica.modelicaml.profile.separator4"
                visible="true">
@@ -1401,7 +1220,7 @@
             </visibleWhen>
          </menu>
       </menuContribution>
-   </extension>
+   </extension>-->
 
    <extension
          point="org.eclipse.ui.commands">
@@ -2405,6 +2224,9 @@
                   <adapt
                         type="org.eclipse.emf.ecore.EObject">
                      <and>
+                        <instanceof
+                                 value="org.eclipse.uml2.uml.Class">
+                           </instanceof>
                         <or>
                            <instanceof
                                  value="org.eclipse.uml2.uml.Class">
@@ -2576,15 +2398,29 @@
                               value="org.eclipse.uml2.uml.Enumeration">
                         </instanceof>
                      </not>
+                     <not>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.PackageImport">
+                        </instanceof>
+                     </not>
                      <or>
                         <instanceof
                               value="org.eclipse.uml2.uml.Classifier">
                         </instanceof>
                         <instanceof
+                              value="org.eclipse.uml2.uml.TypedElement">
+                        </instanceof>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.Connector">
+                        </instanceof>
+                        <instanceof
                               value="org.eclipse.uml2.uml.Package">
                         </instanceof>
+                        <instanceof
+                              value="org.eclipse.uml2.uml.Model">
+                        </instanceof>
                      </or>
-                     <and>
+                     <!--<and>
                         <not>
                            <instanceof
                                  value="org.eclipse.uml2.uml.Behavior">
@@ -2640,7 +2476,7 @@
                                  property="org.openmodelica.modelicaml.testers.hasStereotype">
                            </test>
                         </or>
-                     </and>
+                     </and>-->
                   </adapt>
                </iterate>
             </with>

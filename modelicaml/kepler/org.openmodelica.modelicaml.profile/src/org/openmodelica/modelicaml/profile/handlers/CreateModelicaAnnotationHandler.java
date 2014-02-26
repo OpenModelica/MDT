@@ -53,7 +53,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Comment;
+import org.eclipse.uml2.uml.Connector;
+import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.Stereotype;
+import org.eclipse.uml2.uml.TypedElement;
 import org.openmodelica.modelicaml.common.services.EditorServices;
 import org.openmodelica.modelicaml.profile.Activator;
 
@@ -115,9 +118,28 @@ private EObject selectedElement = null;
 					ct = (Comment) ((org.eclipse.uml2.uml.Class)selectedElement).createOwnedComment();
 					stereotype = ct.getApplicableStereotype(stereotypePath+"::"+stereotyepName);
 				}
+				
+				// annotation for components
+				else if (selectedElement instanceof TypedElement) {
+					//TODO: Should the name get a post-fix number (e.g. ModelicaModel1, ModelicaModel2, etc.)?
+					ct = (Comment) ((org.eclipse.uml2.uml.TypedElement)selectedElement).createOwnedComment();
+					stereotype = ct.getApplicableStereotype(stereotypePath+"::"+stereotyepName);
+				}
+				// annotation for connect clauses
+				else if (selectedElement instanceof Connector) {
+					//TODO: Should the name get a post-fix number (e.g. ModelicaModel1, ModelicaModel2, etc.)?
+					ct = (Comment) ((org.eclipse.uml2.uml.Connector)selectedElement).createOwnedComment();
+					stereotype = ct.getApplicableStereotype(stereotypePath+"::"+stereotyepName);
+				}
+				
 				else if (selectedElement instanceof Package) {
 					//TODO: Should the name get a post-fix number (e.g. ModelicaModel1, ModelicaModel2, etc.)?
 					ct = (Comment) ((org.eclipse.uml2.uml.Package)selectedElement).createOwnedComment();
+					stereotype = ct.getApplicableStereotype(stereotypePath+"::"+stereotyepName);
+				}
+				else if (selectedElement instanceof Model) {
+					//TODO: Should the name get a post-fix number (e.g. ModelicaModel1, ModelicaModel2, etc.)?
+					ct = (Comment) ((org.eclipse.uml2.uml.Model)selectedElement).createOwnedComment();
 					stereotype = ct.getApplicableStereotype(stereotypePath+"::"+stereotyepName);
 				}
 //				else if (selectedElement instanceof Enumeration)
