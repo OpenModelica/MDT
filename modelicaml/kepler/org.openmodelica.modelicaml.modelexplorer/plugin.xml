@@ -271,7 +271,28 @@
             <separator name="org.openmodelica.modelicaml.profile.separator5" visible="true">
             </separator>
             <command commandId="org.openmodelica.modelicaml.commands.CreateModelicaCalculatedPropertyCommand" icon="resources/icons/icons16/calculatedProperty.png" label="Calculated Property (Calculation Model Usage)" style="push">
-               <visibleWhen checkEnabled="true">
+                <visibleWhen checkEnabled="true">
+                  <with variable="selection">
+                     <iterate ifEmpty="false" operator="or">
+                        <adapt type="org.eclipse.emf.ecore.EObject">
+                           <or>
+                              <test args="ModelicaML::ModelicaClassConstructs::ModelicaClass" forcePluginActivation="true" property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                              <test args="ModelicaML::ModelicaClassConstructs::Model" forcePluginActivation="true" property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                              <test args="ModelicaML::ModelicaClassConstructs::Block" forcePluginActivation="true" property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                              <test args="ModelicaML::ModelicaRequirementConstructs::Requirement" forcePluginActivation="true" property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                           </or>
+                        </adapt>
+                     </iterate>
+                     <count value="1">
+                     </count>
+                  </with>
+               </visibleWhen>
+               
+               <!--<visibleWhen checkEnabled="true">
                   <with variable="selection">
                      <iterate ifEmpty="false" operator="or">
                         <adapt type="org.eclipse.emf.ecore.EObject">
@@ -284,7 +305,7 @@
                      <count value="1">
                      </count>
                   </with>
-               </visibleWhen>
+               </visibleWhen>-->
             </command>
             <separator name="org.openmodelica.modelicaml.profile.separator6" visible="true">
             </separator>
@@ -341,33 +362,96 @@
             <separator name="org.openmodelica.modelicaml.profile.separator7" visible="true">
             </separator>
             <command commandId="org.openmodelica.modelicaml.commands.CreateModelicaAlgorithmCommand" icon="resources/icons/papyrus/OpaqueBehavior.gif" label="Algorithm Section" style="push" tooltip="Algorithm Section">
-               <visibleWhen checkEnabled="true">
-                  <with variable="selection">
-                     <iterate ifEmpty="false" operator="or">
-                        <adapt type="org.eclipse.emf.ecore.EObject">
-                           <not>
-                              <test args="ModelicaML::ValueBinding::ValueMediatorsContainer" forcePluginActivation="true" property="org.openmodelica.modelicaml.testers.hasStereotype">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <or>
+                              <test
+                                    args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
                               </test>
-                           </not>
+                              <test
+                                    args="ModelicaML::ModelicaClassConstructs::Model"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                              <test
+                                    args="ModelicaML::ModelicaClassConstructs::Block"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                              <test
+                                    args="ModelicaML::ModelicaRequirementConstructs::Requirement"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                              <test
+                                    args="ModelicaML::ModelicaClassConstructs::Function"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                              <test
+                                    args="ModelicaML::ModelicaClassConstructs::CalculationModel"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                           </or>
                         </adapt>
                      </iterate>
-                     <count value="1">
+                     <count
+                           value="1">
                      </count>
                   </with>
                </visibleWhen>
             </command>
             <command commandId="org.openmodelica.modelicaml.commands.CreateModelicaEquationsCodeCommand" icon="resources/icons/papyrus/OpaqueBehavior.gif" label="Equation Section" style="push" tooltip="Equation Section">
-               <visibleWhen checkEnabled="true">
-                  <with variable="selection">
-                     <iterate ifEmpty="false" operator="or">
-                        <adapt type="org.eclipse.emf.ecore.EObject">
-                           <not>
-                              <test args="ModelicaML::ValueBinding::ValueMediatorsContainer" forcePluginActivation="true" property="org.openmodelica.modelicaml.testers.hasStereotype">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.emf.ecore.EObject">
+                           <or>
+                              <test
+                                    args="ModelicaML::ModelicaClassConstructs::ModelicaClass"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
                               </test>
-                           </not>
+                              <test
+                                    args="ModelicaML::ModelicaClassConstructs::Model"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                              <test
+                                    args="ModelicaML::ModelicaClassConstructs::Block"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                              <test
+                                    args="ModelicaML::ModelicaRequirementConstructs::Requirement"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                              <test
+                                    args="ModelicaML::ModelicaClassConstructs::CalculationModel"
+                                    forcePluginActivation="true"
+                                    property="org.openmodelica.modelicaml.testers.hasStereotype">
+                              </test>
+                           </or>
                         </adapt>
                      </iterate>
-                     <count value="1">
+                     <count
+                           value="1">
                      </count>
                   </with>
                </visibleWhen>
