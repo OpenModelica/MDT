@@ -7,17 +7,16 @@ import org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlService
 
 <%-- Comments --%>
 <%script type="uml.Element" name="comment"%>
-<%string_comment%>
-<%annotation%>
+<%string_comment%><%annotation%>
 
 <%script type="uml.Element" name="string_comment" post="trim()"%>
 <%if (getProperty("c_includeModelComments") && ownedComment[!hasStereotype(getProperty("s_annotation"))]!=null){%>"<%for (ownedComment[!hasStereotype(getProperty("s_annotation"))]){%><%body.replaceAll("\\n","").replaceAll("\\r","").replaceAll("\"", "'")%> <%}%>"<%}%>
 
 <%script type="uml.Element" name="annotation" post="trim()"%>
-<%if (ownedComment[hasStereotype(getProperty("s_annotation"))] != null){%>#
-<%-- TODO: get the fullAnnotationString instead ... 
-annotation(<%ownedComment[hasStereotype(getProperty("s_annotation"))].body.sepStr(", ")%>)  --%>
-<%}%>
+<%if (ownedComment.annotation_fullString != null){%> annotation(<%ownedComment.annotation_fullString%>)<%}%>
+
+<%script type="uml.Comment" name="annotation_fullString" post="trim()"%>
+<%getStereotypeValue(getProperty("s_annotation"), getProperty("s_p_fullAnnotationString"))%>
 
 <%-- ################## Placeholder for additional includes --%>
 <%-- add_inc_structure: e.g. in ModelicaML for including instances of state machines --%>

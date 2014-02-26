@@ -4,6 +4,7 @@ metamodel http://www.eclipse.org/uml2/3.0.0/UML
 import org.openmodelica.modelicaml.common.services.StringUtls
 import org.openmodelica.modelicaml.gen.modelica.uml2modelica.services.UmlServices
 import org.openmodelica.modelicaml.gen.modelica.uml2modelica.core.helper
+import org.openmodelica.modelicaml.gen.modelica.uml2modelica.core.common
 %>
 
 <%script type="uml.Classifier" name="equation" post="trim()"%>
@@ -64,13 +65,13 @@ algorithm
 	<%for (ownedElement.filter("Connector")[hasStereotype(getProperty("s_connect"))]){%>
 		<%-- NOTE: If explicit ends are defined take them first --%>
 		<%if (getStereotypeValue(getProperty("s_connect"), getProperty("s_p_connectionEnds")) != ""){%>
-	connect(<%getStereotypeValue(getProperty("s_connect"), getProperty("s_p_connectionEnds"))%>);	
+	connect(<%getStereotypeValue(getProperty("s_connect"), getProperty("s_p_connectionEnds"))%>)<%annotation%>;	
 		<%}else{%>
 			<%if (ownedElement.filter("ConnectorEnd").nFirst().filter("ConnectorEnd").role.type.qualifiedName 
 			!= ownedElement.filter("ConnectorEnd").nLast().filter("ConnectorEnd").role.type.qualifiedName){%><%-- NOTE: The types are nominally different -> try to match the next level of connector components using properties names and types. If there is no match then just connect. --%>
 	<%tryToMatchConnections(ownedElement.filter("ConnectorEnd").nFirst().ConnectorInstance)%>
 			<%}else{%><%-- NOTE: The types are nominally the same -> generate a simple connection --%>
-	connect(<%ownedElement.filter("ConnectorEnd").nFirst().ConnectorInstance%><%ownedElement.filter("ConnectorEnd").nFirst().role.name.replaceSpecChar().trim()%>, <%ownedElement.filter("ConnectorEnd").nLast().ConnectorInstance%><%ownedElement.filter("ConnectorEnd").nLast().role.name.replaceSpecChar().trim()%>);
+	connect(<%ownedElement.filter("ConnectorEnd").nFirst().ConnectorInstance%><%ownedElement.filter("ConnectorEnd").nFirst().role.name.replaceSpecChar().trim()%>, <%ownedElement.filter("ConnectorEnd").nLast().ConnectorInstance%><%ownedElement.filter("ConnectorEnd").nLast().role.name.replaceSpecChar().trim()%>)<%annotation%>;
 			<%}%>
 		<%}%>	
 	<%}%>
@@ -78,12 +79,12 @@ algorithm
 
 <%script type="uml.Connector" name="tryToMatchConnections" post="trim()"%>
 <%-- NOTE: try to match from left --%><%if (ownedElement.filter("ConnectorEnd").nFirst().role.type.containsAPropertyOfTheSameNameAndType(ownedElement.filter("ConnectorEnd").nLast().role.name, ownedElement.filter("ConnectorEnd").nLast().role.type.qualifiedName, ownedElement.filter("ConnectorEnd").nFirst().role.name) != ""){%>
-connect(<%ownedElement.filter("ConnectorEnd").nFirst().ConnectorInstance%><%ownedElement.filter("ConnectorEnd").nFirst().role.type.containsAPropertyOfTheSameNameAndType(ownedElement.filter("ConnectorEnd").nLast().role.name, ownedElement.filter("ConnectorEnd").nLast().role.type.qualifiedName, ownedElement.filter("ConnectorEnd").nFirst().role.name)%>, <%ownedElement.filter("ConnectorEnd").nLast().ConnectorInstance%><%ownedElement.filter("ConnectorEnd").nLast().role.name.replaceSpecChar().trim()%>);
+connect(<%ownedElement.filter("ConnectorEnd").nFirst().ConnectorInstance%><%ownedElement.filter("ConnectorEnd").nFirst().role.type.containsAPropertyOfTheSameNameAndType(ownedElement.filter("ConnectorEnd").nLast().role.name, ownedElement.filter("ConnectorEnd").nLast().role.type.qualifiedName, ownedElement.filter("ConnectorEnd").nFirst().role.name)%>, <%ownedElement.filter("ConnectorEnd").nLast().ConnectorInstance%><%ownedElement.filter("ConnectorEnd").nLast().role.name.replaceSpecChar().trim()%>)<%annotation%>;
 <%}else{%>
 <%-- NOTE: try to match from right --%><%if (ownedElement.filter("ConnectorEnd").nLast().role.type.containsAPropertyOfTheSameNameAndType(ownedElement.filter("ConnectorEnd").nFirst().role.name, ownedElement.filter("ConnectorEnd").nFirst().role.type.qualifiedName, ownedElement.filter("ConnectorEnd").nLast().role.name) != ""){%>
-connect(<%ownedElement.filter("ConnectorEnd").nLast().ConnectorInstance%><%ownedElement.filter("ConnectorEnd").nLast().role.type.containsAPropertyOfTheSameNameAndType(ownedElement.filter("ConnectorEnd").nFirst().role.name, ownedElement.filter("ConnectorEnd").nFirst().role.type.qualifiedName, ownedElement.filter("ConnectorEnd").nLast().role.name)%>, <%ownedElement.filter("ConnectorEnd").nFirst().ConnectorInstance%><%ownedElement.filter("ConnectorEnd").nFirst().role.name.replaceSpecChar().trim()%>);
+connect(<%ownedElement.filter("ConnectorEnd").nLast().ConnectorInstance%><%ownedElement.filter("ConnectorEnd").nLast().role.type.containsAPropertyOfTheSameNameAndType(ownedElement.filter("ConnectorEnd").nFirst().role.name, ownedElement.filter("ConnectorEnd").nFirst().role.type.qualifiedName, ownedElement.filter("ConnectorEnd").nLast().role.name)%>, <%ownedElement.filter("ConnectorEnd").nFirst().ConnectorInstance%><%ownedElement.filter("ConnectorEnd").nFirst().role.name.replaceSpecChar().trim()%>)<%annotation%>;
 <%-- NOTE: No match -> just connect. NOTE: No further structural types check is performed! --%><%}else{%>
-connect(<%ownedElement.filter("ConnectorEnd").nFirst().ConnectorInstance%><%ownedElement.filter("ConnectorEnd").nFirst().role.name.replaceSpecChar().trim()%>, <%ownedElement.filter("ConnectorEnd").nLast().ConnectorInstance%><%ownedElement.filter("ConnectorEnd").nLast().role.name.replaceSpecChar().trim()%>);
+connect(<%ownedElement.filter("ConnectorEnd").nFirst().ConnectorInstance%><%ownedElement.filter("ConnectorEnd").nFirst().role.name.replaceSpecChar().trim()%>, <%ownedElement.filter("ConnectorEnd").nLast().ConnectorInstance%><%ownedElement.filter("ConnectorEnd").nLast().role.name.replaceSpecChar().trim()%>)<%annotation%>;
 	<%}%>
 <%}%>
 
