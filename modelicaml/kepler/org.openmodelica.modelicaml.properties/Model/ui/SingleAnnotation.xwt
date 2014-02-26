@@ -17,7 +17,7 @@
 		<Composite.layout>
 			<ppel:PropertiesLayout numColumns="1"></ppel:PropertiesLayout>
 		</Composite.layout>
-		<ppe:StringEditor input="{Binding}"
-			property="ModelicaML:ModelicaAnnotationConstructs:Annotation:fullAnnotationString"></ppe:StringEditor>
+		<ppe:StringMultiline input="{Binding}"
+			property="ModelicaML:ModelicaAnnotationConstructs:Annotation:fullAnnotationString"></ppe:StringMultiline>
 	</Composite>
 </Composite>
