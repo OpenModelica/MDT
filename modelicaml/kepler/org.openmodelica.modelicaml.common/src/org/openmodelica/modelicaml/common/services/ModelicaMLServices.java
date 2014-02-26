@@ -1069,4 +1069,11 @@ public class ModelicaMLServices {
 		}
 		return shell;
 	}
+	
+	
+	/* 
+	 * Modelica synchronization 
+	 */
+	public static Long ModelicaModelSyncStartTime; 	// time when the sync. started 
+	public static Long ModelicaModelSyncStopTime;	// time when the sync. was finished
 }

@@ -151,6 +151,7 @@ public class Constants {
 	public static final String propertyName_arraySize 			= "arraySize";
 	public static final String propertyName_replaceable	 		= "replaceable";
 	public static final String propertyName_variability 		= "variability";
+	public static final String propertyName_visibility 			= "visibility";
 	public static final String propertyName_declarationEquationOrAssignment 		= "declarationEquationOrAssignment";
 	
 	public static final String propertyName_input 				= "input";
