@@ -79,6 +79,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.papyrus.infra.emf.utils.BusinessModelResolver;
+import org.eclipse.papyrus.uml.tools.model.ExtendedUmlModel;
+import org.eclipse.papyrus.uml.tools.model.UmlUtils;
 import org.eclipse.papyrus.views.modelexplorer.ModelExplorerPageBookView;
 import org.eclipse.papyrus.views.modelexplorer.ModelExplorerView;
 import org.eclipse.swt.SWT;
@@ -117,6 +119,7 @@ import org.openmodelica.modelicaml.view.valuebindings.dialogs.ClassInstantiation
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.ElementSelectionDialog;
 import org.openmodelica.modelicaml.view.valuebindings.dialogs.SearchDialog;
 import org.openmodelica.modelicaml.view.valuebindings.display.ViewLabelProviderStyledCell;
+import org.openmodelica.modelicaml.view.valuebindings.exchange.XMLMediatorsExporter;
 import org.openmodelica.modelicaml.view.valuebindings.listeners.DropListener;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeBuilder;
 import org.openmodelica.modelicaml.view.valuebindings.model.TreeObject;
@@ -176,7 +179,10 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 
 	private Action actionClearSubTree;
 
-	private Action actionSort; 
+	private Action actionSort;
+
+	private Action actionImportMediators; 
+	private Action actionExportMediators;
 	
 	public final static int DEFAULT_EXPAND_LEVEL = 2;
 	public final static int DEFAULT_EXPAND_LEVEL_CLIENTS = 1;
@@ -362,7 +368,9 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 		manager.add(actionShowProviderPerspective);
 		manager.add(new Separator());
 		manager.add(actionShowRequiredClients);
-//		manager.add(new Separator());
+		manager.add(new Separator());
+//		manager.add(actionImportMediators);
+		manager.add(actionExportMediators);
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
@@ -501,7 +509,7 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 			public void run() {
 				String message = "This is a read-only node. No actions can be performed on it. " +
 						"\n\nYou can select a client, mediator or provider and switch " +
-						"to the Mediator Perspective in order to enable actions. "
+						"to the Mediator perspective in order to enable actions. "
 						;
 				showMessage(message);
 			}
@@ -531,8 +539,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				}
 			}
 		};
-		actionShowMediatorPerspective.setText("Mediator Perspective");
-		actionShowMediatorPerspective.setToolTipText("Show Mediator Perspective");
+		actionShowMediatorPerspective.setText("Mediator perspective");
+		actionShowMediatorPerspective.setToolTipText("Show mediator perspective");
 		actionShowMediatorPerspective.setChecked(true);
 //		actionShowMediatorPerspective.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
 
@@ -555,8 +563,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				}
 			}
 		};
-		actionShowClientPerspective.setText("Client Perspective (read-only)");
-		actionShowClientPerspective.setToolTipText("Show Client Perspective (read-only)");
+		actionShowClientPerspective.setText("Client perspective (read-only)");
+		actionShowClientPerspective.setToolTipText("Show client perspective (read-only)");
 //		actionShowClientPerspective.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
 		
 		
@@ -578,8 +586,8 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				}
 			}
 		};
-		actionShowProviderPerspective.setText("Provider Perspective (read-only)");
-		actionShowProviderPerspective.setToolTipText("Show Provider Perspective (read-only)");
+		actionShowProviderPerspective.setText("Provider perspective (read-only)");
+		actionShowProviderPerspective.setToolTipText("Show provider perspective (read-only)");
 //		actionShowProviderPerspective.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
 		
 		
@@ -611,9 +619,10 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				}
 			}
 		};
-		actionShowRequiredClients.setText("Show only required clients");
-		actionShowRequiredClients.setToolTipText("Show only required clients");
-//		actionShowRequiredClientPerspective.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/reload.png"));
+		
+		actionShowRequiredClients.setText("Show only mandatory clients");
+		actionShowRequiredClients.setToolTipText("Show only mandatory clients");
+		actionShowRequiredClients.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/filterByClass.gif"));
 		
 		actionLocateInPapyrusModelExplorer = new Action("actionLocateInPapyrusModelExplorer") {
 			public void run() {
@@ -645,11 +654,45 @@ public class ValueBindingsView extends ViewPart implements ITabbedPropertySheetP
 				}
 			}
 		};
-//		actionLocateInPapyrusModelExplorer.setText("Locate in  Model Explorer");
+		actionLocateInPapyrusModelExplorer.setText("Locate in  Model Explorer");
 		actionLocateInPapyrusModelExplorer.setText("Locate in Model Explorer");
 		actionLocateInPapyrusModelExplorer.setToolTipText("Locate in Model Explorer");
 		actionLocateInPapyrusModelExplorer.setImageDescriptor(ImageDescriptor.createFromImage(ResourceManager.getPluginImage("org.openmodelica.modelicaml.common", "/icons/editor/ModelExplorer.png")));
 		
+		
+		actionImportMediators = new Action("actionImportMediators") {
+			public void run() {
+				// TODO
+//				XMLMediatorsImporter importer = new XMLMediatorsImporter();
+//				importer.importMediators();
+			}
+		};
+		actionImportMediators.setText("Import mediators");
+		actionImportMediators.setToolTipText("Import mediators");
+		actionImportMediators.setToolTipText("Import mediators");
+		actionImportMediators.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/import_resource_wiz.gif"));
+
+		
+		actionExportMediators = new Action("actionExportMediators") {
+			public void run() {
+				
+				ExtendedUmlModel umlModel = (ExtendedUmlModel) UmlUtils.getUmlModel();
+				if (umlModel != null) {
+					
+					// get project data
+					String projectName = umlModel.getResource().getURI().segment(1);
+					
+					// export
+					XMLMediatorsExporter exporter = new XMLMediatorsExporter();
+					exporter.exportToXML(getTreeBuilder(), projectName, "", true);
+				}
+			}
+		};
+		actionExportMediators.setText("Export mediators");
+		actionExportMediators.setToolTipText("Export mediators");
+		actionExportMediators.setToolTipText("Export mediators");
+		actionExportMediators.setImageDescriptor(ImageDescriptor.createFromFile(ValueBindingsView.class, "/icons/exportXML.gif"));
+
 		
 		actionReload = new Action("actionReload") {
 			public void run() {
