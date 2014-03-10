@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -56,12 +57,19 @@ public class XMLMediatorsExporter {
 	private String filePath;
 		
 	public final static String XMLTagName_bindings 						= "bindingSpecification";
+	public final static String XMLAttrName_exportDate 					= "exportDate";
+	
 	public final static String XMLTagName_mediator 						= "mediator";
 	public final static String XMLTagName_client 						= "client";
 	public final static String XMLTagName_provider	 					= "provider";
 	public final static String XMLTagName_template 						= "template";
 	
-	public final static String XMLAttrName_langauge 					= "langauge";
+	public final static String XMLTagName_preferred 					= "preferred";
+	public final static String XMLAttrName_clientInstancePath 			= "clientInstancePath";
+	public final static String XMLAttrName_providerInstancePath			= "providerInstancePath";
+	
+	
+	public final static String XMLAttrName_language 					= "language";
 	public final static String XMLAttrName_qualifiedName 				= "qualifiedName";
 	public final static String XMLAttrName_ownerQualifiedName 			= "ownerQualifiedName";
 	
@@ -76,6 +84,8 @@ public class XMLMediatorsExporter {
 	private ProgressMonitorDialog progressDialog;
 	
 	private TreeBuilder treeBuilder;
+	
+	private String bindingTemplateLanguageName = "ModelicaML";
 	
 	// XML document
 	public Document document = null;
@@ -140,12 +150,16 @@ public class XMLMediatorsExporter {
 	}
 	
 	public org.w3c.dom.Element createRootElement(Document document) {
+		
 		org.w3c.dom.Element rootElement = document.createElement(XMLTagName_bindings);
-//		rootElement.setAttribute("xmlns", "htto://www.openmodelica.org/bindings");
-//		rootElement.setAttribute("xmlns:xs", "http://www.w3.org/2001/XMLSchema");
-//		rootElement.setAttribute("targetNamespace", "cids.sw.model");
-//		rootElement.setAttribute("elementFormDefault", "qualified");
-//		rootElement.setAttribute("attributeFormDefault", "unqualified");
+
+		// add date 
+//		org.w3c.dom.Element dateXMLElement = document.createElement(XMLTagName_date);
+//		dateXMLElement.setTextContent(getDate("yyyy.MM.dd HH:mm:ss"));
+//		rootElement.appendChild(dateXMLElement);
+		
+		rootElement.setAttribute(XMLAttrName_exportDate, getDate("yyyy.MM.dd HH:mm:ss"));
+		
 		return rootElement;
 	}
 	
@@ -156,17 +170,20 @@ public class XMLMediatorsExporter {
 			
 			mediatorXMLElement.setAttribute(XMLAttrName_name, StringEscapeUtils.escapeXml(ModelicaMLServices.getName(mediator)));
 			mediatorXMLElement.setAttribute(XMLAttrName_requiredType, ModelicaMLServices.getName(((TypedElement)mediator).getType()).replace("Modelica", ""));
-			mediatorXMLElement.setAttribute(XMLAttrName_ownerQualifiedName, StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(mediator.getOwner())));
+//			mediatorXMLElement.setAttribute(XMLAttrName_ownerQualifiedName, StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(mediator.getOwner())));
+			mediatorXMLElement.setAttribute(XMLAttrName_ownerQualifiedName, StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedNameNormalized(mediator.getOwner(), "::", ".")));
 			
-			appendDate(mediatorXMLElement, mediator);
 			appendComments(mediatorXMLElement, mediator);
 			appendMediatorTemplate(mediatorXMLElement, mediator);
 			
-			monitor.setTaskName("Collecting clients ...");
+			monitor.setTaskName("Collecting clients for '"+ModelicaMLServices.getName(mediator)+"' ...");
 			appendClients(mediatorXMLElement, mediator);
 			
-			monitor.setTaskName("Collecting providers ...");
+			monitor.setTaskName("Collecting providers for '"+ModelicaMLServices.getName(mediator)+"' ...");
 			appendProviders(mediatorXMLElement, mediator);
+
+			monitor.setTaskName("Collecting preffered bindings for '"+ModelicaMLServices.getName(mediator)+"' ...");
+			appendPreferred(mediatorXMLElement, mediator);
 			
 			documentNode.appendChild(mediatorXMLElement);
 		}
@@ -177,25 +194,32 @@ public class XMLMediatorsExporter {
 	
 	private org.w3c.dom.Element appendMediatorTemplate(org.w3c.dom.Element documentNode, Element mediator){
 		
-		org.w3c.dom.Element mediatorTemplateXMLElement = document.createElement(XMLTagName_template);
 		String template = DeriveValueBindingCodeUtls.getOperationSpecification(mediator, Constants.stereotypeQName_ValueMediator, Constants.propertyName_operation);
 		if (template != null) {
 			template = template.trim();
+			
+			if (!template.isEmpty()) {
+				org.w3c.dom.Element mediatorTemplateXMLElement = document.createElement(XMLTagName_template);
+				mediatorTemplateXMLElement.setTextContent(template);
+				mediatorTemplateXMLElement.setAttribute(XMLAttrName_language, getBindingTemplateLanguageName());
+				
+				documentNode.appendChild(mediatorTemplateXMLElement);
+			}
 		}
-		mediatorTemplateXMLElement.setTextContent(template);
 		
 		return documentNode;
 	}
 	
-	private org.w3c.dom.Element appendDate(org.w3c.dom.Element documentNode, Element mediator){
+	private String getDate(String format){
+		String dateFormat = format;
+		if (dateFormat == null) {
+			dateFormat = "yyyy.MM.dd HH:mm:ss";
+		}
 		Calendar c1 = Calendar.getInstance(); // today
 		Date date = c1.getTime();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
 		
-		org.w3c.dom.Element dateXMLElement = document.createElement(XMLTagName_date);
-		dateXMLElement.setTextContent(sdf.format(date));
-		
-		return documentNode;
+		return sdf.format(date);
 	}
 	
 	
@@ -216,14 +240,19 @@ public class XMLMediatorsExporter {
 					clientXMLElement.setAttribute(XMLAttrName_mandatory, isMandatory.toString());	
 				}
 //				clientXMLElement.setAttribute(XMLAttrName_name, StringEscapeUtils.escapeXml(ModelicaMLServices.getName(client)));
-				clientXMLElement.setAttribute(XMLAttrName_qualifiedName, StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(client)));
+//				clientXMLElement.setAttribute(XMLAttrName_qualifiedName, StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(client)));
+				clientXMLElement.setAttribute(XMLAttrName_qualifiedName, StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedNameNormalized(client, "::", ".")));
+				
 
 				// template
 				String template = getClientTemplate(mediator, client);
 				if (template != null) {
 					org.w3c.dom.Element templateElement = document.createElement(XMLTagName_template);
 					templateElement.setTextContent(template);
+					templateElement.setAttribute(XMLAttrName_language, getBindingTemplateLanguageName());
+					
 					clientXMLElement.appendChild(templateElement);
+
 				}
 
 				documentNode.appendChild(clientXMLElement);
@@ -242,17 +271,43 @@ public class XMLMediatorsExporter {
 				
 				org.w3c.dom.Element providerXMLElement = document.createElement(XMLTagName_provider);
 //				clientXMLElement.setAttribute(XMLAttrName_name, StringEscapeUtils.escapeXml(ModelicaMLServices.getName(provider)));
-				providerXMLElement.setAttribute(XMLAttrName_qualifiedName, StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(provider)));
+//				providerXMLElement.setAttribute(XMLAttrName_qualifiedName, StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedName(provider)));
+				providerXMLElement.setAttribute(XMLAttrName_qualifiedName, StringEscapeUtils.escapeXml(ModelicaMLServices.getQualifiedNameNormalized(provider, "::", ".")));
 				
 				// template
 				String template = getProviderTemplate(mediator, provider);
 				if (template != null) {
 					org.w3c.dom.Element templateElement = document.createElement(XMLTagName_template);
 					templateElement.setTextContent(template);
+					templateElement.setAttribute(XMLAttrName_language, getBindingTemplateLanguageName());
+					
 					providerXMLElement.appendChild(templateElement);
 				}
 				
 				documentNode.appendChild(providerXMLElement);
+			}
+		}
+		return documentNode;
+	}
+	
+	
+	private org.w3c.dom.Element appendPreferred(org.w3c.dom.Element documentNode, Element mediator){
+		List<String> preferred = TreeUtls.getStringListPropertyFromElement(mediator, Constants.stereotypeQName_ValueMediator, Constants.propertyName_preferredProviders);
+		
+		if (preferred != null && preferred.size() > 0) {
+			
+			for (String preferredProviderAssignment : preferred) {
+				String[] splitted = preferredProviderAssignment.split(Constants.preferredProvidersAssignmentSeparator);
+				if (splitted.length == 2 ) { // if there is a pair with the separator
+					String clientPath = splitted[0].trim();
+					String providerPath = splitted[1].trim();
+
+					org.w3c.dom.Element preferredXMLElement = document.createElement(XMLTagName_preferred);
+					preferredXMLElement.setAttribute(XMLAttrName_clientInstancePath, StringEscapeUtils.escapeXml(clientPath));
+					preferredXMLElement.setAttribute(XMLAttrName_providerInstancePath, StringEscapeUtils.escapeXml(providerPath));
+					
+					documentNode.appendChild(preferredXMLElement);
+				}
 			}
 		}
 		return documentNode;
@@ -308,7 +363,7 @@ public class XMLMediatorsExporter {
 //				String message = "NOT VALID: There are multiple references between the mediator '" + ((NamedElement)mediator).getQualifiedName() + "' and the provider '"+((NamedElement)provider).getQualifiedName()+"'";
 			}
 			else {
-				template = DeriveValueBindingCodeUtls.getOperationSpecification(dependencies.get(0), Constants.stereotypeQName_ProvidesValueFor, Constants.propertyName_operation);
+				template = DeriveValueBindingCodeUtls.getOperationSpecification(dependencies.get(0), Constants.stereotypeQName_ObtainsValueFrom, Constants.propertyName_operation);
 			}
 		}
 		
@@ -460,6 +515,15 @@ public class XMLMediatorsExporter {
 		else {						folderPath = projectPath;}
 		
 		return folderPath;		
+	}
+
+	public String getBindingTemplateLanguageName() {
+		return bindingTemplateLanguageName;
+	}
+
+	public void setBindingTemplateLanguageName(
+			String bindingTemplateLanguageName) {
+		this.bindingTemplateLanguageName = bindingTemplateLanguageName;
 	}
 	
 }

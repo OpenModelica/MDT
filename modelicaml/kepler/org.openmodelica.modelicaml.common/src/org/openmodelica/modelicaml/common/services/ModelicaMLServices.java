@@ -314,6 +314,18 @@ public class ModelicaMLServices {
 	 */
 	
 	
+	public static String getQualifiedNameNormalized(String modelName, String segmentSeparatorOriginal,  String segmentSeparatorNew){
+		// e.g. from UML to Modelica: segmentSeparatorOriginal = "::", segmentSeparatorNew="."
+		return StringUtls.replaceSpecCharExceptThis( modelName, segmentSeparatorOriginal).replaceAll(segmentSeparatorOriginal, segmentSeparatorNew);
+	}
+	
+	public static String getQualifiedNameNormalized(Element element, String segmentSeparatorOriginal,  String segmentSeparatorNew){
+		// e.g. from UML to Modelica: segmentSeparatorOriginal = "::", segmentSeparatorNew="."
+		return StringUtls.replaceSpecCharExceptThis( getQualifiedName(element), segmentSeparatorOriginal).replaceAll(segmentSeparatorOriginal, segmentSeparatorNew);
+	}
+	
+	
+	
 	public static int getBodyIndex(OpaqueAction behavior, String language) {
 		int index = 0;
 		boolean isFound = false;
