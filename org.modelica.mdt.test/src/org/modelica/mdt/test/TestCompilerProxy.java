@@ -46,24 +46,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
+import junit.framework.TestCase;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.modelica.mdt.core.CompilerProxy;
+import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.ISourceRegion;
-import org.modelica.mdt.core.compiler.IClassInfo;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
+import org.modelica.mdt.core.compiler.IClassInfo;
 import org.modelica.mdt.core.compiler.ICompileError;
-import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.compiler.IParseResults;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.core.CompilerProxy;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
-
-import junit.framework.TestCase;
 
 /**
  * test org.modelica.mdt.core.CompilerProxy class' code
@@ -99,13 +99,13 @@ public class TestCompilerProxy extends TestCase {
 	}
 
 	/**
-	 * test CompilerProxy.getRestriction() 
-	 * @throws CompilerInstantiationException 
+	 * test CompilerProxy.getRestriction()
+	 * @throws CompilerInstantiationException
 	 */
-	public void testGetRestriction() 
+	public void testGetRestriction()
 			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
 		/*
-		 * we need to load modelica package, we can as well do some checks on the returned names of the standard packages 
+		 * we need to load modelica package, we can as well do some checks on the returned names of the standard packages
 		 */
 		String[] stdlib = CompilerProxy.getStandardLibrary();
 		List<String> stdlibList = Arrays.asList(stdlib);
@@ -168,7 +168,7 @@ public class TestCompilerProxy extends TestCase {
 	/**
 	 * Test for compile errors in a problematic file.
 	 */
-	public void testErrorReporting() 
+	public void testErrorReporting()
 			throws ConnectException, UnexpectedReplyException, CompilerInstantiationException {
 		IParseResults parseResults = CompilerProxy.loadSourceFile(broken_nested_models_mo);
 		String[] classes = parseResults.getClasses();
@@ -185,12 +185,12 @@ public class TestCompilerProxy extends TestCase {
 	}
 
 	/**
-	 * test CompilerProxy.getClassInfo() 
-	 * @throws UnexpectedReplyException 
-	 * @throws ConnectException 
-	 * @throws CompilerInstantiationException 
+	 * test CompilerProxy.getClassInfo()
+	 * @throws UnexpectedReplyException
+	 * @throws ConnectException
+	 * @throws CompilerInstantiationException
 	 */
-	public void testGetClassInfo() 
+	public void testGetClassInfo()
 			throws CompilerInstantiationException, ConnectException, UnexpectedReplyException {
 		testGetClassInfo("nested_models", IModelicaClass.Restriction.MODEL, false, "nested_models.mo", 1, 1, 7, 18);
 

@@ -5,17 +5,17 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.texteditor.StatusLineContributionItem;
-import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
+import org.modelica.mdt.internal.core.CompilerProxy;
 import org.modelica.mdt.ui.ModelicaImages;
 
 public class ModelicaStatusLineContributor extends StatusLineContributionItem
-{	
+{
 	Image mdtOnline  = ModelicaImages.getImageDescriptor(ModelicaImages.IMG_MDT_STATUS_ONLINE).createImage();
 	Image mdtOffline = ModelicaImages.getImageDescriptor(ModelicaImages.IMG_MDT_STATUS_OFFLINE).createImage();
-	
+
 	boolean fDirty = false;
-	
+
 	public ModelicaStatusLineContributor()
 	{
 		super("MDT-Status", true, 50);
@@ -31,7 +31,7 @@ public class ModelicaStatusLineContributor extends StatusLineContributionItem
 				}
 				else
 				{
-					setImage(mdtOffline);					
+					setImage(mdtOffline);
 				}
 			}
 			else
@@ -44,13 +44,13 @@ public class ModelicaStatusLineContributor extends StatusLineContributionItem
 		{
 			// do nothing
 			setText("OpenModelica Compiler is Offline");
-			setImage(mdtOffline);			
+			setImage(mdtOffline);
 		}
 		setToolTipText("OpenModelica Compiler Status.\n" +
 				"If 'Empty Compiler' is online, check the Modelica preferences:\n" +
 				"Window->Preferences->Modelica: 'Start OMC from MDT'");
 	}
-	
+
 	@Override
 	public void fill(Composite parent)
 	{
@@ -117,7 +117,7 @@ public class ModelicaStatusLineContributor extends StatusLineContributionItem
 				}
 				else
 				{
-					setImage(mdtOffline);					
+					setImage(mdtOffline);
 				}
 
 			}
@@ -131,7 +131,7 @@ public class ModelicaStatusLineContributor extends StatusLineContributionItem
 		{
 			// do nothing
 			setText("OpenModelica Compiler is Offline");
-			setImage(mdtOffline);			
+			setImage(mdtOffline);
 		}
 		fDirty = true;
 	}

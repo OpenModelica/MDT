@@ -27,12 +27,12 @@ import org.eclipse.zest.core.widgets.ZestStyles;
 import org.eclipse.zest.core.widgets.internal.GraphLabel;
 import org.eclipse.zest.layouts.LayoutStyles;
 import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
-import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.IModelicaCompiler;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.core.CompilerProxy;
 
 /**
  * This class sets up another view presenting each equation
@@ -167,7 +167,7 @@ public class ModelicaDetailedGraphView extends ViewPart {
 					callMiniGraph(graphPanel, buttonIndex);
 					analyzeOptimizations(buttonArray.get(buttonIndex).getText().substring(0, buttonArray.get(buttonIndex).getText().length()-1), className);
 				}
-			});			
+			});
 		}
 
 		equationPanel.setSize(equationPanel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -226,8 +226,8 @@ public class ModelicaDetailedGraphView extends ViewPart {
 	 * of a tree should be relatively other two nodes. The top node is
 	 * the operand operating on the two expressions, placed in the
 	 * child nodes.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param line
 	 * 				an array of all separated elements
 	 * @param g
@@ -362,7 +362,7 @@ public class ModelicaDetailedGraphView extends ViewPart {
 
 	private static GraphNode createEquationNode(Graph targetGraph, String side) {
 		for (ModelicaEquation mEq : subEquations) {
-			if (mEq.equation == side) 
+			if (mEq.equation == side)
 				return(mEq.topNode);
 		}
 		GraphNode gNode = new GraphNode(targetGraph, SWT.NONE, side);
@@ -371,7 +371,7 @@ public class ModelicaDetailedGraphView extends ViewPart {
 	}
 
 	// TODO: Make a function that checks for variable assignments
-	// A. Extract the variables that has pre-instantiated values 
+	// A. Extract the variables that has pre-instantiated values
 	// B. Check if there is another node containing one of those variables, in that case
 	// we should add a ":= <value>" to the text in the node
 	// for (x...)
@@ -397,11 +397,11 @@ public class ModelicaDetailedGraphView extends ViewPart {
 	}
 
 	/**
-	 * This will send a command to the cmd so that a dump operation 
+	 * This will send a command to the cmd so that a dump operation
 	 * is performed on a class and dumps operations into a .txt-file.
 	 * This command ISN'T sent to the OMC-API.
-	 * 
-	 * @throws IOException 
+	 *
+	 * @throws IOException
 	 */
 	private static String consoleDump(String className) throws IOException {
 		String resPath = "";

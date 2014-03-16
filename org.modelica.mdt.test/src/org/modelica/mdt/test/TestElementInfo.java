@@ -41,8 +41,9 @@
 
 package org.modelica.mdt.test;
 
+import junit.framework.TestCase;
+
 import org.eclipse.core.runtime.Path;
-import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaProject;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.List;
@@ -53,34 +54,33 @@ import org.modelica.mdt.core.compiler.ElementInfo;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.ModelicaParser;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.core.CompilerProxy;
 import org.modelica.mdt.test.util.Area51Projects;
 import org.modelica.mdt.test.util.Utility;
 
-import junit.framework.TestCase;
-
 /**
- * test org.modelica.mdt.core.compiler.ElementsInfo class' code 
+ * test org.modelica.mdt.core.compiler.ElementsInfo class' code
  */
-public class TestElementInfo extends TestCase 
+public class TestElementInfo extends TestCase
 {
 	@Override
-	protected void setUp() throws Exception 
+	protected void setUp() throws Exception
 	{
 		/*
 		 * make sure nested_models.mo is created
 		 */
 		Area51Projects.createProjects();
-		IModelicaProject proj = 
+		IModelicaProject proj =
 			Utility.getProject(Area51Projects.MODELICA_PROJECT_NAME);
-		
+
 		/*
 		 * make sure nested_models.mo are loaded into compiler
 		 */
-		IModelicaSourceFile file = 
+		IModelicaSourceFile file =
 			(IModelicaSourceFile)proj.findElement(new Path("nested_models.mo"));
 		assertNotNull("could not find nested_models.mo", file);
 		file.getChildren();
-		
+
 		/*
 		 * make sure nested_models.mo are loaded into compiler
 		 */
@@ -92,31 +92,31 @@ public class TestElementInfo extends TestCase
 	}
 
 	/**
-	 * get a list of element infos on classes defined in nested_models.mo 
-	 * file in Area51 modelica project and check that fetching fields values 
+	 * get a list of element infos on classes defined in nested_models.mo
+	 * file in Area51 modelica project and check that fetching fields values
 	 * works as expected
-	 * @throws ModelicaParserException 
+	 * @throws ModelicaParserException
 	 */
 	public void testFetchingFields()
-		throws ConnectException, InvocationError, 
-			UnexpectedReplyException, CompilerInstantiationException, 
+		throws ConnectException, InvocationError,
+			UnexpectedReplyException, CompilerInstantiationException,
 			ModelicaParserException
 	{
 		String elementType;
 		String className;
-		
+
 		/* do some tests on nested_models class from nested_models.mo */
-		
+
 		boolean heppFound = false;
 		boolean fooFound = false;
 		for (ElementInfo ei : CompilerProxy.getElements("nested_models"))
 		{
 			elementType = ei.getElementType();
-			
+
 			if (elementType.equals("classdef"))
 			{
 				className = ei.getClassName();
-				
+
 				if (className.equals("hepp"))
 				{
 					heppFound = true;
@@ -128,7 +128,7 @@ public class TestElementInfo extends TestCase
 					assertEquals("RECORD", ei.getClassRestriction());
 					assertTrue(ei.getElementFile().
 							endsWith("nested_models.mo"));
-							
+
 				}
 				else if (className.equals("foo"))
 				{
@@ -140,40 +140,40 @@ public class TestElementInfo extends TestCase
 
 					assertEquals("CLASS", ei.getClassRestriction());
 					assertTrue(ei.getElementFile().
-							endsWith("nested_models.mo"));					
+							endsWith("nested_models.mo"));
 				}
 			}
 		}
-		
+
 		assertTrue("class nested_models.foo not found", fooFound);
 		assertTrue("class nested_models.hepp not found", heppFound);
-		
+
 		boolean component_a_found = false;
 		/* do some tests on muu class from nested_models.mo */
 		for (ElementInfo ei : CompilerProxy.getElements("muu"))
 		{
 			if(ei.getElementType().equals("component"))
-			{				
+			{
 				List comp = ModelicaParser.parseList(ei.getNames());
-				
+
 				/* check component name */
 				assertEquals("a", comp.elementAt(0).toString());
-				
+
 				component_a_found = true;
 				/* check component comment */
-				assertEquals("\"\"", comp.elementAt(1).toString()); 
-				
+				assertEquals("\"\"", comp.elementAt(1).toString());
+
 				assertEquals("public", ei.getElementVisibility());
 				assertTrue(ei.getElementFile().
-						endsWith("nested_models.mo"));					
+						endsWith("nested_models.mo"));
 
 			}
 		}
 		assertTrue("could not find component muu.a", component_a_found);
-		
+
 		/* do some test on import_rich_model class from import_rich_model.mo */
 		int importStatmentsFound = 0;
-		
+
 		for (ElementInfo ei : CompilerProxy.getElements("import_rich_model"))
 		{
 			/*
@@ -185,16 +185,16 @@ public class TestElementInfo extends TestCase
 			 * 5. local renaming    (import foo = hepp)
 			 * 6. local qualified   (import hepp.hopp)
 			 * 7. local unqualified (import hepp.*)
-			 * 8. local single definition 
+			 * 8. local single definition
 			 *                      (import root_package.root_package_model)
 
 			 */
 			elementType = ei.getElementType();
-			
+
 			if (elementType.equals("import"))
 			{
 				importStatmentsFound++;
-				switch (importStatmentsFound) 
+				switch (importStatmentsFound)
 				{
 				case 1: // import Modelica
 					assertEquals("qualified", ei.getKind());
@@ -230,14 +230,14 @@ public class TestElementInfo extends TestCase
 					assertEquals("qualified", ei.getKind());
 					assertEquals("root_package.root_package_model",
 							ei.getPath());
-					break;					
+					break;
 				default:
-					fail("unexpectedly many imports found"); 
+					fail("unexpectedly many imports found");
 				}
 			}
 		}
-		
-		assertFalse("did not find all import statments", 
+
+		assertFalse("did not find all import statments",
 				importStatmentsFound < 4);
 	}
 }

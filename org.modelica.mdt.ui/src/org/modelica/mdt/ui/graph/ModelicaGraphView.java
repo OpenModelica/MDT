@@ -10,14 +10,18 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -28,21 +32,19 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphNode;
-import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.core.CompilerProxy;
 import org.modelica.mdt.internal.core.ModelicaSourceFile;
 import org.modelica.mdt.ui.editor.EditorUtility;
 
@@ -65,7 +67,7 @@ public class ModelicaGraphView extends ViewPart {
 	private boolean isDetached = false;
 	public static boolean loadedModelica = false;
 
-	String viewId = "org.modelica.mdt.ui.graph.ModelicaGraphView"; 
+	String viewId = "org.modelica.mdt.ui.graph.ModelicaGraphView";
 
 	/**
 	 * This will be called when the Graph View-view is created. It will
@@ -91,13 +93,13 @@ public class ModelicaGraphView extends ViewPart {
 			page.getActivePerspective().getPresentation().detachPart(ref);
 
 			// TODO: In Eclipse 4.x the following should be done instead
-			
+
 		EModelService s = (EModelService) getSite().getService(EModelService.class);
 		MPartSashContainerElement p = (MPart) getSite().getService(MPart.class);
 		if (p.getCurSharedRef() != null)
 			p = p.getCurSharedRef();
 		s.detach(p, 100, 100, 300, 300);
-		 
+
 		*/
 
 		permaParent = parent;
@@ -107,11 +109,11 @@ public class ModelicaGraphView extends ViewPart {
 
 	/**
 	 * This will add listeners to the graph so that the system will react different
-	 * to different kinds of mouse actions. 
+	 * to different kinds of mouse actions.
 	 * On double-click it will open up the reference to a clicked class.
 	 * On right-click it will show a list of actions from a node, or if it was a
 	 * connection it will show a list of all lines of code that made the selected
-	 * dependency(s)         
+	 * dependency(s)
 	 */
 	private void listenerAdder() {
 		graph.addMouseListener(
@@ -144,7 +146,7 @@ public class ModelicaGraphView extends ViewPart {
 					public void mouseUp(MouseEvent e)
 					{
 						// right-click
-						if (e.button == 3) { 
+						if (e.button == 3) {
 							rightClickHandler(e);
 						}
 					}
@@ -167,7 +169,7 @@ public class ModelicaGraphView extends ViewPart {
 	 * @exception InvocationException
 	 *                if the Modelica compiler replies with an unexpected error in results
 	 */
-	private void doubleClickHandler(String select) 
+	private void doubleClickHandler(String select)
 			throws ConnectException, UnexpectedReplyException, InvocationError {
 		for (int i = 0; i < ModelicaGraphGenerator.nodes.size(); i++) {
 			if (ModelicaGraphGenerator.nodes.get(i).getName().equals(select)) {
@@ -186,7 +188,7 @@ public class ModelicaGraphView extends ViewPart {
 					ArrayList<Integer> destructedConnections = ModelicaGraphAnalyzer.destructClasses(i, select);
 					ModelicaGraphGenerator.removeDependencies(graph, destructedConnections, i);
 				}
-			} 
+			}
 		}
 	}
 
@@ -246,7 +248,7 @@ public class ModelicaGraphView extends ViewPart {
 					}
 				});
 
-			} else if (selectedObject instanceof GraphConnection) {							
+			} else if (selectedObject instanceof GraphConnection) {
 				final List l = new List(graph, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 				l.setBounds (e.x, e.y, 400, 100);
 
@@ -278,24 +280,24 @@ public class ModelicaGraphView extends ViewPart {
 
 				l.addListener (SWT.DefaultSelection, new Listener () {
 					public void handleEvent (Event e) {
-						openSelectedReference(source, listItems.get(l.getFocusIndex()));					
+						openSelectedReference(source, listItems.get(l.getFocusIndex()));
 					}
 				});
-			}	
+			}
 		}
 	}
 
 	private void addMyTrackListener(final List l) {
-		l.addMouseTrackListener(new MouseTrackListener() { 
+		l.addMouseTrackListener(new MouseTrackListener() {
 			public void mouseHover(MouseEvent e) {
 				// TODO: Is this needed?
-				l.redraw(); 
-			}    
-			public void mouseExit(MouseEvent e) { 
+				l.redraw();
+			}
+			public void mouseExit(MouseEvent e) {
 				l.dispose();
-			}    
-			public void mouseEnter(MouseEvent e) { 
-			} 
+			}
+			public void mouseEnter(MouseEvent e) {
+			}
 		});
 	}
 
@@ -307,13 +309,13 @@ public class ModelicaGraphView extends ViewPart {
 	 *            the name of the class
 	 * @param lineNumber
 	 *            the line number in that class file
-	 * @throws CoreException 
+	 * @throws CoreException
 	 *                if the Modelica compiler can't be loaded
-	 * @throws ConnectException 
+	 * @throws ConnectException
 	 *                if the Modelica compiler returns something strange
 	 * @throws UnexpectedReplyException
 	 *                if the Modelica compiler returns something strange
-	 * @throws InvocationError 
+	 * @throws InvocationError
 	 *                if the Modelica compiler returns something strange
 	 */
 	public void openSelectedReference(String ref, int lineNumber) {
@@ -386,7 +388,7 @@ public class ModelicaGraphView extends ViewPart {
 
 				objName = "";
 				try {
-					IStructuredSelection newSelection = (IStructuredSelection) final_selection; 
+					IStructuredSelection newSelection = (IStructuredSelection) final_selection;
 					Object obj = newSelection.getFirstElement();
 					objName = obj.getClass().getName();
 				} catch (ClassCastException e) {}
@@ -402,13 +404,13 @@ public class ModelicaGraphView extends ViewPart {
 				return Status.OK_STATUS;
 			}
 		};
-		job.schedule(); 
+		job.schedule();
 	}
 
 	/**
 	 * This will remove all visual graph objects from the graph
 	 * and will perform this asynchronous with Eclips UI thread.
-	 * 
+	 *
 	 * @param g
 	 *                the graph that should be cleared from
 	 *                all visual objects
@@ -443,7 +445,7 @@ public class ModelicaGraphView extends ViewPart {
 	 */
 	public static void updateGraph(ISelection... select) {
 		ISelection selection = null;
-		for (ISelection s : select ) 
+		for (ISelection s : select )
 			selection = s;
 
 		if(selection!=null && !selection.isEmpty()) {
@@ -544,5 +546,5 @@ public class ModelicaGraphView extends ViewPart {
 
 	public void dispose() {
 		super.dispose();
-	}	
+	}
 }

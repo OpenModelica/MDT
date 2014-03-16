@@ -10,9 +10,9 @@ import java.io.PrintStream;
 
 import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
-import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.core.compiler.CompilerException;
+import org.modelica.mdt.internal.core.CompilerProxy;
 
 public class OpenModelicaCommandHandler extends Thread
 {
@@ -20,16 +20,16 @@ public class OpenModelicaCommandHandler extends Thread
 	private IOConsoleOutputStream output = null;
 	private BufferedReader        reader = null;
 	private BufferedWriter        writer = null;
-	
+
 	public OpenModelicaCommandHandler(IOConsoleInputStream input, IOConsoleOutputStream output)
 	{
 		super();
 		this.input  = input;
 		this.output = output;
 		reader = new BufferedReader(new InputStreamReader(this.input));
-		writer = new BufferedWriter(new OutputStreamWriter(this.output));		
+		writer = new BufferedWriter(new OutputStreamWriter(this.output));
 	}
-	
+
 	public void run()
 	{
 		try
@@ -60,7 +60,7 @@ public class OpenModelicaCommandHandler extends Thread
 					// ignore
 					writer.write("reply omc> error!\n");
 					//writer.write(e.getMessage());
-					e.printStackTrace(new PrintStream(output));					
+					e.printStackTrace(new PrintStream(output));
 				}
 				writer.write("omc> ");
 				writer.flush();
@@ -73,5 +73,5 @@ public class OpenModelicaCommandHandler extends Thread
 			this.interrupt();
 		}
 	}
-	
+
 }

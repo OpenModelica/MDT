@@ -2,29 +2,29 @@
  * @author Adrian Pop [adrpo@ida.liu.se, http://www.ida.liu.se/~adrpo]
  * Copyright (c) 2002-2006, Adrian Pop [adrpo@ida.liu.se],
  * Programming Environments Laboratory (PELAB),
- * Department of Computer and Information Science (IDA), 
- * Linköpings University (LiU). 
+ * Department of Computer and Information Science (IDA),
+ * Linköpings University (LiU).
  * All rights reserved.
  *
  * http://www.ida.liu.se/~adrpo/license/
  *
  * NON-COMMERCIAL terms and conditions [NON-COMMERCIAL setting]:
  * Permission to use, copy, modify, and distribute this software and
- * its documentation in source or binary form (including products 
- * developed or generated using this software) for NON-COMMERCIAL 
- * purposes and without fee is hereby granted, provided that this 
- * copyright notice appear in all copies and that both the copyright 
- * notice and this permission notice and warranty disclaimer appear 
- * in supporting documentation, and that the name of The Author is not 
- * to be used in advertising or publicity pertaining to distribution 
+ * its documentation in source or binary form (including products
+ * developed or generated using this software) for NON-COMMERCIAL
+ * purposes and without fee is hereby granted, provided that this
+ * copyright notice appear in all copies and that both the copyright
+ * notice and this permission notice and warranty disclaimer appear
+ * in supporting documentation, and that the name of The Author is not
+ * to be used in advertising or publicity pertaining to distribution
  * of the software without specific, prior written permission.
- * 
+ *
  * COMMERCIAL terms and conditions [COMMERCIAL setting]:
- * COMMERCIAL use, copy, modification and distribution in source 
+ * COMMERCIAL use, copy, modification and distribution in source
  * or binary form (including products developed or generated using
- * this software) is NOT permitted without prior written agreement 
+ * this software) is NOT permitted without prior written agreement
  * from Adrian Pop [adrpo@ida.liu.se].
- * 
+ *
  * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
  * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.
  * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, INDIRECT OR
@@ -44,15 +44,14 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
 import org.modelica.mdt.core.IModelicaElementChange;
+import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.IModelicaSourceFile;
 import org.modelica.mdt.core.ISourceRegion;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.ListElement;
-import org.modelica.mdt.core.IModelicaElementChange.ChangeType;
 import org.modelica.mdt.core.builder.SyntaxChecker;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
@@ -64,28 +63,28 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  * @author Adrian Pop
  * @author Elmir Jagudin
  */
-public class ModelicaSourceFile extends ModelicaElement implements IModelicaSourceFile 
+public class ModelicaSourceFile extends ModelicaElement implements IModelicaSourceFile
 {
 	private IFile file;
 
 	/* classes and packages in this file hashed by name */
-	Hashtable<String, IModelicaElement> children = null;	
+	Hashtable<String, IModelicaElement> children = null;
 
 	/**
 	 * Create a modelica file that is inside a package. All the definitions
 	 * in the file are placed in the namespace under the parent package.
 	 */
-	public ModelicaSourceFile(FolderPackage parent, IFile file) 
+	public ModelicaSourceFile(FolderPackage parent, IFile file)
 	{
 		super(parent);
 		this.file = file;
 	}
 
 	/**
-	 * Create a modelica source file that is inside a folder. All the 
+	 * Create a modelica source file that is inside a folder. All the
 	 * definitions in the file are placed in the root namespace.
 	 */
-	public ModelicaSourceFile(ModelicaFolder parent, IFile file) 
+	public ModelicaSourceFile(ModelicaFolder parent, IFile file)
 	{
 		super(parent);
 		this.file = file;
@@ -100,20 +99,20 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 	}
 
 	@Override
-	public IFile getResource() 
+	public IFile getResource()
 	{
 		return file;
 	}
 
 	public Collection<IModelicaElement> getChildren()
 		throws ConnectException, UnexpectedReplyException,
-			CompilerInstantiationException 
+			CompilerInstantiationException
 	{
 		if (children == null)
 		{
 			children = loadElements();
 		}
-		
+
 		return children.values();
 	}
 
@@ -121,14 +120,14 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 		throws ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
 	{
-		Hashtable<String, IModelicaElement> elements = 
+		Hashtable<String, IModelicaElement> elements =
 			new Hashtable<String, IModelicaElement>();
-		
-		IParseResults res = SyntaxChecker.loadFileAndReportErrors(file, false);		
-		
+
+		IParseResults res = SyntaxChecker.loadFileAndReportErrors(file, false);
+
 		IModelicaElement parent = getParent();
 		FolderPackage parentPackage = null;
-		
+
 		/*
 		 * If we're inside a package, define the classes inside the
 		 * parent package.
@@ -153,7 +152,7 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 						/* Ignore, just don't add something that contains
 						 * errors */
 					}
-					
+
 					if(list != null)
 					{
 						for(ListElement element : list)
@@ -161,7 +160,7 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 							elements.put(element.toString(), new InnerClass(this, parentPackage, element.toString(), null, null));
 						}
 					}
-					
+
 					/* don't add the package definition to the package.mo */
 					continue;
 				}
@@ -201,11 +200,11 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 					elements.put(name, new InnerClass(this, null, name, null, null));
 				}
 			}
-		}	
-		
+		}
+
 		return elements;
 	}
-	
+
 	public boolean hasChildren()
 		throws CoreException, ConnectException, UnexpectedReplyException,
 			CompilerInstantiationException
@@ -214,22 +213,22 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 	}
 
 
-	
+
 	@Override
 	public Collection<IModelicaElementChange> update(IResourceDelta delta)
-		throws ConnectException, UnexpectedReplyException, InvocationError, 
+		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException, CoreException
-	{	
+	{
 		LinkedList<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
-		
+
 		if ((delta.getFlags() & IResourceDelta.CONTENT) == 0)
 		{
 			return changes;
 		}
-		
+
 		/* this file have been change, add an the event that describes that */
 		changes.add(new ModelicaElementChange(this, ChangeType.MODIFIED, delta));
-		
+
 		if (children == null)
 		{
 			/* if children are not loaded, then we can't update */
@@ -239,13 +238,13 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 		Hashtable<String, IModelicaElement> newChildren = loadElements();
 		@SuppressWarnings("unchecked")
 		Hashtable<String, IModelicaElement> oldChildren = (Hashtable<String, IModelicaElement>) children.clone();
-		
-		
+
+
 		for (IModelicaElement element : newChildren.values())
 		{
-		
+
 			ModelicaElement oldElement = (ModelicaElement)oldChildren.remove(element.getElementName());
-			
+
 			if (oldElement == null)
 			{
 				/* new element added */
@@ -258,14 +257,14 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 				changes.addAll(oldElement.reload());
 			}
 		}
-		
+
 		/* now there is only removed elements in the oldChildren table */
 		for (IModelicaElement element : oldChildren.values())
 		{
 			children.remove(element.getElementName());
 			changes.add(new ModelicaElementChange(element, ChangeType.REMOVED, delta));
 		}
-		
+
 		return changes;
 	}
 
@@ -280,7 +279,7 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 
 		Vector<IModelicaClass> pkgs = new Vector<IModelicaClass>();
 		IModelicaClass classElement;
-		
+
 		for (Object element : children.values())
 		{
 			if (element instanceof IModelicaClass)
@@ -292,7 +291,7 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 				}
 			}
 		}
-		
+
 		IModelicaClass[] arry =  new IModelicaClass[pkgs.size()];
 
 		return pkgs.toArray(arry);
@@ -305,7 +304,7 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 	}
 
 	/**
-	 * @see IModelicaSourceFile#getClassAt(ISourceRegion sourceRegion) 
+	 * @see IModelicaSourceFile#getClassAt(ISourceRegion sourceRegion)
 	 */
 	public IModelicaClass getClassAt(ISourceRegion sourceRegion)
 	throws ConnectException, UnexpectedReplyException, CompilerInstantiationException, InvocationError, CoreException
@@ -315,22 +314,22 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 		{
 			children = loadElements();
 		}
-		
+
 		return findClassDefAt(children.values(), sourceRegion);
 	}
 
 	/**
 	 * Checks if there is a class definition at specified position
 	 * among provided classes.
-	 * 
+	 *
 	 * @param elements the elements among which look for class definitions
 	 * @param position the character at which look for the class definiton
 	 * @return the innermost class definition found or null if no class
 	 * definitions region overlaps position
 	 */
 	private IModelicaClass findClassDefAt(Collection<? extends IModelicaElement> elements, ISourceRegion sourceRegion)
-	
-		throws ConnectException, UnexpectedReplyException, InvocationError, 
+
+		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException, CoreException
 	{
 		/*
@@ -348,27 +347,27 @@ public class ModelicaSourceFile extends ModelicaElement implements IModelicaSour
 
 			IModelicaClass clazz = (IModelicaClass)el;
 			ISourceRegion reg = clazz.getLocation().getSourceRegion();
-			
+
 			if (reg.contains(sourceRegion))
 			{
 				/* check if position is inside a subclass definition */
 				IModelicaClass subclazz = findClassDefAt(clazz.getChildren(), sourceRegion);
-				
+
 				if (subclazz != null)
 				{
 					return subclazz;
 				}
 				return clazz;
 			}
-			
+
 		}
-		
+
 		return null; /* no definition found at position */
 	}
-	
-	public String getFullName() 
+
+	public String getFullName()
 	{
 		return getElementName();
 	}
-	
+
 }

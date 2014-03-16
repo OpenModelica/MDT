@@ -46,7 +46,6 @@ import java.util.LinkedList;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaElement;
@@ -66,23 +65,23 @@ public class StandardLibrary  extends ModelicaElement implements IStandardLibrar
 	{
 		super(parent);
 	}
-	
+
 	public Collection<IModelicaClass> getPackages() throws ConnectException, CompilerInstantiationException
 	{
 		if (packages == null)
 		{
 			packages = new LinkedList<IModelicaClass>();
-						
+
 			for (String packageName : CompilerProxy.getStandardLibrary())
 			{
 				packages.add(new InnerClass(null, packageName, IModelicaClass.Restriction.PACKAGE, null));
 			}
 		}
-		
+
 		return packages;
 	}
 
-	public String getElementName() 
+	public String getElementName()
 	{
 		String oml = System.getenv("OPENMODELICALIBRARY");
 		if (oml == null)
@@ -90,12 +89,12 @@ public class StandardLibrary  extends ModelicaElement implements IStandardLibrar
 		return "Libraries: " + oml;
 	}
 
-	public String getFullName() 
+	public String getFullName()
 	{
 		return getElementName();
 	}
 
-	public IResource getResource() 
+	public IResource getResource()
 	{
 		return null;
 	}
@@ -110,19 +109,19 @@ public class StandardLibrary  extends ModelicaElement implements IStandardLibrar
 		return null;
 	}
 
-	public IModelicaSourceFile getSourceFile() 
+	public IModelicaSourceFile getSourceFile()
 	{
 		return null;
 	}
 
 	public IModelicaClass getPackage(String packageName)
 		throws ConnectException, CompilerInstantiationException,
-			UnexpectedReplyException, InvocationError, CoreException 
+			UnexpectedReplyException, InvocationError, CoreException
 	{
 		return ModelicaRoot.getPackage(getPackages(), packageName);
 	}
 
-	public Collection<? extends IModelicaElement> getChildren() 
+	public Collection<? extends IModelicaElement> getChildren()
 		throws ConnectException, CompilerInstantiationException
 	{
 		return getPackages();

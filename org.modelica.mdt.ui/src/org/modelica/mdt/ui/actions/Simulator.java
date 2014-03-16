@@ -1,25 +1,23 @@
 
 package org.modelica.mdt.ui.actions;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.Element;
 import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.IModelicaCompiler;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.core.CompilerProxy;
 
 public class Simulator {
-	
+
 	private Simulator() {
 		try {
 			compiler = CompilerProxy.getCompiler();
@@ -28,21 +26,21 @@ public class Simulator {
 		catch (CompilerInstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		}
 		catch (ConnectException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static Simulator getInstance() {
 		if (inst == null)  {
 			inst = new Simulator();
 		}
-		
+
 		return inst;
 	}
-	
+
 	public void Run(String fullPath) {
 		try {
 			System.out.println(fullPath);
@@ -52,7 +50,7 @@ public class Simulator {
 				FileWriter fw = new FileWriter(testFile);
 				// cd("C:/Users/magsj467/AppData/Local/Temp/OpenModelica");
 				String topLevelModel = getFirstRootClass(fullPath);
-				String testData = 
+				String testData =
 					"loadModel(Modelica);\n" +
 					"getErrorString();\n" +
 					"loadFile(\"" + fullPath + "\");\n" +
@@ -62,7 +60,7 @@ public class Simulator {
 				fw.write(testData);
 				fw.flush();
 				fw.close();
-	            List<String> params = new ArrayList<String>();    
+	            List<String> params = new ArrayList<String>();
 	            params.add(omcCompilerPath);
 	            params.add("+simCodeTarget=Dump");
 	            params.add(testFile.getAbsolutePath());
@@ -79,18 +77,18 @@ public class Simulator {
 			else {
 				System.err.println("Error creating temporary file!");
 			}
-		} 
+		}
 		catch (IOException e) {
 			e.printStackTrace();
-		} 
+		}
 		catch (ConnectException e) {
 			e.printStackTrace();
-		} 
+		}
 		catch (UnexpectedReplyException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private String getFirstRootClass(String fullPath) throws ConnectException, UnexpectedReplyException {
 		org.modelica.mdt.core.List fileRootClasses = compiler.parseFile(fullPath);
 
@@ -105,12 +103,12 @@ public class Simulator {
 			}
 			else if (listElement instanceof List) {
 				System.err.println("Weird, nested list found!");
-			} 
+			}
 		}
 
 		return null;
 	}
-	
+
 	private static Simulator inst;
 
 	private IModelicaCompiler compiler;

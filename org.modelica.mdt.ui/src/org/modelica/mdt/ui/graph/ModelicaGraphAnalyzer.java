@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.SWT;
-import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.ICompilerResult;
 import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
@@ -19,9 +18,10 @@ import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.IModelicaCompiler;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
+import org.modelica.mdt.internal.core.CompilerProxy;
 
 /**
- * This class analyze the code of a file and to extract class-/package-dependencies, 
+ * This class analyze the code of a file and to extract class-/package-dependencies,
  * and then send it onwards to org.modelica.mdt.ui.graph.GraphGenerator.
  *
  * @author: Magnus Sjöstrand
@@ -59,7 +59,7 @@ public class ModelicaGraphAnalyzer {
 	 * @exception InvocationException
 	 *                if the Modelica compiler replies with an unexpected error in results
 	 */
-	public static void initAnalyze(String fileName, IPath filePath) 
+	public static void initAnalyze(String fileName, IPath filePath)
 			throws ConnectException, UnexpectedReplyException, InvocationError {
 		String className;
 		ModelicaNode coreNode;
@@ -78,7 +78,7 @@ public class ModelicaGraphAnalyzer {
 				ModelicaGraphView.loadedModelica = true;
 		}
 		classPath = filePath.toString();
-		
+
 		// load modelica file
 		currentCompiler.loadFile(classPath);
 
@@ -86,7 +86,7 @@ public class ModelicaGraphAnalyzer {
 		List classList = currentCompiler.parseFile(classPath);
 
 		nid = -1;
-		
+
 		for (int j = 0; j < classList.size(); j++) {
 			className = classList.elementAt(j).toString();
 
@@ -103,7 +103,7 @@ public class ModelicaGraphAnalyzer {
 				coreNode.expandable = false;
 				ModelicaGraphGenerator.nodes.add(coreNode);
 			}
-			
+
 			analyzeClasses(nid, className, false);
 		}
 	}
@@ -126,7 +126,7 @@ public class ModelicaGraphAnalyzer {
 	 * @exception InvocationException
 	 *                if the Modelica compiler replies with an unexpected error in results
 	 */
-	public static int analyzeClasses(int prevID, String className, boolean recursive) 
+	public static int analyzeClasses(int prevID, String className, boolean recursive)
 			throws ConnectException, UnexpectedReplyException, InvocationError {
 		System.out.println("TESTING");
 		currentCompiler.loadFile(classPath);
@@ -146,7 +146,7 @@ public class ModelicaGraphAnalyzer {
 			ICompilerResult res = currentCompiler.getNthImport(className, i+1);
 			createBond(className, res.getFirstResult(), recursive, prevID, SWT.LINE_SOLID, SWT.COLOR_GREEN);
 		}
-		
+
 		// Find inheritance-dependencies
 		num =  currentCompiler.getInheritanceCount(className);
 		for (int i = 0; i < num; i++) {
@@ -168,7 +168,7 @@ public class ModelicaGraphAnalyzer {
 			String trimRes = res.getFirstResult();
 			checkExist(className, trimRes, recursive, prevID);
 		}
-		
+
 		// Find function-call-dependencies among equations
 		num =  currentCompiler.getEquationItemsCount(className);
 		for (int i = 0; i < num; i++) {
@@ -197,7 +197,7 @@ public class ModelicaGraphAnalyzer {
 	 * @exception UnexpectedReplyException
 	 *                if the Modelica compiler returns something strange
 	 */
-	private static void setToolTipInfo(ModelicaNode node, String className, String classPath) 
+	private static void setToolTipInfo(ModelicaNode node, String className, String classPath)
 			throws ConnectException, UnexpectedReplyException {
 		// loads the file in order to perform new OMC calls on this specific file
 		currentCompiler.loadFile(classPath);
@@ -214,7 +214,7 @@ public class ModelicaGraphAnalyzer {
 		}
 
 		// extract the class type if there is any
-		if (!classType.isEmpty()) 
+		if (!classType.isEmpty())
 			node.setClassType(classType.substring(0, 1).toUpperCase() + classType.substring(1, classType.length()));
 
 		node.setClassDescription(classComment);
@@ -239,7 +239,7 @@ public class ModelicaGraphAnalyzer {
 	 * @exception InvocationException
 	 *                if the Modelica compiler replies with an unexpected error in results
 	 */
-	private static void checkExist(String className, String trimRes, boolean recursive, int prevID) 
+	private static void checkExist(String className, String trimRes, boolean recursive, int prevID)
 			throws ConnectException, UnexpectedReplyException, InvocationError {
 		int lastIndex = 0;
 		int count = 0;
@@ -263,7 +263,7 @@ public class ModelicaGraphAnalyzer {
 			tempRes = tempRes.substring(tempRes.lastIndexOf(" ")+1,tempRes.length());
 
 			// TODO: Keep track of what has been found before?
-			
+
 			// Create a connection from this found function dependency
 			if (tempRes.length() != 0 && currentCompiler.existClass(tempRes))
 				createBond(className, tempRes, recursive, prevID, SWT.LINE_DOT, SWT.COLOR_GREEN);
@@ -288,7 +288,7 @@ public class ModelicaGraphAnalyzer {
 	 * @exception InvocationException
 	 *                if the Modelica compiler replies with an unexpected error in results
 	 */
-	public static void analyzeParent(int prevID, String fullName, boolean recursive) 
+	public static void analyzeParent(int prevID, String fullName, boolean recursive)
 			throws ConnectException, UnexpectedReplyException, InvocationError {
 		if (fullName.contains(".") && currentCompiler.isPackage(fullName.substring(0, fullName.lastIndexOf(".")))){
 			String packageName = fullName.substring(0, fullName.lastIndexOf("."));
@@ -318,17 +318,17 @@ public class ModelicaGraphAnalyzer {
 	 * @exception InvocationException
 	 *                if the Modelica compiler replies with an unexpected error in results
 	 */
-	public static void createBond(String sourceName, String targetName, boolean recursive, int prev, int style, int color) 
+	public static void createBond(String sourceName, String targetName, boolean recursive, int prev, int style, int color)
 			throws ConnectException, UnexpectedReplyException, InvocationError {
-		
+
 		// TODO: OpenModelica is missing a good way of checking for a Keyword
-		if (targetName.equals("Real") || 
-			targetName.equals("assert") || 
+		if (targetName.equals("Real") ||
+			targetName.equals("assert") ||
 			targetName.equals("Integer")) {
-			
+
 			return;
 		}
-		
+
 		String myPath = (new Path(ModelicaGraphAnalyzer.currentCompiler.getClassLocation(sourceName).getPath()).toString());
 		ArrayList<Integer> lineNumbers = findLineNumber(myPath, targetName);
 		boolean familiar = true;
@@ -355,7 +355,7 @@ public class ModelicaGraphAnalyzer {
 
 		int n = 0;
 		// Fix for handling analyze of multiple trees of classes
-		if(!nodesContains(targetName)) 
+		if(!nodesContains(targetName))
 			n = nid;
 		else {
 			int j;
@@ -363,7 +363,7 @@ public class ModelicaGraphAnalyzer {
 			   if (ModelicaGraphGenerator.nodes.get(j).getName().equals(targetName))
 					   n = j;
 		}
-		
+
 		ModelicaNode currentNode = ModelicaGraphGenerator.nodes.get(n);
 		ModelicaNode prevNode = ModelicaGraphGenerator.nodes.get(prev);
 
@@ -385,7 +385,7 @@ public class ModelicaGraphAnalyzer {
 			for (int i = 0; i < ModelicaGraphGenerator.connections.size(); i++) {
 				instantConnection = ModelicaGraphGenerator.connections.get(i);
 				if (instantConnection.getSource().getName().equals(currentNode.getName()) &&
-						instantConnection.getDestination().getName().equals(prevNode.getName())) 
+						instantConnection.getDestination().getName().equals(prevNode.getName()))
 					instantConnection.setBending();
 			}
 
@@ -393,16 +393,16 @@ public class ModelicaGraphAnalyzer {
 			ModelicaConnection connect = new ModelicaConnection(
 					Integer.toString(cid), "test", prevNode, currentNode, style, targetName, lineNumbers);
 			connect.setBending();
-			ModelicaGraphGenerator.connections.add(connect);	
+			ModelicaGraphGenerator.connections.add(connect);
 			cid += 1;
 		}
-		
+
 		// Connection doesn't exist in neither direction
 		else if (!connectionsContains(prevNode.getName(), currentNode.getName()) &&
 				!prevNode.getName().equals(currentNode.getName())) {
 			ModelicaConnection connect = new ModelicaConnection(
 					Integer.toString(cid), "test", prevNode, currentNode, style, targetName, lineNumbers);
-			ModelicaGraphGenerator.connections.add(connect);	
+			ModelicaGraphGenerator.connections.add(connect);
 			cid += 1;
 		}
 	}
@@ -410,7 +410,7 @@ public class ModelicaGraphAnalyzer {
 	/**
 	 * This will iterate over all the stored nodes and check if a name
 	 * exist among them.
-	 * 	
+	 *
 	 * @param comparingString
 	 *            the name that should be found among the stored nodes
 	 * @return true if it was found, otherwise false
@@ -428,7 +428,7 @@ public class ModelicaGraphAnalyzer {
 	/**
 	 * This will iterate over all the stored connections and check if a connection
 	 * exist among them with a specific source and a specific target.
-	 * 	
+	 *
 	 * @param comparingSource
 	 *            the source of a connection that should be found
 	 * @param comparingTarget
@@ -439,7 +439,7 @@ public class ModelicaGraphAnalyzer {
 		for (int i = 0; i < ModelicaGraphGenerator.connections.size(); i++) {
 			ModelicaConnection currentConnection = ModelicaGraphGenerator.connections.get(i);
 			if (currentConnection.getSource().getName().equals(comparingSource) &&
-					currentConnection.getDestination().getName().equals(comparingDestination)) 
+					currentConnection.getDestination().getName().equals(comparingDestination))
 				return true;
 		}
 		return false;
@@ -466,19 +466,19 @@ public class ModelicaGraphAnalyzer {
 		} catch (FileNotFoundException e)
 		{
 			e.printStackTrace();
-		}  
-		int lineID = 0;  
-		ArrayList<Integer> lineNumbers = new ArrayList<Integer>();  
+		}
+		int lineID = 0;
+		ArrayList<Integer> lineNumbers = new ArrayList<Integer>();
 		Pattern pattern =  Pattern.compile("\\b" + text);
-		Matcher matcher = null;  
+		Matcher matcher = null;
 
-		while(fileScanner.hasNextLine()){  
-			String line = fileScanner.nextLine();  
-			lineID++;  
-			matcher = pattern.matcher(line);  
-			if(matcher.find()){  
+		while(fileScanner.hasNextLine()){
+			String line = fileScanner.nextLine();
+			lineID++;
+			matcher = pattern.matcher(line);
+			if(matcher.find()){
 				lineNumbers.add(lineID);
-			}  	  
+			}
 		}
 		return lineNumbers;
 	}
@@ -503,7 +503,7 @@ public class ModelicaGraphAnalyzer {
 
 		for(int i = destroyedConnections.size()-1; i >= 0; i--) {
 			if (ModelicaGraphGenerator.connections.get(destroyedConnections.get(i)).getDestination().isExpandable())
-			{ 
+			{
 				// We can possibly also remove the node pointed at
 				ModelicaGraphGenerator.nodes.remove(ModelicaGraphGenerator.connections.get(destroyedConnections.get(i)).getDestination().getId());
 
@@ -511,7 +511,7 @@ public class ModelicaGraphAnalyzer {
 				for(int j = ModelicaGraphGenerator.connections.get(destroyedConnections.get(i)).getDestination().getId(); j < ModelicaGraphGenerator.nodes.size(); j++)
 					ModelicaGraphGenerator.nodes.get(j).setId(ModelicaGraphGenerator.nodes.get(j).getId()-1);
 				nid -= 1;
-			} 
+			}
 			int resulting = destroyedConnections.get(i);
 			ModelicaGraphGenerator.connections.remove(resulting);
 			cid -= 1;
