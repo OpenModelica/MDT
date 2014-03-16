@@ -1,18 +1,18 @@
 /*******************************************************************************
  * @author Adrian Pop
  * Copyright (c) 2006 Adrian Pop, adrpo@ida.liu.se
- * All rights reserved. 
+ * All rights reserved.
  * Permission to use, copy, modify, and distribute this software and
- * its documentation for NON-COMMERCIAL purposes and without fee is hereby 
- * granted, provided that this copyright notice appear in all copies and 
+ * its documentation for NON-COMMERCIAL purposes and without fee is hereby
+ * granted, provided that this copyright notice appear in all copies and
  * that both the copyright notice and this permission notice and warranty
  * disclaimer appear in supporting documentation, and that the name of
  * The Author not be used in advertising or publicity pertaining to
  * distribution of the software without specific, written prior permission.
- * 
- * COMMERCIAL use, copy, modification and distribution 
+ *
+ * COMMERCIAL use, copy, modification and distribution
  * is NOT permitted without prior agreement with Adrian Pop.
- * 
+ *
  * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
  * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.
  * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, INDIRECT OR
@@ -65,30 +65,30 @@ import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 
 
 /**
- * 
+ *
  * @author Adrian Pop
  *   - big changes, splited scanners for different partitions, etc
  */
-public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration 
-{	
+public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
+{
 	private ModelicaCodeScanner 	         fCodeScanner;              /* for code parts and strings */
 	private ModelicaMultilineCommentScanner  fMultilineCommentScanner;  /* for C comments */
 	private ModelicaSinglelineCommentScanner fSinglelineCommentScanner; /* for single line comments */
 	private ModelicaStringScanner            fStringScanner;            /* for strings and comment strings */
-	
+
 	private ITextEditor textEditor;
-		
+
 	private String fDocumentPartitioning;
-	
-	public ModelicaSourceViewerConfig(ITextEditor textEditor, String partitioning) 
+
+	public ModelicaSourceViewerConfig(ITextEditor textEditor, String partitioning)
 	{
 		this.textEditor = textEditor;
 		this.fDocumentPartitioning = partitioning;
 	}
 
-	protected ModelicaCodeScanner getCodeScanner() 
+	protected ModelicaCodeScanner getCodeScanner()
 	{
-		if (fCodeScanner == null) 
+		if (fCodeScanner == null)
 		{
 			fCodeScanner = new ModelicaCodeScanner();
 			fCodeScanner.setDefaultReturnToken
@@ -96,10 +96,10 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 		}
 		return fCodeScanner;
 	}
-	
-	protected ModelicaMultilineCommentScanner getMultilineCommentScanner() 
+
+	protected ModelicaMultilineCommentScanner getMultilineCommentScanner()
 	{
-		if (fMultilineCommentScanner == null) 
+		if (fMultilineCommentScanner == null)
 		{
 			fMultilineCommentScanner = new ModelicaMultilineCommentScanner();
 			fMultilineCommentScanner.setDefaultReturnToken
@@ -108,9 +108,9 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 		return fMultilineCommentScanner;
 	}
 
-	protected ModelicaSinglelineCommentScanner getSinglelineCommentScanner() 
+	protected ModelicaSinglelineCommentScanner getSinglelineCommentScanner()
 	{
-		if (fSinglelineCommentScanner == null) 
+		if (fSinglelineCommentScanner == null)
 		{
 			fSinglelineCommentScanner = new ModelicaSinglelineCommentScanner();
 			fSinglelineCommentScanner.setDefaultReturnToken
@@ -119,9 +119,9 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 		return fSinglelineCommentScanner;
 	}
 
-	protected ModelicaStringScanner getStringScanner() 
+	protected ModelicaStringScanner getStringScanner()
 	{
-		if (fStringScanner == null) 
+		if (fStringScanner == null)
 		{
 			fStringScanner = new ModelicaStringScanner();
 			fStringScanner.setDefaultReturnToken
@@ -129,40 +129,40 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 		}
 		return fStringScanner;
 	}
-		
-	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) 
+
+	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer)
 	{
 		PresentationReconciler reconciler = new PresentationReconciler();
-		
+
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-		
+
 		DefaultDamagerRepairer drCode = new DefaultDamagerRepairer(getCodeScanner());
 		reconciler.setDamager(drCode, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(drCode, IDocument.DEFAULT_CONTENT_TYPE);
-		
-		DefaultDamagerRepairer drMultilineComments = new DefaultDamagerRepairer(getMultilineCommentScanner());		
+
+		DefaultDamagerRepairer drMultilineComments = new DefaultDamagerRepairer(getMultilineCommentScanner());
 		reconciler.setDamager(drMultilineComments, IModelicaPartitions.MODELICA_MULTI_LINE_COMMENT);
-		reconciler.setRepairer(drMultilineComments, IModelicaPartitions.MODELICA_MULTI_LINE_COMMENT);		
-		
-		DefaultDamagerRepairer drSingleComments = new DefaultDamagerRepairer(getSinglelineCommentScanner());		
+		reconciler.setRepairer(drMultilineComments, IModelicaPartitions.MODELICA_MULTI_LINE_COMMENT);
+
+		DefaultDamagerRepairer drSingleComments = new DefaultDamagerRepairer(getSinglelineCommentScanner());
 		reconciler.setDamager(drSingleComments, IModelicaPartitions.MODELICA_SINGLE_LINE_COMMENT);
 		reconciler.setRepairer(drSingleComments, IModelicaPartitions.MODELICA_SINGLE_LINE_COMMENT);
-		
+
 		DefaultDamagerRepairer drStrings = new DefaultDamagerRepairer(getStringScanner());
 		reconciler.setDamager(drStrings, IModelicaPartitions.MODELICA_STRING);
-		reconciler.setRepairer(drStrings, IModelicaPartitions.MODELICA_STRING);		
-				
+		reconciler.setRepairer(drStrings, IModelicaPartitions.MODELICA_STRING);
+
 		return reconciler;
 	}
-	
+
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer)
 	{
 		ContentAssistant assistant = new ContentAssistant();
-		
+
 		assistant.setContentAssistProcessor(new ModelicaCompletionProcessor(textEditor), IDocument.DEFAULT_CONTENT_TYPE);
 		DialogSettings s = new DialogSettings("completion_proposal_size");
 		s.put(ContentAssistant.STORE_SIZE_X, "550");
-		s.put(ContentAssistant.STORE_SIZE_Y, "280");		
+		s.put(ContentAssistant.STORE_SIZE_Y, "280");
 		assistant.setRestoreCompletionProposalSize(s);
 		assistant.enableAutoActivation(true);
 		assistant.setAutoActivationDelay(500);
@@ -172,13 +172,13 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 		assistant.setContextInformationPopupBackground(new Color(Display.getCurrent(), new RGB(255, 255, 255)));
 		assistant.setInformationControlCreator(getInformationPresenterControlCreator(sourceViewer));
 		assistant.setRepeatedInvocationMode(true);
-		
+		assistant.enableAutoInsert(true);
 
 		return assistant;
 	}
-	
+
 	//TODO Adrian Pop, please add the tab length to the Modelica Preferences page!
-	public int getTabWidth(ISourceViewer sourceViewer) 
+	public int getTabWidth(ISourceViewer sourceViewer)
 	{
 		/* return the peter fritzson constant */
 		return 2;
@@ -204,7 +204,7 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 		if (fDocumentPartitioning != null)
 			return fDocumentPartitioning;
 		return super.getConfiguredDocumentPartitioning(sourceViewer);
-	}	
+	}
 
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
 
@@ -222,10 +222,10 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 		return detectors;
 	}
 
-	
-	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType, int stateMask) 
+
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType, int stateMask)
 	{
-		
+
 		if (contentType.equals(IDocument.DEFAULT_CONTENT_TYPE))
 		{
 			ModelicaSourceHover textHover = new ModelicaSourceHover();
@@ -234,12 +234,12 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 		}
 		else return super.getTextHover(sourceViewer, contentType);
 	}
-	
+
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		return getTextHover(sourceViewer, contentType, ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK);
 	}
-	
-	
+
+
 	/**
 	 * Returns the information presenter control creator. The creator is a factory creating the
 	 * presenter controls for the given source viewer. This implementation always returns a creator
@@ -258,13 +258,13 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 			}
 		};
 	}
-	
-	
+
+
 	/*
 	 * @see SourceViewerConfiguration#getInformationPresenter(ISourceViewer)
 	 * @since 2.0
 	 */
-	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) 
+	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer)
 	{
 		InformationPresenter presenter= new InformationPresenter(getInformationPresenterControlCreator(sourceViewer));
 		presenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
@@ -275,16 +275,16 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 		presenter.setSizeConstraints(80, 10, true, false);
 		return presenter;
 	}
-	
+
 	/*
 	 * @see SourceViewerConfiguration#getAnnotationHover(ISourceViewer)
 	 */
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new ModelicaAnnotationHover() {
-			protected boolean isIncluded(Annotation annotation) 
+			protected boolean isIncluded(Annotation annotation)
 			{
 				return isShowInVerticalRuler(annotation);
-			}			
+			}
 		};
 	}
 
@@ -294,7 +294,7 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 	 */
 	public IAnnotationHover getOverviewRulerAnnotationHover(ISourceViewer sourceViewer) {
 		return new ModelicaAnnotationHover() {
-			protected boolean isIncluded(Annotation annotation) 
+			protected boolean isIncluded(Annotation annotation)
 			{
 				return isShowInOverviewRuler(annotation);
 			}
@@ -330,6 +330,6 @@ public class ModelicaSourceViewerConfig extends TextSourceViewerConfiguration
 	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer)
 	{
 		return null;
-	}	
-	
+	}
+
 }
