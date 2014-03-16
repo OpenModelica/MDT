@@ -52,12 +52,13 @@ import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.ModelicaCore;
 import org.osgi.framework.BundleContext;
 
 /**
  * The main plugin class for the org.modelica.mdt.core plugin
- *
+ * 
  * @author Sigmund Freud
  */
 
@@ -70,12 +71,12 @@ public class CorePlugin extends AbstractUIPlugin
 
 	/* extension point ID for modelica compilers */
 	public static final String COMPILER_EXTENSION_ID = "org.modelica.mdt.core.compiler";
-
+	
 	public static final String UNEXPECTED_NAMESPACE_MARKER_ID = "org.modelica.mdt.core.unexpectednamespacemarker";
-
+		
 	/* The shared instance. */
 	private static CorePlugin plugin;
-
+	
 	/**
 	 * The constructor.
 	 */
@@ -87,24 +88,24 @@ public class CorePlugin extends AbstractUIPlugin
 //	class LazyLoadThread extends Thread
 //	{
 //		private Vector<IModelicaImport> imports = null;;
-//
+//		
 //		public LazyLoadThread()
 //		{
 //			super("LazyLoading for Class:" + getElementName());
 //			this.imports = imports;
 //			setPriority(Thread.MIN_PRIORITY);
 //		}
-//
+//				
 //		public void run()
 //		{
 //			/* wait a bit before loading imports */
-//			try{ Thread.sleep(10000);} catch(InterruptedException e) {/* ignore */}
+//			try{ Thread.sleep(10000);} catch(InterruptedException e) {/* ignore */}			
 //			try
 //			{
 //				for (IModelicaImport i : this.imports)
 //				{
 //					/* wait a bit between import loading */
-//					try{ Thread.sleep(100);} catch(InterruptedException e) {/* ignore */}
+//					try{ Thread.sleep(100);} catch(InterruptedException e) {/* ignore */}					
 //					i.getImportedPackage();
 //				}
 //
@@ -115,13 +116,13 @@ public class CorePlugin extends AbstractUIPlugin
 //			}
 //		}
 //	}
-//
+//	
 //	LazyLoadImport lazyLoadImports = new LazyLoadImport(new Vector<IModelicaImport>(imports));
 //	lazyLoadImports.start();
-
-
-//	private static Map lazyLoadList = new HashMap();
-//
+	
+	
+//	private static Map lazyLoadList = new HashMap(); 
+//	
 //	public Map getLazyLoadList()
 //	{
 //		return lazyLoadList;
@@ -131,15 +132,15 @@ public class CorePlugin extends AbstractUIPlugin
 //	{
 //		//return lazyLoadList;
 //	}
-
+	
 	/**
-	 *
+	 * 
 	 * @param project the project that should be marked as Modelica project
 	 * @throws CoreException
 	 */
 	public static void addModelicaNature(IProject project) throws CoreException
 	{
-		if (project.hasNature(MODELICA_NATURE))
+		if (project.hasNature(MODELICA_NATURE)) 
 			return;
 
 		IProjectDescription description = project.getDescription();
@@ -150,7 +151,7 @@ public class CorePlugin extends AbstractUIPlugin
 		description.setNatureIds(newIds);
 		project.setDescription(description, null);
 	}
-
+	
 	/**
 	 * Returns the shared instance.
 	 * @return the shared instance of CorePlugin
@@ -159,7 +160,7 @@ public class CorePlugin extends AbstractUIPlugin
 	{
 		return plugin;
 	}
-
+	
 	IWorkbenchListener onExitListener = new IWorkbenchListener()
 	{
 
@@ -175,11 +176,11 @@ public class CorePlugin extends AbstractUIPlugin
 				if (!CompilerProxy.isRunning()) return true;
 			}
 			catch (Exception e) { }
-
-			boolean choice =
+			
+			boolean choice = 
 				MessageDialog.openConfirm(
-					getShell(),
-					"Modelica Development Tooling",
+					getShell(), 
+					"Modelica Development Tooling", 
 					"The OpenModelica compiler is running in the background.\n " +
 					"Should we stop it? If you have other clients connected choose 'Cancel'.");
 			try
@@ -192,13 +193,13 @@ public class CorePlugin extends AbstractUIPlugin
 			return true;
 		}
 	};
-
+	
 	/**
 	 * This method is called upon plug-in activation
 	 * @param context
 	 */
 	@Override
-	public void start(BundleContext context) throws Exception
+	public void start(BundleContext context) throws Exception 
 	{
 		super.start(context);
 		ModelicaCore.start();
@@ -209,12 +210,12 @@ public class CorePlugin extends AbstractUIPlugin
 	 * This method is called when the plug-in is stopped
 	 */
 	@Override
-	public void stop(BundleContext context) throws Exception
+	public void stop(BundleContext context) throws Exception 
 	{
 		ModelicaCore.stop();
 		plugin = null;
 		super.stop(context);
-		getWorkbench().removeWorkbenchListener(onExitListener);
+		getWorkbench().removeWorkbenchListener(onExitListener);		
 	}
 
 	/**
@@ -225,7 +226,7 @@ public class CorePlugin extends AbstractUIPlugin
 		return getDefault().getBundle().getSymbolicName();
 	}
 
-	private IWorkbenchPage internalGetActivePage()
+	private IWorkbenchPage internalGetActivePage() 
 	{
 		IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
 		if (window == null)
@@ -235,17 +236,17 @@ public class CorePlugin extends AbstractUIPlugin
 		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
 
-
-	public static IWorkbenchPage getActivePage()
+		
+	public static IWorkbenchPage getActivePage() 
 	{
 		return getDefault().internalGetActivePage();
-	}
-
+	}	
+	
 	public static Shell getShell()
 	{
 		IWorkbench workbench = getDefault().getWorkbench();
 		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-
+			
 		if (window == null)
 		{
 			return null;
@@ -253,32 +254,32 @@ public class CorePlugin extends AbstractUIPlugin
 
 		return window.getShell();
 	}
-
+	
 	public static Display getDisplay()
 	{
 		return getDefault().getWorkbench().getDisplay();
 	}
-
-
+	
+	
 	/**
 	 * Note: This method is for internal use only. Clients should not
 	 * call this method.
 	 */
-	public static Object[] concatenate(Object[] a1, Object[] a2)
+	public static Object[] concatenate(Object[] a1, Object[] a2) 
 	{
 		int a1Len = 0;
 		int a2Len = 0;
 		if (a1 != null)
 		{
-			a1Len= a1.length;
+			a1Len= a1.length;			
 		}
 		if (a2 != null)
 		{
 			a2Len= a2.length;
 		}
-
+		
 		Object[] res =  new Object[a1Len + a2Len];
-
+		
 		if (a1 != null)
 		{
 			System.arraycopy(a1, 0, res, 0, a1Len);
@@ -292,5 +293,5 @@ public class CorePlugin extends AbstractUIPlugin
 
 	public static final String TAB = "tab"; //$NON-NLS-1$
 	public static final String SPACE = "space"; //$NON-NLS-1$
-
+	
 }

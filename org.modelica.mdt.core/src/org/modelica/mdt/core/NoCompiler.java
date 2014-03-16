@@ -1,14 +1,11 @@
-package org.modelica.mdt.internal.core;
+package org.modelica.mdt.core;
 
 import java.io.File;
 import java.io.OutputStream;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IFile;
-import org.modelica.mdt.core.ICompilerResult;
-import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IModelicaClass.Restriction;
-import org.modelica.mdt.core.List;
 import org.modelica.mdt.core.compiler.ConnectException;
 import org.modelica.mdt.core.compiler.ElementInfo;
 import org.modelica.mdt.core.compiler.IClassInfo;
@@ -19,9 +16,9 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 class NoCompiler implements IModelicaCompiler
 {
 	@Override
-	public String getCompilerName()
-	{
-		return "Empty Compiler";
+	public String getCompilerName() 
+	{ 
+		return "Empty Compiler"; 
 	}
 
 	@Override
@@ -29,19 +26,19 @@ class NoCompiler implements IModelicaCompiler
 	{
 		return null;
 	}
-
+	
 	@Override
 	public List getClassNames(String className)
 	{
 		return null;
 	}
-
+	
 	@Override
 	public Collection<ElementInfo> getElements(String className)
 	{
 		return null;
 	}
-
+	
 	@Override
 	public IDefinitionLocation getClassLocation(String className)
 	{
@@ -53,25 +50,25 @@ class NoCompiler implements IModelicaCompiler
 	{
 		return null;
 	}
-
+	
 	@Override
 	public String[] getStandardLibrary()
 	{
 		return null;
 	}
-
+	
 	@Override
 	public IClassInfo getClassInfo(String className)
 	{
 		return null;
 	}
-
+	
 	@Override
 	public ICompilerResult getClassString(String className)
 	{
 		return null;
 	}
-
+	
 	@Override
 	public ICompilerResult sendExpression(String command, boolean showInConsole)
 	{
@@ -89,106 +86,106 @@ class NoCompiler implements IModelicaCompiler
 	{
 		/* do nothing */
 	}
-
+	
 	@Override
 	public ICompilerResult getNthInheritedClass(String className, int n)
 	{
 		return null;
 	}
-
+	
 	@Override
 	public int getInheritanceCount(String className)
 	{
 		return 0;
 	}
-
+	
 	@Override
 	public ICompilerResult getNthAlgorithmItem(String className, int n)
 	{
 		return null;
 	}
-
+	
 	@Override
 	public int getAlgorithmItemsCount(String className)
 	{
 		return 0;
 	}
-
+	
 	@Override
 	public ICompilerResult getNthEquationItem(String className, int n)
 	{
 		return null;
 	}
-
+	
 	@Override
 	public int getEquationItemsCount(String className)
 	{
 		return 0;
 	}
-
-
+	
+	
 	@Override
 	public List getComponents(String className)
 	{
 		return null;
 	}
-
+	
 	@Override
 	public boolean existClass(String className)
 	{
 		return false;
 	}
-
+	
 	@Override
 	public boolean isPackage(String className)
 	{
 		return false;
 	}
-
+	
 	@Override
 	public ICompilerResult getErrorString()
 	{
 		return null;
 	}
-
+	
 	@Override
-	public ICompilerResult loadFile(String classPath) throws ConnectException, UnexpectedReplyException
-	{
+	public ICompilerResult loadFile(String classPath) throws ConnectException, UnexpectedReplyException 
+	{	
 		return null;
 	}
-
+	
 	@Override
-	public ICompilerResult getSourceFile(String className) throws ConnectException, UnexpectedReplyException
-	{
+	public ICompilerResult getSourceFile(String className) throws ConnectException, UnexpectedReplyException 
+	{	
 		return null;
 	}
-
+	
 	@Override
-	public List parseFile(String fileName) throws ConnectException, UnexpectedReplyException
-	{
+	public List parseFile(String fileName) throws ConnectException, UnexpectedReplyException 
+	{	
 		return null;
 	}
-
+	
 	@Override
-	public ICompilerResult getClassRestriction(String className) throws ConnectException, UnexpectedReplyException
-	{
+	public ICompilerResult getClassRestriction(String className) throws ConnectException, UnexpectedReplyException 
+	{	
 		return null;
 	}
-
+	
 	@Override
-	public ICompilerResult getClassComment(String className) throws ConnectException, UnexpectedReplyException
-	{
+	public ICompilerResult getClassComment(String className) throws ConnectException, UnexpectedReplyException 
+	{	
 		return null;
 	}
-
+	
 	@Override
 	public File[] getOmcBinaryPaths() throws ConnectException {
 		return null;
 	}
-
+	
 	@Override
-	public ICompilerResult buildModel(String className) throws ConnectException, UnexpectedReplyException
-	{
+	public ICompilerResult buildModel(String className) throws ConnectException, UnexpectedReplyException 
+	{	
 		return null;
 	}
 

@@ -54,6 +54,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.IDefinitionLocation;
 import org.modelica.mdt.core.IModelicaClass;
 import org.modelica.mdt.core.IModelicaComponent;
@@ -400,7 +401,7 @@ public class InnerClass extends ModelicaClass {
 		// * components that are not new or were removed are notified
 		//   of the change to give them a chance to update their state
 		super.reload();
-
+		
 		LinkedList<IModelicaElementChange> changes = new LinkedList<IModelicaElementChange>();
 
 		// if children are not loaded, then we can't reload
@@ -417,7 +418,7 @@ public class InnerClass extends ModelicaClass {
 
 				if (oldElement == null) {
 					// new element added
-					ModelicaElementChange modelicaElementChange = new ModelicaElementChange(this, element, null);
+					ModelicaElementChange modelicaElementChange = new ModelicaElementChange(this, element, null); 
 					changes.add(modelicaElementChange);
 				}
 				else {
@@ -429,7 +430,7 @@ public class InnerClass extends ModelicaClass {
 					if (oldElement instanceof IModelicaComponent && element instanceof IModelicaComponent) {
 						((ModelicaComponent)oldElement).setModelicaComponent((ModelicaComponent)element);
 					}
-
+					
 					changes.addAll(oldElement.reload());
 				}
 			}
@@ -459,11 +460,11 @@ public class InnerClass extends ModelicaClass {
 
 		// try some magic :)
 		IPath p = null;
-		try {
-			p = new Path(getFilePath());
+		try { 
+			p = new Path(getFilePath()); 
 		}
-		catch (Exception e) {
-			ErrorManager.logError(e);
+		catch (Exception e) { 
+			ErrorManager.logError(e); 
 		}
 
 		IFile f = null;

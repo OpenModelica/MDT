@@ -46,6 +46,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Display;
+import org.modelica.mdt.core.CompilerProxy;
 import org.modelica.mdt.core.compiler.CommunicationException;
 import org.modelica.mdt.core.compiler.CompilerException;
 import org.modelica.mdt.core.compiler.CompilerInstantiationException;
@@ -57,17 +58,17 @@ import org.modelica.mdt.core.preferences.PreferenceManager;
 /**
  * Contains code for handling errors and other unexpected/undersireable
  * conditions.
- *
+ * 
  * Provides methods to log errors, warning and to display error to the
  * user.
- *
+ * 
  * @author Adrian Pop
  * @author MDT Team
  * @author Homer Simpson
  */
 public class ErrorManager
 {
-	/* status codes used for logging */
+	/* status codes used for logging */ 
 	private static final int INTERNAL_ERROR = 0;
 	private static final int INTERNAL_WARNING = 1;
 	/* used to logg suspected bugs */
@@ -82,12 +83,12 @@ public class ErrorManager
 	private static long nextInvocationErrorShown = 0;
 	private static long nextUnexpectedReplyErrorShown = 0;
 
-	/*
+	/* 
 	 * the interval in milliseconds between two error dialogs on same
 	 * transient errors are shown to the user
 	 */
 	private static final long BUG_USER_WITH_ERRORS_INTERVAL = 60000; /* 1 min */
-
+	
 	/**
 	 * convinience wrapper method for loggin to plugin logger
 	 */
@@ -98,10 +99,10 @@ public class ErrorManager
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 *
+	 * 
 	 * @param e the exception to be logged
-	 */
-	public static void logError(Throwable e)
+	 */	
+	public static void logError(Throwable e) 
 	{
 		/* some exceptions return null as a message, Status does not like that*/
 		String message = e.getMessage();
@@ -110,117 +111,117 @@ public class ErrorManager
 			message = "no message available";
 		}
 
-		logError(new Status(IStatus.ERROR, CorePlugin.getSymbolicName(),
+		logError(new Status(IStatus.ERROR, CorePlugin.getSymbolicName(), 
 				INTERNAL_ERROR,
 				message, e));
 	}
-
+	
 	/**
 	 * Logs a runtime warning. A message that can be helpfull while
 	 * investigating possible problems.
-	 *
+	 * 
 	 * @param message warning message
 	 */
 	public static void logWarning(String message)
 	{
-		logError(new Status(IStatus.WARNING, CorePlugin.getSymbolicName(),
+		logError(new Status(IStatus.WARNING, CorePlugin.getSymbolicName(), 
 				INTERNAL_WARNING, message, null));
-
+					
 	}
 
 	/**
 	 * Display the appropriate error message to the user. The message
 	 * is derived based on the subtype of the exception.
-	 *
+	 * 
 	 * This method also handles the logic if it is appropriate do pop-up
 	 * the error dialog box. For example, you don't want to display
-	 * 20 'InvocationError' messages in a row to the user.
-	 *
+	 * 20 'InvocationError' messages in a row to the user. 
+	 * 
 	 * However, errors are allways logged.
-	 *
+	 * 
 	 * @param exception the exception thrown by the compiler
 	 */
 	public static void showCompilerError(CompilerException exception)
 	{
 		boolean showErrorDialog = false;
-
+		
 		/* construct the error message */
 		String message = "unknown error";
 		String compilerName = "unknown Modelica compiler";
-
+		
 		try
 		{
 			compilerName = CompilerProxy.getCompilerName();
 		}
 		catch (CompilerInstantiationException e)
 		{
-			/*
+			/* 
 			 * oh well, not much to do 'bout this one,
 			 * let's just name our compiler 'unknown'
 			 */
 		}
-
+		
 		String upgrade_your_software =  /* the standard remedy */
-			"Try upgrading the " + CorePlugin.PLUGIN_HUMAN_NAME +
-			" and/or the " + compilerName +
+			"Try upgrading the " + CorePlugin.PLUGIN_HUMAN_NAME + 
+			" and/or the " + compilerName + 
 			" to more recent versions.";
-
+		
 		String check_compiler_and_restart =
-			" Make sure that " + compilerName +
+			" Make sure that " + compilerName + 
 			" is properly installed and configured on your system and" +
 			" restart Eclipse to retry connecting.";
-
+			
 
 		if (exception instanceof CommunicationException)
 		{
 			message = "Lost connection to the " + compilerName +
 				check_compiler_and_restart;
-
+			
 			/* we only want to se connect error once */
 			showErrorDialog = !communicationErrorShown;
 			communicationErrorShown = true;
 		}
 		else if (exception instanceof ConnectException)
 		{
-			message = "Could not establish connection to the " +
+			message = "Could not establish connection to the " + 
 				compilerName + "." + check_compiler_and_restart;
-
+			
 			/* we only want to se connect error once */
 			showErrorDialog = !connectErrorShown;
 			connectErrorShown = true;
 		}
 		else if (exception instanceof CompilerInstantiationException)
 		{
-			CompilerInstantiationException cie
+			CompilerInstantiationException cie 
 				= (CompilerInstantiationException) exception;
 			switch (((CompilerInstantiationException)exception).getProblemType())
 			{
 			case NO_COMPILERS_FOUND:
-				message = "No plugin found that provides Modelica " +
-					"compiler services. Please install a plugin that " +
+				message = "No plugin found that provides Modelica " + 
+					"compiler services. Please install a plugin that " + 
 					"provides a Modelica compiler and try again";
 				break;
 			case MULTIPLE_COMPILERS_FOUND:
 				message = "Multiple Modelica compiler plugins available. " +
-					"Please make sure only one compiler is enabled and " +
+					"Please make sure only one compiler is enabled and " + 
 					"try again. The following compiler plugins were found:\n";
 				for (String pluginName : cie.getCompilerPlugins())
 				{
-					message += "'" + pluginName + "'\n";
+					message += "'" + pluginName + "'\n"; 
 				}
 				break;
 			case ERROR_CREATING_COMPILER:
 				message = "Could not instantiate the Modelica compiler. " +
-					"The compiler plugin '" + cie.getCompilerPlugin() +
+					"The compiler plugin '" + cie.getCompilerPlugin() + 
 					"' seems to be faulty. Try upgrading to unfaulty version.";
-				/*
+				/* 
 				 * log the underlying exception also, to make enhance
-				 * the fourthcoming debuggin experience
+				 * the fourthcoming debuggin experience 
 				 */
 				logError(cie.getCause());
 				break;
 			}
-
+			
 			/* we only want to se instantiation error once */
 			showErrorDialog = !instantiationErrorShown;
 			instantiationErrorShown = true;
@@ -230,9 +231,9 @@ public class ErrorManager
 			message = compilerName + " unexpectedly reported error while " +
 				((InvocationError)exception).getAction() + ". " +
 				upgrade_your_software;
-
+			
 			long now = System.currentTimeMillis();
-
+			
 			if (PreferenceManager.getDisplayCompErrors() == false)
 			{
 				/* the user don't want to see this error message */
@@ -246,8 +247,8 @@ public class ErrorManager
 			}
 			else
 			{
-				/*
-				 * we have show this error message quite recently,
+				/* 
+				 * we have show this error message quite recently, 
 				 * give the user a break
 				 */
 				showErrorDialog = false;
@@ -275,8 +276,8 @@ public class ErrorManager
 			}
 			else
 			{
-				/*
-				 * we have show this error message quite recently,
+				/* 
+				 * we have show this error message quite recently, 
 				 * give the user a break
 				 */
 				showErrorDialog = false;
@@ -286,18 +287,18 @@ public class ErrorManager
 		{
 			/* unexpected exception type */
 			ErrorManager.logBug(CorePlugin.getSymbolicName(),
-					"Exception of unexpected type " +
+					"Exception of unexpected type " + 
 					exception.getClass().getName() +
 					" encountered");
 		}
 
-		final IStatus status =
-			new Status(IStatus.ERROR, CorePlugin.getSymbolicName(),
+		final IStatus status = 
+			new Status(IStatus.ERROR, CorePlugin.getSymbolicName(), 
 				INTERNAL_ERROR, message, exception);
-
+		
 		/* log error */
 		logError(status);
-
+		
 		/* display error to the user */
 		if ((PreferenceManager.getDisplayCompErrors() == true) && showErrorDialog)
 		{
@@ -306,7 +307,7 @@ public class ErrorManager
 			{
 				public void run()
 				{
-					ErrorDialog.openError(CorePlugin.getShell(),
+					ErrorDialog.openError(CorePlugin.getShell(),	
 							"Error", null, status);
 				}
 			});
@@ -316,14 +317,14 @@ public class ErrorManager
 	/**
 	 * Display Eclipse Core Error, that is condition when a CoreException
 	 * is thrown.
-	 *
+	 * 
 	 * @param exception the exception describing the error
 	 */
 	public static void showCoreError(final CoreException exception)
 	{
 		/* log error */
 		logError(exception);
-
+		
 		if (PreferenceManager.getDisplayCompErrors() == true)
 		{
 			Display display = CorePlugin.getDisplay();
@@ -331,7 +332,7 @@ public class ErrorManager
 			{
 				public void run()
 				{
-					ErrorDialog.openError(CorePlugin.getShell(),
+					ErrorDialog.openError(CorePlugin.getShell(),	
 							"Error", null, exception.getStatus());
 				}
 			});
@@ -340,55 +341,55 @@ public class ErrorManager
 
 	/**
 	 * Log illegal internal state that is a suspected bug.
-	 *
-	 * @param pluginSymbolicName the symbolic name of the plugin where the state
+	 * 
+	 * @param pluginSymbolicName the symbolic name of the plugin where the state 
 	 * is occuring
-	 * @param message a descriptive message of the nature of illegalness of the
+	 * @param message a descriptive message of the nature of illegalness of the 
 	 * state, this description should be usable to fix the bug.
-	 *
+	 * 
 	 */
 	public static void logBug(String pluginSymbolicName, String message)
 	{
 		/*
-		 * get the stack trace of the caller,
-		 * used to log the location of the bug
+		 * get the stack trace of the caller, 
+		 * used to log the location of the bug 
 		 */
 		StackTraceElement ste = Thread.currentThread().getStackTrace()[3];
-
-		IStatus status =
-			new Status(IStatus.WARNING, pluginSymbolicName,
-				ILLEGAL_INTERNAL_STATE,
+		
+		IStatus status = 
+			new Status(IStatus.WARNING, pluginSymbolicName, 
+				ILLEGAL_INTERNAL_STATE, 
 				"illegal internal status (suspected bug) encountered at " +
 				ste.getClassName() + "." + ste.getMethodName() +
 				"(" + ste.getFileName() + ":" + ste.getLineNumber() + "). " +
 				"'" + message + "'", null);
-
+		
 		CorePlugin.getDefault().getLog().log(status);
 
 	}
-
+	
 	/**
 	 * Returns caller methods name including classname and source file name.
 	 * This method is usefull for logging internal errors in conditions
 	 * where an exception is not thrown, e.g.
-	 *
+	 * 
 	 * ErrorManager.logWarning("something unexpected happend at " +
 	 *                         ErrorManager.getCurrentMethod());
-	 *
+	 *                         
 	 * will add following line (among others) to the logg:
-	 *
+	 * 
 	 * 'something unexpected happend at foo.bar(foo.java)'
-	 *
+	 * 
 	 * if called from foo.bar() method.
-	 *
+	 * 
 	 * @return the callers method including classname and sourcefile
 	 */
 	public static String getCurrentMethod()
     {
 		StackTraceElement ste = Thread.currentThread().getStackTrace()[3];
-
-		return
-			ste.getClassName() + "." + ste.getMethodName() +
+		
+		return 
+			ste.getClassName() + "." + ste.getMethodName() + 
 				"(" + ste.getFileName() + ")";
 	}
 }
