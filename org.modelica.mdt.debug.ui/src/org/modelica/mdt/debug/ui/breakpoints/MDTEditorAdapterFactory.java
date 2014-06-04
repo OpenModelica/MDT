@@ -23,7 +23,7 @@ public class MDTEditorAdapterFactory implements IAdapterFactory {
 			IResource resource = (IResource) editorPart.getEditorInput().getAdapter(IResource.class);
 			if (resource != null) {
 				String extension = resource.getFileExtension();
-				if (extension != null && extension.equals("mo")) {
+				if (extension != null && (extension.equals("mo")||extension.equals("rml"))) {
 				    if (adapterType.equals(IToggleBreakpointsTarget.class)) {
 				        return new MDTBreakpointAdapter();
 				    }

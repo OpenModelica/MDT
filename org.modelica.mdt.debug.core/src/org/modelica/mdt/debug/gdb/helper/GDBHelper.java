@@ -85,7 +85,7 @@ public class GDBHelper {
 			}
 			return false;
 		} else {
-			return !isMoFile(miFrame.getFile());
+			return !isMoOrRmlFile(miFrame.getFile());
 		}
 	}
 	
@@ -93,9 +93,10 @@ public class GDBHelper {
 	 * @param file
 	 * @return
 	 */
-	public static Boolean isMoFile(String file) {
+	public static Boolean isMoOrRmlFile(String file) {
 		// TODO Auto-generated method stub
-		if (new Path(file).getFileExtension().equals("mo")) {
+		String FileExtension = new Path(file).getFileExtension();
+		if (FileExtension.equals("mo")||FileExtension.equals("rml")) {
 			return true;
 		} else {
 			return false;

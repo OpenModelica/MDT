@@ -76,7 +76,7 @@
             class="org.modelica.mdt.ui.editor.ModelicaEditor"
             contributorClass="org.modelica.mdt.ui.actions.ModelicaActionContributor"
             default="true"
-            extensions="mo, mof, mos"
+            extensions="mo, mof, mos,rml"
             icon="icons/obj16/mo_file.gif"
             id="org.modelica.mdt.ui.editor"
             name="Modelica Editor"/>
