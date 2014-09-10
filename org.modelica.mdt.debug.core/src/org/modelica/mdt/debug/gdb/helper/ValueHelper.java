@@ -192,7 +192,7 @@ public class ValueHelper {
 	}
 	
 	/**
-	 * Creates and sends the "-data-evaluate-expression (int)arrayLength(void*)" command.
+	 * Creates and sends the "-data-evaluate-expression (int)mmc_gdb_arrayLength(void*)" command.
 	 * @param variableName 
 	 * @param gdbStackFrame
 	 * @return

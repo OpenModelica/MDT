@@ -343,7 +343,7 @@ public class CommandFactory {
 	 * @return MIDataEvaluateExpression
 	 */
 	public MIDataEvaluateExpression createMIGetArrayLength(String expression) {
-		return new MIDataEvaluateExpression("(int)arrayLength(" + expression + ")");
+		return new MIDataEvaluateExpression("(int)mmc_gdb_arrayLength(" + expression + ")");
 	}
 	
 	/**
