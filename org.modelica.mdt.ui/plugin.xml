@@ -413,4 +413,14 @@
              name="simulate">
     </command>
   </extension>
+  <extension
+        point="org.eclipse.ui.editors">
+     <editor
+           class="org.modelica.mdt.ui.editor.SusanEditor"
+           default="true"
+           extensions="tpl"
+           id="org.modelica.mdt.ui.editorSusan"
+           name="Susan Editor">
+     </editor>
+  </extension>
 </plugin>
