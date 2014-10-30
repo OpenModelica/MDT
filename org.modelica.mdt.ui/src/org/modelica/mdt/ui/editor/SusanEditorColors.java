@@ -1,3 +1,8 @@
+/**
+ * This Class is for the Susan-Editor-Extension;
+ * it is providing the Attributes for the Tokens
+ */
+
 package org.modelica.mdt.ui.editor;
 
 import org.eclipse.jface.text.TextAttribute;

@@ -1,3 +1,9 @@
+/**
+ * This Class is for the Susan-Editor-Extension
+ * it is containing the Reconciler Class wich contains the call of the Demage Repairers for the Rules
+ * 
+ */
+
 package org.modelica.mdt.ui.editor;
 
 import org.eclipse.jface.text.IDocument;
@@ -26,9 +32,12 @@ public class SusanSourceViewerConfig extends SourceViewerConfiguration
 	{
 		return SusanRuleBasedPartitionScanner.SUSAN_PARTITIONING;
 	}
-
+	
+	
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer)
 	{
+		
+		
 
 		PresentationReconciler r = new PresentationReconciler();
 		DefaultDamagerRepairer dr_default;

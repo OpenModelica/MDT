@@ -1,3 +1,9 @@
+/**
+ * This Class is for the Susan-Editor-Extension;
+ * stantard implementation of the RuleBasedScanner Class
+ * provides a Scanner to scan for SingleLine-Objects[ Comments, Keywords ]
+ * 
+ */
 package org.modelica.mdt.ui.editor;
 
 import java.util.HashMap;
@@ -21,6 +27,10 @@ public class SusanRuleBasedScanner extends RuleBasedScanner
 	public final static String[] CASE_KEYWORDS = { "case", "if", "then", "else", "as", "match" };
 	public final static String[] VAR_KEYWORDS = { "let", "hasindex" };
 
+	/**
+	 * A Scanner for SingleLine-Objects[ Comments, a List of Keywords ]
+	 * 
+	 */
 	public SusanRuleBasedScanner()
 	{
 

@@ -239,6 +239,7 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 	protected IDocumentProvider fDocumentProvider;
 	protected ITextEditor fTextEditor;
 
+
 	/**
 	 * Creates a content outline page using the given provider and the given
 	 * editor.
@@ -258,6 +259,7 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 	/*
 	 * (non-Javadoc) Method declared on ContentOutlinePage
 	 */
+
 	public void createControl(Composite parent)
 	{
 
@@ -270,6 +272,7 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 
 		if (fInput != null)
 			viewer.setInput(fInput);
+
 	}
 
 	/*
@@ -279,7 +282,9 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 	{
 
 		super.selectionChanged(event);
-
+		
+		
+		
 		ISelection selection = event.getSelection();
 		if (selection.isEmpty())
 			fTextEditor.resetHighlightRange();
@@ -293,6 +298,8 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 				fTextEditor.resetHighlightRange();
 			}
 		}
+		
+		update();
 	}
 
 	/**
@@ -319,7 +326,7 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 			if (control != null && !control.isDisposed()) {
 				control.setRedraw(false);
 				viewer.setInput(fInput);
-				viewer.expandAll();
+				//viewer.expandAll();
 				control.setRedraw(true);
 			}
 		}

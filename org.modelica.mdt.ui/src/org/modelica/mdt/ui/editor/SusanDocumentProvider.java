@@ -1,3 +1,10 @@
+/**
+ * This Class is for the Susan-Editor-Extension;
+ * standart implemention of the FileDocumentProvider Class
+ * containing CreateDocument() and isModifiable()
+ * 
+ */
+
 package org.modelica.mdt.ui.editor;
 
 import java.io.IOException;
@@ -12,7 +19,10 @@ import org.eclipse.ui.editors.text.FileDocumentProvider;
 
 public class SusanDocumentProvider extends FileDocumentProvider
 {
-
+	/**
+	 * Creates a Susan-Document for the given Element
+	 * also is setting the Scanners for the Document
+	 */
 	protected IDocument createDocument(Object element) throws CoreException
 	{
 
@@ -54,7 +64,11 @@ public class SusanDocumentProvider extends FileDocumentProvider
 
 		return doc;
 	}
-
+	
+	/*
+	 * @see IDocumentProviderExtension#isModifiable(Object)
+	 * @since 2.0
+	 */
 	public boolean isModifiable(Object element)
 	{
 		boolean modifiable = super.isModifiable(element);

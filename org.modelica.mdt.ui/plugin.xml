@@ -80,6 +80,15 @@
             icon="icons/obj16/mo_file.gif"
             id="org.modelica.mdt.ui.editor"
             name="Modelica Editor"/>
+            
+            <editor
+            class="org.modelica.mdt.ui.editor.SusanEditor"
+            default="false"
+            extensions="tpl"
+            icon="icons/obj16/mo_file_Susan.png"
+            id="org.modelica.mdt.ui.editorSusan"
+            name="Susan Editor">
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
@@ -412,15 +421,5 @@
              id="org.modelica.mdt.ui.actions.commandsimulate"
              name="simulate">
     </command>
-  </extension>
-  <extension
-        point="org.eclipse.ui.editors">
-     <editor
-           class="org.modelica.mdt.ui.editor.SusanEditor"
-           default="true"
-           extensions="tpl"
-           id="org.modelica.mdt.ui.editorSusan"
-           name="Susan Editor">
-     </editor>
   </extension>
 </plugin>

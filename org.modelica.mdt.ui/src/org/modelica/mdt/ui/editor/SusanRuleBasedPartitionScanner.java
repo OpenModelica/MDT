@@ -1,3 +1,10 @@
+/**
+ * This Class is for the Susan-Editor-Extension;
+ * stantard implementation of the RuleBasedPartitionScanner Class
+ * provides a Scanner to scan for Comments and Templates
+ * 
+ */
+
 package org.modelica.mdt.ui.editor;
 
 import java.util.ArrayList;
@@ -18,7 +25,10 @@ public class SusanRuleBasedPartitionScanner extends RuleBasedPartitionScanner
 	public static final String[] PARTITION_TYPES = { SUSAN_SINGLELINE_COMMENT_ID, SUSAN_MULTILINE_COMMENT_ID, SUSAN_TARGET_CODE_ID, SUSAN_KEYWORDS_ID };
 
 	public final static String[] SUSAN_KEYWORDS = { "import", "package" };
-
+	
+	/**
+	 * A RuleBasedPartitionScanner, scanning for for Comments and Templates in Susan-Files
+	 */
 	public SusanRuleBasedPartitionScanner()
 	{
 

@@ -1,3 +1,7 @@
+/**
+ * This Class is for the Susan-Editor-Extension;
+ * standard implementation of the IWordDetector class
+ */
 package org.modelica.mdt.ui.editor;
 
 import org.eclipse.jface.text.rules.IWordDetector;
