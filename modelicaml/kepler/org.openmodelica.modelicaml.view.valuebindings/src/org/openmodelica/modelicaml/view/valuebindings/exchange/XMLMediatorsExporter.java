@@ -320,15 +320,18 @@ public class XMLMediatorsExporter {
 			
 			if (element instanceof Element) {
 				for (Comment comment : element.getOwnedComments()) {
-					//counter
-					string += StringEscapeUtils.escapeXml(comment.getBody());
+					if (comment.getBody() != null) {
+						string += StringEscapeUtils.escapeXml(comment.getBody());
+					}
 				}
 			}
 			
-			org.w3c.dom.Element commentXMLElement = document.createElement(XMLTagName_comment);
-			commentXMLElement.setTextContent(string);
-			
-			documentNode.appendChild(commentXMLElement);
+			if (!string.isEmpty()) {
+				org.w3c.dom.Element commentXMLElement = document.createElement(XMLTagName_comment);
+				commentXMLElement.setTextContent(string);
+				
+				documentNode.appendChild(commentXMLElement);
+			}
 			
 		}
 		return documentNode;
