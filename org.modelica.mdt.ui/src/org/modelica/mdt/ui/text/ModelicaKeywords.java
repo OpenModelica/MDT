@@ -19,19 +19,19 @@ public class ModelicaKeywords
 		"partial","protected","public","record",
 		"redeclare","replaceable","return", "terminate",
 		"then","time","true","type","when","while","within",
-		
+
 		/* The following are Meta-Modelica Keywords */
-		"as", "case", "equality", "failure", "local", "match", 
-		"matchcontinue" , "fail", "subtypeof", "uniontype"
+		"as", "case", "equality", "failure", "local", "match",
+		"matchcontinue" , "fail", "subtypeof", "uniontype", "metarecord", "guard"
 	};
-	
+
 	public static boolean isKeyword(String key)
 	{
-		for (int i=0; i<keywords.length;i++) 
+		for (int i=0; i<keywords.length;i++)
 		{
 			if (keywords[i].equals(key)) return true;
 		}
 		return false;
 	}
-	
+
 }

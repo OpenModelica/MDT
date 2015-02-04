@@ -7,16 +7,16 @@
  *
  * All rights reserved.
  *
- * THIS PROGRAM IS PROVIDED UNDER THE TERMS OF GPL VERSION 3 
- * AND THIS OSMC PUBLIC LICENSE (OSMC-PL). 
- * ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS PROGRAM CONSTITUTES RECIPIENT'S  
+ * THIS PROGRAM IS PROVIDED UNDER THE TERMS OF GPL VERSION 3
+ * AND THIS OSMC PUBLIC LICENSE (OSMC-PL).
+ * ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS PROGRAM CONSTITUTES RECIPIENT'S
  * ACCEPTANCE OF THE OSMC PUBLIC LICENSE.
  *
  * The OpenModelica software and the Open Source Modelica
  * Consortium (OSMC) Public License (OSMC-PL) are obtained
  * from Linkoping University, either from the above address,
- * from the URLs: http://www.ida.liu.se/projects/OpenModelica or  
- * http://www.openmodelica.org, and in the OpenModelica distribution. 
+ * from the URLs: http://www.ida.liu.se/projects/OpenModelica or
+ * http://www.openmodelica.org, and in the OpenModelica distribution.
  * GNU version 3 is obtained from: http://www.gnu.org/copyleft/gpl.html.
  *
  * This program is distributed WITHOUT ANY WARRANTY; without
@@ -70,7 +70,7 @@ public class GDBHelper {
 	public static String SIGINT = "SIGINT";
 	public static String SIGTRAP = "SIGTRAP";
 	public static String SIGSEGV = "SIGSEGV";
-	
+
 	public static Boolean filterCFiles(GDBDebugTarget gdbDebugTarget, MIFrame miFrame) throws CoreException {
 		if (miFrame.getFile().isEmpty()) {
 			return true;
@@ -88,7 +88,7 @@ public class GDBHelper {
 			return !isMoOrRmlFile(miFrame.getFile());
 		}
 	}
-	
+
 	/**
 	 * @param file
 	 * @return
@@ -122,7 +122,7 @@ public class GDBHelper {
 		int endIndex = listType.lastIndexOf(">");
 		return listType.substring(beginIndex + 1, endIndex);
 	}
-	
+
 	/**
 	 * Converts OMC hex string to normal java string with utf-8 encoding
 	 * @param hexString
@@ -130,7 +130,7 @@ public class GDBHelper {
 	 */
 	public static String omcHexToString(String hexString) {
 		String hex = hexString.substring(9);					// since the hex value starts with _omcQuot_
-		
+
 		byte[] bytes = new byte[hex.length() / 2];
 		for (int i = 0; i < bytes.length; i++) {
 		   bytes[i] = (byte) Integer.parseInt(hex.substring(2 * i, 2 * i + 2), 16);

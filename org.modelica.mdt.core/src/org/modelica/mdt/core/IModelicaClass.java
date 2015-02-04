@@ -54,10 +54,10 @@ import org.modelica.mdt.core.compiler.UnexpectedReplyException;
  */
 public interface IModelicaClass extends IModelicaElement, IParent
 {
-	public enum Restriction 
-	{ 
+	public enum Restriction
+	{
 		CLASS, MODEL, FUNCTION, RECORD, CONNECTOR, EXPANDABLE_CONNECTOR, BLOCK, TYPE, PACKAGE, UNIONTYPE;
-		
+
 		/**
 		 * @param text the type of restriction
 		 * @return the restriction provided
@@ -85,8 +85,12 @@ public interface IModelicaClass extends IModelicaElement, IParent
 			else if (text.equalsIgnoreCase("EXPANDABLE CONNECTOR"))
 			{
 				return EXPANDABLE_CONNECTOR;
-			}			
+			}
 			else if (text.equalsIgnoreCase("RECORD"))
+			{
+				return RECORD;
+			}
+			else if (text.equalsIgnoreCase("METARECORD"))
 			{
 				return RECORD;
 			}
@@ -106,8 +110,8 @@ public interface IModelicaClass extends IModelicaElement, IParent
 			{
 				return UNIONTYPE;
 			}
-			
-			/* 
+
+			/*
 			 * this is an error condition, classRestriction is of unexpected
 			 * type
 			 */
@@ -118,11 +122,11 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	/**
 	 * return the class' prefix, that is if class' full name is
 	 * foo.bar.hej then the prefix is foo.bar and short name is hej
-	 * 
+	 *
 	 * @return the prefix of this package
 	 */
 	public String getPrefix();
-	
+
 	/**
 	 * @return the restriction type of this class
 	 */
@@ -143,25 +147,25 @@ public interface IModelicaClass extends IModelicaElement, IParent
 	public Collection<IModelicaExtends> getExtends()
 		throws ConnectException, UnexpectedReplyException, InvocationError,
 			CompilerInstantiationException, CoreException;
-	
+
 	/**
 	 * @return the class that defines the parent namespace or null if this class
 	 * is defined in top namespace
 	 */
 	public IModelicaClass getParentNamespace();
-	
+
 	/**
-	 * 
+	 *
 	 * @return the signature of this class (input and output parameters)
 	 */
 	public ISignature getSignature()
 		throws ConnectException, InvocationError, UnexpectedReplyException,
 			CompilerInstantiationException, CoreException;
-	
+
 	/**
 	 * @return true if the class is encapsulated (prefix with keyword encapsulated)
 	 */
-	public boolean isEncapsulated() 
+	public boolean isEncapsulated()
 		throws CompilerInstantiationException, ConnectException,
 			UnexpectedReplyException, CoreException, InvocationError;
 }

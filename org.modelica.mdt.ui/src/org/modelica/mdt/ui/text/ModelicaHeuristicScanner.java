@@ -1,5 +1,5 @@
 /*******************************************************************************
- * 
+ *
  *******************************************************************************/
 package org.modelica.mdt.ui.text;
 
@@ -19,103 +19,105 @@ import org.eclipse.jface.text.TypedRegion;
  *
  * @since 3.0
  */
-public final class ModelicaHeuristicScanner implements Symbols 
-{	
+public final class ModelicaHeuristicScanner implements Symbols
+{
 
 	String fLastIdent = null;
-		
-	static public class key 
+
+	static public class key
 	{
 		String token;
 		int tokenID;
 		public key(
-			String token, 
+			String token,
 			int tokenID )
 		{
 			this.token    = token;    /* the name of the keyword */
 			this.tokenID  = tokenID;  /* the tokenID */
 		}
-		
+
 		String getToken() { return token; }
 		int getTokenID() { return tokenID; }
 	}
 	/* keywords */
-	static public key[] keywords = 
+	static public key[] keywords =
 		{
 			new key("algorithm",  	TokenALGORITHM),
 			new key("and",       	TokenAND),
-			new key("annotation",	TokenANNOTATION), 
-			new key("assert",		TokenASSERT), 
-			new key("block",    	TokenBLOCK), 
+			new key("annotation",	TokenANNOTATION),
+			new key("assert",		TokenASSERT),
+			new key("block",    	TokenBLOCK),
 			new key("break", 		TokenBREAK),
-			new key("class", 		TokenCLASS), 
+			new key("class", 		TokenCLASS),
 			new key("connect", 		TokenCONNECT),
 			new key("expandable", 	TokenEXPANDABLE),
-			new key("connector", 	TokenCONNECTOR), 
+			new key("connector", 	TokenCONNECTOR),
 			new key("operator", 	TokenOPERATOR),
 			new key("constrainedby", 	TokenCONSTRAINEDBY),
-			new key("constant", 	TokenCONSTANT), 
+			new key("constant", 	TokenCONSTANT),
 			new key("der", 			TokenDER),
 			new key("discrete", 	TokenDISCRETE),
-			new key("each", 		TokenEACH), 
-			new key("else", 		TokenELSE), 
-			new key("elseif", 		TokenELSEIF), 
-			new key("elsewhen", 	TokenELSEWHEN), 
-			new key("encapsulated", TokenENCAPSULATED), 
+			new key("each", 		TokenEACH),
+			new key("else", 		TokenELSE),
+			new key("elseif", 		TokenELSEIF),
+			new key("elsewhen", 	TokenELSEWHEN),
+			new key("encapsulated", TokenENCAPSULATED),
 			new key("end", 			TokenEND),
-			new key("enumeration", 	TokenENUMERATION), 
-			new key("equation", 	TokenEQUATION), 
-			new key("extends", 		TokenEXTENDS), 
-			new key("external", 	TokenEXTERNAL), 
-			new key("false", 		TokenFALSE), 
+			new key("enumeration", 	TokenENUMERATION),
+			new key("equation", 	TokenEQUATION),
+			new key("extends", 		TokenEXTENDS),
+			new key("external", 	TokenEXTERNAL),
+			new key("false", 		TokenFALSE),
 			new key("final", 		TokenFINAL),
-			new key("flow", 		TokenFLOW), 
-			new key("for", 			TokenFOR), 
-			new key("function", 	TokenFUNCTION), 
-			new key("if", 			TokenIF), 
-			new key("import", 		TokenIMPORT), 
-			new key("in", 			TokenIN), 
-			new key("initial", 		TokenINITIAL), 
+			new key("flow", 		TokenFLOW),
+			new key("for", 			TokenFOR),
+			new key("function", 	TokenFUNCTION),
+			new key("if", 			TokenIF),
+			new key("import", 		TokenIMPORT),
+			new key("in", 			TokenIN),
+			new key("initial", 		TokenINITIAL),
 			new key("inner", 		TokenINNER),
-			new key("input", 		TokenINPUT), 
-			new key("loop", 		TokenLOOP), 
-			new key("model", 		TokenMODEL), 
-			new key("not", 			TokenNOT), 
-			new key("or", 			TokenOR), 
-			new key("outer", 		TokenOUTER),	
-			new key("output", 		TokenOUTPUT), 
-			new key("overload", 	TokenOVERLOAD), 
-			new key("package", 		TokenPACKAGE), 
-			new key("parameter", 	TokenPARAMETER), 
-			new key("partial", 		TokenPARTIAL), 
-			new key("protected", 	TokenPROTECTED), 
-			new key("public", 		TokenPUBLIC), 
-			new key("record", 		TokenRECORD), 
-			new key("redeclare", 	TokenREDECLARE), 
-			new key("replacable", 	TokenREPLACEABLE), 
+			new key("input", 		TokenINPUT),
+			new key("loop", 		TokenLOOP),
+			new key("model", 		TokenMODEL),
+			new key("not", 			TokenNOT),
+			new key("or", 			TokenOR),
+			new key("outer", 		TokenOUTER),
+			new key("output", 		TokenOUTPUT),
+			new key("overload", 	TokenOVERLOAD),
+			new key("package", 		TokenPACKAGE),
+			new key("parameter", 	TokenPARAMETER),
+			new key("partial", 		TokenPARTIAL),
+			new key("protected", 	TokenPROTECTED),
+			new key("public", 		TokenPUBLIC),
+			new key("record", 		TokenRECORD),
+			new key("redeclare", 	TokenREDECLARE),
+			new key("replacable", 	TokenREPLACEABLE),
 			new key("return", 		TokenRETURN),
-			new key("terminate", 	TokenTERMINATE), 
-			new key("then", 		TokenTHEN), 
-			new key("time", 		TokenTIME), 
-			new key("true", 		TokenTRUE), 
-			new key("type", 		TokenTYPE), 
-			new key("when", 		TokenWHEN), 
+			new key("terminate", 	TokenTERMINATE),
+			new key("then", 		TokenTHEN),
+			new key("time", 		TokenTIME),
+			new key("true", 		TokenTRUE),
+			new key("type", 		TokenTYPE),
+			new key("when", 		TokenWHEN),
 			new key("while", 		TokenWHILE),
 			new key("within", 		TokenWITHIN),
-			
+
 			/* The following are Meta-Modelica Keywords */
-			new key("as", 			TokenAS), 
-			new key("case", 		TokenCASE), 
-			new key("equality", 	TokenEQUALITY), 
-			new key("failure", 		TokenFAILURE), 
-			new key("list", 		TokenLIST), 
-			new key("local", 		TokenLOCAL), 
-			new key("match", 		TokenMATCH), 
+			new key("as", 			TokenAS),
+			new key("case", 		TokenCASE),
+			new key("equality", 	TokenEQUALITY),
+			new key("failure", 		TokenFAILURE),
+			new key("list", 		TokenLIST),
+			new key("local", 		TokenLOCAL),
+			new key("match", 		TokenMATCH),
 			new key("matchcontinue",TokenMATCHCONTINUE),
 			new key("tuple", 		TokenTUPLE),
 			new key("subtypeof",    TokenSUBTYPEOF),
 			new key("uniontype", 	TokenUNIONTYPE),
-			
+			new key("guard", 	    TokenGUARD),
+			new key("metarecord", 	TokenRECORD),
+
 			new key("{", 			TokenLBRACE),
 			new key("}",			TokenRBRACE),
 			new key("(",			TokenLPAREN),
@@ -146,7 +148,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 	 * Specifies the stop condition, upon which the <code>scanXXX</code> methods will decide whether
 	 * to keep scanning or not. This interface may implemented by clients.
 	 */
-	private static abstract class StopCondition 
+	private static abstract class StopCondition
 	{
 		/**
 		 * Instructs the scanner to return the current position.
@@ -164,7 +166,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 		 *
 		 * @return the next position to scan
 		 */
-		public int nextPosition(int position, boolean forward) 
+		public int nextPosition(int position, boolean forward)
 		{
 			return forward ? position + 1 : position - 1;
 		}
@@ -173,14 +175,14 @@ public final class ModelicaHeuristicScanner implements Symbols
 	/**
 	 * Stops upon a non-whitespace (as defined by {@link Character#isWhitespace(char)}) character.
 	 */
-	private static class NonWhitespace extends StopCondition 
+	private static class NonWhitespace extends StopCondition
 	{
 		/*
 		 * @see org.modelica.mdt.ui.text.ModelicaHeuristicScanner.StopCondition#stop(char)
 		 */
-		public boolean stop(String str, int position, boolean forward) 
+		public boolean stop(String str, int position, boolean forward)
 		{
-			if (forward) 
+			if (forward)
 				return !Character.isWhitespace(str.charAt(0));
 			else
 				return !Character.isWhitespace(str.charAt(str.length()));
@@ -192,12 +194,12 @@ public final class ModelicaHeuristicScanner implements Symbols
 	 *
 	 * @see NonWhitespace
 	 */
-	private final class NonWhitespaceDefaultPartition extends NonWhitespace 
+	private final class NonWhitespaceDefaultPartition extends NonWhitespace
 	{
 		/*
 		 * @see org.modelica.mdt.ui.text.ModelicaHeuristicScanner.StopCondition#stop(char)
 		 */
-		public boolean stop(String str, int position, boolean forward) 
+		public boolean stop(String str, int position, boolean forward)
 		{
 			return super.stop(str, position, true) && isDefaultPartition(position);
 		}
@@ -205,19 +207,19 @@ public final class ModelicaHeuristicScanner implements Symbols
 		/*
 		 * @see org.modelica.mdt.ui.text.ModelicaHeuristicScanner.StopCondition#nextPosition(int, boolean)
 		 */
-		public int nextPosition(int position, boolean forward) 
+		public int nextPosition(int position, boolean forward)
 		{
 			ITypedRegion partition= getPartition(position);
 			if (fPartition.equals(partition.getType()))
 				return super.nextPosition(position, forward);
 
-			if (forward) 
+			if (forward)
 			{
 				int end= partition.getOffset() + partition.getLength();
 				if (position < end)
 					return end;
-			} 
-			else 
+			}
+			else
 			{
 				int offset= partition.getOffset();
 				if (position > offset)
@@ -234,13 +236,13 @@ public final class ModelicaHeuristicScanner implements Symbols
 		/*
 		 * @see org.modelica.mdt.ui.text.ModelicaHeuristicScanner.StopCondition#stop(char)
 		 */
-		public boolean stop(String str, int position, boolean forward) 
+		public boolean stop(String str, int position, boolean forward)
 		{
 			if (forward)
 				return !Character.isJavaIdentifierPart(str.charAt(0));
-			else 
+			else
 				return !Character.isJavaIdentifierPart(str.charAt(str.length()));
-		}	
+		}
 	}
 
 	/**
@@ -312,7 +314,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 		/*
 		 * @see org.modelica.mdt.ui.text.ModelicaHeuristicScanner.StopCondition#nextPosition(int, boolean)
 		 */
-		public int nextPosition(int position, boolean forward) 
+		public int nextPosition(int position, boolean forward)
 		{
 			ITypedRegion partition= getPartition(position);
 			if (fPartition.equals(partition.getType()))
@@ -394,7 +396,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 	 * @param bound the first position not to consider any more
 	 * @return a constant from {@link Symbols} describing the next token
 	 */
-	public int nextToken(int start, int bound) 
+	public int nextToken(int start, int bound)
 	{
 		int pos= scanForward(start, bound, fNonWSDefaultPart);
 		if (pos == NOT_FOUND)
@@ -408,10 +410,10 @@ public final class ModelicaHeuristicScanner implements Symbols
 			if (keywords[i].token.equals(String.valueOf(fChar)))
 				return keywords[i].tokenID;
 		}
-		
-		
-		// else 
-		if (Character.isJavaIdentifierPart(fChar)) 
+
+
+		// else
+		if (Character.isJavaIdentifierPart(fChar))
 		{
 			// assume an ident or keyword
 			int from= pos, to;
@@ -422,7 +424,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 				to= pos;
 
 			String identOrKeyword;
-			try 
+			try
 			{
 				identOrKeyword= fDocument.get(from, to - from);
 			} catch (BadLocationException e) {
@@ -432,8 +434,8 @@ public final class ModelicaHeuristicScanner implements Symbols
 			return getToken(identOrKeyword);
 
 
-		} 
-		else 
+		}
+		else
 		{
 			// operators, number literals etc
 			return TokenOTHER;
@@ -465,7 +467,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 		}
 
 		// else
-		if (Character.isJavaIdentifierPart(fChar)) 
+		if (Character.isJavaIdentifierPart(fChar))
 		{
 			// assume an ident or keyword
 			int from, to= pos + 1;
@@ -482,8 +484,8 @@ public final class ModelicaHeuristicScanner implements Symbols
 				return TokenEOF;
 			}
 			return getToken(identOrKeyword);
-		} 
-		else 
+		}
+		else
 		{
 			// operators, number literals etc
 			return TokenOTHER;
@@ -497,7 +499,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 	 * @param s a scanned identifier
 	 * @return one of the constants defined in {@link Symbols}
 	 */
-	private int getToken(String s) 
+	private int getToken(String s)
 	{
 		Assert.isNotNull(s);
 		for(int i = 0; i < keywords.length; i++)
@@ -510,9 +512,9 @@ public final class ModelicaHeuristicScanner implements Symbols
 	}
 
 	/**
-	 * Returns the position of the closing peer string (forward search). 
+	 * Returns the position of the closing peer string (forward search).
 	 * Any scopes introduced by opening peers
-	 * are skipped. All peers accounted for must reside in the 
+	 * are skipped. All peers accounted for must reside in the
 	 * default partition.
 	 *
 	 * <p>Note that <code>start</code> must not point to the opening peer, but to the first
@@ -523,21 +525,21 @@ public final class ModelicaHeuristicScanner implements Symbols
 	 * @param closingPeer the closing peer string (e.g. "}")
 	 * @return the matching peer string position, or <code>NOT_FOUND</code>
 	 */
-	public int findClosingPeer(int start, final String openingPeer, final String closingPeer) 
+	public int findClosingPeer(int start, final String openingPeer, final String closingPeer)
 	{
 		Assert.isNotNull(fDocument);
 		Assert.isTrue(start >= 0);
 
-		try 
+		try
 		{
 			int depth= 1;
 			start -= 1;
-			while (true) 
+			while (true)
 			{
-				start= 
+				start=
 					scanForward(
-							start + 1, 
-							UNBOUND, 
+							start + 1,
+							UNBOUND,
 							new StringMatch(new String[] {openingPeer, closingPeer}));
 				if (start == NOT_FOUND)
 					return NOT_FOUND;
@@ -551,17 +553,17 @@ public final class ModelicaHeuristicScanner implements Symbols
 					return start;
 			}
 
-		} 
-		catch (BadLocationException e) 
+		}
+		catch (BadLocationException e)
 		{
 			return NOT_FOUND;
 		}
 	}
 
 	/**
-	 * Returns the position of the opening peer character (backward search). 
+	 * Returns the position of the opening peer character (backward search).
 	 * Any scopes introduced by closing peers
-	 * are skipped. All peers accounted for must reside in 
+	 * are skipped. All peers accounted for must reside in
 	 * the default partition.
 	 *
 	 * <p>Note that <code>start</code> must not point to the closing peer, but to the first
@@ -578,11 +580,11 @@ public final class ModelicaHeuristicScanner implements Symbols
 		try {
 			int depth= 1;
 			start += 1;
-			while (true) 
+			while (true)
 			{
 				start= scanBackward(
-							start - 1, 
-							UNBOUND, 
+							start - 1,
+							UNBOUND,
 							new StringMatch(new String[] {openingPeer, closingPeer}));
 				if (start == NOT_FOUND)
 					return NOT_FOUND;
@@ -596,8 +598,8 @@ public final class ModelicaHeuristicScanner implements Symbols
 					return start;
 			}
 
-		} 
-		catch (BadLocationException e) 
+		}
+		catch (BadLocationException e)
 		{
 			return NOT_FOUND;
 		}
@@ -612,7 +614,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 	 * @param bound the first position in <code>fDocument</code> to not consider any more, with <code>bound</code> &gt; <code>position</code>, or <code>UNBOUND</code>
 	 * @return the smallest position of a non-whitespace character in [<code>position</code>, <code>bound</code>) that resides in a Modelica partition, or <code>NOT_FOUND</code> if none can be found
 	 */
-	public int findNonWhitespaceForward(int position, int bound) 
+	public int findNonWhitespaceForward(int position, int bound)
 	{
 		return scanForward(position, bound, fNonWSDefaultPart);
 	}
@@ -625,7 +627,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 	 * @param bound the first position in <code>fDocument</code> to not consider any more, with <code>bound</code> &gt; <code>position</code>, or <code>UNBOUND</code>
 	 * @return the smallest position of a non-whitespace character in [<code>position</code>, <code>bound</code>), or <code>NOT_FOUND</code> if none can be found
 	 */
-	public int findNonWhitespaceForwardInAnyPartition(int position, int bound) 
+	public int findNonWhitespaceForwardInAnyPartition(int position, int bound)
 	{
 		return scanForward(position, bound, fNonWS);
 	}
@@ -639,7 +641,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 	 * @param bound the first position in <code>fDocument</code> to not consider any more, with <code>bound</code> &lt; <code>position</code>, or <code>UNBOUND</code>
 	 * @return the highest position of a non-whitespace character in (<code>bound</code>, <code>position</code>] that resides in a Modelica partition, or <code>NOT_FOUND</code> if none can be found
 	 */
-	public int findNonWhitespaceBackward(int position, int bound) 
+	public int findNonWhitespaceBackward(int position, int bound)
 	{
 		return scanBackward(position, bound, fNonWSDefaultPart);
 	}
@@ -653,7 +655,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 	 * @param condition the <code>StopCondition</code> to check
 	 * @return the lowest position in [<code>start</code>, <code>bound</code>) for which <code>condition</code> holds, or <code>NOT_FOUND</code> if none can be found
 	 */
-	public int scanForward(int start, int bound, StopCondition condition) 
+	public int scanForward(int start, int bound, StopCondition condition)
 	{
 		Assert.isTrue(start >= 0);
 
@@ -662,10 +664,10 @@ public final class ModelicaHeuristicScanner implements Symbols
 
 		Assert.isTrue(bound <= fDocument.getLength());
 
-		try 
+		try
 		{
 			fPos= start;
-			while (fPos < bound) 
+			while (fPos < bound)
 			{
 				fChar= fDocument.getChar(fPos);
 				if (condition.stop(String.valueOf(fChar), fPos, true))
@@ -673,8 +675,8 @@ public final class ModelicaHeuristicScanner implements Symbols
 
 				fPos= condition.nextPosition(fPos, true);
 			}
-		} 
-		catch (BadLocationException e) 
+		}
+		catch (BadLocationException e)
 		{
 		}
 		return NOT_FOUND;
@@ -691,7 +693,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 	 * @param ch the <code>char</code> to search for
 	 * @return the lowest position of <code>ch</code> in (<code>bound</code>, <code>position</code>] that resides in a Modelica partition, or <code>NOT_FOUND</code> if none can be found
 	 */
-	public int scanForward(int position, int bound, String str) 
+	public int scanForward(int position, int bound, String str)
 	{
 		return scanForward(position, bound, new StringMatch(str));
 	}
@@ -706,7 +708,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 	 * @param chars an array of <code>char</code> to search for
 	 * @return the lowest position of a non-whitespace character in [<code>position</code>, <code>bound</code>) that resides in a Modelica partition, or <code>NOT_FOUND</code> if none can be found
 	 */
-	public int scanForward(int position, int bound, String[] strs) 
+	public int scanForward(int position, int bound, String[] strs)
 	{
 		return scanForward(position, bound, new StringMatch(strs));
 	}
@@ -720,7 +722,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 	 * @param condition the <code>StopCondition</code> to check
 	 * @return the highest position in (<code>bound</code>, <code>start</code> for which <code>condition</code> holds, or <code>NOT_FOUND</code> if none can be found
 	 */
-	public int scanBackward(int start, int bound, StopCondition condition) 
+	public int scanBackward(int start, int bound, StopCondition condition)
 	{
 		if (bound == UNBOUND)
 			bound= -1;
@@ -728,10 +730,10 @@ public final class ModelicaHeuristicScanner implements Symbols
 		Assert.isTrue(bound >= -1);
 		Assert.isTrue(start < fDocument.getLength() );
 
-		try 
+		try
 		{
 			fPos= start;
-			while (fPos > bound) 
+			while (fPos > bound)
 			{
 
 				fChar= fDocument.getChar(fPos);
@@ -740,8 +742,8 @@ public final class ModelicaHeuristicScanner implements Symbols
 
 				fPos= condition.nextPosition(fPos, false);
 			}
-		} 
-		catch (BadLocationException e) 
+		}
+		catch (BadLocationException e)
 		{
 		}
 		return NOT_FOUND;
@@ -757,7 +759,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 	 * @param ch the <code>char</code> to search for
 	 * @return the highest position of one element in <code>chars</code> in (<code>bound</code>, <code>position</code>] that resides in a Modelica partition, or <code>NOT_FOUND</code> if none can be found
 	 */
-	public int scanBackward(int position, int bound, String str) 
+	public int scanBackward(int position, int bound, String str)
 	{
 		return scanBackward(position, bound, new StringMatch(str));
 	}
@@ -772,7 +774,7 @@ public final class ModelicaHeuristicScanner implements Symbols
 	 * @param chars an array of <code>char</code> to search for
 	 * @return the highest position of one element in <code>chars</code> in (<code>bound</code>, <code>position</code>] that resides in a Modelica partition, or <code>NOT_FOUND</code> if none can be found
 	 */
-	public int scanBackward(int position, int bound, String[] strs) 
+	public int scanBackward(int position, int bound, String[] strs)
 	{
 		return scanBackward(position, bound, new StringMatch(strs));
 	}
@@ -783,16 +785,16 @@ public final class ModelicaHeuristicScanner implements Symbols
 	 * @param position the position to be checked
 	 * @return <code>true</code> if <code>position</code> is in the default partition of <code>fDocument</code>, <code>false</code> otherwise
 	 */
-	public boolean isDefaultPartition(int position) 
+	public boolean isDefaultPartition(int position)
 	{
 		Assert.isTrue(position >= 0);
 		Assert.isTrue(position <= fDocument.getLength());
 
-		try 
+		try
 		{
 			return fPartition.equals(TextUtilities.getContentType(fDocument, fPartitioning, position, false));
-		} 
-		catch (BadLocationException e) 
+		}
+		catch (BadLocationException e)
 		{
 			return false;
 		}
@@ -805,20 +807,20 @@ public final class ModelicaHeuristicScanner implements Symbols
 	 * @return the partition at <code>position</code> or a dummy zero-length
 	 *         partition if accessing the document fails
 	 */
-	private ITypedRegion getPartition(int position) 
+	private ITypedRegion getPartition(int position)
 	{
 		Assert.isTrue(position >= 0);
 		Assert.isTrue(position <= fDocument.getLength());
 
-		try 
+		try
 		{
 			return TextUtilities.getPartition(fDocument, fPartitioning, position, false);
-		} 
-		catch (BadLocationException e) 
+		}
+		catch (BadLocationException e)
 		{
 			return new TypedRegion(position, 0, "__no_partition_at_all"); //$NON-NLS-1$
 		}
 
 	}
-	
+
 }
