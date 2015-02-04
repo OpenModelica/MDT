@@ -164,7 +164,7 @@ public class OMCProxy implements IModelicaCompiler {
 
 	private OMCThread fOMCThread = null;
 	private boolean fOMCThreadHasBeenScheduled = false;
-	
+
 	private boolean DEBUG_PREVENT_DUPLICATE_CLASSNAMES = true;
 
 	//private ILock fOMCLock = null;
@@ -1546,7 +1546,7 @@ public class OMCProxy implements IModelicaCompiler {
 			}
 			else if (listElement instanceof List) {
 				System.err.println(preamble + "Weird, nested list found!");
-			} 
+			}
 		}
 
 		return false;
@@ -1568,7 +1568,7 @@ public class OMCProxy implements IModelicaCompiler {
 
 		// TODO: Continue to recurse down.. (?)
 	}
-	
+
 	public ICompilerResult buildModel(String className) throws ConnectException, UnexpectedReplyException {
 		ICompilerResult res = sendExpression("buildModel(" + className + ")", true);
 		return res;
@@ -1580,7 +1580,7 @@ public class OMCProxy implements IModelicaCompiler {
 	{
 		ICompilerResult res = sendExpression("getNthImport("+ className + ", " + n + ")", true);
 		res.trimFirstResult();
-		
+
 		return res;
 	}
 

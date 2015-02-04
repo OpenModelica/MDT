@@ -47,9 +47,9 @@ import org.modelica.mdt.core.ListElement;
 import org.modelica.mdt.core.ModelicaParserException;
 
 /**
- * This class prvides some code to parse simple modelica primitives,
+ * This class provides some code to parse simple Modelica primitives,
  * for now it can parse lists in modelica syntax.
- * 
+ *
  * @author Andreas Remar
  */
 public class ModelicaParser
@@ -59,59 +59,62 @@ public class ModelicaParser
 	 * @param str the Modelica list to parse
 	 * @return a Vector containing Vector:s and String:s. The Vector:s contain
 	 * further Vector:s and String:s. Nesting and stuff.
-	 * @throws ModelicaParserException 
+	 * @throws ModelicaParserException
 	 */
 	public static List parseList(String str) throws ModelicaParserException
 	{
 		List elements = new List();
-		
+
 		/* Remove whitespace before and after */
 		str = str.trim();
-		
+
 		/* Make sure this string is not empty */
 		if(str == "" || str.length() < 2)
 		{
 			throw new ModelicaParserException("Empty list: [" + str + "]");
 		}
-		
+
 		if (str.startsWith("{ rec("))
 		{
 			str = "{"+str.substring(6, str.length()-3) + "}";
 		}
-		
+
 		/* Make sure this is a list */
 		if(str.charAt(0) != '{' || str.charAt(str.length() - 1) != '}')
 		{
-			throw new ModelicaParserException("Not a list: ["+str+"]");
+			if(str.charAt(0) != '(' || str.charAt(str.length() - 1) != ')')
+			{
+			  throw new ModelicaParserException("Not a list: ["+str+"]");
+			}
 		}
 		/* Remove { and } */
 		str = str.substring(1, str.length() - 1);
-		
+
 		str = str.trim();
-		
+
 		if (str.startsWith("rec("))
 		{
 			str = str.substring(4, str.length()-1);
 		}
-				
-		
+
+
 		if(str.trim().equals(""))
 		{
 			/* This is an empty list, so return an empty list! */
 			return new List();
 		}
-		
+
 		/*
 		 * { { hej, på } , dig } => [[hej,på],dig]
 		 */
-		
+
 		/*
 		 * Go through the string character by character, looking for commas (,)
 		 * and start ({) and end (}) of lists. Take special note of " as they
 		 * start and end strings. Inside a string, there can be , { and }
 		 * characters and also escaped characters (for example \").
 		 */
-		
+
 		// TODO Rewrite this using a better way of acumulating the characters.
 		// Right now, it uses string += otherString, which generates alot of
 		// strings that later are thrown away. Slowness, the slowness!
@@ -126,7 +129,7 @@ public class ModelicaParser
 			{
 				/* Read this \ and the escaped character */
 				characterPosition++;
-				
+
 				if(characterPosition >= str.length())
 				{
 					/* This is some kind of error*/
@@ -135,7 +138,7 @@ public class ModelicaParser
 
 				subString += "\\" + str.charAt(characterPosition);
 			}
-			
+
 			else if(str.charAt(characterPosition) == '"')
 			{
 				/* If we're not inside a string, enter string mode*/
@@ -148,24 +151,30 @@ public class ModelicaParser
 				{
 					insideString = false;
 				}
-				
+
 				subString += '"';
 			}
 			else if(str.charAt(characterPosition) == '<')
 			{
 				if(!insideString) tupleDepth++;
 				subString += '<';
-			}			
+			}
 			else if(str.charAt(characterPosition) == '>')
 			{
 				if(!insideString) tupleDepth--;
 				subString += '>';
-			}			
+			}
 			else if(str.charAt(characterPosition) == '{' && insideString == false)
 			{
 				listFound = true;
 				depth++;
 				subString += '{';
+			}
+			else if(str.charAt(characterPosition) == '(' && insideString == false)
+			{
+				listFound = true;
+				depth++;
+				subString += '(';
 			}
 			else if(str.charAt(characterPosition) == ',' && depth == 0 && insideString == false && tupleDepth == 0)
 			{
@@ -174,7 +183,7 @@ public class ModelicaParser
 				 * at the bottom level.
 				 */
 				ListElement element = null;
-				
+
 				if(listFound)
 				{
 					try
@@ -205,16 +214,16 @@ public class ModelicaParser
 				{
 					element = new Element(subString.trim());
 				}
-				
+
 				listFound = false;
 				if(element instanceof Element && ((Element)element).toString().equals(""))
 				{
-					/* An empty string denotes an empty 
-					 * list element, which is an error. 
+					/* An empty string denotes an empty
+					 * list element, which is an error.
 					 */
 					throw new ModelicaParserException("Element is empty");
 				}
-				
+
 				elements.append(element);
 				subString = "";
  			}
@@ -222,7 +231,18 @@ public class ModelicaParser
 			{
 				depth--;
 				subString += '}';
-				
+
+				/* Unmatched } */
+				if(depth < 0)
+				{
+					throw new ModelicaParserException("Unmatched }: ["+str+"]");
+				}
+			}
+			else if(str.charAt(characterPosition) == ')' && insideString == false)
+			{
+				depth--;
+				subString += ')';
+
 				/* Unmatched } */
 				if(depth < 0)
 				{
@@ -234,7 +254,7 @@ public class ModelicaParser
 				subString += str.charAt(characterPosition);
 			}
 		}
-		
+
 		/* This happens at the end of the list. */
 		if(depth == 0)
 		{
@@ -269,7 +289,7 @@ public class ModelicaParser
 			{
 				element = new Element(subString.trim());
 			}
-			
+
 			if(element instanceof Element && ((Element)element).toString().equals(""))
 			{
 				/* An empty string denotes an empty list element, which
@@ -281,13 +301,13 @@ public class ModelicaParser
 				elements.append(element);
 			}
 		}
-		
+
 		if(insideString == true)
 		{
 			/* We should not be inside a string at the end of the list */
 			throw new ModelicaParserException("Unterminated string: ["+str+"]");
 		}
-		
+
 		return elements;
 	}
 }

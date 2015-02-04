@@ -56,7 +56,7 @@ import org.modelica.mdt.internal.core.DefinitionLocation;
 /**
  * An object that converts output of OMC's getClassInformation(cref)
  * to IClassInfo interface, the interface that Core plugin understands
- * 
+ *
  * @author Homer Simpson
  */
 public class ClassInfo implements IClassInfo
@@ -65,11 +65,11 @@ public class ClassInfo implements IClassInfo
 	private boolean isEncapsulated;
 	private DefinitionLocation defLocation;
 	private String documentation;
-	
+
 	/**
 	 * Create a ClassInfo object from the raw output of
 	 * OMC's getClassInformation() function.
-	 * 
+	 *
 	 * @param rawList the row output
 	 * @throws ModelicaParserException if could not parse rawList
 	 * @throws IllegalRestrictionException if could not parse provided restriction type
@@ -81,66 +81,130 @@ public class ClassInfo implements IClassInfo
 		List defLocList = null;
 		documentation = null;
 
-		/* 
-		 * parse the interesting bits of getClassInformation() output, it's
-		 * format is as follows: 
-		 * 
-		 * (copied from interactive_api.txt)
-         * getClassInformation(cref) 
-         *      returns all known class information using this format:
-         *  
-         *  {"restriction", "comment", "file.mo", {partial,final,encapsulated},
-         *   {"(readonly|writable)",
-         *     startLine, startColumn, endLine, endColumn}} 
-         *  with the following type for the components:
-         *            {"string","string","string","string",{bool,bool,bool},
-         *                {"string",int,int,int,int}}
-		 */
-		int i = 0;
-		
 		/*
-		 * parse the list and then put stuff that we are interested in into 
-		 * member fields 
+		 * parse the interesting bits of getClassInformation() output, it's
+		 * format is as follows:
+		 *
+		 * (copied from interactive_api.txt)
+         * getClassInformation(cref)
+         *      returns all known class information using this format:
+         *
+         *  {"restriction", "comment", "file.mo", {partial,final,encapsulated},{"(readonly|writable)",startLine, startColumn, endLine, endColumn}, {dimensions}}
+         *  with the following type for the components:
+         *  {"string","string","string","string",{bool,bool,bool},{"string",int,int,int,int}}
+         *  example:
+         *  {"package","Modelica Standard Library (Version 3.1)","F:/OpenModelica1.9.2-r24371/lib/omlibrary/Modelica 3.1/package.mo",{false,false,false},{"writable",2,1,5197,13},{}}
+         *
+         *  // this changed to:
+         *  {"restriction", "comment", partial, final, encapsulated, "file.mo", writable:false|true, startLine, startColumn, endLine, endColumn, {dimensions}}
+         *  ("package","Modelica Standard Library - Version 3.2.1 (Build 3)",false,false,false,"c:/bin/cygwin/home/adrpo/dev/OpenModelica/build/lib/omlibrary/Modelica 3.2.1/package.mo",false,2,1,7864,13,{})
+         *
 		 */
-		for (ListElement le : ModelicaParser.parseList(rawList))
+
+		int i = 0, startLine = 0, startColumn = 0, endLine = 0, endColumn = 0;
+		String str = "";
+		/*
+		 * parse the list and then put stuff that we are interested in into
+		 * member fields
+		 */
+
+		// check if we have the new way:
+		if (rawList.trim().startsWith("("))
 		{
-			switch (i)
+			for (ListElement le : ModelicaParser.parseList(rawList))
 			{
-			case 0: /* class restriction */
-				parseRestrictionType(le);
-				break;
-			case 1: /* class documentation */
-				parseDocumentation(le);
-				break;
-			case 2: /* source file path */
-				sourceFilePath = parseSourceFilePath(le);
-				break;
-			case 3: /* list that contains restricted attribute value */
-				parseEncapsulated(le);
-				break;
-			case 4: /* list that contains definitions file coordinates */
-				defLocList = checkLocationList(le);
-				break;
+				switch (i)
+				{
+				case 0: /* class restriction */
+					parseRestrictionType(le);
+					break;
+				case 1: /* class documentation */
+					parseDocumentation(le);
+					break;
+				case 2: /* partial */
+				case 3: /* final */
+					break;
+				case 4: /* encapsulated */
+					str = ((Element)le).toString();
+					isEncapsulated = str.equalsIgnoreCase("true");
+					break;
+				case 5: /* source file path */
+					sourceFilePath = parseSourceFilePath(le);
+					break;
+				case 6: /* writable */
+					break;
+				case 7: // startLine
+					startLine = Integer.parseInt(((Element)le).toString());
+					break;
+				case 8: // startColumn
+					startColumn = Integer.parseInt(((Element)le).toString());
+					break;
+				case 9: // endLine
+					endLine = Integer.parseInt(((Element)le).toString());
+					break;
+				case 10: // endColumn
+					endColumn = Integer.parseInt(((Element)le).toString());
+					break;
+				case 11: // dimensions
+					break;
+				}
+				i++;
 			}
-			i++;
+
+			if (i < 11)
+			{
+				throw new UnexpectedReplyException("class info list is to short");
+			}
+
+			if (startColumn == 0) {
+				assert(startLine == 1);
+				startColumn = 1;
+			}
 		}
-		
-		if (i < 5)
+		else if (rawList.trim().startsWith("{")) // the old way
 		{
-			throw new UnexpectedReplyException("class info list is to short");
+			for (ListElement le : ModelicaParser.parseList(rawList))
+			{
+				switch (i)
+				{
+				case 0: /* class restriction */
+					parseRestrictionType(le);
+					break;
+				case 1: /* class documentation */
+					parseDocumentation(le);
+					break;
+				case 2: /* list that contains restricted attribute value */
+					parseEncapsulated(le);
+					break;
+				case 3: /* source file path */
+					sourceFilePath = parseSourceFilePath(le);
+					break;
+				case 4: /* list that contains definitions file coordinates */
+					defLocList = checkLocationList(le);
+					break;
+				}
+				i++;
+			}
+
+			if (i < 5)
+			{
+				throw new UnexpectedReplyException("class info list is to short");
+			}
+			startLine = Integer.parseInt(((Element)defLocList.elementAt(1)).toString());
+			startColumn = Integer.parseInt(((Element)defLocList.elementAt(2)).toString());
+			endLine =  Integer.parseInt(((Element)defLocList.elementAt(3)).toString());
+			endColumn = Integer.parseInt(((Element)defLocList.elementAt(4)).toString());
+
+			if (startColumn == 0) {
+				assert(startLine == 1);
+				startColumn = 1;
+			}
 		}
-		
-		/* parse file coordinates and 'assemble' the definition location object */
-		int startLine = Integer.parseInt(((Element)defLocList.elementAt(1)).toString());
-		int startColumn = Integer.parseInt(((Element)defLocList.elementAt(2)).toString());
-		int endLine =  Integer.parseInt(((Element)defLocList.elementAt(3)).toString());
-		int endColumn = Integer.parseInt(((Element)defLocList.elementAt(4)).toString());
-		
-		if (startColumn == 0) {
-			assert(startLine == 1);
-			startColumn = 1;
+		else
+		{
+			throw new UnexpectedReplyException("getClassInformation is not well formed");
 		}
-		
+
 		defLocation = new DefinitionLocation(sourceFilePath, startLine, startColumn, endLine, endColumn);
 	}
 
@@ -153,26 +217,26 @@ public class ClassInfo implements IClassInfo
 		{
 			throw new UnexpectedReplyException("expected simple element, got a list");
 		}
-		
+
 		String str = ((Element)le).toString();
-		
+
 		/*
-		 * remove " around restriction type name 
+		 * remove " around restriction type name
 		 */
-		if (str.length() < 2) 
+		if (str.length() < 2)
 		{
-			/* 
+			/*
 			 * can't be two " around anything in a string with length
 			 * less then 2, we don't quite expect this
 			 */
 			throw new UnexpectedReplyException(str);
 		}
 		str = str.substring(1, str.length() - 1);
-		
+
 		documentation = str;
 	}
-	
-	
+
+
 	/**
 	 * Parse the element that represent restriction type
 	 */
@@ -183,57 +247,57 @@ public class ClassInfo implements IClassInfo
 		{
 			throw new UnexpectedReplyException("expected simple element, got a list");
 		}
-		
+
 		String str = ((Element)le).toString();
-		
+
 		/*
-		 * remove " around restriction type name 
+		 * remove " around restriction type name
 		 */
-		if (str.length() < 2) 
+		if (str.length() < 2)
 		{
-			/* 
+			/*
 			 * can't be two " around anything in a string with length
 			 * less then 2, we don't quite expect this
 			 */
 			throw new UnexpectedReplyException(str);
 		}
 		str = str.substring(1, str.length() - 1);
-		
+
 		restrictionType = Restriction.parse(str);
 	}
-	
+
 	/**
 	 * check that list representing definitions file coordinates looks sane
 	 */
-	private List checkLocationList(ListElement le) 
+	private List checkLocationList(ListElement le)
 		throws UnexpectedReplyException
 	{
 		if (!(le instanceof List))
 		{
 			throw new UnexpectedReplyException("expected list, got a simple element");
 		}
-		
+
 		if (((List)le).size() < 5)
 		{
 			throw new UnexpectedReplyException("list to short");
 		}
-		
+
 		return ((List)le);
 	}
-	
+
 	/**
 	 * parse the list element that represent encapsulates status of the class
 	 */
-	private void parseEncapsulated(ListElement le) 
+	private void parseEncapsulated(ListElement le)
 		throws UnexpectedReplyException
 	{
 		if (!(le instanceof List))
 		{
 			throw new UnexpectedReplyException("expected list, got a simple element");
 		}
-		
+
 		Element element = null;
-		try 
+		try
 		{
 			element = (Element) ((List)le).elementAt(2);
 		}
@@ -252,22 +316,22 @@ public class ClassInfo implements IClassInfo
 	/**
 	 * parse the element that contains source file path
 	 */
-	private String parseSourceFilePath(ListElement le) 
+	private String parseSourceFilePath(ListElement le)
 		throws UnexpectedReplyException
 	{
 		if (!(le instanceof Element))
 		{
 			throw new UnexpectedReplyException("expected simple element, got a list");
 		}
-		
+
 		String str = ((Element)le).toString();
-		
+
 		/*
-		 * remove " around restriction type name 
+		 * remove " around restriction type name
 		 */
-		if (str.length() < 2) 
+		if (str.length() < 2)
 		{
-			/* 
+			/*
 			 * can't be two " around anything in a string with length
 			 * less then 2, we don't quite expect this
 			 */
@@ -300,7 +364,7 @@ public class ClassInfo implements IClassInfo
 	{
 		return defLocation;
 	}
-	
+
 	/**
 	 * @author Adrian Pop
 	 * @return the documentation for this element or null if there isn't any.
@@ -308,5 +372,5 @@ public class ClassInfo implements IClassInfo
  	public String getDocumentation()
 	{
 		return documentation;
-	}	
+	}
 }

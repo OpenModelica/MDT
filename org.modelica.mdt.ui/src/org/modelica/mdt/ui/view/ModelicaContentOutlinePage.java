@@ -1,19 +1,19 @@
 /******************************************************************************
  * @author Adrian Pop [adrpo@ida.liu.se, http://www.ida.liu.se/~adrpo]
  * Copyright (c) 2006 Adrian Pop [adrpo@ida.liu.se]
- * All rights reserved. 
+ * All rights reserved.
  * Permission to use, copy, modify, and distribute this software and
- * its documentation for NON-COMMERCIAL purposes and without fee is hereby 
- * granted, provided that this copyright notice appear in all copies and 
+ * its documentation for NON-COMMERCIAL purposes and without fee is hereby
+ * granted, provided that this copyright notice appear in all copies and
  * that both the copyright notice and this permission notice and warranty
  * disclaimer appear in supporting documentation, and that the name of
  * The Author not be used in advertising or publicity pertaining to
  * distribution of the software without specific, written prior permission.
- * 
- * COMMERCIAL use, copy, modification and distribution 
- * is NOT permitted without prior written agreement with 
+ *
+ * COMMERCIAL use, copy, modification and distribution
+ * is NOT permitted without prior written agreement with
  * Adrian Pop [adrpo@ida.liu.se].
- * 
+ *
  * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
  * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.
  * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, INDIRECT OR
@@ -112,7 +112,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage {
 	static Object[] NO_CHILDREN= new Object[0];
 	static IPreferenceStore prefStore = UIPlugin.getDefault().getPreferenceStore();
 
-	ModelicaEditor fEditor = null;	
+	ModelicaEditor fEditor = null;
 
 	private IModelicaElement fInput;
 	private String fContextMenuID;
@@ -143,7 +143,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage {
 			fOutlineViewer.setInput(fInput);
 			updateSelectionProvider(getSite());
 		}
-	}	
+	}
 
 
 	/**
@@ -242,8 +242,8 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage {
 				IParent c= (IParent) parent;
 				try {
 					return c.hasChildren();
-				} 
-				catch (Exception x) 
+				}
+				catch (Exception x)
 				{
 					// do nothing
 					x.printStackTrace();
@@ -274,7 +274,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage {
 				fListener= new ModelicaElementChangeListener(true);
 				fListener.setViewer(viewer);
 				ModelicaCore.getModelicaRoot().addModelicaElementChangeListener(fListener);
-			} 
+			}
 			else if (!isMO && fListener != null) {
 				ModelicaCore.getModelicaRoot().removeModelicaElementChangeListener(fListener);
 				fListener= null;
@@ -290,7 +290,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage {
 
 			final boolean matchedAsIn = searchParameterArray(inputs, name, typeName);
 			final boolean matchedAsOut = searchParameterArray(outputs, name, typeName);
-			
+
 			String decoratedName = name;
 
 			if (matchedAsIn && !matchedAsOut) {
@@ -300,14 +300,14 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage {
 				decoratedName = name + " (" + typeName + " - OUT)";
 			}
 			else if (!matchedAsIn && !matchedAsOut) {
-				ErrorManager.logWarning("That's odd, that parameter did not match as being neither in nor out.");
+				// ErrorManager.logWarning("That's odd, that parameter did not match as being neither in nor out.");
 			}
 			else { // if matchedAsIn && matchedAsOut
 				ErrorManager.logWarning("That's odd, that parameter matched as being both in and out.");
 			}
-			
+
 			IModelicaComponent newComponent = new ModelicaComponent(parent, decoratedName, typeName, visibility, definitionLocation);
-			
+
 			return newComponent;
 		}
 
@@ -474,15 +474,15 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage {
 	class LexicalSortingAction extends Action {
 
 		private ModelicaElementComparator fComparator= new ModelicaElementComparator(ModelicaElementComparator.NAME);
-		private ModelicaElementComparator fModelicaComparator= new ModelicaElementComparator(ModelicaElementComparator.MODELICA);		
+		private ModelicaElementComparator fModelicaComparator= new ModelicaElementComparator(ModelicaElementComparator.MODELICA);
 
 		public LexicalSortingAction() {
 			setText("Sort");
-			setImageDescriptor(ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OUTLINE_SORT)); 
+			setImageDescriptor(ModelicaImages.getImageDescriptor(ModelicaImages.IMG_OUTLINE_SORT));
 			setToolTipText("Sort");
 			setDescription("Sorting lables");
 			boolean checked= fCorePreferenceStore.getBoolean("ModelicaEditor.Outline.LexicalSortingAction.isChecked"); //$NON-NLS-1$
-			valueChanged(checked, false);			
+			valueChanged(checked, false);
 		}
 
 		@Override
@@ -527,7 +527,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage {
 		 */
 		public ToggleLinkingAction(ModelicaContentOutlinePage outlinePage) {
 			boolean isLinkingEnabled= fCorePreferenceStore.getBoolean("ModelicaEditor.SyncOutlineOnCursorMove");
-			setChecked(isLinkingEnabled);			
+			setChecked(isLinkingEnabled);
 			fModelicaOutlinePage= outlinePage;
 		}
 
@@ -536,14 +536,14 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage {
 		 */
 		@Override
 		public void run() {
-			fCorePreferenceStore.setValue("ModelicaEditor.SyncOutlineOnCursorMove", isChecked());			
+			fCorePreferenceStore.setValue("ModelicaEditor.SyncOutlineOnCursorMove", isChecked());
 			if (isChecked() && fEditor != null) {
 				fEditor.synchronizeOutlinePage(fEditor.computeHighlightRangeSourceReference(), false);
 			}
 		}
 	}
 
-	private IPropertyChangeListener fPropertyChangeListener;	
+	private IPropertyChangeListener fPropertyChangeListener;
 
 	public ModelicaContentOutlinePage(String contextMenuID, ModelicaEditor editor) {
 		Assert.isNotNull(editor);
@@ -556,7 +556,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage {
 				doPropertyChange(event);
 			}
 		};
-		fCorePreferenceStore.addPropertyChangeListener(fPropertyChangeListener);		
+		fCorePreferenceStore.addPropertyChangeListener(fPropertyChangeListener);
 	}
 
 	private void doPropertyChange(PropertyChangeEvent event) {
@@ -898,7 +898,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage {
 					return true;
 				}
 			}
-		} 
+		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -957,7 +957,7 @@ public class ModelicaContentOutlinePage extends ContentOutlinePage {
 
 		try {
 			EditorUtility.openInEditor ((IModelicaElement)selection.getFirstElement());
-		} 
+		}
 		catch (CompilerException e) {
 			ErrorManager.showCompilerError(e);
 		}
