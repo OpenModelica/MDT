@@ -47,7 +47,6 @@ import org.modelica.mdt.debug.gdb.core.mi.event.MIInferiorExitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.output.CLIInfoProcInfo;
 import org.modelica.mdt.debug.gdb.core.mi.output.CLIInfoProgramInfo;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIGDBShowExitCodeInfo;
-import org.modelica.mdt.debug.gdb.core.mi.pty.IMITTY;
 
 /**
  * Represents the actual debugged process.
@@ -75,16 +74,9 @@ public class GDBInferior extends Process {
 	PipedOutputStream inPiped;
 	PipedInputStream err;
 	PipedOutputStream errPiped;
-	
-	IMITTY tty;
 
-	public GDBInferior(MISession mi, IMITTY pty) {
+	public GDBInferior(MISession mi) {
 		session = mi;
-		tty = pty;
-		if (tty != null) {
-			out = tty.getOutputStream();
-			in = tty.getInputStream();
-		}
 	}
 
 	/**
@@ -344,26 +336,6 @@ public class GDBInferior extends Process {
 			//e.printStackTrace();
 		}
 		
-		// If tty is not null then we are using a master/slave terminal
-		// emulation close the master to notify the slave.
-		if (tty != null) {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					//e.printStackTrace();
-				}
-				in = null;
-			}
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e) {
-					//e.printStackTrace();
-				}
-				out = null;
-			}
-		}
 		if (fireEvent) {
 			session.fireEvent(new MIInferiorExitEvent(session, token));
 		}

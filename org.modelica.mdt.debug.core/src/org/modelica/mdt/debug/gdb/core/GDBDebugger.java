@@ -41,9 +41,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.modelica.mdt.debug.core.MDTDebugCorePlugin;
 import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.mi.MISession;
-import org.modelica.mdt.debug.gdb.core.mi.pty.IMITTY;
-import org.modelica.mdt.debug.gdb.core.mi.pty.MITTYAdapter;
-import org.modelica.mdt.debug.gdb.core.mi.pty.PTY;
 
 /**
  * Starts the GDB with the given parameters.
@@ -58,7 +55,6 @@ public class GDBDebugger {
 	private Process fGDBProcess;
 	// MI Session
 	private MISession fMISession;
-	IMITTY fPty = null;
 	
 	/**
 	 * @param debugTargetProgram
@@ -88,7 +84,7 @@ public class GDBDebugger {
 	 */
 	private void createMISession() throws MIException, IOException {
 		// TODO Auto-generated method stub
-		fMISession = new MISession(fGDBProcess, fPty);
+		fMISession = new MISession(fGDBProcess);
 		if (MDTDebugCorePlugin.DEBUG) fMISession.writeLog("Created MI Session");
 	}
 
@@ -109,23 +105,13 @@ public class GDBDebugger {
 			gdb =  "gdb";
 		}
 		
-		try {
-			PTY pseudo = new PTY();
-			fPty = new MITTYAdapter(pseudo);
-		} catch (IOException e) {
-			// Should we not print/log this ? may be. I can't test this thing in windows :)
-		}
-		
 		ArrayList<String> argList = new ArrayList<String>();
 		argList.add(gdb);
 		argList.add("-q");		// don't print welcome messages
 		argList.add("-nw");		// don't use window interface
 		argList.add("-i");		// tells gdb to run in MI protocol mode
 		argList.add("mi");		// tells gdb to run in MI protocol mode
-		if (fPty != null) {
-			argList.add("-tty");
-			argList.add(fPty.getSlaveName());
-		}
+		
 		if (debugTargetProgram != null) {
 			argList.add("--args");
 			argList.add(new Path(debugTargetProgram).toOSString());

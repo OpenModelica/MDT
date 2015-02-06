@@ -58,7 +58,6 @@ import org.modelica.mdt.debug.gdb.core.mi.event.MIEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIGDBExitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIGDBShowInfo;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIParser;
-import org.modelica.mdt.debug.gdb.core.mi.pty.IMITTY;
 import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
 import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
 
@@ -113,13 +112,12 @@ public class MISession extends Observable {
 	private File fLogFile;
 	private BufferedWriter fLogFileWriter;
 	
-	/**
-	 * @param fPty 
+	/** 
 	 * @param fGDBProcess
 	 * @throws MIException 
 	 * @throws IOException 
 	 */
-	public MISession(Process gdbProcess, IMITTY pty) throws MIException, IOException {
+	public MISession(Process gdbProcess) throws MIException, IOException {
 		// TODO Auto-generated constructor stub
 		fGDBProcess = gdbProcess;
 		// get the gdb streams
@@ -140,7 +138,7 @@ public class MISession extends Observable {
 		// create the MI command factory
 		fMICommandFactory = new CommandFactory();
 		// create the gdb inferior process which actually represents our debugged program
-		fGDBInferior = new GDBInferior(this, pty);
+		fGDBInferior = new GDBInferior(this);
 		// logging
 		fLogFile = new File(ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString() + "/debuggerlog.txt");
 		fLogFileWriter = new BufferedWriter(new FileWriter(fLogFile));
