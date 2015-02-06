@@ -140,7 +140,12 @@ public class MISession extends Observable {
 		// create the gdb inferior process which actually represents our debugged program
 		fGDBInferior = new GDBInferior(this);
 		// logging
-		fLogFile = new File(ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString() + "/debuggerlog.txt");
+		String temp = System.getProperty("java.io.tmpdir");
+		String username = System.getenv("USER");
+		if (username == null) {
+			username = "nobody";
+		}
+		fLogFile = new File(temp + "/debuggerlog." + username + ".txt");
 		fLogFileWriter = new BufferedWriter(new FileWriter(fLogFile));
 		
 		setup();
