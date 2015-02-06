@@ -43,7 +43,6 @@ import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.Observable;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
