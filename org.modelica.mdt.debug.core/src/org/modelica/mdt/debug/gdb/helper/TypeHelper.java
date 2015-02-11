@@ -46,7 +46,7 @@ import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
 public class TypeHelper {
 	
 	public static String getModelicaType(String variableName, String variableType, GDBStackFrame gdbStackFrame) {
-		if (variableType.equals(GDBHelper.MODELICA_METATYPE)) {
+		if (variableType.equals(GDBHelper.MODELICA_METATYPE) || variableType.equals(GDBHelper.MODELICA_STRING)) {
 			return getModelicaMetaType(variableName, gdbStackFrame);
 		} else if (variableType.equals(GDBHelper.MODELICA_BOOLEAN)) {
 			return GDBHelper.BOOLEAN;

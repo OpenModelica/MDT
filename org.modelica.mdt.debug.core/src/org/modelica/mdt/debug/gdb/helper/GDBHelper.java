@@ -45,6 +45,7 @@ import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
 public class GDBHelper {
 	/* Meta Modelica Types */
 	public static String MODELICA_METATYPE = "modelica_metatype";
+	public static String MODELICA_STRING = "modelica_string";
 	public static String MODELICA_BOOLEAN = "modelica_boolean";
 	public static String MODELICA_INETGER = "modelica_integer";
 	public static String MODELICA_REAL = "modelica_real";
