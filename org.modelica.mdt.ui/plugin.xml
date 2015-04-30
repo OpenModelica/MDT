@@ -2,6 +2,48 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension-point id="modelicaElementFilters" name="Modelica Element Filters" schema="schema/org.modelica.mdt.ui.modelicaElementFilters.exsd"/>
+   
+
+   
+	<extension
+       id="org.mdt.susanMarker"
+       name="SusanMarker"
+       point="org.eclipse.core.resources.markers">
+    <super
+          type="org.eclipse.core.resources.textmarker">
+    </super>
+ </extension>
+ 
+    <extension
+         point="org.eclipse.ui.editors.annotationTypes">
+      <type
+            markerType="org.mdt.susanMarker"
+            name="org.mdt.susanMarker">
+      </type>
+   </extension>
+ 
+   <extension
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            annotationType="org.mdt.susanMarker"
+            colorPreferenceKey="org.mdt.susanMarker.color"
+            colorPreferenceValue="169,169,169"
+            contributesToHeader="false"
+            highlightPreferenceKey="org.mdt.susanMarker.highlight"
+            highlightPreferenceValue="true"
+            includeOnPreferencePage="true"
+            label="SusanMarker"
+            overviewRulerPreferenceKey="org.mdt.susanMarker.overview"
+            overviewRulerPreferenceValue="true"
+            presentationLayer="0"
+            textPreferenceKey="org.mdt.susanMarker.text"
+            textPreferenceValue="true"
+            textStylePreferenceValue="BOX"
+            verticalRulerPreferenceKey="org.mdt.susanMarker.ruler"
+            verticalRulerPreferenceValue="true">
+      </specification>
+   </extension>
+   
    <extension
          point="org.eclipse.ui.views">
       <category
@@ -76,7 +118,7 @@
             class="org.modelica.mdt.ui.editor.ModelicaEditor"
             contributorClass="org.modelica.mdt.ui.actions.ModelicaActionContributor"
             default="true"
-            extensions="mo, mof, mos,rml"
+            extensions="mo, mof, mos"
             icon="icons/obj16/mo_file.gif"
             id="org.modelica.mdt.ui.editor"
             name="Modelica Editor"/>
@@ -172,6 +214,31 @@
          name="Toggle Mark Occurrences">
          <!--<state class="org.eclipse.ui.handlers.RegistryToggleState:false" id="org.eclipse.ui.commands.toggleState"></state>-->
    </command>
+   <command
+         defaultHandler="org.modelica.mdt.ui.editor.SusanAddCommentsHandler"
+         id="org.modelica.mdt.ui.SusanComments"
+         name="SusanComments">
+   </command>
+   <command
+         defaultHandler="org.modelica.mdt.ui.editor.SusanRemoveCommentsHandler"
+         id="org.modelica.mdt.ui.UnSusanComments"
+         name="SusanUnComment">
+   </command>
+   <command
+         defaultHandler="org.modelica.mdt.ui.editor.SusanAddTabsCommentHandler"
+         id="org.modelica.mdt.ui.SusanAddTabstops"
+         name="SusanAddTabs">
+   </command>
+   <command
+         defaultHandler="org.modelica.mdt.ui.editor.SusanRemoveTabsCommentHandler"
+         id="org.modelica.mdt.ui.SusanRemoveTabs"
+         name="SusanRemoveTabs">
+   </command>
+   <command
+         defaultHandler="org.modelica.mdt.ui.editor.SusanJumpToDeclaration"
+         id="org.modelica.mdt.ui.SusanJumpToDeclaration"
+         name="SusanJumpToDeclaration">
+   </command>
    </extension>
    
    <extension point="org.eclipse.ui.bindings">   
@@ -215,6 +282,31 @@
          contextId="org.modelica.mdt.ui.modelicaEditorScope"
          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
          sequence="Alt+B">
+   </key>
+   <key
+         commandId="org.modelica.mdt.ui.SusanComments"
+         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+         sequence="M1+7">
+   </key>
+   <key
+         commandId="org.modelica.mdt.ui.UnSusanComments"
+         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+         sequence="M1+SHIFT+7">
+   </key>
+   <key
+         commandId="org.modelica.mdt.ui.SusanAddTabstops"
+         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+         sequence="M1+Tab">
+   </key>
+   <key
+         commandId="org.modelica.mdt.ui.SusanRemoveTabs"
+         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+         sequence="Shift+Tab">
+   </key>
+   <key
+         commandId="org.modelica.mdt.ui.SusanJumpToDeclaration"
+         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+         sequence="M1+F3">
    </key>
   </extension>   
    
@@ -421,5 +513,18 @@
              id="org.modelica.mdt.ui.actions.commandsimulate"
              name="simulate">
     </command>
+  </extension>
+  <extension
+        point="org.eclipse.ui.bindings">
+  </extension>
+  <extension
+        point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+     <hyperlinkDetector
+           activate="true"
+           class="org.modelica.mdt.ui.editor.SusanHyperLinkDetector"
+           id="org.modelica.mdt.ui.editor.SusanHyperLinkEditor"
+           name="SusanHyperLinkDetector"
+           targetId="org.eclipse.ui.DefaultTextEditor">
+     </hyperlinkDetector>
   </extension>
 </plugin>
