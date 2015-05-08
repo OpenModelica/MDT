@@ -517,14 +517,4 @@
   <extension
         point="org.eclipse.ui.bindings">
   </extension>
-  <extension
-        point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
-     <hyperlinkDetector
-           activate="true"
-           class="org.modelica.mdt.ui.editor.SusanHyperLinkDetector"
-           id="org.modelica.mdt.ui.editor.SusanHyperLinkEditor"
-           name="SusanHyperLinkDetector"
-           targetId="org.eclipse.ui.DefaultTextEditor">
-     </hyperlinkDetector>
-  </extension>
 </plugin>

@@ -9,7 +9,8 @@ package org.modelica.mdt.ui.editor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IMarker;
@@ -30,20 +31,44 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.modelica.mdt.ui.editor.SusanContentOutlinePage.Segment;
+import org.modelica.mdt.ui.state.State;
 
 
 public class SusanEditor extends TextEditor
 {
 	private SusanContentOutlinePage fOutlinePage;
 	protected AnnotationModel annotationModel;
-	private List<IMarker> markerList = new ArrayList<IMarker>();
 	private SusanEditorSelectionChangedListener selectionChangedListener;
+	private MarkOccurencesHelper markOccurencesHelper;
 	
+	public final String SUSANMARKERTYPE = "org.mdt.susanMarker";
+	
+	/** 
+	 * Constructor
+	 * Creates a new SusanEditor and is setting the DocumentProvider
+	 */
+	public SusanEditor()
+	{
+		super();
+		markOccurencesHelper = new MarkOccurencesHelper();
+		setSourceViewerConfiguration(new SusanSourceViewerConfig());
+		setDocumentProvider(new SusanDocumentProvider());
+	}
+	
+	@Override
+	protected void finalize() throws Throwable
+	{
+		super.finalize();
+	}
+	
+	public SusanEditor getEditor()
+	{
+		return this;
+	}
 	
 	//-----start SelectionChangedListener
 	/**
@@ -61,112 +86,112 @@ public class SusanEditor extends TextEditor
 		@Override
 		public void selectionChanged(SelectionChangedEvent event)
 		{
-			ISelection selection = event.getSelection();
-			Object source = event.getSource();
-						
-			if (selection instanceof TextSelection && source instanceof SourceViewer )
+			if (State.getInstance().markOccurrencesOn()) 
 			{
-				TextSelection textSelection = (TextSelection)selection;
-				SourceViewer sV = (SourceViewer)source;
-				IDocument document = sV.getDocument();
-				if (markerList.size() > 0)
+				ISelection selection = event.getSelection();
+				Object source = event.getSource();
+							
+				if (selection instanceof TextSelection && source instanceof SourceViewer )
 				{
+					TextSelection textSelection = (TextSelection)selection;
+					SourceViewer sV = (SourceViewer)source;
+					IDocument document = sV.getDocument();
 					removeAnnotations(getAnnotationModel());
-					markerList.clear();
-				}
-				//IDocument document = getDocument()
-				if (document != null) {
-					String text = textSelection.getText();
-					if ( ( text.length() <= 1 ) || (lastindex.equals(text) ))
-					{
-						//find word where the cursorPosition is in
-						int pos = textSelection.getOffset();
-						int line = textSelection.getStartLine();
+					
+					//IDocument document = getDocument()
+					if (document != null && textSelection.getText().length() > 2) {
+						String text = textSelection.getText();
+						if ( ( text.length() <= 1 ) || (lastindex.equals(text) ))
+						{
+							//find word where the cursorPosition is in
+							int pos = textSelection.getOffset();
+							int line = textSelection.getStartLine();
+							try
+							{
+								String lineString = document.get(document.getLineOffset(line), document.getLineLength(line));
+								
+								pos = pos - document.getLineOffset(line);//somewhere in between the word
+								
+								int startPos = pos - 1;
+								int endPos = pos;
+								while((startPos > 0) && (wordMatchingPattern.matcher("" + lineString.charAt(startPos)).matches()))
+									startPos--;
+	
+								while((endPos < lineString.length()-1) && (wordMatchingPattern.matcher("" + lineString.charAt(endPos)).matches()))
+									endPos++;
+								
+								word = lineString.substring(startPos + 1, endPos);
+							} 
+							catch (BadLocationException e)
+							{
+								
+								e.printStackTrace();
+								word = "";
+							}
+							return;
+						}
+						
+						// no marking of keywords, there are too much and there is no use in jumping to them
+						for (int i = 0; i < SusanRuleBasedScanner.SUSAN_KEYWORDS.length; i++)
+						{
+							if ( text.equals(SusanRuleBasedScanner.SUSAN_KEYWORDS[i]) )
+								return;
+						}
+	
+						for (int i = 0; i < SusanRuleBasedScanner.TEMPLATE_KEYWORDS.length; i++)
+						{
+							if ( text.equals(SusanRuleBasedScanner.TEMPLATE_KEYWORDS[i]) )
+								return;
+						}
+						
+						for (int i = 0; i < SusanRuleBasedScanner.CASE_KEYWORDS.length; i++)
+						{
+							if ( text.equals(SusanRuleBasedScanner.CASE_KEYWORDS[i]) )
+								return;
+						}
+						
+						for (int i = 0; i < SusanRuleBasedScanner.VAR_KEYWORDS.length; i++)
+						{
+							if ( text.equals(SusanRuleBasedScanner.VAR_KEYWORDS[i]) )
+								return;
+						}
+						
+						if ( text.equals("<%") || text.equals("%>") || text.equals("<<") || text.equals(">>") )
+							return;
+						
+						boolean b = false;
+						int i = 0;
+						while ((!b) && (i < (text.length()-1) ) )
+						{
+							if ( !( (text.charAt(i) == ' ' ) || ((text.charAt(i) == '	' )) ) )
+							{
+								b = true;
+							}
+							i++;
+							
+						}
+						if (!b)
+							return;
+						
 						try
 						{
-							String lineString = document.get(document.getLineOffset(line), document.getLineLength(line));
-							
-							pos = pos - document.getLineOffset(line);//somewhere in between the word
-							
-							int startPos = pos - 1;
-							int endPos = pos;
-							while((startPos > 0) && (wordMatchingPattern.matcher("" + lineString.charAt(startPos)).matches()))
-								startPos--;
-
-							while((endPos < lineString.length()-1) && (wordMatchingPattern.matcher("" + lineString.charAt(endPos)).matches()))
-								endPos++;
-							
-							word = lineString.substring(startPos + 1, endPos);
-						} 
-						catch (BadLocationException e)
+							markwords(text);
+							word = text;
+						} catch (CoreException e)
 						{
-							
 							e.printStackTrace();
-							word = "";
-						}
-						return;
-					}
-					
-					// no marking of keywords, there are too much and there is no use in jumping to them
-					for (int i = 0; i < SusanRuleBasedScanner.SUSAN_KEYWORDS.length; i++)
-					{
-						if ( text.equals(SusanRuleBasedScanner.SUSAN_KEYWORDS[i]) )
-							return;
-					}
-
-					for (int i = 0; i < SusanRuleBasedScanner.TEMPLATE_KEYWORDS.length; i++)
-					{
-						if ( text.equals(SusanRuleBasedScanner.TEMPLATE_KEYWORDS[i]) )
-							return;
-					}
-					
-					for (int i = 0; i < SusanRuleBasedScanner.CASE_KEYWORDS.length; i++)
-					{
-						if ( text.equals(SusanRuleBasedScanner.CASE_KEYWORDS[i]) )
-							return;
-					}
-					
-					for (int i = 0; i < SusanRuleBasedScanner.VAR_KEYWORDS.length; i++)
-					{
-						if ( text.equals(SusanRuleBasedScanner.VAR_KEYWORDS[i]) )
-							return;
-					}
-					
-					if ( text.equals("<%") || text.equals("%>") || text.equals("<<") || text.equals(">>") )
-						return;
-					
-					boolean b = false;
-					int i = 0;
-					while ((!b) && (i < (text.length()-1) ) )
-					{
-						if ( !( (text.charAt(i) == ' ' ) || ((text.charAt(i) == '	' )) ) )
+						} catch (BadLocationException e)
 						{
-							b = true;
+							e.printStackTrace();
 						}
-						i++;
 						
 					}
-					if (!b)
-						return;
-					
-					try
-					{
-						markwords(text);
-						//lastindex = text;
-						word = text;
-					} catch (CoreException e)
-					{
-						
-						e.printStackTrace();
-					} catch (BadLocationException e)
-					{
-						
-						e.printStackTrace();
-					}
-					
 				}
 			}
-		
+			else
+			{
+				markOccurencesHelper.clearMarkers();
+			}
 		}
 		
 		public String getMarkedWord()
@@ -182,82 +207,117 @@ public class SusanEditor extends TextEditor
 	}
 	//-----end SelectionChangedListener
 	
-	//-----start thread
 	/**
 	 * a thread for adding bookmarks to the text for a sequence of characters <br>
 	 * extends Thread to reduce the slowing down of the editor if there are a lot of occurrences
 	 */
-	private class addBookmarkThread extends Thread{
-
-		ArrayList<Integer> positions = new ArrayList<Integer>();
-		int length;
+	private class MarkOccurencesHelper
+	{
+		private int wordLength;
+		private Timer timer;
+		private ArrayList<Integer> positions;
 		
-		public addBookmarkThread(int len, ArrayList<Integer> pos, IWorkbenchPage pag)
+		public MarkOccurencesHelper()
 		{
-			positions = pos;
-			length = len;
+			super();
+			timer = new Timer();
+			positions = new ArrayList<Integer>();
+			wordLength = 0;
 		}
 		
-		public void run() {
-
-			for (int i = 0; i < positions.size()-1; i++)
-			{
-				addBookmark(positions.get(i), length);
-			}
-
-		}
-				
-		
-		private void addBookmark(int p, int length)
+		public void setMarkers(ArrayList<Integer> positions, int wordLength)
 		{
-			Position pos = new Position(p);
-			pos.setLength(length);
-			IWorkbenchPage page = getSite().getWorkbenchWindow().getActivePage();
-			if (page == null)
-				return;
-			IEditorPart  editorPart = page.getActiveEditor();
-			IResource resource;
-			try
+			this.positions = positions;
+			this.wordLength = wordLength;
+			timer.cancel();
+			timer = new Timer();
+			timer.schedule(new TimerTask()
 			{
-				resource = extractResource(editorPart);
-				
-				IMarker marker =  resource.createMarker("org.mdt.susanMarker");
-
-				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-				marker.setAttribute(IMarker.LOCATION, "1");
-				marker.setAttribute(IMarker.LINE_NUMBER, getDocumentProvider().getDocument(getEditorInput()).getLineOfOffset(p)+1) ;
-				marker.setAttribute(IMarker.DONE, true);
-				
-				if (pos.offset != 0) {
-				  marker.setAttribute(IMarker.CHAR_START,pos.offset);
-				  marker.setAttribute(IMarker.CHAR_END,pos.offset+pos.length);
+				@Override
+				public void run()
+				{
+					refreshMarkers();
 				}
-				
-				markerList.add(marker);
-			} catch (CoreException e)
-			{
-				
-				e.printStackTrace();
-			} catch (BadLocationException e)
-			{
-				
-				e.printStackTrace();
-			}
+			}, 500);
 		}
 		
-		private IResource extractResource(IEditorPart editor) throws CoreException {
-			   	IEditorInput input = editor.getEditorInput();
-			      if ((input instanceof IFileEditorInput))      
-			    	  return ((IFileEditorInput)input).getFile();
-			      if ((input instanceof FileStoreEditorInput))
-			    	  {
-			    	  	return null;
-			    	  }
+		public void clearMarkers()
+		{
+			clearMarkers(extractResource(getEditor()));
+		}
+		
+		protected void clearMarkers(final IResource resource)
+		{
+			if(resource == null)
+				return;
+			
+			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						try {
+							resource.deleteMarkers(SUSANMARKERTYPE, false, 1);
+						} catch (CoreException e1) {
+							e1.printStackTrace();
+						}
+					}
+				});
+		}
+		
+		private void refreshMarkers()
+		{			
+			final IResource resource = extractResource(getEditor());
+			final IDocument document = getDocumentProvider().getDocument(getEditorInput());
+			
+			if(resource == null)
+				return;
+			
+			clearMarkers(resource);
+			
+			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					for(Integer posIdx : positions)
+					{
+						if(posIdx < 0)
+							continue;
+				
+						try
+						{
+							IMarker marker =  resource.createMarker(SUSANMARKERTYPE);
+			
+							marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+							marker.setAttribute(IMarker.LOCATION, "1");
+							marker.setAttribute(IMarker.LINE_NUMBER, document.getLineOfOffset(posIdx)+1) ;
+							marker.setAttribute(IMarker.DONE, true);
+						
+							if (posIdx != 0) {
+								marker.setAttribute(IMarker.CHAR_START,posIdx);
+								marker.setAttribute(IMarker.CHAR_END,posIdx + wordLength);
+							}
+						
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+					}
+				}
+			});
+		}
+		
+		private IResource extractResource(IEditorPart editor) {
+			IEditorInput input = editor.getEditorInput();
+			if ((input instanceof IFileEditorInput))      
+				return ((IFileEditorInput)input).getFile();
+			
 	     
-			      return null;
-			   }
+			return null;
+		}
 	}
-	//-----end Thread
 	
 	/**
 	 * creates the selectionChangedListener for the editor
@@ -266,28 +326,11 @@ public class SusanEditor extends TextEditor
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		
-		//this.changeMark(getTitle(), getDocumentProvider());
-		//this.
 		selectionChangedListener= new SusanEditorSelectionChangedListener();
 		selectionChangedListener.setOutlinePage(fOutlinePage);
 		ISelectionProvider selProv = getSelectionProvider();
 		selProv.addSelectionChangedListener(selectionChangedListener);
-		selectionChangedListener.install(selProv);
 	}
-	
-	/** 
-	 * Constructor
-	 * Creates a new SusanEditor and is setting the DocumentProvider
-	 */
-	
-	public SusanEditor()
-	{
-		super();
-		setSourceViewerConfiguration(new SusanSourceViewerConfig());
-		setDocumentProvider(new SusanDocumentProvider());
-		
-	}
-
 	
 
 	/**
@@ -312,7 +355,9 @@ public class SusanEditor extends TextEditor
 		for (@SuppressWarnings("unchecked")
 		Iterator<Annotation> it = model.getAnnotationIterator(); it.hasNext();) {
 			{
-				model.removeAnnotation( it.next() );
+				Annotation annotation = it.next();
+				if(annotation.getType().equals(SUSANMARKERTYPE))
+					model.removeAnnotation(annotation);
 			}
 			
 		}
@@ -327,11 +372,8 @@ public class SusanEditor extends TextEditor
 	 */
 	public void markwords(String word) throws CoreException, BadLocationException
 	{
-		
 		ArrayList<Integer> positions = getWordPositionList(word);
-		
-		addBookmarkThread T = new addBookmarkThread(word.length(), positions, getSite().getWorkbenchWindow().getActivePage() );
-		T.run();	
+		markOccurencesHelper.setMarkers(positions, word.length());
 	}
 	
 	@Override

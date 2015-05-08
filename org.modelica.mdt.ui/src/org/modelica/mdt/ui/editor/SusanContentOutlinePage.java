@@ -45,6 +45,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
@@ -55,7 +56,24 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
  */
 public class SusanContentOutlinePage extends ContentOutlinePage
 {
-
+	protected final static String OUTLINE_MARKER_ID = "__susan_segments";
+	
+	/**
+	 * Creates a content outline page using the given provider and the given
+	 * editor.
+	 * 
+	 * @param provider
+	 *            the document provider
+	 * @param editor
+	 *            the editor
+	 */
+	public SusanContentOutlinePage(IDocumentProvider provider, ITextEditor editor)
+	{
+		super();
+		fDocumentProvider = provider;
+		fTextEditor = editor;
+	}
+	
 	/**
 	 * A segment element.
 	 */
@@ -88,7 +106,9 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 		}
 	}
 	
-	
+	/**
+	 * Use this iterator to iterate over all lines of the susan document
+	 */
 	protected class DocumentLineIterator implements Iterable<String>, Iterator<String>
 	{
 		private IDocument document;
@@ -158,7 +178,7 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 			{
 				try {
 					region = document.getPartition(startOffset);
-					if(isRegionValues(region))
+					if(isRegionValid(region))
 					{
 						currentRegionOffset = startOffset;
 						return region;
@@ -188,7 +208,7 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 			{
 				try {
 					region = document.getPartition(startOffset);
-					if(isRegionValues(region))
+					if(isRegionValid(region))
 						return true;
 					startOffset += region.getLength() + 1;
 				} catch (BadLocationException e) {
@@ -197,12 +217,9 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 			}
 		}
 		
-		protected boolean isRegionValues(ITypedRegion region)
+		protected boolean isRegionValid(ITypedRegion region)
 		{
-			if(region.getType() != SusanRuleBasedPartitionScanner.SUSAN_MULTILINE_COMMENT_ID && region.getType() != SusanRuleBasedPartitionScanner.SUSAN_SINGLELINE_COMMENT_ID)
-				return true;
-			
-			return false;
+			return region.getType() == "__dftl_partition_content_type";
 		}
 		
 		@Override
@@ -215,90 +232,148 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 		{
 			return this;
 		}
-		
 	}
 
+	protected class SusanTemplateFinderThread extends Thread
+	{
+		private IDocument document;
+		protected List<Segment> innerContent;
+		protected HashMap<String, ArrayList<Segment>> innerChildContent;
+		protected ContentProvider contentProvider;
+		protected Pattern templateFunctionHeadPattern = Pattern.compile("[ \\t]*template[ \\t]+([^\\(]+)\\(([^\\)]*)\\)(.)*");
+		protected Pattern templateStartPattern = Pattern.compile("[ \\t]*template(.)*");
+		protected Pattern templateEndPattern = Pattern.compile("(.)*::=(.)*");
+		private Matcher blockTemplateMatcher = null;
+		
+		public SusanTemplateFinderThread(IDocument document, ContentProvider contentProvider)
+		{
+			this.document = document;
+			this.innerContent = new ArrayList<SusanContentOutlinePage.Segment>();
+			this.innerChildContent = new HashMap<String, ArrayList<Segment>>();
+			this.contentProvider = contentProvider;
+		}
+		
+		@Override
+		public void run()
+		{
+			DocumentLineIterator lineIterator = new DocumentLineIterator(document);
+			String currentBlock = "";
+
+			boolean noMoreFunctionsFound = false;
+			int lineOffset = 0;
+			
+			try {
+				for(String line : lineIterator)
+				{
+					if(isInterrupted())
+						return;
+					currentBlock = line;
+					
+					//Check if current line contains a template definition
+					if(templateStartPattern.matcher(currentBlock).matches())
+					{
+						//Check if the end-pattern is already part of the text
+						while(!templateEndPattern.matcher(currentBlock).matches())
+						{
+							//Include the next line
+							if(lineIterator.hasNext())
+								currentBlock += lineIterator.next();
+							else
+							{
+								noMoreFunctionsFound = true;
+								break;
+							}
+						}
+						
+						if(noMoreFunctionsFound)
+							break;
+						
+						blockTemplateMatcher = templateFunctionHeadPattern.matcher(currentBlock);
+						if(!blockTemplateMatcher.matches())
+							continue;
+						
+						Position markerPosition = new Position(lineOffset, 0);
+						try {
+							document.addPosition(OUTLINE_MARKER_ID, markerPosition);
+						} catch (BadLocationException e) {
+							e.printStackTrace();
+							break;
+						} catch (BadPositionCategoryException e) {
+							e.printStackTrace();
+							break;
+						}
+
+						ArrayList<Segment> subTree = new ArrayList<Segment>();
+
+						innerContent.add(new Segment(MessageFormat.format(blockTemplateMatcher.group(1), new Object[] { new Integer(markerPosition.offset) }), markerPosition, false));
+
+						for(String arg : blockTemplateMatcher.group(2).split(","))
+						{
+							if(arg.trim().length() > 0)
+								subTree.add(new Segment(MessageFormat.format(arg.trim(), new Object[] { new Integer(markerPosition.offset) }), markerPosition, true));
+						}
+						innerChildContent.put(blockTemplateMatcher.group(1), subTree);
+					}
+					
+					lineOffset = lineIterator.getCurrentOffset();
+				}
+			}
+			//Catch any exception if someone has changed the document during parsing
+			catch (Exception e) 
+			{
+			}
+
+			Collections.sort(innerContent, new SegmentStringUpperComparator());
+			
+			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					contentProvider.setContent(innerContent, innerChildContent);
+				}
+			});
+		}
+	}
+	
 	/**
 	 * Divides the editor's document into ten segments and provides elements for
 	 * them.
 	 */
 	protected class ContentProvider implements ITreeContentProvider
 	{
-		protected final static String SEGMENTS = "__susan_segments"; //$NON-NLS-1$
-		protected IPositionUpdater fPositionUpdater = new DefaultPositionUpdater(SEGMENTS);
-		protected List<Segment> fContent = new ArrayList<Segment>();
+		protected IPositionUpdater fPositionUpdater = new DefaultPositionUpdater(OUTLINE_MARKER_ID);
+		protected List<Segment> fContent = new ArrayList<SusanContentOutlinePage.Segment>();
 		protected HashMap<String, ArrayList<Segment>> fChildContent = new HashMap<String, ArrayList<Segment>>();
-		protected Pattern templateFunctionHeadPattern = Pattern.compile("[ \\t]*template[ \\t]+([^\\(]+)\\(([^\\)]*)\\)(.)*");
-		protected Pattern templateStartPattern = Pattern.compile("[ \\t]*template(.)*");
-		protected Pattern templateEndPattern = Pattern.compile("(.)*::=(.)*");
+		protected SusanTemplateFinderThread susanTemplateFinderThread = null;
 		
 		protected void parse(IDocument document)
 		{
-			DocumentLineIterator lineIterator = new DocumentLineIterator(document);
-			String currentBlock = "";
-			Matcher blockTemplateMatcher = null;
-			boolean noMoreFunctionsFound = false;
-			int lineOffset = 0;
-			
-			for(String line : lineIterator)
+			if(susanTemplateFinderThread != null && susanTemplateFinderThread.isAlive())
 			{
-				currentBlock = line;
-				
-				//Check if current line contains a template definition
-				if(templateStartPattern.matcher(currentBlock).matches())
-				{
-					//Check if the end-pattern is already part of the text
-					while(!templateEndPattern.matcher(currentBlock).matches())
-					{
-						//Include the next line
-						if(lineIterator.hasNext())
-							currentBlock += lineIterator.next();
-						else
-						{
-							noMoreFunctionsFound = true;
-							break;
-						}
-					}
-					
-					if(noMoreFunctionsFound)
-						break;
-					
-					blockTemplateMatcher = templateFunctionHeadPattern.matcher(currentBlock);
-					if(!blockTemplateMatcher.matches())
-						continue;
-					
-					Position markerPosition = new Position(lineOffset, 0);
-					try {
-						document.addPosition(SEGMENTS, markerPosition);
-					} catch (BadLocationException e) {
-						e.printStackTrace();
-						break;
-					} catch (BadPositionCategoryException e) {
-						e.printStackTrace();
-						break;
-					}
-
-					ArrayList<Segment> subTree = new ArrayList<Segment>();
-
-					fContent.add(new Segment(MessageFormat.format(blockTemplateMatcher.group(1), new Object[] { new Integer(markerPosition.offset) }), markerPosition, false));
-
-					for(String arg : blockTemplateMatcher.group(2).split(","))
-					{
-						if(arg.trim().length() > 0)
-							subTree.add(new Segment(MessageFormat.format(arg.trim(), new Object[] { new Integer(markerPosition.offset) }), markerPosition, true));
-					}
-					fChildContent.put(blockTemplateMatcher.group(1), subTree);
+				susanTemplateFinderThread.interrupt();
+				try {
+					susanTemplateFinderThread.join();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				lineOffset = lineIterator.getCurrentOffset();
 			}
-
-			// sort the top of the tree alphabetic
-			Collections.sort(fContent, new SegmentStringUpperComparator());
+			susanTemplateFinderThread = new SusanTemplateFinderThread(document, this);
+			susanTemplateFinderThread.start();
 		}
 
 		public HashMap<String, ArrayList<Segment>> getSegmentMap()
 		{
 			return fChildContent;
+		}
+		
+		public void setContent(List<Segment> content, HashMap<String, ArrayList<Segment>> childContent)
+		{
+			fContent = content;
+			fChildContent = childContent;
+			
+			getTreeViewer().refresh();
 		}
 		
 		/*
@@ -310,21 +385,18 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 				IDocument document = fDocumentProvider.getDocument(oldInput);
 				if (document != null) {
 					try {
-						document.removePositionCategory(SEGMENTS);
+						document.removePositionCategory(OUTLINE_MARKER_ID);
 					} catch (BadPositionCategoryException x) {
 					}
 					document.removePositionUpdater(fPositionUpdater);
 				}
 			}
 
-			fContent.clear();
-
 			if (newInput != null) {
 				IDocument document = fDocumentProvider.getDocument(newInput);
 				if (document != null) {
-					document.addPositionCategory(SEGMENTS);
+					document.addPositionCategory(OUTLINE_MARKER_ID);
 					document.addPositionUpdater(fPositionUpdater);
-
 					parse(document);
 				}
 			}
@@ -454,30 +526,9 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 			    return fontDescriptor.setStyle(style).createFont(display);
 			}
 	}
-	
-	/**
-	 * Creates a content outline page using the given provider and the given
-	 * editor.
-	 * 
-	 * @param provider
-	 *            the document provider
-	 * @param editor
-	 *            the editor
-	 */
-	public SusanContentOutlinePage(IDocumentProvider provider, ITextEditor editor)
-	{
-		super();
-		fDocumentProvider = provider;
-		fTextEditor = editor;
-	}
-
-	/*
-	 * (non-Javadoc) Method declared on ContentOutlinePage
-	 */
 
 	public void createControl(Composite parent)
 	{
-
 		super.createControl((org.eclipse.swt.widgets.Composite) parent);
 		
 		//Add font change
@@ -491,20 +542,12 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 
 		if (fInput != null)
 			viewer.setInput(fInput);
-		
-		
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on ContentOutlinePage
-	 */
 	public void selectionChanged(SelectionChangedEvent event)
 	{
-
 		super.selectionChanged(event);
-		
-		
-		
+
 		ISelection selection = event.getSelection();
 		if (selection.isEmpty())
 			fTextEditor.resetHighlightRange();
@@ -514,14 +557,10 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 			int length = segment.name.length();
 			try {
 				fTextEditor.setHighlightRange(start, length, true);
-//				TextSelection sel = new TextSelection(start, length);
-//				fTextEditor.getSelectionProvider().setSelection(sel);
 			} catch (IllegalArgumentException x) {
 				fTextEditor.resetHighlightRange();
 			}
 		}
-		
-		//update();
 	}
 
 	/**
@@ -533,7 +572,6 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 	public void setInput(Object input)
 	{
 		fInput = input;
-		update();
 	}
 	
 	public HashMap<String, ArrayList<Segment>> getMap()
@@ -561,7 +599,6 @@ public class SusanContentOutlinePage extends ContentOutlinePage
 				//viewer.setl
 				
 				control.setRedraw(true);
-				
 			}
 		}
 	}
