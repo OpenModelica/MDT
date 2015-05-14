@@ -156,6 +156,9 @@
   <feature url="features/org.modelica.mdt_0.7.39.jar" id="org.modelica.mdt" version="0.7.39">
     <category name="modelica"/>
   </feature>
+  <feature url="features/org.modelica.mdt_0.7.40.jar" id="org.modelica.mdt" version="0.7.40">
+    <category name="modelica"/>
+  </feature>
   <category-def name="modelica" label="Modelica and MetaModelica Tools">
       <description>
          Tools for Modelica and MetaModelica
