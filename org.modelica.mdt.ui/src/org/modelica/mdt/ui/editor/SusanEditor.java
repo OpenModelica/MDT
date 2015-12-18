@@ -13,8 +13,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -86,11 +90,12 @@ public class SusanEditor extends TextEditor
 		@Override
 		public void selectionChanged(SelectionChangedEvent event)
 		{
+			ISelection selection = event.getSelection();
+			Object source = event.getSource();
+			
 			if (State.getInstance().markOccurrencesOn()) 
 			{
-				ISelection selection = event.getSelection();
-				Object source = event.getSource();
-							
+								
 				if (selection instanceof TextSelection && source instanceof SourceViewer )
 				{
 					TextSelection textSelection = (TextSelection)selection;
@@ -191,6 +196,10 @@ public class SusanEditor extends TextEditor
 			else
 			{
 				markOccurencesHelper.clearMarkers();
+				if (selection instanceof TextSelection && source instanceof SourceViewer )
+				{
+					word = ((TextSelection) selection).getText();
+				}
 			}
 		}
 		
@@ -506,7 +515,7 @@ public class SusanEditor extends TextEditor
 		
 		int startPos = doc.getLineOffset(sel.getStartLine());
 		int endPos = doc.getLineOffset(sel.getEndLine()+1)-doc.getLineOffset(sel.getStartLine());		
-		String[] lines = doc.get(startPos , endPos  ).split("\n");		
+		String[] lines = doc.get(startPos , endPos  ).split("\n");
 		String s = "";
 		
 		for (int i = 0; i <= stop-start; i++)
@@ -522,7 +531,7 @@ public class SusanEditor extends TextEditor
 	}
 	
 	/**
-	 * uncomments marked section or line where the coursor is atm
+	 * uncomments marked section or line where the cursor is atm
 	 * @throws BadLocationException
 	 */
 	public void unCommentSection() throws BadLocationException
@@ -555,7 +564,6 @@ public class SusanEditor extends TextEditor
 			}
 			s += lines[i];
 				s+= "\n";
-		
 		}
 		
 		doc.replace(startPos, endPos, s);
@@ -586,12 +594,44 @@ public class SusanEditor extends TextEditor
 		    list.add(index);
 		}
 		
-		return list;
+		return list;	
+	}
+	
+	/**
+	 * checks all files, if the functions are used or not
+	 * @return
+	 */
+	public String getDependenciesOfFiles()
+	{
+		String activeProjectName = "";
+		IProject activeProject = null;
 		
+		//get Name of active Project
+		IEditorPart  editorPart = getSite().getWorkbenchWindow().getActivePage().getActiveEditor();
+				if(editorPart  != null)
+				{
+				    IFileEditorInput input = (IFileEditorInput)editorPart.getEditorInput() ;
+				    IFile file = input.getFile();
+				    activeProject = file.getProject();
+				    activeProjectName = activeProject.getName();  
+				    IResource res[] = {};
+					try
+					{
+						res = activeProject.members();
+					} catch (CoreException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					//got all Files from the project, iterate through them
+				    for (int i = 0; i < res.length; i++)
+				    	activeProject.getFolder(activeProject.getFullPath()).getFile(res[i].getName());
+				    return activeProjectName;
+				}
+				else return null;
 	}
 	
 
-	
 	@Override
 	public void dispose()
 	{

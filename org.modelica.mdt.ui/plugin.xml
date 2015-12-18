@@ -72,7 +72,19 @@
             class="org.modelica.mdt.ui.graph.ModelicaDetailedGraphView"
             icon="icons/obj16/mo_file.gif"
             id="org.modelica.mdt.ui.graph.ModelicaDetailedGraphView"
-            name="Modelica Detailed Graph View"/>
+            name="Modelica Detailed Graph View"/> 
+       <view
+            category="org.modelica.mdt.ModelicaCategory"
+            class="org.modelica.mdt.ui.view.ModelicaUnusedView"
+            icon="icons/obj16/mo_file.gif"
+            id="org.modelica.mdt.ui.view.UnusedView"
+            name="Find unused protected Functions and Variables"/>
+       <view
+            category="org.modelica.mdt.ModelicaCategory"
+            class="org.modelica.mdt.ui.view.ModelicaUnusedPublicFuncionsView"
+            icon="icons/obj16/mo_file.png"
+            id="org.modelica.mdt.ui.view.ModelicaUnusedPublicFuncionsView"
+            name="Find unused public Functions"/>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -127,7 +139,7 @@
             class="org.modelica.mdt.ui.editor.SusanEditor"
             default="false"
             extensions="tpl"
-            icon="icons/obj16/mo_file_Susan.png"
+            icon="icons/obj16/tpl_file.png"
             id="org.modelica.mdt.ui.editorSusan"
             name="Susan Editor">
       </editor>
@@ -219,6 +231,7 @@
          id="org.modelica.mdt.ui.SusanComments"
          name="SusanComments">
    </command>
+
    <command
          defaultHandler="org.modelica.mdt.ui.editor.SusanRemoveCommentsHandler"
          id="org.modelica.mdt.ui.UnSusanComments"
@@ -483,6 +496,20 @@
       </command>
     </menuContribution>
     <menuContribution locationURI="popup:org.modelica.mdt.ui.view.ModelicaProjectsView">
+      <command commandId="org.modelica.mdt.ui.actions.duplicates"
+               icon="icons/obj16/mo_file.gif"
+               label="Find unused protected Functions and Variables"
+               style="push">
+      </command>
+    </menuContribution>
+        <menuContribution locationURI="popup:org.modelica.mdt.ui.view.ModelicaProjectsView">
+      <command commandId="org.modelica.mdt.ui.actions.duplicateFunctions"
+               icon="icons/obj16/mo_file.gif"
+               label="Find unused public Functions"
+               style="push">
+      </command>
+    </menuContribution>
+    <menuContribution locationURI="popup:org.modelica.mdt.ui.view.ModelicaProjectsView">
       <command commandId="org.modelica.mdt.ui.actions.commandsimulate"
         icon="icons/obj16/mo_file.gif"
         label="Simulate"
@@ -512,6 +539,14 @@
     <command defaultHandler="org.modelica.mdt.ui.actions.SimulateHandler"
              id="org.modelica.mdt.ui.actions.commandsimulate"
              name="simulate">
+    </command>
+    <command defaultHandler="org.modelica.mdt.ui.actions.FindDuplicatesHandler"
+      		 id="org.modelica.mdt.ui.actions.duplicates" 
+      		 name="findDuplicates">
+    </command>
+        <command defaultHandler="org.modelica.mdt.ui.actions.FindUnusedHandler"
+      		 id="org.modelica.mdt.ui.actions.duplicateFunctions" 
+      		 name="fundFunctions">
     </command>
   </extension>
   <extension

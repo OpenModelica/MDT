@@ -78,6 +78,7 @@ public class ModelicaPreferencePage	extends PreferencePage
 	private Text omcCommandLineParameters;
 	private Text omcLibraries;
 	private Text omcGDBMaxStakDepth;
+	private Text functionDocTestRegex;
 	
 	private Button browseButton;
 	
@@ -345,6 +346,24 @@ public class ModelicaPreferencePage	extends PreferencePage
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		omcGDBMaxStakDepth.setLayoutData(data);
 		
+		/*
+		 * added regEx modificator for the search of Function-Documentations
+		 */
+		/* dummy label for space */
+		new Label(parent, SWT.NONE);
+		group = new Group(parent, SWT.SHADOW_ETCHED_IN);
+		group.setText("The RegEx for function-documentations");
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.grabExcessHorizontalSpace = true;
+		group.setLayoutData(data);
+		layout = new GridLayout();
+		group.setLayout(layout);
+		functionDocTestRegex = new Text(group, SWT.SINGLE | SWT.BORDER | SWT.LEFT);
+		functionDocTestRegex.setText(PreferenceManager.getFunctionDocTestRegex());		
+		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+		functionDocTestRegex.setLayoutData(data);
+		
+		
 		return parent;
 	}
 	
@@ -374,6 +393,8 @@ public class ModelicaPreferencePage	extends PreferencePage
 		omcCommandLineParameters.setText(store.getDefaultString(PreferenceManager.OMC_COMMAND_LINE_PARAMETERS));
 		omcLibraries.setText(store.getDefaultString(PreferenceManager.OMC_LIBRARIES));
 		preventDuplicateClassNames.setSelection(store.getDefaultBoolean(PreferenceManager.PREVENT_DUPLICATE_CLASS_NAMES));
+		functionDocTestRegex.setText(store.getDefaultString(PreferenceManager.FUNCDOC_TEST_REGEX));
+		
 	}
 
 	
@@ -400,6 +421,10 @@ public class ModelicaPreferencePage	extends PreferencePage
 				omcLibraries.getText());
 		store.setValue(PreferenceManager.PREVENT_DUPLICATE_CLASS_NAMES,
 				preventDuplicateClassNames.getSelection());
+		store.setValue(PreferenceManager.FUNCDOC_TEST_REGEX,
+				functionDocTestRegex.getText());
+		
+		//functionDocTestRegex
 		return true;
 	}
 }

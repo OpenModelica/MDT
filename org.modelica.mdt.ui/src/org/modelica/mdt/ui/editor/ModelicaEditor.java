@@ -45,6 +45,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
@@ -64,6 +66,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextSelection;
@@ -94,11 +97,13 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.DefaultEncodingSupport;
 import org.eclipse.ui.editors.text.IEncodingSupport;
 import org.eclipse.ui.editors.text.TextEditor;
@@ -1501,4 +1506,533 @@ public class ModelicaEditor extends TextEditor implements IPropertyListener {
 
 		return statusMessage;
 	}
+	
+	/**
+	 * Get a list with the unused variables in the file in the editor.
+	 * One set of strings contains: <br>
+	 *  Name <br>
+	 * 	LineNumber <br>
+	 *  Type of variable <br>
+	 * @return
+	 */
+	public ArrayList<String[]> getUnusedVariables()
+	{
+		ArrayList<String[]> list = new ArrayList<String[]>();
+		ArrayList<String[]> functionList = getFunctions(); // list with all functions and where they start and end
+		//IDocument document = getDocumentProvider().getDocument(getEditorInput());
+		
+		for (int i= 0; i < functionList.size(); i++) // look for unused variables in functions
+		{
+			List<String[]> variables = new ArrayList<String[]>();
+			//protected part
+			
+			int startLine = Integer.parseInt(functionList.get(i)[1]);
+			int endLine = Integer.parseInt(functionList.get(i)[2]);
+			variables = getUnusedVariablesForFunction(startLine, endLine, functionList.get(i)[0]);
+			if (variables == null)
+				continue;
+			if ( variables.isEmpty() )
+				continue;
+			for (int j = 0; j < variables.size(); j++) {	
+				//if unused add
+				String[] tmp = {variables.get(j)[0],variables.get(j)[2],variables.get(j)[1]  ,functionList.get(i)[0] };
+				list.add(tmp);
+			}
+		}
+		//return list
+		return list;
+	}
+	
+	/**
+	 * Returns all Functions that have a wrong or no documentation.<b>
+	 * The return-Values are [function_Name, StartLine, Endline]. The lines are respective to the document
+	 * 
+	 * @return ArrayList<String[]>
+	 */
+
+	public List<String[]> getWrongFunctionDoc(String regEx)
+	{
+		ArrayList<String[]> list = new ArrayList<String[]>();
+		ArrayList<String[]> functionList = getFunctions();
+		for (int i= 0; i < functionList.size(); i++) // search for documentatins and check
+		{
+			//checkFunctionDoc("gets the stateVars from the list of vars. author:Waurich TUD 2013-06");
+			int startLine = Integer.parseInt(functionList.get(i)[1]);
+			int endLine = Integer.parseInt(functionList.get(i)[2]);
+			
+			IWorkbench wb = PlatformUI.getWorkbench();
+			IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+			IWorkbenchPage page = win.getActivePage();
+			IDocument document = (IDocument) getDocumentProvider().getDocument(page.getActiveEditor().getEditorInput());
+			String doc = ""; //the string with the documentation
+			//get the documentation of the function
+			try {	
+				String funcText = document.get(document.getLineOffset(startLine), document.getLineOffset(endLine)-document.getLineOffset(startLine));
+				
+				//ArrayList<String> matches = new ArrayList<String>();
+				
+				Matcher m = Pattern.compile("\\\"[^\\\"]*\\\"").matcher(funcText);
+				if (m.find())
+				doc = m.group();
+
+			} catch (BadLocationException e) {
+				e.printStackTrace();
+			}
+			
+			//Check for pattern in documentation
+			if (!checkRegEx(doc, regEx))
+				list.add(functionList.get(i));
+
+		}
+		
+		return list;
+	}
+	
+
+	public List<String[]> getUnusedFunctions()
+	{
+		ArrayList<String[]> list = new ArrayList<String[]>();
+		ArrayList<String[]> functionList = getFunctions(); // list with all functions and where they start and end
+		//IDocument document = getDocumentProvider().getDocument(getEditorInput());
+		
+		for (int i= 0; i < functionList.size(); i++) // look for unused variables in functions
+		{
+			int startLine = Integer.parseInt(functionList.get(i)[1]);
+			int endLine = Integer.parseInt(functionList.get(i)[2]);
+			
+			IWorkbench wb = PlatformUI.getWorkbench();
+			IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+			IWorkbenchPage page = win.getActivePage();
+			IDocument document = (IDocument) getDocumentProvider().getDocument(page.getActiveEditor().getEditorInput());
+			try {
+				endLine = document.getLineOffset(endLine)+document.getLineLength(endLine);
+				
+				if (document.get(document.getLineOffset(startLine),document.getLineLength(startLine)).trim().startsWith("public") )
+					continue;
+				startLine = document.getLineOffset(startLine);
+			} catch (BadLocationException e) {
+				e.printStackTrace();
+			}
+
+			String doc = document.get();
+			int lastIndex = 0;
+			boolean found = false;
+			while(lastIndex != -1)
+			{
+				lastIndex = doc.indexOf(functionList.get(i)[0],lastIndex);
+			    
+			    if (lastIndex == -1)
+			    	break;	    
+			    //found function and not in itself
+			    if (!( (lastIndex >= startLine) && (lastIndex <= endLine) ) ) {
+			    		found = true;
+			    		break;
+			    	}   
+			    if(lastIndex != -1) {
+			        lastIndex += functionList.get(i)[0].length();
+			    }
+			}
+			
+			if (!found) {
+				list.add(functionList.get(i));
+			}	
+		}
+		return list;
+	}
+
+	private List<String[]> getUnusedVariablesForFunction(int startLine, int endLine, String funcName)
+	{
+		String lineString = "";
+		int line = startLine+1;
+		
+		IWorkbench wb = PlatformUI.getWorkbench();
+		IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+		IWorkbenchPage page = win.getActivePage();
+		 
+		//get editorInput from active page
+		IDocument document = (IDocument) getDocumentProvider().getDocument(page.getActiveEditor().getEditorInput());
+		
+		ArrayList<String[]> variables = new ArrayList<String[]>(); //list with All variables in the function
+		ArrayList<String[]> returnVariables = new ArrayList<String[]>(); //list with unused Variables only
+		//structure of the list: Name, Type, Line
+		ITypedRegion[] linePartitioning = null;
+		int offs = 0;
+		boolean protec = false;
+		int algoStartLine = -1;
+		String partFunctName = "";
+		while (line <= endLine)	
+		{
+			if (lineString.trim().equals("algorithm")) {
+				algoStartLine = line;
+				line = endLine;
+				break;
+			}
+			
+			String[] var = {"","",""};
+			try {
+				lineString = document.get( document.getLineOffset(line) , document.getLineLength(line));				
+				linePartitioning= TextUtilities.computePartitioning(document, IModelicaPartitions.MODELICA_PARTITIONING, document.getLineOffset(line), document.getLineLength(line), false);
+				if (line < endLine-1)
+					offs = document.getLineOffset(line+1)-1;
+				else offs = document.getLineOffset(endLine)-1;
+				
+			} catch (BadLocationException e) {
+				e.printStackTrace();
+				return null;
+			}
+
+			//if Not String or comment check for type of variable and then name
+			boolean found = false;
+			for (int i = 0; i< linePartitioning.length; i++)
+			{
+				if ( (linePartitioning[i].getType().equals("__dftl_partition_content_type") ) && (linePartitioning[i].getLength() >= 1) && (linePartitioning[i].getOffset()<offs) )
+				{
+					try {
+						if (document.get(linePartitioning[i].getOffset(), linePartitioning[i].getLength()).trim().length() <= 0) 
+							break;
+					} catch (BadLocationException e) {
+						e.printStackTrace();
+					}
+					
+					found = true;
+					break;
+				}
+			}
+			// finished checking for comments
+			
+			if (!found) // line is comments and strings only
+			{
+				line++;
+				continue;
+			}
+			//get variable from line
+			if (lineString.contains("replaceable"))
+			{
+				line++;
+				continue;
+			}
+			// check for partial functions and skip them
+			if (lineString.contains("partial")) {
+				partFunctName = lineString.trim().substring(lineString.trim().lastIndexOf("function")+8, lineString.trim().length()-1);
+				line++;
+				continue;
+			}
+
+			if (partFunctName != "") {
+				lineString = lineString.trim();
+				if ( lineString.startsWith("end") && (lineString.contains(partFunctName.trim())) )
+				{
+					partFunctName = "";
+				}
+				
+				line++;
+				continue;
+			}
+			//start with the algorithm
+			int add = 0;
+			int prefixIndex = 0;
+			String type = "";
+			String name = "";
+			if (!protec) //not in protected range
+			{
+				if (lineString.contains("protected")) {
+					protec = true;
+					line++;
+					continue;
+				}
+				//break because of end of the variables
+				if (lineString.contains("algorithm")) {
+					algoStartLine = line;
+					line = endLine;
+					break;
+				}
+				prefixIndex = lineString.indexOf("input")-1;
+				
+				if (prefixIndex <= -1) {
+					prefixIndex = lineString.indexOf("output");
+					add += 7+prefixIndex;
+				}
+				else
+					add += 6+prefixIndex;
+			}
+			else //protec
+			{
+				//break because of end of the variables
+				if (lineString.contains("algorithm")) 
+				{
+					algoStartLine = line;
+					line = endLine;
+					break;
+				}
+			}
+			
+			//check for whitespaces
+			while ( (lineString.charAt(add) == ' ') || (lineString.charAt(add) == '\t') ) {				
+				add++;
+				if (add > lineString.length())
+					break;				
+			}
+			//extract varname and type
+			ArrayList<String> nameList = new ArrayList<String>();
+		
+			type = extractType(lineString, add);
+			add += type.length();
+			if (add >= lineString.length()) {
+				//System.out.println(Integer.toString(line));
+				return null;
+			}
+			while ( (lineString.charAt(add) == ' ') || (lineString.charAt(add) == '\t') ) {				
+				add++;
+				if (add > lineString.length())
+					break;				
+			}
+			
+			for (int i= add; i < lineString.length(); i++)
+			{
+				if ( (lineString.charAt(i) == ' ') || (lineString.charAt(i) == '\t') || (lineString.charAt(i) == ';') )
+					{ 
+						if (nameList.isEmpty() || (lineString.charAt(i) == ';') )
+							{
+								if ( (!nameList.isEmpty() ) && ( !lineString.trim().startsWith("output") ) )
+									nameList.add(name);
+								break;
+							}
+						else
+							continue;
+					}
+				else
+					if (lineString.charAt(i) != ',')
+						name += lineString.charAt(i);
+					else //more then one variable with this type in the same line
+					{
+						nameList.add(name);
+						name = "";	
+					}
+			}
+			if ( (nameList.isEmpty() ) 
+					&&  (!lineString.trim().startsWith("output")) 
+					) {
+					var[0] = name;
+					var[1] = type;
+					var[2] = Integer.toString(line - 1);
+					variables.add(var);
+			}
+			else
+				if  ( (!lineString.trim().startsWith("output")) )
+				for (int i = 0; i < nameList.size(); i++) {
+					String[] tmpvar = {nameList.get(i),type,Integer.toString(line -1 )};				
+					variables.add(tmpvar);
+				}
+			
+			//add found variables to list
+			//break because of end of the variables
+			if (lineString.contains("algorithm")) {
+				algoStartLine = line;
+				line = endLine;				
+				break;
+			}
+
+			line++;
+		}
+		
+		//complete list of variables available
+		//search for variables
+		String algorithm = "";
+		String outputVariables = "";
+		if ( (algoStartLine < 0) && (lineString.contains("end"))  && (lineString.contains(funcName)) )
+			//return variables;
+			algoStartLine = startLine;
+		try {
+			algorithm = document.get( document.getLineOffset(algoStartLine) , document.getLineOffset(endLine)-document.getLineOffset(algoStartLine));
+			outputVariables = document.get(document.getLineOffset(startLine), document.getLineOffset(algoStartLine) - document.getLineOffset(startLine));
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+			return variables;
+		}
+		
+		boolean found = false;
+		for (int var = 0; var < variables.size(); var++) {
+			found = false;
+			//check each variable	
+			if ( algorithm.indexOf(variables.get(var)[0]) != -1)		
+				found = true;
+			//check output variables
+
+			//=.*v((;)|([^A-Za-z0-9]))			
+			Pattern p = Pattern.compile("=.*[^A-Za-z0-9]+"+variables.get(var)[0]+"((;)|([^A-Za-z0-9]))");
+			Matcher m = p.matcher(outputVariables);
+
+
+			if ( m.find() )
+				found = true;
+			
+			if (!found) {
+				returnVariables.add(variables.get(var));
+			}
+		}
+		return returnVariables;
+	}
+	/**
+	 * checks the functiondoc to match the given regex
+	 * @param doc
+	 * @param regEx
+	 * @return
+	 */
+	private boolean checkRegEx(String doc, String regEx)
+	{
+		Pattern p = Pattern.compile(regEx, Pattern.DOTALL);
+		Matcher m = p.matcher(doc);
+		return m.matches();
+	}
+	
+	/**
+	 * Extract the type from the string
+	 * @param lineString
+	 * @param startPos
+	 * @return
+	 */
+	private String extractType(String lineString, int startPos)
+	{
+		boolean found = false;
+		String type = "";
+		int i = startPos;
+		int count = 0; //count for "<" symbols 
+		while (i < lineString.length())
+		{
+			if ( ( (lineString.charAt(i) == ' ') || (lineString.charAt(i) == '	') ) && (count == 0))
+				{
+					// check for whitespaces after found type
+					return type;
+				}
+			
+				switch (lineString.charAt(i)) {
+					case '>': {
+						count--;
+						break;
+					}
+					case '<': {
+						found = true;
+						count++;
+						break;
+					}
+				}	
+			
+			type += lineString.charAt(i);
+			
+			if ( found && (count == 0) )
+				return type;
+			
+			i++;
+		}
+		return type;
+	}
+
+	public ArrayList<String[]> getFunctions(IDocument document)
+	{
+		ArrayList<String[]> functionList = new ArrayList<String[]>(); //list of all functions and where they start + end
+		//start analyzing
+		int line = 0;
+		int startLine = 0; //line where the function that is searched now starts
+		String fName = ""; //name of function 
+		boolean foundfunction = false;
+		Pattern wordMatchingPattern = Pattern.compile("[A-Za-z0-9\\_]");
+		ITypedRegion[] linePartitioning = null;
+		
+		//start search for functions
+		while (line < document.getNumberOfLines())
+		{
+			//get content of line
+
+			String lineString = "";
+			int offs = 0;
+			try {
+				lineString = document.get( document.getLineOffset(line) , document.getLineLength(line));
+				linePartitioning= TextUtilities.computePartitioning(document, IModelicaPartitions.MODELICA_PARTITIONING, document.getLineOffset(line), document.getLineLength(line), false);
+				if (line < document.getNumberOfLines()-1)
+					offs = document.getLineOffset(line+1)-1;
+				else offs = document.getLineOffset(document.getNumberOfLines()-1)-1;
+			} catch (BadLocationException e) {
+				e.printStackTrace();
+				return null;
+			}		
+			
+			Pattern p = Pattern.compile("\\sfunction\\s[A-Za-z0-9<>, ()]+\\s*=\\s*[A-Za-z0-9<>, ()]+\\s*;");
+			Matcher m = p.matcher(lineString);
+			if (m.find())
+				{
+					line++;
+					continue;
+				}
+			boolean notJustComments = false;
+			String newLineString  = "";
+			for (int i = 0; i< linePartitioning.length; i++)
+			{
+				if ( (linePartitioning[i].getType().equals("__dftl_partition_content_type") ) && (linePartitioning[i].getLength() >= 1) && (linePartitioning[i].getOffset()<offs) )
+				{
+					
+					try {
+						newLineString += document.get(linePartitioning[i].getOffset(), linePartitioning[i].getLength());
+						if (document.get(linePartitioning[i].getOffset(), linePartitioning[i].getLength()).trim().length() <= 0) 
+							break;
+					} catch (BadLocationException e) {
+						e.printStackTrace();
+					}
+					
+					notJustComments = true;
+					break;
+				}
+			}
+			//look if it is the start of a function
+			if (!foundfunction)
+			{
+				//check if "function" is just in comment
+
+				if ( (newLineString.contains("function")) && (notJustComments) && (!(newLineString.contains("partial"))) && (!(newLineString.contains("uniontype"))))
+				{
+					foundfunction = true;
+					startLine = line;
+					//search for name
+					int pos = lineString.indexOf("function")+8;
+					boolean into = false;
+					while ( (pos < lineString.length()) && !wordMatchingPattern.matcher("" + lineString.charAt(pos)).matches() )
+					{
+						into = true;
+						pos++;
+					}
+					if (!into)
+						continue;
+					int pos2 = pos;
+					while ( (pos2 < lineString.length()) && wordMatchingPattern.matcher("" + lineString.charAt(pos2)).matches() )
+					{
+						fName += lineString.charAt(pos2);
+						pos2++;
+					}
+
+				}
+			}
+			else // look for end of function
+			{
+				if ( checkRegEx(lineString, "\\s*end\\s+"+fName+".*$") && (notJustComments) )
+				{
+					String[] tmp = { fName, Integer.toString(startLine),Integer.toString(line) };
+					functionList.add( tmp );
+					//reset
+					foundfunction = false;
+					startLine = 0;
+					fName = "";
+				}
+			}
+			
+			line++; 
+		}
+		
+		return functionList;
+	
+	}
+	
+	public ArrayList<String[]> getFunctions()
+	{
+		return getFunctions( getDocumentProvider().getDocument(getEditorInput()) );
+	}
+	
 }

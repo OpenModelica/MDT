@@ -1,7 +1,7 @@
 /*
  * This file is part of Modelica Development Tooling.
  *
- * Copyright (c) 2005, Linköpings universitet, Department of
+ * Copyright (c) 2005, Linkï¿½pings universitet, Department of
  * Computer and Information Science, PELAB
  *
  * All rights reserved.
@@ -22,7 +22,7 @@
  *   the documentation and/or other materials provided with the
  *   distribution.
  *
- * * Neither the name of Linköpings universitet nor the names of its
+ * * Neither the name of Linkï¿½pings universitet nor the names of its
  *   contributors may be used to endorse or promote products derived from
  *   this software without specific prior written permission.
  *
@@ -87,6 +87,8 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 	public static final String PREVENT_DUPLICATE_CLASS_NAMES = "PreventDuplicateClassNames";
 	public static final String GDB_MAX_STACK_DEPTH = "OMCGDBMaxStackDepth";
 	
+	public static final String FUNCDOC_TEST_REGEX = "FUNCDocTestRegEx";
+	
 	protected final static String EDITOR_MATCHING_BRACKETS="matchingBrackets";
 	protected final static String EDITOR_MATCHING_BRACKETS_COLOR="matchingBracketsColor";
 	protected final static String EDITOR_TAB_WIDTH = "tabWidth";	
@@ -129,6 +131,9 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 		store.setDefault(USE_STANDARD_OMC_PATH, true);
 		store.setDefault(CUSTOM_OMC_PATH, "");
 		store.setDefault(START_OMC, true);
+		
+		store.setDefault(FUNCDOC_TEST_REGEX, ".+author:.+\\d{4}-\\d{2}.+");
+		
 		String ignored = "";
 		if (getOs() == osType.UNIX)
 			ignored = "omc_release:omc_debug:omc_frontend:omc_profiler:testsuite:bin:pde:modelica_parser:tools:mingw:template_precompile:susan_codegen:build:test_files:libraries:c_runtime:Examples:test_codegen:ModelicaBuiltin.mo:MetaModelicaBuiltin.mo:";
@@ -297,4 +302,10 @@ public class PreferenceManager extends AbstractPreferenceInitializer
 		 return getStore().getString(GDB_MAX_STACK_DEPTH);
 	 }
 
+     /**
+	  * @return current setting for
+	  */
+	 public static String getFunctionDocTestRegex() {
+		 return getStore().getString(FUNCDOC_TEST_REGEX);
+	 }
 }
