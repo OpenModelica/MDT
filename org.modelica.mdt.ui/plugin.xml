@@ -309,12 +309,12 @@
    <key
          commandId="org.modelica.mdt.ui.SusanAddTabstops"
          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-         sequence="M1+Tab">
+         sequence="M1+8">
    </key>
    <key
          commandId="org.modelica.mdt.ui.SusanRemoveTabs"
          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-         sequence="Shift+Tab">
+         sequence="Shift+8">
    </key>
    <key
          commandId="org.modelica.mdt.ui.SusanJumpToDeclaration"
