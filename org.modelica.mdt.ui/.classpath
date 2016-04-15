@@ -6,5 +6,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.draw2d_3.8.1.201208200205.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.zest.core_1.3.0.201208200205.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.zest.layouts_1.1.0.201208200205.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.swt"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
