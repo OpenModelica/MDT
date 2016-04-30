@@ -262,19 +262,7 @@
 	  	schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
    <key
          commandId="org.eclipse.ui.project.rebuildAll"
-         contextId="org.eclipse.ui.contexts.window"
-         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-         sequence="Alt+B">
-   </key>
-   <key
-         commandId="org.eclipse.ui.project.rebuildAll"
          contextId="org.eclipse.ui.console.ConsoleView"
-         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-         sequence="Alt+B">
-   </key>
-   <key
-         commandId="org.eclipse.ui.project.rebuildAll"
-         contextId="org.eclipse.ui.contexts.dialog"
          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
          sequence="Alt+B">
    </key>
@@ -314,7 +302,7 @@
    <key
          commandId="org.modelica.mdt.ui.SusanRemoveTabs"
          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-         sequence="Shift+8">
+         sequence="M1+Shift+8">
    </key>
    <key
          commandId="org.modelica.mdt.ui.SusanJumpToDeclaration"
