@@ -209,7 +209,7 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 		miSession.deleteObserver(this);
 		CommandFactory factory = miSession.getCommandFactory();
 		MIBreakDelete breakDeleteCmd = factory.createMIBreakDelete(new int[]{getBreakPointNumber()});
-		miSession.postCommand(breakDeleteCmd, -1, null);
+		miSession.postCommand(breakDeleteCmd, null);
 		/*
 		 * Adeel 2011-09-16 20:58
 		 * Not interested in this output. Don't wait for it.
@@ -237,7 +237,7 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 		miSession.addObserver(this);
 		CommandFactory factory = miSession.getCommandFactory();
 		MIBreakEnable breakEnableCmd = factory.createMIBreakEnable(new int[]{getBreakPointNumber()});
-		miSession.postCommand(breakEnableCmd, -1, null);
+		miSession.postCommand(breakEnableCmd, null);
 	}
 	
 	/**
@@ -254,7 +254,7 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 		MISession miSession = getGDBDebugTarget().getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
 		MIBreakAfter breakAfterCmd = factory.createMIBreakAfter(getBreakPointNumber(), getHitCount());
-		miSession.postCommand(breakAfterCmd, -1, null);
+		miSession.postCommand(breakAfterCmd, null);
 	}
 	
 	/**
@@ -275,7 +275,7 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 		MISession miSession = getGDBDebugTarget().getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
 		MIBreakCondition breakConditionCmd = factory.createMIBreakCondition(getBreakPointNumber(), timeCondition);
-		miSession.postCommand(breakConditionCmd, -1, null);
+		miSession.postCommand(breakConditionCmd, null);
 	}
 	
 	private String createBreakpointConditionString() {
@@ -324,7 +324,7 @@ public class MDTLineBreakpoint extends LineBreakpoint implements IMDTEventListen
 		miSession.deleteObserver(this);
 		CommandFactory factory = miSession.getCommandFactory();
 		MIBreakDisable breakDisableCmd = factory.createMIBreakDisable(new int[]{getBreakPointNumber()});
-		miSession.postCommand(breakDisableCmd, -1, null);
+		miSession.postCommand(breakDisableCmd, null);
 	}
     
     /**

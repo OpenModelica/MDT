@@ -509,5 +509,17 @@ public class CompilerProxy {
 		System.out.println("WE IMPORTED: " + resNum + " AMOUNT!");
 		return resNum;
 	}
+	
+	/**
+	 * Returns the MSL path.
+	 * @return
+	 * @throws CompilerInstantiationException
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 */
+	public synchronized static String getModelicaPath()
+			throws CompilerInstantiationException, ConnectException, UnexpectedReplyException {
+		return getCompiler().getModelicaPath();
+	}
 
 }

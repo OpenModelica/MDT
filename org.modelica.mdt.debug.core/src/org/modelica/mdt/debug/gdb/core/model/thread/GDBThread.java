@@ -54,7 +54,6 @@ import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakDelete;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakDisable;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakEnable;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIBreakInsert;
-import org.modelica.mdt.debug.gdb.core.mi.command.MIDataEvaluateExpression;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIExecContinue;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIExecFinish;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIExecNext;
@@ -120,6 +119,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	 * Needed to handle deletion of Catch.omc:1 breakpoint
 	 */
 	private int fCatchOMCBreakpoint = 0;
+	private boolean fStdStreamBuffer = false;
 	/**
 	 * Constructs a new thread for the given target
 	 * 
@@ -541,10 +541,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 					throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
 							MDTDebugCorePlugin.getResourceString("GDBThread.start.ExecRun.NoAnswer"), null));
 				}
-				// if run is ok then change the stdout buffer policy
-				MIDataEvaluateExpression changeStdStreamBufferCmd = factory.createMIChangeStdStreamBuffer();
-				// we don't care about the time and output of this command
-				miSession.postCommand(changeStdStreamBufferCmd, -1, null);
+				setStdStreamBuffer(false);
 				// Insert a breakpoint to catch longjmp/MMC_THROW
 				insertCatchOMCBreakpoint();
 			} catch (MIException e) {
@@ -997,5 +994,13 @@ public class GDBThread extends GDBDebugElement implements IThread {
 		MIBreakDelete breakDeleteCmd = factory.createMIBreakDelete(new int[]{fCatchOMCBreakpoint});
 		breakDeleteCmd.setQuiet(true);
 		miSession.postCommand(breakDeleteCmd, null);
+	}
+
+	public boolean isStdStreamBuffer() {
+		return fStdStreamBuffer;
+	}
+
+	public void setStdStreamBuffer(boolean stdStreamBuffer) {
+		this.fStdStreamBuffer = stdStreamBuffer;
 	}
 }

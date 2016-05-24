@@ -83,7 +83,19 @@ public class StandardLibrary  extends ModelicaElement implements IStandardLibrar
 
 	public String getElementName()
 	{
-		String oml = System.getenv("OPENMODELICALIBRARY");
+		String oml = null;
+		try {
+			oml = CompilerProxy.getModelicaPath();
+		} catch (CompilerInstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ConnectException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnexpectedReplyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (oml == null)
 			return "Libraries";
 		return "Libraries: " + oml;

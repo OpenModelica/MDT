@@ -60,6 +60,7 @@ import org.modelica.mdt.debug.gdb.core.mi.MIException;
 import org.modelica.mdt.debug.gdb.core.mi.MISession;
 import org.modelica.mdt.debug.gdb.core.mi.command.CommandFactory;
 import org.modelica.mdt.debug.gdb.core.mi.command.MICommand;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIDataEvaluateExpression;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIExecFinish;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIBreakpointHitEvent;
 import org.modelica.mdt.debug.gdb.core.mi.event.MIErrorEvent;
@@ -545,6 +546,9 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 		// TODO Auto-generated method stub
 		MIEvent miEvent = (MIEvent)event;
 		try {
+			if (miEvent instanceof MIStoppedEvent) {
+				changeStdStreamBuffer(miEvent);
+			}
 			if (miEvent instanceof MIInferiorExitEvent || miEvent instanceof MIGDBExitEvent) {
 				handleExitEvent(miEvent);
 			}
@@ -574,6 +578,17 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			MDTDebugCorePlugin.log(null, e);
+		}
+	}
+	
+	private void changeStdStreamBuffer(MIEvent miEvent) throws MIException, CoreException {
+		// TODO Auto-generated method stub
+		if (((GDBThread)getThread()).isStdStreamBuffer()) {
+			CommandFactory factory = fMISession.getCommandFactory();
+			MIDataEvaluateExpression changeStdStreamBufferCmd = factory.createMIChangeStdStreamBuffer();
+			fMISession.postCommand(changeStdStreamBufferCmd, null);
+			((GDBThread)getThread()).setStdStreamBuffer(true);
+			// we don't care about the result of this command.
 		}
 	}
 	

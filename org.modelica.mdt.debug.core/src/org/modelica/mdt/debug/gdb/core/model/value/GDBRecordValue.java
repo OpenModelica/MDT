@@ -141,7 +141,7 @@ public class GDBRecordValue extends GDBValue {
 	public void createVariable(Variable variable) {
 		// TODO Auto-generated method stub
 		// get the record element type
-		String referenceType = TypeHelper.getModelicaMetaType(variable.getVoidPointer(), getGDBVariable().getGDBStackFrame());
+		String referenceType = TypeHelper.getModelicaMetaType(variable.getVoidPointer(), getGDBVariable().getGDBStackFrame(), true);
 		// based on the modelica type create the specific variable.
 		VariableHelper.createVariable(getGDBVariable().getGDBStackFrame(), variable.getName(),
 				variable.getDisplayName(), GDBHelper.MODELICA_METATYPE, referenceType, getActualType(),

@@ -311,8 +311,13 @@ public class CommandFactory {
 	 * @param expression
 	 * @return MIDataEvaluateExpression
 	 */
-	public MIDataEvaluateExpression createMIGetTypeOfAny(String expression) {
-		return new MIDataEvaluateExpression("(char*)getTypeOfAny(" + expression + ")");
+	public MIDataEvaluateExpression createMIGetTypeOfAny(String expression, boolean inRecord) {
+		if (inRecord) {
+			return new MIDataEvaluateExpression("(char*)getTypeOfAny(" + expression + ", 1)");
+		} else {
+			return new MIDataEvaluateExpression("(char*)getTypeOfAny(" + expression + ", 0)");
+		}
+		
 	}
 	
 	/* List Manipulation Commands */

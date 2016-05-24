@@ -198,7 +198,7 @@ public class GDBInferior extends Process {
 				try {
 					CommandFactory factory = session.getCommandFactory();
 					CLIExecAbort execAbortCmd = factory.createCLIExecAbort();
-					session.postCommand(execAbortCmd, -1, null);
+					session.postCommand(execAbortCmd, null);
 					// do not wait for the answer.
 					//abort.getMIInfo();
 					token = execAbortCmd.getToken();

@@ -201,4 +201,9 @@ class NoCompiler implements IModelicaCompiler
 	public int getImportCount(String className) throws ConnectException, UnexpectedReplyException {
 		return 0;
 	}
+
+	@Override
+	public String getModelicaPath() throws ConnectException, UnexpectedReplyException {
+		return "";
+	}
 }

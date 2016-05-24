@@ -341,4 +341,14 @@ public interface IModelicaCompiler
 	 */
 	public int getImportCount(String className) 
 			throws ConnectException, UnexpectedReplyException;
+	
+	/**
+	 * Returns the MSL path. 
+	 * @param className
+	 * @return
+	 * @throws ConnectException
+	 * @throws UnexpectedReplyException
+	 */
+	public String getModelicaPath() 
+			throws ConnectException, UnexpectedReplyException;
 }

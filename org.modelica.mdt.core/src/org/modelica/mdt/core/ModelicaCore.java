@@ -41,19 +41,8 @@
 
 package org.modelica.mdt.core;
 
-import java.net.URI;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.resources.IPathVariableManager;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.swt.widgets.Display;
-import org.modelica.mdt.internal.core.CorePlugin;
-import org.modelica.mdt.internal.core.ErrorManager;
 import org.modelica.mdt.internal.core.ModelicaRoot;
 
 public class ModelicaCore {
@@ -92,70 +81,6 @@ public class ModelicaCore {
 	}
 
 	public static void start() {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IPathVariableManager pathMan = workspace.getPathVariableManager();
-		String name = "OPENMODELICALIBRARY";
-		String path = System.getenv(name);
-		
-		boolean error = false;
-		
-		if (path != null) {
-			java.io.File openModelicaLib = new java.io.File(path);
-
-			if (!openModelicaLib.exists() || !openModelicaLib.isDirectory()) {
-				error = true;
-			}
-			else {
-				try {
-					URI value = openModelicaLib.toURI();
-					IStatus validNameStatus = pathMan.validateName(name);
-					IStatus validValueStatus = pathMan.validateValue(value);
-
-					if (validNameStatus.isOK()) {
-						// There is a bug in Eclipse versions < 3.8 where IPathVariableManager.validateValue(URI)
-						// returns null regardless of its input. We simply cannot validate the value URI
-						// in those versions.
-						if (validValueStatus == null || validValueStatus.isOK()) {
-							pathMan.setURIValue(name, value);
-						}
-						else {
-							// if validValueStatus != null && !validValueStatus.isOK()
-							error = true;
-						}
-					}
-					else {
-						// if !validNameStatus.isOK()
-						error = true;
-					}
-				}
-				catch (CoreException e) {
-					ErrorManager.logError(e);
-					error = true;
-				}
-			}
-		}
-		else {
-			// if path == null
-			error = true;
-		}
-		
-		/* do not display the error, just log it.
-		if (error) {
-			
-			Display display = CorePlugin.getDisplay();
-			display.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					ErrorDialog.openError(CorePlugin.getShell(),"Error", null,
-							new Status(IStatus.ERROR, "org.modelica.mdt.core", IStatus.OK, 
-									"OPENMODELICALIBRARY environment variable is not set or has an invalid value!\n" +
-											"Please exit Eclipse and set the variable properly if you want to be able " +
-											"to browse the Modelica Library", null));
-				}
-			});
-		}
-		*/
-
 		modelicaRoot = new ModelicaRoot();
 		modelicaRoot.start();
 	}

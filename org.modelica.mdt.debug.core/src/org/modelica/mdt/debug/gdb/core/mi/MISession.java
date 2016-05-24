@@ -417,15 +417,6 @@ public class MISession extends Observable {
 	 * postCommand(cmd, cmdTimeout) 
 	 */
 	public void postCommand(Command cmd, GDBStackFrame gdbStackFrame) throws MIException {
-		postCommand(cmd, fCommandTimeout, gdbStackFrame);
-	}
-
-	/**
-	 * Sends a command to gdb, and wait(timeout) for a response.
-	 * if timeout < 0 the wait will be skipped.
-	 * 
-	 */
-	public void postCommand(Command cmd, long timeout, GDBStackFrame gdbStackFrame) throws MIException {
 		synchronized (fLock) {
 			// Test if we are in a sane state.
 			if (!fTxThread.isAlive() || !fRxThread.isAlive()) {
@@ -463,17 +454,13 @@ public class MISession extends Observable {
 			
 			fTxQueue.addCommand(cmd);
 
-			// do not wait around the answer.
-//			if (timeout < 0) {
-//				return;
-//			}
 			// Wait for the response or timeout
 			synchronized (cmd) {
 				// RxThread will set the MIOutput on the cmd
 				// when the response arrive.
 				while (cmd.getMIOutput() == null) {
 					try {
-						cmd.wait(timeout);
+						cmd.wait(fCommandTimeout);
 						if (cmd.getMIOutput() == null) {
 							throw new MIException(MDTDebugCorePlugin.getResourceString("MISession.postCommand.Target_not_responding"));
 						}
@@ -508,7 +495,7 @@ public class MISession extends Observable {
 		// send the exit(-gdb-exit).  But we only wait a maximum of 2 sec.
 		MIGDBExit gdbExitCmd = fMICommandFactory.createMIGDBExit();
 		try {
-			postCommand(gdbExitCmd, 2000, null);
+			postCommand(gdbExitCmd, null);
 		} catch (MIException e) {
 			//ignore any exception at this point.
 		}

@@ -47,7 +47,7 @@ public class TypeHelper {
 	
 	public static String getModelicaType(String variableName, String variableType, GDBStackFrame gdbStackFrame) {
 		if (variableType.equals(GDBHelper.MODELICA_METATYPE) || variableType.equals(GDBHelper.MODELICA_STRING)) {
-			return getModelicaMetaType(variableName, gdbStackFrame);
+			return getModelicaMetaType(variableName, gdbStackFrame, false);
 		} else if (variableType.equals(GDBHelper.MODELICA_BOOLEAN)) {
 			return GDBHelper.BOOLEAN;
 		} else if (variableType.equals(GDBHelper.MODELICA_INETGER)) {
@@ -60,11 +60,11 @@ public class TypeHelper {
 		return variableType;
 	}
 	
-	public static String getModelicaMetaType(String variableName, GDBStackFrame gdbStackFrame) {
+	public static String getModelicaMetaType(String variableName, GDBStackFrame gdbStackFrame, Boolean inRecord) {
 		GDBDebugTarget gdbDebugTarget = gdbStackFrame.getGDBDebugTarget();
 		MISession miSession = gdbDebugTarget.getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
-		MIDataEvaluateExpression getTypeOfAnyCmd = factory.createMIGetTypeOfAny(variableName);
+		MIDataEvaluateExpression getTypeOfAnyCmd = factory.createMIGetTypeOfAny(variableName, inRecord);
 		MIDataEvaluateExpressionInfo getTypeOfAnyInfo;
 		try {
 			miSession.postCommand(getTypeOfAnyCmd, gdbStackFrame);

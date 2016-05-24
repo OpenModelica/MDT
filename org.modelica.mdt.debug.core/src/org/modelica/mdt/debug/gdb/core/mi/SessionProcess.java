@@ -122,7 +122,7 @@ public class SessionProcess extends Process {
 					}
 					try {
 						// Do not wait around for the answer.
-						session.postCommand(cmd, -1, null);
+						session.postCommand(cmd, null);
 					} catch (MIException e) {
 						throw new IOException(e.getMessage());
 					}

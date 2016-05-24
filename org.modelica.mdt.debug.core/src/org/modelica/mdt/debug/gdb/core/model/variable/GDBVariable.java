@@ -173,7 +173,8 @@ public class GDBVariable extends GDBDebugElement implements IVariable {
 		}
 		
 		setOldReferenceTypeName(fReferenceTypeName);
-		return TypeHelper.getModelicaType(getOriginalName(), getType(), getGDBStackFrame());
+		return fReferenceTypeName;
+		//return TypeHelper.getModelicaType(getOriginalName(), getType(), getGDBStackFrame());
 	}
 	
 	/**
