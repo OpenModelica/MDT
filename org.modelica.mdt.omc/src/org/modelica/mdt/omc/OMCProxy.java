@@ -1217,14 +1217,7 @@ public class OMCProxy implements IModelicaCompiler {
 					Collection<String> lst = new ArrayList<String>();
 					String x = "OPENMODELICAHOME=" + omcBinary.getParentFile().getParentFile().getAbsolutePath();
 					lst.add(x);
-
-					if (System.getenv("OPENMODELICALIBRARY") == null) {
-						String y = "OPENMODELICALIBRARY=" +
-								omcBinary.getParentFile().getParentFile().getAbsolutePath() +
-								"/lib/omlibrary";
-						lst.add(y);
-					}
-
+					
 					Iterator<Entry<String, String>> i = entrySet.iterator();
 					while (i.hasNext()) {
 						Entry<String,String> z = i.next();
@@ -1595,5 +1588,14 @@ public class OMCProxy implements IModelicaCompiler {
 			resNum = Integer.parseInt(res.getFirstResult());
 		}
 		return resNum;
+	}
+
+	@Override
+	public String getModelicaPath() throws ConnectException,
+			UnexpectedReplyException
+	{
+		ICompilerResult res = sendExpression("getModelicaPath()", true);
+		String retval = res.getFirstResult();
+		return retval;
 	}
 }
