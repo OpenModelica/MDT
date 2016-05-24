@@ -102,6 +102,7 @@ public class MISession extends Observable {
 	MIParser fMIParser;
 	
 	long fCommandTimeout = 30000;	// 30 secs
+	final private Object fLock = new Object();
 	// GDB inferior process i.e actual program we are debugging
 	GDBInferior fGDBInferior;
 	Process fSessionProcess;
@@ -425,58 +426,60 @@ public class MISession extends Observable {
 	 * 
 	 */
 	public void postCommand(Command cmd, long timeout, GDBStackFrame gdbStackFrame) throws MIException {
+		synchronized (fLock) {
+			// Test if we are in a sane state.
+			if (!fTxThread.isAlive() || !fRxThread.isAlive()) {
+				throw new MIException(MDTDebugCorePlugin.getResourceString("MISession.postCommand.Thread_Terminated"));
+			}
+			
+			if (gdbStackFrame != null) {
+				GDBThread gdbThread = (GDBThread) gdbStackFrame.getThread();
+				if (!gdbStackFrame.equals(gdbThread.getCurrentGDBStackFrame())) {
+					writeLog("not posting command");
+					return;
+				}	
+			}
 
-		// Test if we are in a sane state.
-		if (!fTxThread.isAlive() || !fRxThread.isAlive()) {
-			throw new MIException(MDTDebugCorePlugin.getResourceString("MISession.postCommand.Thread_Terminated"));
-		}
-		
-		if (gdbStackFrame != null) {
-			GDBThread gdbThread = (GDBThread) gdbStackFrame.getThread();
-			if (!gdbStackFrame.equals(gdbThread.getCurrentGDBStackFrame())) {
-				writeLog("not posting command");
-				return;
-			}	
-		}
-
-//		// Test if we are in the right state?
-//		if (inferior.isRunning()) {
-//			// REMINDER: if we support -exec-interrupt
-//			// Let it throught:
-//			if (!(cmd instanceof MIExecInterrupt)) {
-//				throw new MIException(MIPlugin.getResourceString("src.MISession.Target_not_suspended"));
+//			// Test if we are in the right state?
+//			if (inferior.isRunning()) {
+//				// REMINDER: if we support -exec-interrupt
+//				// Let it throught:
+//				if (!(cmd instanceof MIExecInterrupt)) {
+//					throw new MIException(MIPlugin.getResourceString("src.MISession.Target_not_suspended"));
+//				}
 //			}
-//		}
 
-//		if (inferior.isTerminated()) {
-//			// the only thing that can call postCommand when the inferior is in a TERMINATED
-//			// state is MIGDBShowExitCode, for when MIInferior is computing error code.
-//			if (!(cmd instanceof MIGDBShowExitCode)) {
-//				throw new MIException(MIPlugin.getResourceString("src.MISession.Inferior_Terminated"));
+//			if (inferior.isTerminated()) {
+//				// the only thing that can call postCommand when the inferior is in a TERMINATED
+//				// state is MIGDBShowExitCode, for when MIInferior is computing error code.
+//				if (!(cmd instanceof MIGDBShowExitCode)) {
+//					throw new MIException(MIPlugin.getResourceString("src.MISession.Inferior_Terminated"));
+//				}
 //			}
-//		}
 
-		if (isTerminated()) {
-			throw new MIException(MDTDebugCorePlugin.getResourceString("MISession.postCommand.Session_terminated"));
-		}
-		fTxQueue.addCommand(cmd);
+			if (isTerminated()) {
+				throw new MIException(MDTDebugCorePlugin.getResourceString("MISession.postCommand.Session_terminated"));
+			}
+			
+			fTxQueue.addCommand(cmd);
 
-		// do not wait around the answer.
-		if (timeout < 0) {
-			return;
-		}
-		// Wait for the response or timeout
-		synchronized (cmd) {
-			// RxThread will set the MIOutput on the cmd
-			// when the response arrive.
-			while (cmd.getMIOutput() == null) {
-				try {
-					cmd.wait(timeout);
-					if (cmd.getMIOutput() == null) {
-						throw new MIException(MDTDebugCorePlugin.getResourceString("MISession.postCommand.Target_not_responding"));
+			// do not wait around the answer.
+//			if (timeout < 0) {
+//				return;
+//			}
+			// Wait for the response or timeout
+			synchronized (cmd) {
+				// RxThread will set the MIOutput on the cmd
+				// when the response arrive.
+				while (cmd.getMIOutput() == null) {
+					try {
+						cmd.wait(timeout);
+						if (cmd.getMIOutput() == null) {
+							throw new MIException(MDTDebugCorePlugin.getResourceString("MISession.postCommand.Target_not_responding"));
+						}
+					} catch (InterruptedException e) {
+						//MDTDebugCorePlugin.log(null, e);
 					}
-				} catch (InterruptedException e) {
-					//MDTDebugCorePlugin.log(null, e);
 				}
 			}
 		}

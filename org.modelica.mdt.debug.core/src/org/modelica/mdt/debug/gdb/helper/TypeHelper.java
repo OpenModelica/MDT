@@ -65,7 +65,6 @@ public class TypeHelper {
 		MISession miSession = gdbDebugTarget.getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
 		MIDataEvaluateExpression getTypeOfAnyCmd = factory.createMIGetTypeOfAny(variableName);
-		getTypeOfAnyCmd.setQuiet(true);
 		MIDataEvaluateExpressionInfo getTypeOfAnyInfo;
 		try {
 			miSession.postCommand(getTypeOfAnyCmd, gdbStackFrame);

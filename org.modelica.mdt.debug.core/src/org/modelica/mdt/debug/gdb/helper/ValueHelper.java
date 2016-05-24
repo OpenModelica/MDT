@@ -62,7 +62,6 @@ public class ValueHelper {
 			MISession miSession = gdbDebugTarget.getMISession();
 			CommandFactory factory = miSession.getCommandFactory();
 			MIDataEvaluateExpression getAnyStringCmd = factory.createMIAnyString(variableName);
-			getAnyStringCmd.setQuiet(true);
 			miSession.postCommand(getAnyStringCmd, gdbStackFrame);
 			MIDataEvaluateExpressionInfo getTypeOfAnyInfo = getAnyStringCmd.getMIDataEvaluateExpressionInfo();
 			if (referenceType.equals(GDBHelper.STRING)) {
@@ -122,7 +121,6 @@ public class ValueHelper {
 			MISession miSession = gdbDebugTarget.getMISession();
 			CommandFactory factory = miSession.getCommandFactory();
 			MIDataEvaluateExpression dataEvaluateExpressionCmd = factory.createMIDataEvaluateExpression(variableName);
-			dataEvaluateExpressionCmd.setQuiet(true);
 			miSession.postCommand(dataEvaluateExpressionCmd, gdbStackFrame);
 			MIDataEvaluateExpressionInfo dataEvaluateExpressionInfo = dataEvaluateExpressionCmd.getMIDataEvaluateExpressionInfo();
 			return dataEvaluateExpressionInfo.getExpression();
@@ -149,7 +147,6 @@ public class ValueHelper {
 			MISession miSession = gdbDebugTarget.getMISession();
 			CommandFactory factory = miSession.getCommandFactory();
 			MIDataEvaluateExpression getListLengthCmd = factory.createMIGetListLength(variableName);
-			getListLengthCmd.setQuiet(true);
 			miSession.postCommand(getListLengthCmd, gdbStackFrame);
 			MIDataEvaluateExpressionInfo getListLengthInfo = getListLengthCmd.getMIDataEvaluateExpressionInfo();
 			return Integer.parseInt(getListLengthInfo.getExpression());
@@ -178,7 +175,6 @@ public class ValueHelper {
 			MISession miSession = gdbDebugTarget.getMISession();
 			CommandFactory factory = miSession.getCommandFactory();
 			MIDataEvaluateExpression getListItemCmd = factory.createMIGetListItem(variableName, item);
-			getListItemCmd.setQuiet(true);
 			miSession.postCommand(getListItemCmd, gdbStackFrame);
 			result = getListItemCmd.getMIDataEvaluateExpressionInfo().getExpression();
 		} catch (MIException e) {
@@ -206,7 +202,6 @@ public class ValueHelper {
 			MISession miSession = gdbDebugTarget.getMISession();
 			CommandFactory factory = miSession.getCommandFactory();
 			MIDataEvaluateExpression getArrayLengthCmd = factory.createMIGetArrayLength(variableName);
-			getArrayLengthCmd.setQuiet(true);
 			miSession.postCommand(getArrayLengthCmd, gdbStackFrame);
 			MIDataEvaluateExpressionInfo getArrayLengthInfo = getArrayLengthCmd.getMIDataEvaluateExpressionInfo();
 			return Integer.parseInt(getArrayLengthInfo.getExpression());
@@ -235,7 +230,6 @@ public class ValueHelper {
 			MISession miSession = gdbDebugTarget.getMISession();
 			CommandFactory factory = miSession.getCommandFactory();
 			MIDataEvaluateExpression getArrayElementCmd = factory.createMIGetArrayElement(variableName, element);
-			getArrayElementCmd.setQuiet(true);
 			miSession.postCommand(getArrayElementCmd, gdbStackFrame);
 			result = getArrayElementCmd.getMIDataEvaluateExpressionInfo().getExpression();
 		} catch (MIException e) {
@@ -264,7 +258,6 @@ public class ValueHelper {
 			MISession miSession = gdbDebugTarget.getMISession();
 			CommandFactory factory = miSession.getCommandFactory();
 			MIDataEvaluateExpression getRecordElementNameCmd = factory.createMIGetRecordElementName(variableName, element);
-			getRecordElementNameCmd.setQuiet(true);
 			miSession.postCommand(getRecordElementNameCmd, gdbStackFrame);
 			return parseResult(getRecordElementNameCmd.getMIDataEvaluateExpressionInfo().getExpression());
 		} catch (MIException e) {
@@ -290,7 +283,6 @@ public class ValueHelper {
 			MISession miSession = gdbDebugTarget.getMISession();
 			CommandFactory factory = miSession.getCommandFactory();
 			MIDataEvaluateExpression getOptionValueCmd = factory.createMIIsOptionNone(variableName);
-			getOptionValueCmd.setQuiet(true);
 			miSession.postCommand(getOptionValueCmd, gdbStackFrame);
 			return getOptionValueCmd.getMIDataEvaluateExpressionInfo().getExpression();
 		} catch (MIException e) {
@@ -317,7 +309,6 @@ public class ValueHelper {
 			CommandFactory factory = miSession.getCommandFactory();
 			variableName += ".ndims";
 			MIDataEvaluateExpression getArrayDimensionsCmd = factory.createMIGetModelicaArrayDimensions(variableName);
-			getArrayDimensionsCmd.setQuiet(true);
 			miSession.postCommand(getArrayDimensionsCmd, gdbStackFrame);
 			MIDataEvaluateExpressionInfo getArrayDimensionsInfo = getArrayDimensionsCmd.getMIDataEvaluateExpressionInfo();
 			return Integer.parseInt(getArrayDimensionsInfo.getExpression());
@@ -346,7 +337,6 @@ public class ValueHelper {
 			CommandFactory factory = miSession.getCommandFactory();
 			variableName += ".dim_size[" + (dimension - 1)  + "]";
 			MIDataEvaluateExpression getArrayDimensionSizeCmd = factory.createMIGetModelicaArrayDimensionSize(variableName);
-			getArrayDimensionSizeCmd.setQuiet(true);
 			miSession.postCommand(getArrayDimensionSizeCmd, gdbStackFrame);
 			MIDataEvaluateExpressionInfo getArrayDimensionSizeInfo = getArrayDimensionSizeCmd.getMIDataEvaluateExpressionInfo();
 			return Integer.parseInt(getArrayDimensionSizeInfo.getExpression());

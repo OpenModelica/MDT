@@ -226,7 +226,6 @@ public abstract class GDBValue extends GDBDebugElement implements IValue {
 		CLIPType cliPTypeCmd = factory.createCLIPType(getGDBVariable().getOriginalName());
 		CLIPTypeInfo cliPTypeInfo;
 		try {
-			cliPTypeCmd.setQuiet(true);
 			miSession.postCommand(cliPTypeCmd, getGDBVariable().getGDBStackFrame());
 			cliPTypeInfo = cliPTypeCmd.getMIPtypeInfo();
 			setActualType(cliPTypeInfo.getType());

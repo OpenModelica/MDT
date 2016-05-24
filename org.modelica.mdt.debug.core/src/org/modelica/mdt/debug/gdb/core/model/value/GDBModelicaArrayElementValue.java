@@ -97,7 +97,6 @@ public class GDBModelicaArrayElementValue extends GDBValue {
 			CLIPType cliPTypeCmd = factory.createCLIPType(variable);
 			CLIPTypeInfo cliPTypeInfo;
 			try {
-				cliPTypeCmd.setQuiet(true);
 				miSession.postCommand(cliPTypeCmd, getGDBVariable().getGDBStackFrame());
 				cliPTypeInfo = cliPTypeCmd.getMIPtypeInfo();
 				setActualType(cliPTypeInfo.getType());
