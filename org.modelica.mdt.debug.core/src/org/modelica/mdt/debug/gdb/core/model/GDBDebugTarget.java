@@ -583,7 +583,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 	
 	private void changeStdStreamBuffer(MIEvent miEvent) throws MIException, CoreException {
 		// TODO Auto-generated method stub
-		if (((GDBThread)getThread()).isStdStreamBuffer()) {
+		if (!((GDBThread)getThread()).isStdStreamBuffer()) {
 			CommandFactory factory = fMISession.getCommandFactory();
 			MIDataEvaluateExpression changeStdStreamBufferCmd = factory.createMIChangeStdStreamBuffer();
 			fMISession.postCommand(changeStdStreamBufferCmd, null);
