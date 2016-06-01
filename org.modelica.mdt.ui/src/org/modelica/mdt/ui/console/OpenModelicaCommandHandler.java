@@ -37,7 +37,7 @@ public class OpenModelicaCommandHandler extends Thread
 			while (true)
 			{
 				String line = reader.readLine();
-				String result = null;
+				String result = null, error = null;
 				try
 				{
 					if (line != null && line.length() > 0)
@@ -46,7 +46,12 @@ public class OpenModelicaCommandHandler extends Thread
 						if (res != null)
 						{
 							result = res.getFirstResult().trim();
-							writer.write(result + "\n");
+							writer.write("omc> reply:\n" + result + "\n");
+							error = res.getError();
+							if (error != null)
+							{
+							  writer.write("omc> error:\n" + error.trim() + "\n");
+							}
 						}
 						else
 						{
