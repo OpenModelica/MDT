@@ -48,7 +48,7 @@ public class OpenModelicaCommandHandler extends Thread
 							result = res.getFirstResult().trim();
 							writer.write("omc> reply:\n" + result + "\n");
 							error = res.getError();
-							if (error != null)
+							if (error != null && !error.trim().equals(""))
 							{
 							  writer.write("omc> error:\n" + error.trim() + "\n");
 							}
