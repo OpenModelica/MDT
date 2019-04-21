@@ -193,7 +193,7 @@ public class MarkProblemsVisitor implements IResourceVisitor
     	debug("File:" + in_file.getName());
     	debug("Line:" + lineNumber);
     	debug("Message:" + message);    	
-        Map<String, Integer> attributes = new HashMap<String, Integer>();
+        Map<String, Object> attributes = new HashMap<String, Object>();
         message = message.trim();        
         if (message.startsWith(":") || Character.isDigit(message.charAt(0)))
         {        	

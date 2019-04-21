@@ -438,7 +438,7 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 			IPath path = new Path(directory);
 			java.io.File f = path.toFile(); 
 			if (!(f.exists() && f.isDirectory())) {
-				setErrorMessage("Specified work drirectory does not exist or is not a directory.");
+				setErrorMessage("Specified work directory does not exist or is not a directory.");
 				return false;				
 			}
 		} else {
