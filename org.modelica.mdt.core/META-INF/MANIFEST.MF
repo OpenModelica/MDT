@@ -19,7 +19,16 @@ Export-Package: antlr,
  org.modelica.mdt.core,
  org.modelica.mdt.core.compiler,
  org.modelica.mdt.core.preferences,
- org.modelica.mdt.internal.core
+ org.modelica.mdt.internal.core,
+ org.modelica.mdt.omc;
+  uses:="org.osgi.framework,
+   org.modelica.mdt.core.compiler,
+   org.eclipse.core.resources,
+   org.modelica.mdt.core,
+   org.modelica.mdt.internal.core,
+   org.modelica.mdt.omc.internal,
+   org.eclipse.ui.plugin",
+ org.modelica.mdt.omc.internal;x-friends:="org.modelica.mdt.test"
 Bundle-Activator: org.modelica.mdt.internal.core.CorePlugin
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -31,5 +40,7 @@ Bundle-ClassPath: lib/antlr-2.7.2.jar,
  lib/jboss-rmi-api_1.0_spec-1.0.6.Final.jar,
  lib/picocontainer-1.2.jar,
  lib/wrapper-3.1.0.jar,
- .
+ .,
+ lib/slf4j-api-1.7.14.jar,
+ lib/slf4j-jdk14-1.7.14.jar
 Automatic-Module-Name: org.modelica.mdt.core

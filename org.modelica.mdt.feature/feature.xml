@@ -104,13 +104,6 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
          unpack="false"/>
 
    <plugin
-         id="org.modelica.mdt.omc"
-         download-size="0"
-         install-size="0"
-         version="0.7.47"
-         unpack="false"/>
-
-   <plugin
          id="org.modelica.mdt.debug.core"
          download-size="0"
          install-size="0"
