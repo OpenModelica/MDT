@@ -25,6 +25,10 @@ Export-Package: org.modelica.mdt.debug.core,
  org.modelica.mdt.debug.gdb.core.model,
  org.modelica.mdt.debug.gdb.core.model.stack,
  org.modelica.mdt.debug.gdb.core.model.thread,
- org.modelica.mdt.debug.gdb.core.sourcelookup
+ org.modelica.mdt.debug.gdb.core.model.value,
+ org.modelica.mdt.debug.gdb.core.model.variable,
+ org.modelica.mdt.debug.gdb.core.sourcelookup,
+ org.modelica.mdt.debug.gdb.helper
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Automatic-Module-Name: org.modelica.mdt.debug.core

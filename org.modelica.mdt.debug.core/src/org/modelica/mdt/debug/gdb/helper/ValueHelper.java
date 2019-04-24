@@ -361,12 +361,12 @@ public class ValueHelper {
 		if (arrayIndexes.size() == 1)
 			arrayIndexes.get(0);
 		
-		int index = 0;
-		for(int i = 0 ; i < arrayIndexes.size() - 1 ; i++)
+		int index = 0, size = arrayIndexes.size();
+		for(int i = 0 ; i < size - 1 ; i++)
 		{
 			index += getArrayIndexHelper(itemName, i, arrayIndexes, gdbStackFrame);
 		}
-		index += arrayIndexes.get(arrayIndexes.size() - 1);
+		index += arrayIndexes.get(size - 1);
 		return index;
 	}
 	

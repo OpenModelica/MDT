@@ -20,3 +20,4 @@ Require-Bundle: org.modelica.mdt.core,
  org.eclipse.ui.editors
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.ui.console
+Automatic-Module-Name: org.modelica.mdt.test

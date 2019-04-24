@@ -65,7 +65,7 @@ public class MDTLaunchDelegate extends LaunchConfigurationDelegate {
 		
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) 
 		{						
-			List commandList = new ArrayList();
+			List<String> commandList = (List<String>)new ArrayList<String>();
 			//configuration.
 			commandList.add(debugTargetProgram);
 

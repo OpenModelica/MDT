@@ -8,10 +8,28 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,
  org.eclipse.core.runtime,
  org.eclipse.jface.text
-Export-Package: org.modelica.mdt.core,
+Export-Package: antlr,
+ antlr.actions.cpp,
+ antlr.actions.java,
+ antlr.collections,
+ antlr.collections.impl,
+ antlr.debug,
+ antlr.debug.misc,
+ antlr.preprocessor,
+ org.modelica.mdt.core,
  org.modelica.mdt.core.compiler,
  org.modelica.mdt.core.preferences,
  org.modelica.mdt.internal.core
 Bundle-Activator: org.modelica.mdt.internal.core.CorePlugin
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: lib/antlr-2.7.2.jar,
+ lib/idl.jar,
+ lib/jacorb-3.9.jar,
+ lib/jacorb-omgapi-3.9.jar,
+ lib/jacorb-services-3.9.jar,
+ lib/jboss-rmi-api_1.0_spec-1.0.6.Final.jar,
+ lib/picocontainer-1.2.jar,
+ lib/wrapper-3.1.0.jar,
+ .
+Automatic-Module-Name: org.modelica.mdt.core

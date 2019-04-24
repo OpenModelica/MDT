@@ -23,7 +23,15 @@ Require-Bundle: org.modelica.mdt.core,
  org.modelica.mdt.breakpoint
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Adrian Pop [Adrian.Pop@liu.se] @ OSMC, Linkoping University
-Export-Package: org.modelica.mdt.ui;x-friends:="org.modelica.mdt.test,org.modelica.mdt.ui,org.modelica.mdt.debug.ui",
+Export-Package: org.eclipse.draw2d,
+ org.eclipse.draw2d.geometry,
+ org.eclipse.draw2d.graph,
+ org.eclipse.draw2d.images,
+ org.eclipse.draw2d.internal;x-internal:=true,
+ org.eclipse.draw2d.parts,
+ org.eclipse.draw2d.text,
+ org.eclipse.draw2d.widgets,
+ org.modelica.mdt.ui;x-friends:="org.modelica.mdt.test,org.modelica.mdt.ui,org.modelica.mdt.debug.ui",
  org.modelica.mdt.ui.actions,
  org.modelica.mdt.ui.assist,
  org.modelica.mdt.ui.console,
@@ -43,3 +51,4 @@ Bundle-ClassPath: lib/org.eclipse.draw2d_3.8.1.201208200205.jar,
  lib/org.eclipse.zest.core_1.3.0.201208200205.jar,
  lib/org.eclipse.zest.layouts_1.1.0.201208200205.jar,
  .
+Automatic-Module-Name: org.modelica.mdt.ui

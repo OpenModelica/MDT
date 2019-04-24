@@ -326,7 +326,7 @@ public class MDTExceptionBreakpoint extends MDTBreakpoint implements IMDTFailure
 	 * Parses the comma separated String into an array of Strings
 	 */
 	protected String[] parseList(String listString) {
-		List list = new ArrayList(10);
+		List<String> list = (List<String>)new ArrayList<String>(10);
 		StringTokenizer tokenizer = new StringTokenizer(listString, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();

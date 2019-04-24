@@ -103,7 +103,8 @@ public class RxThread extends Thread {
 				// TRACING: print the output.
 				setPrompt(line);
 				List<String> outputs = filterMIOutput(line + "\n");
-				for (String output : outputs) {
+				String[] outputsArray = (String[]) outputs.toArray(); 
+				for (String output : outputsArray) {
 					processMIOutput(output + "\n");
 					// logging
 					session.writeLog("MI RxThread :: " + output);
@@ -151,7 +152,7 @@ public class RxThread extends Thread {
 		} else if (buffer.toString().contains("*"+MIAsyncRecord.STOPPED+",")) {
 			return createMIOutputArray(buffer, "*"+MIAsyncRecord.STOPPED+",");
 		} else {
-			List<String> outputs = new ArrayList<String>();
+			List<String> outputs = (List<String>)new ArrayList<String>();
 			outputs.add(buffer);
 			return outputs;
 		}
@@ -165,7 +166,7 @@ public class RxThread extends Thread {
 	 */
 	private List<String> createMIOutputArray(String buffer, String separator) {
 		// TODO Auto-generated method stub
-		List<String> outputs = new ArrayList<String>();
+		List<String> outputs = (List<String>)new ArrayList<String>();
 		outputs.add(buffer.substring(0, buffer.indexOf(separator)));
 		outputs.add(buffer.substring(buffer.indexOf(separator)));
 		return outputs;
@@ -549,7 +550,7 @@ public class RxThread extends Thread {
 	}
 
 	String[] getStreamRecords() {
-		List<String> streamRecords = new ArrayList<String>(fStreamRecords.size());
+		List<String> streamRecords = (List<String>)new ArrayList<String>(fStreamRecords.size());
 		for (MIStreamRecord rec : fStreamRecords) {
 			String str = rec.getString().trim();
 			if (str.length() > 0) {

@@ -126,7 +126,7 @@ public class MDTVariable extends MDTDebugElement implements IVariable {
 	
 	public IValue buildMDTValue(DefaultMutableTreeNode root)
 	{
-		Enumeration kids = root.children();		
+		Enumeration kids = root.children();
 		ModelicaVariableInfo vi = (ModelicaVariableInfo)root.getUserObject();
 		String value = vi.toString();		
 		if (!kids.hasMoreElements())
