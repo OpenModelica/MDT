@@ -65,6 +65,7 @@ import org.modelica.mdt.core.compiler.IParseResults;
 import org.modelica.mdt.core.compiler.InvocationError;
 import org.modelica.mdt.core.compiler.UnexpectedReplyException;
 import org.modelica.mdt.core.preferences.PreferenceManager;
+import org.modelica.mdt.omc.OMCProxy;
 
 /**
  * This class provides one to one mapping to IModelicaCompiler interface,
@@ -145,44 +146,8 @@ public class CompilerProxy {
 			return new NoCompiler();
 		}
 
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CorePlugin.COMPILER_EXTENSION_ID);
-
-		IExtension[] extensions = extensionPoint.getExtensions();
-
-		if (extensions.length == 0) {
-			throw new CompilerInstantiationException(ProblemType.NO_COMPILERS_FOUND);
-		}
-		else if (extensions.length > 1) {
-			/*
-			 * compile a list of all plugins that define modelica compiler
-			 * extension point
-			 */
-			Vector<String> compilerPlugins = new Vector<String>();
-
-			for (IExtension ext : extensions) {
-				compilerPlugins.add(ext.getNamespaceIdentifier());
-			}
-
-			throw new CompilerInstantiationException(compilerPlugins);
-		}
-
-		/* here we know that extensions array is one element long */
-		IConfigurationElement[] configurationElements = extensions[0].getConfigurationElements();
-		for (IConfigurationElement elm : configurationElements) {
-			try {
-				Object obj = elm.createExecutableExtension("class");
-				if (obj instanceof IModelicaCompiler) {
-					return (IModelicaCompiler)obj;
-				}
-			}
-			catch (CoreException e) {
-				String namespaceIdentifier = extensions[0].getNamespaceIdentifier();
-				throw new CompilerInstantiationException(e, namespaceIdentifier);
-			}
-		}
-
-		//TODO no class element found in the extension declaration
-		return null;
+		IModelicaCompiler compiler = new OMCProxy();
+		return compiler;
 	}
 
 	public synchronized static String getCompilerName() throws CompilerInstantiationException {

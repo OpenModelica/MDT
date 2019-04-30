@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-   <extension-point id="compiler" name="Modelica Compiler" schema="schema/compiler.exsd"/>
  
    <extension
          id="ModelicaNature"
