@@ -102,9 +102,8 @@ public class RxThread extends Thread {
 			while ((line = reader.readLine()) != null) {
 				// TRACING: print the output.
 				setPrompt(line);
-				List<String> outputs = filterMIOutput(line + "\n");
-				String[] outputsArray = (String[]) outputs.toArray(); 
-				for (String output : outputsArray) {
+				List<String> outputs = filterMIOutput(line + "\n"); 
+				for (String output : outputs) {
 					processMIOutput(output + "\n");
 					// logging
 					session.writeLog("MI RxThread :: " + output);

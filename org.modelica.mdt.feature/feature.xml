@@ -2,7 +2,7 @@
 <feature
       id="org.modelica.mdt"
       label="Modelica Development Tooling"
-      version="0.7.48"
+      version="0.7.49"
       provider-name="Open Source Modelica Consortium (OpenModelica@ida.liu.se)">
 
    <description url="http://www.OpenModelica.org">
@@ -93,35 +93,35 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
          id="org.modelica.mdt.core"
          download-size="0"
          install-size="0"
-         version="0.7.48"
+         version="0.7.49"
          unpack="false"/>
 
    <plugin
          id="org.modelica.mdt.ui"
          download-size="0"
          install-size="0"
-         version="0.7.48"
+         version="0.7.49"
          unpack="false"/>
 
    <plugin
          id="org.modelica.mdt.debug.core"
          download-size="0"
          install-size="0"
-         version="0.7.48"
+         version="0.7.49"
          unpack="false"/>
 
    <plugin
          id="org.modelica.mdt.debug.ui"
          download-size="0"
          install-size="0"
-         version="0.7.48"
+         version="0.7.49"
          unpack="false"/>
 
    <plugin
          id="org.modelica.mdt.breakpoint"
          download-size="0"
          install-size="0"
-         version="0.7.48"
+         version="0.7.49"
          unpack="false"/>
 
 </feature>
