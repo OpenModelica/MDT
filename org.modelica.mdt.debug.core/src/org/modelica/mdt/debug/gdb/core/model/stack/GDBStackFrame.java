@@ -236,7 +236,7 @@ public class GDBStackFrame extends GDBDebugElement implements IStackFrame {
 			CommandFactory factory = miSession.getCommandFactory();
 			MIArg[] args = null;
 			MIStackListVariablesInfo stackListVariablesInfo = null;
-			MIStackListVariables stackListVariablesCmd = factory.createMIStackListVariables(new String[]{"--thread", "1", "--frame", Integer.toString(fDepth - getIdentifier()), "--simple-values"});
+			MIStackListVariables stackListVariablesCmd = factory.createMIStackListVariables(new String[]{"--thread", Integer.toString(((GDBThread)getThread()).getCurrentThreadID()), "--frame", Integer.toString(fDepth - getIdentifier()), "--simple-values"});
 			try {
 				miSession.postCommand(stackListVariablesCmd, null);
 				stackListVariablesInfo = stackListVariablesCmd.getMIStackListVariablesInfo();

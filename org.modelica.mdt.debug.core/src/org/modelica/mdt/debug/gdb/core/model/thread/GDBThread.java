@@ -62,12 +62,14 @@ import org.modelica.mdt.debug.gdb.core.mi.command.MIExecStep;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIStackInfoDepth;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIStackListFrames;
 import org.modelica.mdt.debug.gdb.core.mi.command.MIStackSelectFrame;
+import org.modelica.mdt.debug.gdb.core.mi.command.MIThreadInfo;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIBreakInsertInfo;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIBreakpoint;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIFrame;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIInfo;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIStackInfoDepthInfo;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIStackListFramesInfo;
+import org.modelica.mdt.debug.gdb.core.mi.output.MIThreadInfoInfo;
 import org.modelica.mdt.debug.gdb.core.model.GDBDebugElement;
 import org.modelica.mdt.debug.gdb.core.model.GDBDebugTarget;
 import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
@@ -109,6 +111,7 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	private static int MAX_STACK_DEPTH = 
 			Integer.parseInt(PreferenceManager.getOMCGDBMaxStackDepth());
 	private Boolean fRefreshStackFrames = true;
+	private int fCurrentThreadID = 1;
 	public enum ExecuteCommand {
 		EXECNEXT,
 		EXECSTEP;
@@ -128,6 +131,25 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	public GDBThread(GDBDebugTarget target) {
 		super(target);
 		fGDBStackFrames = new ArrayList<GDBStackFrame>();
+	}
+	
+	public void fetchCurrentThreadId() {
+		try {
+			// get the current thread id from GDB
+			MISession miSession = getGDBDebugTarget().getMISession();
+			CommandFactory factory = miSession.getCommandFactory();
+			MIThreadInfo threadInfoCmd = factory.createMIThreadInfo();
+			miSession.postCommand(threadInfoCmd, null);
+			MIThreadInfoInfo threadInfoInfo = threadInfoCmd.getMIThreadInfoInfo();
+			if (threadInfoInfo == null) {
+				throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+						"-thread-info command returned null", null));
+			}
+			setCurrentThreadID(threadInfoInfo.getcurrentThreadId());			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			MDTDebugCorePlugin.log(null, e);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -856,6 +878,20 @@ public class GDBThread extends GDBDebugElement implements IThread {
 	public Boolean isRefreshStackFrames() {
 		return fRefreshStackFrames;
 	}
+	
+	/**
+	 * @param fCurrentThreadID the fCurrentThreadID to set
+	 */
+	public void setCurrentThreadID(int currentThreadID) {
+		this.fCurrentThreadID = currentThreadID;
+	}
+
+	/**
+	 * @return the fCurrentThreadID
+	 */
+	public int getCurrentThreadID() {
+		return fCurrentThreadID;
+	}
 
 	/**
 	 * @param executeCommand the fExecuteCommand to set
@@ -897,15 +933,15 @@ public class GDBThread extends GDBDebugElement implements IThread {
 		// See comment in GDBStackFrame constructor.
 		if (fCurrentGDBStackFrame == gdbStackFrame)
 			return;
-		int miFrameLevel = getLastStackDepth() - gdbStackFrame.getIdentifier();
-		MISession miSession = getGDBDebugTarget().getMISession();
-		CommandFactory factory = miSession.getCommandFactory();
-		MIStackSelectFrame miStackSelectFrameCmd = factory.createMIStackSelectFrame(miFrameLevel);
-		miSession.postCommand(miStackSelectFrameCmd, null);
-		if (miStackSelectFrameCmd.getMIInfo() == null) {
-			throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
-					MDTDebugCorePlugin.getResourceString("GDBThread.setCurrentStackFrame.StackSelectFrame.NoAnswer"), null));
-		}
+//		int miFrameLevel = getLastStackDepth() - gdbStackFrame.getIdentifier();
+//		MISession miSession = getGDBDebugTarget().getMISession();
+//		CommandFactory factory = miSession.getCommandFactory();
+//		MIStackSelectFrame miStackSelectFrameCmd = factory.createMIStackSelectFrame(miFrameLevel);
+//		miSession.postCommand(miStackSelectFrameCmd, null);
+//		if (miStackSelectFrameCmd.getMIInfo() == null) {
+//			throw new CoreException(new Status(IStatus.ERROR, IMDTConstants.ID_MDT_DEBUG_MODEL, 0,
+//					MDTDebugCorePlugin.getResourceString("GDBThread.setCurrentStackFrame.StackSelectFrame.NoAnswer"), null));
+//		}
 		fCurrentGDBStackFrame = gdbStackFrame;
 	}
 	

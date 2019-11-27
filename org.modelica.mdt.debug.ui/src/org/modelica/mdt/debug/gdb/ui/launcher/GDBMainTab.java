@@ -57,6 +57,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
+import org.modelica.mdt.core.preferences.PreferenceManager.osType;
 import org.modelica.mdt.debug.core.launcher.IMDTConstants;
 
 /**
@@ -178,7 +179,18 @@ public class GDBMainTab extends AbstractLaunchConfigurationTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fGDBPathTextBox.setLayoutData(gd);
 		fGDBPathTextBox.setFont(font);
-		fGDBPathTextBox.setText("${env_var:OMDEV}\\tools\\mingw\\bin\\gdb.exe");
+		String osName = System.getProperty("os.name");
+		if (osName.contains("Windows")) {
+			String osArch = System.getProperty("os.arch");
+			if (osArch.endsWith("64")) {
+				fGDBPathTextBox.setText("${env_var:OMDEV}\\tools\\msys\\mingw64\\bin\\gdb.exe");
+			} else {
+				fGDBPathTextBox.setText("${env_var:OMDEV}\\tools\\msys\\mingw32\\bin\\gdb.exe");
+			}
+		} else {
+			fGDBPathTextBox.setText("gdb");
+		}
+		
 		fGDBPathTextBox.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateLaunchConfigurationDialog();

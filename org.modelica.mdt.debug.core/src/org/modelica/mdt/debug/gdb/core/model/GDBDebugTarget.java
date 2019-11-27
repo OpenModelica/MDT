@@ -604,6 +604,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 		MIStoppedEvent stoppedEvent = (MIStoppedEvent)miEvent;
 		if (stoppedEvent.getFrame() == null)
 		{
+			((GDBThread)getThread()).fetchCurrentThreadId();
 			((GDBThread)getThread()).setRefreshStackFrames(true);
 			((GDBThread)getThread()).suspended(DebugEvent.STEP_END);
 			return;
@@ -671,6 +672,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 					}
 				}
 			}
+			((GDBThread)getThread()).fetchCurrentThreadId();
 			((GDBThread)getThread()).setRefreshStackFrames(true);
 			((GDBThread)getThread()).suspended(DebugEvent.STEP_RETURN);
 		}
@@ -717,6 +719,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 					}
 				}
 			}
+			((GDBThread)getThread()).fetchCurrentThreadId();
 			((GDBThread)getThread()).setRefreshStackFrames(true);
 			((GDBThread)getThread()).suspended(DebugEvent.STEP_END);
 		}
@@ -752,6 +755,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 			}
 		}
 		else {
+			((GDBThread)getThread()).fetchCurrentThreadId();
 			((GDBThread)getThread()).setRefreshStackFrames(true);
 			((GDBThread)getThread()).suspended(DebugEvent.BREAKPOINT);
 		}
@@ -772,6 +776,7 @@ public class GDBDebugTarget extends GDBDebugElement implements IDebugTarget, IBr
 			MISignalEvent signalEvent = (MISignalEvent)miEvent;
 			
 			if (signalEvent.getName().equals(GDBHelper.SIGTRAP) || signalEvent.getName().equals(GDBHelper.SIGINT)) {
+				((GDBThread)getThread()).fetchCurrentThreadId();
 				((GDBThread)getThread()).setRefreshStackFrames(true);
 				((GDBThread)getThread()).interrupted(DebugEvent.STEP_END);
 			} else if (signalEvent.getName().equals(GDBHelper.SIGSEGV)) {
