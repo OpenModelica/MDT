@@ -221,6 +221,14 @@ public class CommandFactory {
 		return new MIBreakCondition(breakPointNumber, condition);
 	}
 	
+	/**
+	 * Creates the -thread-info command
+	 * @return MIThreadInfo
+	 */
+	public MIThreadInfo createMIThreadInfo() {
+		return new MIThreadInfo();
+	}
+	
 	/* Stack Manipulation Commands */
 	
 	/**
