@@ -1,0 +1,30 @@
+
+name: Build BreakProcess.exe
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  build_BreakProcess:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+    - name: CMake Configure
+      run: |
+        cmake -S BreakProcess -B BreakProcess/build -DCMAKE_INSTALL_PREFIX=BreakProcess/install
+
+    - name: CMake Build
+      run: |
+        cmake --build BreakProcess/build --target install
+
+    - name: Upload BuildProcess.exe
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: BuildProcess
+        path: BreakProcess/install/bin/BuildProcess.exe
+        if-no-files-found: error
+        archive: false
