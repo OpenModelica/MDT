@@ -285,11 +285,15 @@ public class OMCProxy implements IModelicaCompiler {
 
 			/*
 			 * Standard path to omc (or omc.exe) binary is encoded in OPENMODELICAHOME
-			 * variable. If we don't find it just search the path!
+			 * variable, the default installation. Several versions of OpenModelica
+			 * can be installed side by side, each one registered in a variable
+			 * OPENMODELICAHOME_<version>: the newest one is used if there is no
+			 * default installation. If we don't find it just search the path!
 			 */
-			String openModelicaHome = System.getenv("OPENMODELICAHOME");
+			File home = OMCHome.find(System.getenv());
+			String openModelicaHome = home == null ? null : home.getPath();
 			if (openModelicaHome == null) {
-				logOMCStatus("OPENMODELICAHOME environment variable is NULL, trying the PATH variable", true);
+				logOMCStatus("OPENMODELICAHOME environment variable is NULL and there is no OPENMODELICAHOME_<version>, trying the PATH variable", true);
 				File omc = findExecutableOnPath(binaryName);
 				if (omc != null) {
 					logOMCStatus("Found omc executable in the path here: " + omc.getAbsolutePath(), true);
@@ -1212,18 +1216,25 @@ public class OMCProxy implements IModelicaCompiler {
 			logOMCStatus("Setting working directory to: " + workingDirectory.getAbsolutePath(), true);
 			try {
 				String[] env = null;
-				// prepare buffers for process output and error streams
-				if (System.getenv("OPENMODELICAHOME") == null) {
+				/*
+				 * OPENMODELICAHOME of the omc we start is the installation of
+				 * that omc, which is not the default installation when several
+				 * versions of OpenModelica are installed.
+				 */
+				File omcHome = omcBinary.getAbsoluteFile().getParentFile().getParentFile();
+				if (omcHome != null) {
 					Map<String, String> envMap = System.getenv();
 					Set<Entry<String, String>> entrySet = envMap.entrySet();
 					Collection<String> lst = new ArrayList<String>();
-					String x = "OPENMODELICAHOME=" + omcBinary.getParentFile().getParentFile().getAbsolutePath();
+					String x = OMCHome.ENV_HOME + "=" + omcHome.getAbsolutePath();
 					lst.add(x);
 					
 					Iterator<Entry<String, String>> i = entrySet.iterator();
 					while (i.hasNext()) {
 						Entry<String,String> z = i.next();
-						lst.add(z.getKey() + "=" + z.getValue());
+						if (!z.getKey().equalsIgnoreCase(OMCHome.ENV_HOME)) {
+							lst.add(z.getKey() + "=" + z.getValue());
+						}
 					}
 					env = lst.toArray(new String[lst.size()]);
 				}

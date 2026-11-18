@@ -59,6 +59,7 @@ import org.modelica.mdt.debug.gdb.core.mi.output.MIGDBShowInfo;
 import org.modelica.mdt.debug.gdb.core.mi.output.MIParser;
 import org.modelica.mdt.debug.gdb.core.model.stack.GDBStackFrame;
 import org.modelica.mdt.debug.gdb.core.model.thread.GDBThread;
+import org.modelica.mdt.omc.OMCHome;
 
 /**
  * Maintains all MI activities.
@@ -738,7 +739,7 @@ public class MISession extends Observable {
 	 */
 	private int interruptInferiorWindows() throws CoreException, InterruptedException, IOException {
 		// TODO Auto-generated method stub
-		String openModelicaHome = System.getenv("OPENMODELICAHOME");
+		File openModelicaHome = OMCHome.find(System.getenv());
 		ArrayList<String> argList = new ArrayList<String>();
 		argList.add(openModelicaHome + File.separator + "bin" + File.separator + "BreakProcess.exe");
 		argList.add(Integer.toString(getGDBInferior().getInferiorPID()));
