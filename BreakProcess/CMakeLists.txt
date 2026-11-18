@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
 project(BreakProcess CXX)
 
+include(GNUInstallDirs)
+
 if(NOT WIN32)
   message(FATAL_ERROR "BreakProcess.exe is a small helper for debugging simulations on Windows."
                       " Only applicable if target system is Windows.")

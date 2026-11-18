@@ -49,6 +49,9 @@
 #endif
 #include <stdio.h>
 #include <string.h>  // strcasecmp
+#ifdef _MSC_VER
+#  define strcasecmp _stricmp  // the Microsoft compiler has no strcasecmp
+#endif
 
 void printUsage() {
   printf("Usage: BreakProcess <pid>\n");
