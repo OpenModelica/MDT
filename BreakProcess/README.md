@@ -8,5 +8,5 @@ It uses the Win32 debugging API and has no meaning on any other platform.
 
 ```cmd
 cmake -S BreakProcess -B BreakProcess/build -DCMAKE_INSTALL_PREFIX=BreakProcess/install
-cmake --build BreakProcess/build --target install
+cmake --build BreakProcess/build --config Release --target install
 ```
