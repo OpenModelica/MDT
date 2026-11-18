@@ -95,6 +95,16 @@ packages provided by PELAB.
 </p>
 
 <p>
+Several versions of OpenModelica can be installed side by side on Windows. The installer
+sets OPENMODELICAHOME for the default installation and a variable OPENMODELICAHOME_&lt;version&gt;
+for each installed version, where every character of the version that is not a letter or a
+digit is replaced by an underscore, for example OPENMODELICAHOME_1_27_0 for version 1.27.0.
+MDT uses OPENMODELICAHOME if it is set and otherwise the newest installed version. If none
+of these variables is set the binary is searched for in the PATH. To use a specific version
+specify its binary as the custom binary, see below.
+</p>
+
+<p>
 If for some reason you are not able set OPENMODELICAHOME to correct value, or wish to
 use another binary, custom binary can be specified. To configure OMC binary goto Modelica
 preferences page. It is accessable via <b>Window > Preferences...</b> menu, followed by selecting

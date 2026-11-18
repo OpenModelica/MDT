@@ -222,7 +222,7 @@ public class ModelicaPreferencePage	extends PreferencePage
 		
 		/* use standard path option */
 		useStandardOmcPath = new Button(group, SWT.RADIO);
-		useStandardOmcPath.setText("use OPENMODELICAHOME specified binary");
+		useStandardOmcPath.setText("use OPENMODELICAHOME specified binary (or the newest OPENMODELICAHOME_<version>)");
 
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.grabExcessHorizontalSpace = true;
